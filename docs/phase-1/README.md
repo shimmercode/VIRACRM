@@ -10,7 +10,7 @@
 | 1 | گزارش کامل تحلیل سند | [`14-analysis-report.md`](14-analysis-report.md) |
 | 2 | فهرست نیازمندی‌های شناسه‌گذاری‌شده (۸۱ مورد) | [`../requirements/requirements.catalog.yaml`](../requirements/requirements.catalog.yaml) |
 | 3 | Requirements Traceability Matrix (اولیه) | [`05-traceability-matrix.md`](05-traceability-matrix.md) + [CSV](05-traceability-matrix.csv) |
-| 4 | گزارش سازگاری هاست | [`01-host-compliance-report.md`](01-host-compliance-report.md) |
+| 4 | گزارش سازگاری هاست | [`01a-host-compliance-report.md`](01a-host-compliance-report.md) |
 | 5 | گزارش محیط توسعه (اجرای واقعی) | [`00-dev-environment-validation.md`](00-dev-environment-validation.md) |
 | 6 | معماری پیشنهادی + نمودار | [`02-architecture.md`](02-architecture.md) · [`../diagrams/architecture.png`](../diagrams/architecture.png) |
 | 7 | ERD دیتابیس | [`../diagrams/erd.png`](../diagrams/erd.png) · منبع [`../database/erd.dot`](../database/erd.dot) |
