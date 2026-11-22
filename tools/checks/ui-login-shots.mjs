@@ -9,26 +9,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
+import { startBrowserFlow } from './lib/browser-flow.mjs';
+
+// ISOLATION: this suite runs against its own dev server and database copy, so
+// it never writes a session row into the shared database. See
+// tools/checks/lib/browser-flow.mjs.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = process.env.VIRA_SHOTS_OUT || path.join(ROOT, 'docs/phase-2/evidence/ui-audit');
-const BASE = process.env.VIRA_BASE_URL || 'http://127.0.0.1:8080';
-const EXECUTABLE = process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin';
-const LIB_PATH = process.env.VIRA_CHROMIUM_LIBS || '/tmp/chromium/libs/lib:/tmp/chromium/libs/lib64';
-
-const requireFrom = createRequire(path.resolve(process.env.VIRA_PLAYWRIGHT || '/tmp/pwuse', 'noop.js'));
-let chromium;
-try { ({ chromium } = requireFrom('playwright-core')); }
-catch { console.error('playwright-core not found. Set VIRA_PLAYWRIGHT.'); process.exit(2); }
 
 fs.mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--font-render-hinting=none'],
-  env: { ...process.env, LD_LIBRARY_PATH: LIB_PATH },
-});
+const flow = await startBrowserFlow('ui-login', { viewport: { width: 1440, height: 900 } });
+const BASE = flow.baseUrl;
 
 const results = [];
 const record = (id, ok, detail) => {
@@ -42,7 +35,7 @@ for (const [label, w, h] of [
   ['phone-430', 430, 932],
   ['phone-390', 390, 844],
 ]) {
-  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+  const ctx = await flow.browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
 
   const res = await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
@@ -80,7 +73,7 @@ for (const [label, w, h] of [
   await ctx.close();
 }
 
-await browser.close();
+await flow.close();
 
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n--- summary ---\n${passed}/${results.length} passed`);

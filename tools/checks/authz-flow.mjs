@@ -6,61 +6,24 @@
  * privileged URL *directly*. If hiding links were the only control, these
  * would all succeed; they must return 403.
  */
-import fs from 'node:fs';
-import path from 'node:path';
-import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const NODE = process.execPath;
-const PHP_CLI = path.join(ROOT, 'docs/tools/php-cli.mjs');
-const RENDERER = path.join(ROOT, 'tools/http-render.php');
-const PHP_WASM_PATH = process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules';
+import { Flow, Checks } from './lib/flow-harness.mjs';
 
-const USER = process.env.VIRA_VIEWER_USER || 'viewer1';
-const PASSWORD = process.env.VIRA_VIEWER_PASSWORD || 'DevOnly-Viewer-2026x';
+// ISOLATION: private database, private viewer account. The viewer's password is
+// generated per run, so this flow cannot depend on (or disturb) the account
+// another flow used.
+const flow = new Flow('authz');
+await flow.setup();
 
-let jar = new Map();
+const c = new Checks('authz-flow');
 
-function render(spec) {
-  const dir = fs.mkdtempSync(path.join(ROOT, '.arena', 'z-'));
-  const file = path.join(dir, 'req.json');
-  fs.writeFileSync(file, JSON.stringify({
-    method: spec.method || 'GET', uri: spec.uri, host: 'localhost:8080',
-    cookie: [...jar].map(([k, v]) => `${k}=${v}`).join('; '),
-    post_body: spec.body || '',
-    content_type: spec.body ? 'application/x-www-form-urlencoded' : '',
-    accept: 'text/html',
-  }));
-  return new Promise((resolve) => {
-    const child = spawn(NODE, [PHP_CLI, RENDERER, file], { cwd: ROOT, env: { ...process.env, PHP_WASM_PATH } });
-    let out = '';
-    child.stdout.on('data', d => out += d);
-    const timer = setTimeout(() => child.kill('SIGKILL'), 90_000);
-    child.on('close', () => {
-      clearTimeout(timer);
-      const clean = out.replace(/^\[php-cli\][^\n]*\n?/gm, '');
-      const status = Number((clean.match(/^VIRA_STATUS (\d+)/m) || [0, 0])[1]);
-      const vi = clean.indexOf('VIRA_BODY\n');
-      const headers = {};
-      for (const line of clean.slice(0, vi).split('\n')) {
-        const m = line.match(/^VIRA_HEADER ([^:]+):\s*(.*)$/);
-        if (!m) continue;
-        const k = m[1].toLowerCase(), v = m[2];
-        if (k === 'set-cookie') {
-          const [pair] = v.split(';');
-          const i = pair.indexOf('=');
-          if (i > 0) jar.set(pair.slice(0, i).trim(), pair.slice(i + 1).trim());
-        }
-        headers[k] = headers[k] ? headers[k] + ' | ' + v : v;
-      }
-      resolve({ status, headers, body: vi === -1 ? clean : clean.slice(vi + 9) });
-    });
-  });
-}
+const USER = 'viewer1';
+const PASSWORD = `Viewer-${Date.now().toString(36)}-D5`;
+await flow.resetPassword({ username: USER, password: PASSWORD, mustChange: false });
 
-const results = [];
-const check = (id, ok, detail) => { results.push({ id, ok }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${id}  ${detail}`); };
+const results = c.results;
+const check = (id, ok, detail) => c.check(id, ok, detail);
+const render = (spec) => flow.render(spec);
 
 // log in as the viewer
 const page = await render({ uri: '/login' });
@@ -107,7 +70,12 @@ check('T-AZ-08', post.status === 403, `direct POST /customers -> ${post.status}`
 const del = await render({ method: 'POST', uri: '/customers/1', body: `_token=${encodeURIComponent(postToken)}&_method=DELETE` });
 check('T-AZ-09', del.status === 403, `direct DELETE /customers/1 -> ${del.status}`);
 
-console.log('\n--- summary ---');
-const pass = results.filter(r => r.ok).length;
-console.log(`${pass}/${results.length} passed`);
-process.exit(pass === results.length ? 0 : 1);
+// The viewer really holds only the viewer role in this database.
+const roles = await flow.query(
+  "select r.code from roles r join user_roles ur on ur.role_id = r.id join users u on u.id = ur.user_id where u.username = 'viewer1' order by r.code"
+);
+check('T-AZ-10', roles.trim() === 'viewer', `viewer1 roles in flow db: "${roles.trim()}"`);
+
+const ok = c.summary();
+flow.cleanup();
+process.exit(ok ? 0 : 1);

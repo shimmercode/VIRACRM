@@ -6,71 +6,23 @@
  * cookie jar, so this exercises the actual session, CSRF and middleware stack —
  * not a mock.
  */
-import fs from 'node:fs';
-import path from 'node:path';
-import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const NODE = process.execPath;
-const PHP_CLI = path.join(ROOT, 'docs/tools/php-cli.mjs');
-const RENDERER = path.join(ROOT, 'tools/http-render.php');
-const PHP_WASM_PATH = process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules';
+import { Flow, Checks } from './lib/flow-harness.mjs';
 
-let jar = new Map();
+// ISOLATION: even though this flow is anonymous-only, it runs against its own
+// database copy. Two reasons: the sessions it creates cannot interfere with a
+// concurrent flow, and its own user gives it a *known* credential to prove the
+// positive login path with — previously only the failure path was tested here.
+const flow = new Flow('login');
+await flow.setup();
 
-function render(spec) {
-  const dir = fs.mkdtempSync(path.join(ROOT, '.arena', 'flow-'));
-  const file = path.join(dir, 'req.json');
-  fs.writeFileSync(file, JSON.stringify({
-    method: spec.method || 'GET',
-    uri: spec.uri,
-    host: 'localhost:8080',
-    cookie: [...jar].map(([k, v]) => `${k}=${v}`).join('; '),
-    post_body: spec.body || '',
-    content_type: spec.contentType || (spec.body ? 'application/x-www-form-urlencoded' : ''),
-    accept: 'text/html',
-  }));
+const c = new Checks('login-flow');
+const render = (spec) => flow.render(spec);
+const check = (id, ok, detail) => c.check(id, ok, detail);
+const results = c.results;
 
-  return new Promise((resolve) => {
-    const child = spawn(NODE, [PHP_CLI, RENDERER, file], {
-      cwd: ROOT,
-      env: { ...process.env, PHP_WASM_PATH },
-    });
-    let out = '', err = '';
-    child.stdout.on('data', d => out += d);
-    child.stderr.on('data', d => err += d);
-    const timer = setTimeout(() => child.kill('SIGKILL'), 90_000);
-
-    child.on('close', () => {
-      clearTimeout(timer);
-      const clean = out.replace(/^\[php-cli\][^\n]*\n?/gm, '');
-      const status = Number((clean.match(/^VIRA_STATUS (\d+)/m) || [0, 0])[1]);
-      const vi = clean.indexOf('VIRA_BODY\n');
-      const headers = {};
-      for (const line of clean.slice(0, vi).split('\n')) {
-        const m = line.match(/^VIRA_HEADER ([^:]+):\s*(.*)$/);
-        if (!m) continue;
-        const k = m[1].toLowerCase();
-        const v = m[2];
-        // collect set-cookie into the jar
-        if (k === 'set-cookie') {
-          const [pair] = v.split(';');
-          const idx = pair.indexOf('=');
-          if (idx > 0) jar.set(pair.slice(0, idx).trim(), pair.slice(idx + 1).trim());
-        }
-        headers[k] = headers[k] ? headers[k] + ' | ' + v : v;
-      }
-      resolve({ status, headers, body: vi === -1 ? clean : clean.slice(vi + 9), err });
-    });
-  });
-}
-
-const results = [];
-function check(id, passed, detail) {
-  results.push({ id, passed, detail });
-  console.log(`${passed ? 'PASS' : 'FAIL'}  ${id}  ${detail}`);
-}
+const GOOD_PASSWORD = `Login-${Date.now().toString(36)}-E8`;
+await flow.resetPassword({ password: GOOD_PASSWORD, mustChange: false });
 
 // ── T-AUTH-01 Anonymous access is blocked ────────────────────────────────
 const anon = await render({ uri: '/customers' });
@@ -104,7 +56,42 @@ const noToken = await render({
 check('T-AUTH-05', noToken.status === 419 || noToken.status === 302,
   `POST without CSRF token -> ${noToken.status}`);
 
-console.log('\n--- summary ---');
-const pass = results.filter(r => r.passed).length;
-console.log(`${pass}/${results.length} passed`);
-process.exit(pass === results.length ? 0 : 1);
+// ── T-AUTH-14 The positive path: correct credentials really sign in ─────
+// Every other assertion here proves that bad input is refused. Without this
+// one, a login form that rejected everybody would pass the whole flow.
+const fresh = await render({ uri: '/login' });
+const goodToken = (fresh.body.match(/name="_token" value="([^"]+)"/) || [])[1];
+
+const good = await render({
+  method: 'POST',
+  uri: '/login',
+  body: `_token=${encodeURIComponent(goodToken)}`
+    + `&username=admin&password=${encodeURIComponent(GOOD_PASSWORD)}`,
+});
+
+const signedIn = good.status === 302 && !/\/login/.test(good.headers.location || '');
+check('T-AUTH-14', signedIn, `POST correct creds -> ${good.status} -> ${good.headers.location}`);
+
+const dashboard = await render({ uri: '/' });
+check('T-AUTH-15', dashboard.status === 200, `GET / with the session -> ${dashboard.status}`);
+
+// ── T-AUTH-16 The session cookie is not readable by JavaScript ──────────
+// httpOnly is the control that keeps a session token out of reach of any
+// script that ends up on the page.
+const cookieHeaders = [good.headers['set-cookie'], fresh.headers['set-cookie']]
+  .filter(Boolean)
+  .join(' | ');
+
+// The cookie name derives from APP_NAME: "VIRA CRM" -> vira_crm_session.
+// Matching the literal name keeps this from passing on some unrelated cookie.
+const isSessionCookie = /vira_crm_session=/i.test(cookieHeaders);
+const httpOnly = /httponly/i.test(cookieHeaders);
+
+// The first assertion must be real: if no session cookie was set at all, we
+// have not proven anything about its flags.
+check('T-AUTH-16', isSessionCookie && httpOnly,
+  `session cookie issued=${isSessionCookie}, httpOnly=${httpOnly}`);
+
+const ok = c.summary();
+flow.cleanup();
+process.exit(ok ? 0 : 1);

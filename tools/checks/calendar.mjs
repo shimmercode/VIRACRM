@@ -13,37 +13,29 @@
  * matched, so correct output cannot trip it.
  */
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
+import { startBrowserFlow, uiLogin } from './lib/browser-flow.mjs';
+
+// ISOLATION: private dev server + database copy. Previously this suite drove
+// the shared server, so simply rendering pages wrote session and audit rows
+// into the shared database.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const BASE = process.env.VIRA_BASE_URL || 'http://127.0.0.1:8080';
-const PASSWORD = process.env.VIRA_ADMIN_PASSWORD || 'DevOnly-Passw0rd-2026';
-const EXECUTABLE = process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin';
-const LIB_PATH = process.env.VIRA_CHROMIUM_LIBS || '/tmp/chromium/libs/lib:/tmp/chromium/libs/lib64';
+const OUT = process.env.VIRA_SHOTS_OUT || path.join(ROOT, 'docs/phase-2/evidence/ui-audit');
 
-const requireFrom = createRequire(
-  path.resolve(process.env.VIRA_PLAYWRIGHT || '/tmp/pwuse', 'noop.js')
-);
+fs.mkdirSync(OUT, { recursive: true });
 
-let chromium;
-try {
-  ({ chromium } = requireFrom('playwright-core'));
-} catch {
-  console.error('playwright-core not found. Set VIRA_PLAYWRIGHT.');
-  process.exit(2);
-}
+const flow = await startBrowserFlow('calendar', { viewport: { width: 1440, height: 900 } });
+const BASE = flow.baseUrl;
+const PASSWORD = flow.password;
+const browser = flow.browser;
 
 // A year above 1600 can only be Gregorian: the Jalali year is in the 1400s.
 const GREGORIAN = /\b(1[6-9]\d{2}|20\d{2})\s*[-/]\s*\d{1,2}\s*[-/]\s*\d{1,2}\b/g;
 
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-  env: { ...process.env, LD_LIBRARY_PATH: LIB_PATH },
-});
 
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const page = await flow.context.newPage({ viewport: { width: 1440, height: 900 } });
 
 await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
 await page.fill('#username', 'admin');
@@ -105,7 +97,7 @@ for (const uri of pages) {
   }
 }
 
-await browser.close();
+await flow.close();
 
 console.log(failures === 0 ? '\ncalendar: OK' : `\ncalendar: ${failures} Gregorian date(s) leaked`);
 process.exit(failures === 0 ? 0 : 1);

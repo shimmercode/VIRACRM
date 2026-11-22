@@ -2440,3 +2440,120 @@ a.v-list__main:hover .v-list__title {
 [dir='rtl'] .v-input[inputmode='numeric'][dir='ltr'] {
     text-align: right;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Responsive list → card view.
+
+   Below 768px a six-column table cannot fit: measured at 390px it hid 41% of
+   its width, including the whole Actions column, so edit/view were unreachable
+   by touch. Card view was chosen over horizontal scrolling because scrolling
+   keeps the actions off-screen (they sit in the last column, RTL) and forces
+   the user to swipe sideways before they can act on any row.
+
+   Progressive enhancement: the markup stays a real <table>. Cards are produced
+   only by the script that also labels them, and only when the script can read
+   the header cells. That costs nothing on desktop, and with JavaScript off the
+   user keeps the original (scrollable) table rather than a broken layout.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+    /* Hide the table only once the script has confirmed the cards exist. */
+    .v-tablewrap[data-cards="ready"] > .v-table {
+        display: none;
+    }
+
+    .v-tablewrap[data-cards="ready"] > .v-cards {
+        display: grid;
+    }
+}
+
+.v-tablewrap > .v-cards {
+    display: none;
+    gap: var(--vira-space-3);
+    padding: var(--vira-space-3);
+    list-style: none;
+    margin: 0;
+}
+
+.v-card-row {
+    display: grid;
+    gap: var(--vira-space-2);
+    padding: var(--vira-space-3);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius);
+    background: var(--vira-surface);
+}
+
+.v-card-row__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--vira-space-3);
+}
+
+.v-card-row__primary {
+    /* A bare line of text is only 22px tall, under both the 28px house rule and
+       the 24px WCAG 2.5.8 floor. Padding makes the whole title tappable. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    font-weight: 600;
+    color: var(--vira-text);
+    text-decoration: none;
+}
+
+.v-card-row__sub {
+    margin-top: 2px;
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+
+/* Field pairs: label above value, two to a row on a phone. */
+.v-card-row__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--vira-space-2) var(--vira-space-3);
+    margin: 0;
+}
+
+.v-card-row__field {
+    min-width: 0;
+}
+
+.v-card-row__label {
+    display: block;
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+
+.v-card-row__value {
+    margin: 2px 0 0;
+    font-size: var(--vira-text-sm);
+    color: var(--vira-text);
+    overflow-wrap: anywhere;
+}
+
+.v-card-row__value[dir="ltr"] {
+    text-align: start;
+}
+
+.v-card-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-2);
+    padding-top: var(--vira-space-2);
+    border-top: 1px solid var(--vira-border);
+}
+
+/* In card view the icon-only buttons lose their mouse tooltip, so each action
+   carries a visible text label instead. */
+.v-card-row__actions .v-iconbtn {
+    width: auto;
+    padding-inline: var(--vira-space-3);
+    gap: var(--vira-space-2);
+    font-size: var(--vira-text-xs);
+}
+
+.v-card-row__action-text {
+    white-space: nowrap;
+}

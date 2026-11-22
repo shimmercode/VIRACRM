@@ -14,7 +14,11 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-$pw = 'DevOnly-Viewer-2026x';
+// Generated, never printed, and never the same twice. This script only exercises
+// the policy layer (permission helpers) — it never authenticates over HTTP — so
+// no human needs to know this value. A fixed password in a committed file is a
+// credential regardless of its name; see docs/phase-1/22-bootstrap-credential-policy.md.
+$pw = rtrim(strtr(base64_encode(random_bytes(18)), '+/', 'Aa'), '=');
 
 $viewer = User::query()->firstOrNew(['username' => 'viewer1']);
 $viewer->fill([

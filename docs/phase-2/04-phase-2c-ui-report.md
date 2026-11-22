@@ -222,12 +222,18 @@ node tools/build-assets.mjs && node tools/build-js.mjs
 # 4. gates
 node tools/checks/css-audit.mjs && node tools/checks/contrast.mjs \
   && node tools/checks/unstyled.mjs && node tools/checks/tokens.mjs
-VIRA_ADMIN_PASSWORD='DevOnly-Passw0rd-2026' node tools/checks/ui-shots.mjs
+node tools/checks/ui-shots.mjs
 node tools/checks/calendar.mjs
 ```
 
-`prepare.php` resets the admin password to `DevOnly-Passw0rd-2026` and creates
-`viewer1`. Both are development credentials for a local SQLite installation only.
+`prepare.php` generates a random admin password and writes it to
+`.arena/admin-password` (git-ignored, mode 0600); it creates `viewer1` with a
+password that is never persisted. No fixed credential exists in the repository.
+See `docs/phase-1/22-bootstrap-credential-policy.md`.
+
+> **Superseded:** the browser suites no longer need this at all. Each one now
+> clones the database and sets its own password inside its own copy, so they run
+> with `node tools/checks/run-all.mjs` and no environment variables.
 
 ## 6. Evidence index
 

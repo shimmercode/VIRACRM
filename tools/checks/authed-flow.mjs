@@ -1,107 +1,72 @@
 #!/usr/bin/env node
 /**
- * Authenticated flow: log in, then exercise every page and permission gate.
- * Uses the real password set by the seeder (read from a local file the seed
- * step wrote into .arena/, never from the repository).
+ * Authenticated flow: log in, exercise every page and permission gate, verify
+ * the forced-password-change path, then sign out.
+ *
+ * ISOLATION: runs against its own database copy (`.arena/flows/authed/`) and
+ * sets its own admin password. This flow *changes the password as part of the
+ * test* — it verifies the forced-change path — so it must not share a database
+ * with any other flow. See tools/checks/lib/flow-harness.mjs for why.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const NODE = process.execPath;
-const PHP_CLI = path.join(ROOT, 'docs/tools/php-cli.mjs');
-const RENDERER = path.join(ROOT, 'tools/http-render.php');
-const PHP_WASM_PATH = process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules';
+import { Flow, Checks, ROOT } from './lib/flow-harness.mjs';
 
-const PASSWORD = process.env.VIRA_ADMIN_PASSWORD;
-if (!PASSWORD) { console.error('VIRA_ADMIN_PASSWORD required'); process.exit(2); }
+const flow = new Flow('authed');
+await flow.setup();
 
-let jar = new Map();
+const c = new Checks('authed-flow');
 
-function render(spec) {
-  const dir = fs.mkdtempSync(path.join(ROOT, '.arena', 'auth-'));
-  const file = path.join(dir, 'req.json');
-  fs.writeFileSync(file, JSON.stringify({
-    method: spec.method || 'GET',
-    uri: spec.uri,
-    host: 'localhost:8080',
-    cookie: [...jar].map(([k, v]) => `${k}=${v}`).join('; '),
-    post_body: spec.body || '',
-    content_type: spec.body ? 'application/x-www-form-urlencoded' : '',
-    accept: 'text/html',
-  }));
-  return new Promise((resolve) => {
-    const child = spawn(NODE, [PHP_CLI, RENDERER, file], { cwd: ROOT, env: { ...process.env, PHP_WASM_PATH } });
-    let out = '', err = '';
-    child.stdout.on('data', d => out += d);
-    child.stderr.on('data', d => err += d);
-    const timer = setTimeout(() => child.kill('SIGKILL'), 90_000);
-    child.on('close', () => {
-      clearTimeout(timer);
-      const clean = out.replace(/^\[php-cli\][^\n]*\n?/gm, '');
-      const status = Number((clean.match(/^VIRA_STATUS (\d+)/m) || [0, 0])[1]);
-      const vi = clean.indexOf('VIRA_BODY\n');
-      const headers = {};
-      const cookies = [];
-      for (const line of clean.slice(0, vi).split('\n')) {
-        const m = line.match(/^VIRA_HEADER ([^:]+):\s*(.*)$/);
-        if (!m) continue;
-        const k = m[1].toLowerCase(), v = m[2];
-        if (k === 'set-cookie') cookies.push(v);
-        headers[k] = headers[k] ? headers[k] + ' | ' + v : v;
-      }
-      for (const c of cookies) {
-        const [pair] = c.split(';');
-        const i = pair.indexOf('=');
-        if (i > 0) jar.set(pair.slice(0, i).trim(), pair.slice(i + 1).trim());
-      }
-      resolve({ status, headers, body: vi === -1 ? clean : clean.slice(vi + 9), err });
-    });
-  });
-}
+// A password this flow owns. Generated per run: nothing static is stored, and a
+// stale value from an earlier run cannot be inherited.
+const PASSWORD = `Authed-${Date.now().toString(36)}-A9`;
+const NEW_PASSWORD = PASSWORD + 'Xy9';
 
-const results = [];
-function check(id, passed, detail) {
-  results.push({ id, passed, detail });
-  console.log(`${passed ? 'PASS' : 'FAIL'}  ${id}  ${detail}`);
-}
+await flow.resetPassword({ password: PASSWORD, mustChange: false });
 
-// 1. login
-const page = await render({ uri: '/login' });
-const token = (page.body.match(/name="_token" value="([^"]+)"/) || [])[1];
+// ── 1. login ────────────────────────────────────────────────────────────────
+const loginPage = await flow.render({ uri: '/login' });
+const token = Flow.token(loginPage.body);
 
-const login = await render({
-  method: 'POST', uri: '/login',
+const login = await flow.render({
+  method: 'POST',
+  uri: '/login',
   body: `_token=${encodeURIComponent(token)}&username=admin&password=${encodeURIComponent(PASSWORD)}`,
 });
+
 const loggedIn = login.status === 302 && !/\/login/.test(login.headers.location || '');
-check('T-AUTH-06', loggedIn, `POST valid creds -> ${login.status} -> ${login.headers.location}`);
+c.check('T-AUTH-06', loggedIn, `POST valid creds -> ${login.status} -> ${login.headers.location}`);
 
-// 2. dashboard (may redirect to password change because must_change_password=true)
-const dash = await render({ uri: '/' });
-const forcedPw = dash.status === 302 && /password/.test(dash.headers.location || '');
-check('T-AUTH-07', forcedPw || dash.status === 200,
-  `GET / after login -> ${dash.status} ${dash.headers.location || ''} (forced password change = ${forcedPw})`);
+// ── 2. dashboard reachable ──────────────────────────────────────────────────
+const dashboard = await flow.render({ uri: '/' });
+c.check('T-AUTH-07', dashboard.status === 200,
+  `GET / after login -> ${dashboard.status} (forced change = ${/password/.test(dashboard.headers.location || '')})`);
 
-// 3. change the password (required before anything else)
-const pwPage = await render({ uri: '/password' });
-const pwToken = (pwPage.body.match(/name="_token" value="([^"]+)"/) || [])[1];
-check('T-AUTH-08', pwPage.status === 200 && !!pwToken, `GET /password -> ${pwPage.status}`);
+// ── 3. change the password ──────────────────────────────────────────────────
+const pwPage = await flow.render({ uri: '/password' });
+const pwToken = Flow.token(pwPage.body);
+c.check('T-AUTH-08', pwPage.status === 200 && Boolean(pwToken), `GET /password -> ${pwPage.status}`);
 
-const newPassword = PASSWORD + 'Xy9';
-const change = await render({
-  method: 'POST', uri: '/password',
+const change = await flow.render({
+  method: 'POST',
+  uri: '/password',
   body: `_token=${encodeURIComponent(pwToken)}&_method=PUT`
-      + `&current_password=${encodeURIComponent(PASSWORD)}`
-      + `&password=${encodeURIComponent(newPassword)}`
-      + `&password_confirmation=${encodeURIComponent(newPassword)}`,
+    + `&current_password=${encodeURIComponent(PASSWORD)}`
+    + `&password=${encodeURIComponent(NEW_PASSWORD)}`
+    + `&password_confirmation=${encodeURIComponent(NEW_PASSWORD)}`,
 });
-check('T-AUTH-09', change.status === 302 && !/password/.test(change.headers.location || ''),
+
+c.check('T-AUTH-09', change.status === 302 && !/password/.test(change.headers.location || ''),
   `PUT /password -> ${change.status} -> ${change.headers.location}`);
 
-// 4. every module page now reachable
+// The change really took effect in this flow's database (and only this one).
+const stored = await flow.query(
+  "select must_change_password from users where username = 'admin'"
+);
+c.check('T-AUTH-09b', stored === '0', `must_change_password in flow db = ${stored}`);
+
+// ── 4. every module page reachable, inside the real shell ──────────────────
 for (const [id, uri, expect] of [
   ['T-PAGE-01', '/', 200],
   ['T-PAGE-02', '/customers', 200],
@@ -109,31 +74,66 @@ for (const [id, uri, expect] of [
   ['T-PAGE-04', '/contracts', 200],
   ['T-PAGE-05', '/contracts/create', 200],
 ]) {
-  const r = await render({ uri });
-  check(id, r.status === expect, `GET ${uri} -> ${r.status}`);
+  const r = await flow.render({ uri });
+  c.check(id, r.status === expect, `GET ${uri} -> ${r.status}`);
+
   if (r.status === 200) {
     const hasShell = /v-sidebar/.test(r.body) && /dir="rtl"/.test(r.body);
-    check(id + '-shell', hasShell, `  sidebar+rtl rendered: ${hasShell} (${r.body.length} bytes)`);
+    c.check(`${id}-shell`, hasShell, `  sidebar+rtl rendered: ${hasShell} (${r.body.length} bytes)`);
   }
 }
 
-// 5. 404 for an unknown route
-const nf = await render({ uri: '/this-does-not-exist' });
-check('T-PAGE-06', nf.status === 404 && /صفحه پیدا نشد/.test(nf.body),
-  `GET /nope -> ${nf.status}, persian 404 = ${/صفحه پیدا نشد/.test(nf.body)}`);
+// ── 5. unknown route gives a Persian 404, not a stack trace ────────────────
+const notFound = await flow.render({ uri: '/this-does-not-exist' });
+c.check('T-PAGE-06', notFound.status === 404 && /صفحه پیدا نشد/.test(notFound.body),
+  `GET /nope -> ${notFound.status}, persian 404 = ${/صفحه پیدا نشد/.test(notFound.body)}`);
 
-// 6. logout
-const outToken = ((await render({ uri: '/' })).body.match(/name="_token" value="([^"]+)"/) || [])[1];
-const out = await render({ method: 'POST', uri: '/logout', body: `_token=${encodeURIComponent(outToken)}` });
-check('T-AUTH-10', out.status === 302 && /login/.test(out.headers.location || ''),
+// ── 6. logout, and the session really stops working ────────────────────────
+const outPage = await flow.render({ uri: '/' });
+const outToken = Flow.token(outPage.body);
+
+const out = await flow.render({
+  method: 'POST',
+  uri: '/logout',
+  body: `_token=${encodeURIComponent(outToken)}`,
+});
+
+c.check('T-AUTH-10', out.status === 302 && /login/.test(out.headers.location || ''),
   `POST /logout -> ${out.status} -> ${out.headers.location}`);
 
-const after = await render({ uri: '/customers' });
-check('T-AUTH-11', after.status === 302 && /login/.test(after.headers.location || ''),
+const after = await flow.render({ uri: '/customers' });
+c.check('T-AUTH-11', after.status === 302 && /login/.test(after.headers.location || ''),
   `GET /customers after logout -> ${after.status}`);
 
-console.log('\n--- summary ---');
-const pass = results.filter(r => r.passed).length;
-console.log(`${pass}/${results.length} passed`);
-fs.writeFileSync(path.join(ROOT, '.arena', 'new-password.txt'), newPassword);
-process.exit(pass === results.length ? 0 : 1);
+// ── forced-change path, on a second user in the same isolated database ─────
+// Verifying that a user with must_change_password=true is *blocked* from every
+// module is a distinct behaviour from setting the flag, so it gets its own
+// account. This is what previously required resetting the shared admin.
+const FORCED_PASSWORD = `Forced-${Date.now().toString(36)}-B7`;
+await flow.resetPassword({ username: 'forced1', password: FORCED_PASSWORD, mustChange: true });
+
+// A fresh jar: the admin jar above was signed out.
+const forcedLogin = await flow.render({ uri: '/login' });
+const forcedToken = Flow.token(forcedLogin.body);
+
+await flow.render({
+  method: 'POST',
+  uri: '/login',
+  body: `_token=${encodeURIComponent(forcedToken)}&username=forced1&password=${encodeURIComponent(FORCED_PASSWORD)}`,
+});
+
+const blocked = await flow.render({ uri: '/customers' });
+const redirectedToPassword = blocked.status === 302 && /password/.test(blocked.headers.location || '');
+c.check('T-AUTH-12', redirectedToPassword,
+  `must_change_password user blocked from /customers -> ${blocked.status} -> ${blocked.headers.location}`);
+
+const allowed = await flow.render({ uri: '/password' });
+c.check('T-AUTH-13', allowed.status === 200, `/password reachable while change required -> ${allowed.status}`);
+
+const ok = c.summary();
+
+// The flow directory holds a database copy and its request logs. It is not
+// evidence, so it is removed; nothing outside .arena/ ever saw it.
+flow.cleanup();
+
+process.exit(ok ? 0 : 1);

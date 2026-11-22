@@ -60,6 +60,36 @@ $postBody = (string) ($spec['post_body'] ?? '');
 $contentType = (string) ($spec['content_type'] ?? '');
 $accept = (string) ($spec['accept'] ?? 'text/html,application/xhtml+xml');
 
+/*
+ * PER-FLOW ENVIRONMENT OVERRIDES
+ *
+ * Specs may carry an "env" map. It is applied BEFORE bootstrap, because that is
+ * the only point where it has any effect: Laravel's Dotenv is immutable and
+ * only writes a key that is absent from $_ENV/$_SERVER, so a value present
+ * before bootstrap always wins over .env.
+ *
+ * This is what lets each regression flow own a private database: point
+ * DB_DATABASE at a per-flow copy and the flow can create, update and delete
+ * records, and log sessions in and out, without touching the shared database
+ * or any other flow.
+ */
+$envOverrides = is_array($spec['env'] ?? null) ? $spec['env'] : [];
+
+foreach ($envOverrides as $key => $value) {
+    if (! is_string($key) || ! preg_match('/^[A-Z][A-Z0-9_]*$/', $key)) {
+        fwrite(STDERR, "refusing malformed env key\n");
+        exit(2);
+    }
+
+    $value = (string) $value;
+
+    // Set all three: config() reads $_ENV/$_SERVER through Env::getRepository(),
+    // while anything calling getenv() directly needs the C-level variable.
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
+    putenv($key . '=' . $value);
+}
+
 $parts = parse_url($uri);
 $query = $parts['query'] ?? '';
 

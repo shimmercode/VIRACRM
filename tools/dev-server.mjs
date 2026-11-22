@@ -102,6 +102,11 @@ function renderRequest({ method, uri, cookie, body, contentType, host, accept, u
       content_type: contentType || '',
       accept: accept || 'text/html',
       user_agent: userAgent || 'vira-dev-server',
+      // Forward the database this server was started against. The regression
+      // runner starts a private server on a private copy so that capturing
+      // screenshots cannot write sessions or audit rows into the shared
+      // database. When DB_DATABASE is unset, behaviour is unchanged.
+      env: process.env.DB_DATABASE ? { DB_DATABASE: process.env.DB_DATABASE } : {},
     })
   );
 

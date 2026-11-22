@@ -11,7 +11,14 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const PHP_CLI = path.join(ROOT, 'docs/tools/php-cli.mjs');
 const RENDERER = path.join(ROOT, 'tools/http-render.php');
-const PW = process.env.VIRA_ADMIN_PASSWORD || 'DevOnly-Passw0rd-2026';
+// No fallback: a hardcoded default would be a credential in the repository.
+// Run tools/checks/prepare.php first (it writes .arena/admin-password), then:
+//   VIRA_ADMIN_PASSWORD="$(cat .arena/admin-password)" node tools/checks/pages.mjs
+const PW = process.env.VIRA_ADMIN_PASSWORD;
+if (!PW) {
+  console.error('VIRA_ADMIN_PASSWORD is not set. See the comment above.');
+  process.exit(2);
+}
 const OUT = path.join(ROOT, '.arena', 'pages');
 
 fs.mkdirSync(OUT, { recursive: true });

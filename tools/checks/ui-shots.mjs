@@ -11,51 +11,21 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
-// `playwright-core` is not a dependency of this repo: the sandbox has no npm
-// registry access, so the driver is installed out-of-tree and located via
-// VIRA_PLAYWRIGHT (a directory containing node_modules/playwright-core).
-const requireFrom = createRequire(
-  path.resolve(process.env.VIRA_PLAYWRIGHT || '/tmp/pwuse', 'noop.js')
-);
+import { startBrowserFlow, uiLogin } from './lib/browser-flow.mjs';
 
-let chromium;
-try {
-  ({ chromium } = requireFrom('playwright-core'));
-} catch {
-  console.error('playwright-core not found. Set VIRA_PLAYWRIGHT to a directory that has it installed.');
-  process.exit(2);
-}
-
+// ISOLATION: private dev server + database copy, so capturing the pages cannot
+// write sessions or audit rows into the shared database.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = process.env.VIRA_SHOTS_OUT || path.join(ROOT, 'docs/phase-2/evidence/2c');
-const BASE = process.env.VIRA_BASE_URL || 'http://127.0.0.1:8080';
-const PASSWORD = process.env.VIRA_ADMIN_PASSWORD || 'DevOnly-Passw0rd-2026';
-
-// Chromium is not vendored in this repo (the sandbox has no package registry),
-// so its path is an environment concern rather than a source one. The defaults
-// match the throwaway browser used during development.
-const EXECUTABLE =
-  process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin';
-const LIB_PATH =
-  process.env.VIRA_CHROMIUM_LIBS || '/tmp/chromium/libs/lib:/tmp/chromium/libs/lib64';
-
-if (!fs.existsSync(EXECUTABLE)) {
-  console.error(`Chromium not found at ${EXECUTABLE}. Set VIRA_CHROMIUM to a browser binary.`);
-  process.exit(2);
-}
 
 fs.mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--font-render-hinting=none'],
-  env: { ...process.env, LD_LIBRARY_PATH: LIB_PATH },
-});
-
-const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-const page = await context.newPage();
+const flow = await startBrowserFlow('ui-shots', { viewport: { width: 1440, height: 900 } });
+const BASE = flow.baseUrl;
+const PASSWORD = flow.password;
+const browser = flow.browser;
+const context = flow.context;
 
 const results = [];
 const record = (id, ok, detail) => {
@@ -64,21 +34,15 @@ const record = (id, ok, detail) => {
 };
 
 // ── log in ───────────────────────────────────────────────────────────────
-await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
-await page.fill('#username', 'admin');
-await page.fill('#password', PASSWORD);
-await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.click('button[type="submit"]')]);
+const page = await context.newPage();
+
+// The flow prepared admin with must_change_password=false, so there is no
+// forced-change branch to recover from — that branch existed only to cope with
+// whatever password a previous flow had left in the shared database.
+await uiLogin(page, BASE, 'admin', PASSWORD);
 
 const afterLogin = new URL(page.url()).pathname;
 record('T-UI-LOGIN', !afterLogin.includes('/login'), `login reached ${afterLogin}`);
-
-if (afterLogin.includes('/password')) {
-  await page.fill('#current_password', PASSWORD);
-  await page.fill('#password', PASSWORD);
-  await page.fill('#password_confirmation', PASSWORD);
-  await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), page.click('button[type="submit"]')]);
-  record('T-UI-PW', true, 'forced password change completed');
-}
 
 // ── the eight required pages ─────────────────────────────────────────────
 // Detail pages must point at records that actually exist. Hard-coding #1
@@ -232,7 +196,17 @@ const phone = await page.evaluate(() => {
   return {
     smallest,
     tiny,
+    // Below 768px the table is replaced by cards, so it no longer needs to
+    // scroll — that is the fix, not a regression. What must still hold is that
+    // the list is reachable and the PAGE does not overflow. At 768px and above
+    // the table is present again and must scroll inside its own wrapper rather
+    // than pushing the page.
     tableScrolls: wrap ? wrap.scrollWidth > wrap.clientWidth && getComputedStyle(wrap).overflowX === 'auto' : null,
+    cardsReady: wrap ? wrap.getAttribute('data-cards') === 'ready' : null,
+    cardCount: wrap ? wrap.querySelectorAll('.v-card-row').length : 0,
+    cardsVisible: wrap && wrap.querySelector('.v-cards')
+      ? getComputedStyle(wrap.querySelector('.v-cards')).display !== 'none'
+      : false,
     pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     // Breathing room between the sticky topbar and the page heading. A 22px
     // bold Persian title has ascenders reaching the top of its line box, so a
@@ -252,8 +226,11 @@ const phone = await page.evaluate(() => {
 
 record('T-TYPE-MIN', phone.smallest >= 11, `smallest rendered font ${phone.smallest}px on phone`);
 record('T-TOUCH', phone.tiny <= 2, `controls under 28px: ${phone.tiny}`);
-record('T-TABLE-SCROLL', phone.tableScrolls !== false && phone.pageOverflow <= 1,
-  `table scrolls in wrapper=${phone.tableScrolls}, page overflow=${phone.pageOverflow}px`);
+// The list must be usable at 390px by one means or the other: either the table
+// scrolls inside its wrapper (the old behaviour) or the cards replace it (the
+// new one). Silence is the only failure. The page itself must never overflow.
+record('T-TABLE-SCROLL', (phone.tableScrolls === true || (phone.cardsVisible && phone.cardCount > 0)) && phone.pageOverflow <= 1,
+  `table scrolls=${phone.tableScrolls}, cards=${phone.cardCount} visible=${phone.cardsVisible}, page overflow=${phone.pageOverflow}px`);
 // ── Latin values must align with their RTL label ─────────────────────────
 // `dir="ltr"` fixes character order but sets `text-align: start` to the LEFT
 // edge. On a full-width <dd> in a right-aligned RTL column, the label sat right
@@ -374,7 +351,7 @@ const keyboard = await page.evaluate(async () => {
 record('T-KEY-ACTION', keyboard.found && (keyboard.reached === 'tabbable' || keyboard.reached === true),
   `primary action present and tabbable (tabIndex=${keyboard.tabIndex})`);
 
-await browser.close();
+await flow.close();
 
 console.log('\n--- summary ---');
 const pass = results.filter((r) => r.ok).length;

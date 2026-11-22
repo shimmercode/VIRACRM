@@ -10,26 +10,23 @@
  * from markup.
  */
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
+import { startBrowserFlow, uiLogin } from './lib/browser-flow.mjs';
+
+// ISOLATION: private dev server + database copy. Previously this suite drove
+// the shared server, so simply rendering pages wrote session and audit rows
+// into the shared database.
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const BASE = process.env.VIRA_BASE_URL || 'http://127.0.0.1:8080';
-const PASSWORD = process.env.VIRA_ADMIN_PASSWORD || 'DevOnly-Passw0rd-2026';
-const EXECUTABLE = process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin';
-const LIB_PATH = process.env.VIRA_CHROMIUM_LIBS || '/tmp/chromium/libs/lib:/tmp/chromium/libs/lib64';
+const OUT = process.env.VIRA_SHOTS_OUT || path.join(ROOT, 'docs/phase-2/evidence/ui-audit');
 
-const requireFrom = createRequire(
-  path.resolve(process.env.VIRA_PLAYWRIGHT || '/tmp/pwuse', 'noop.js')
-);
+fs.mkdirSync(OUT, { recursive: true });
 
-let chromium;
-try {
-  ({ chromium } = requireFrom('playwright-core'));
-} catch {
-  console.error('playwright-core not found. Set VIRA_PLAYWRIGHT.');
-  process.exit(2);
-}
+const flow = await startBrowserFlow('a11y', { viewport: { width: 1440, height: 900 } });
+const BASE = flow.baseUrl;
+const PASSWORD = flow.password;
+const browser = flow.browser;
 
 const results = [];
 
@@ -37,12 +34,6 @@ const record = (id, ok, detail) => {
   results.push({ id, ok, detail });
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${id.padEnd(26)} ${detail}`);
 };
-
-const browser = await chromium.launch({
-  executablePath: EXECUTABLE,
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-  env: { ...process.env, LD_LIBRARY_PATH: LIB_PATH },
-});
 
 const login = async (page) => {
   await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
@@ -63,7 +54,8 @@ for (const [label, width, height] of [
   ['tablet-768', 768, 1024],
   ['desktop-1440', 1440, 900],
 ]) {
-  const page = await browser.newPage({ viewport: { width, height } });
+  const ctx = await flow.browser.newContext({ viewport: { width, height } });
+  const page = await ctx.newPage();
   await login(page);
   await page.goto(`${BASE}/customers`, { waitUntil: 'domcontentloaded' });
 
@@ -83,12 +75,13 @@ for (const [label, width, height] of [
   );
 
   record(`T-LOGOUT-${label}`, reachable, reachable ? 'sign-out reachable' : 'NO visible sign-out control');
-  await page.close();
+  await ctx.close();
 }
 
 // ── 2. The mobile drawer is a modal dialog, so it must trap focus ────────
 {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const ctx = await flow.browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
   await login(page);
   await page.goto(`${BASE}/customers`, { waitUntil: 'domcontentloaded' });
 
@@ -146,14 +139,15 @@ for (const [label, width, height] of [
     `closed=${!closed.open}, focus restored to trigger=${closed.onTrigger}`
   );
 
-  await page.close();
+  await ctx.close();
 }
 
 // ── 3. Flash and error messages are announced ───────────────────────────
 // role="status" implies aria-live="polite"; role="alert" is assertive. What
 // matters is that the container carries a live region role at all.
 {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  const ctx = await flow.browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
 
   // Force a validation failure by submitting an empty customer form.
   // The submit button must be scoped to the form: every authenticated page also
@@ -213,12 +207,13 @@ for (const [label, width, height] of [
       : 'not reached'
   );
 
-  await page.close();
+  await ctx.close();
 }
 
 // ── 4. Every control has an accessible name ─────────────────────────────
 {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  const ctx = await flow.browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
   await login(page);
 
   const unnamed = [];
@@ -258,15 +253,14 @@ for (const [label, width, height] of [
     unnamed.length === 0 ? 'all visible controls have accessible names' : unnamed.slice(0, 6).join('; ')
   );
 
-  await page.close();
+  await ctx.close();
 }
 
-await browser.close();
+await flow.close();
 
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n--- summary ---\n${passed}/${results.length} passed`);
 
-const fs = await import('node:fs');
 const out = path.join(ROOT, 'docs/phase-2/evidence/ui-audit');
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, 'a11y-results.json'), JSON.stringify(results, null, 2));

@@ -42,7 +42,7 @@ const form = o => Object.entries(o).map(([k, v]) => `${encodeURIComponent(k)}=${
 const tok = h => (h.match(/name="_token" value="([^"]+)"/) || [])[1];
 
 const p = await render({ uri: '/login' });
-await render({ method: 'POST', uri: '/login', body: form({ _token: tok(p.body), username: 'viewer1', password: 'DevOnly-Viewer-2026x' }) });
+await render({ method: 'POST', uri: '/login', body: form({ _token: tok(p.body), username: 'viewer1', password: process.env.VIRA_VIEWER_PASSWORD }) });
 
 const denied = await render({ uri: '/customers/create' });
 console.log('signed-in 403: status =', denied.status);

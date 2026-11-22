@@ -426,11 +426,13 @@ node tools/build-assets.mjs && node tools/build-js.mjs
 node tools/checks/css-audit.mjs && node tools/checks/contrast.mjs \
   && node tools/checks/unstyled.mjs && node tools/checks/tokens.mjs
 
-# browser gates
-VIRA_ADMIN_PASSWORD='DevOnly-Passw0rd-2026' node tools/checks/ui-shots.mjs
+# browser gates — each starts its own dev server against its own database copy,
+# so no password environment variable is needed (see lib/browser-flow.mjs)
+node tools/checks/ui-shots.mjs
 node tools/checks/a11y.mjs
 node tools/checks/ui-login-shots.mjs
 node tools/checks/calendar.mjs
+node tools/checks/table-cards.mjs
 ```
 
 Environment overrides: `VIRA_BASE_URL`, `VIRA_CHROMIUM`, `VIRA_CHROMIUM_LIBS`,

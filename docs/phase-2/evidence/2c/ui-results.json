@@ -852,12 +852,12 @@
   {
     "id": "T-TOUCH",
     "ok": true,
-    "detail": "controls under 28px: 2"
+    "detail": "controls under 28px: 0"
   },
   {
     "id": "T-TABLE-SCROLL",
     "ok": true,
-    "detail": "table scrolls in wrapper=true, page overflow=0px"
+    "detail": "table scrolls=false, cards=7 visible=true, page overflow=0px"
   },
   {
     "id": "T-DL-ALIGN",

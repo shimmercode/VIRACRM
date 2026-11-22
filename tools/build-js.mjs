@@ -17,6 +17,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PARTS = [
   'public/build/js/vendor/alpine/alpine-csp.min.js',
   'resources/js/app.js',
+  // Responsive list tables: turns a wide table into cards below 768px. Kept in
+  // its own file because it is a self-contained progressive enhancement that
+  // runs independently of the interface behaviours above.
+  'resources/js/table-cards.js',
 ];
 
 const OUT = path.join(ROOT, 'public/build/js/app.js');
