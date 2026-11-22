@@ -1,0 +1,326 @@
+{
+  "description": "VIRA CRM — Jalali calendar golden test set. Each case verified against >=2 independent references.",
+  "generated_at": "2026-11-22T19:02:52+00:00",
+  "references": [
+    "jdatetime (33-year cycle)",
+    "convertdate (astronomical)",
+    "pymeeus vernal equinox + official Tehran-noon rule"
+  ],
+  "supported_range": {
+    "from_jalali_year": 1300,
+    "to_jalali_year": 1450
+  },
+  "disputed_years": [],
+  "reference_disagreements": [
+    {
+      "j": "1409-12-30",
+      "note": "leap Esfand 30",
+      "jdatetime": "None",
+      "convertdate": "(2031, 3, 21)"
+    }
+  ],
+  "cases": [
+    {
+      "j": "1390-01-01",
+      "g": "2011-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1391-01-01",
+      "g": "2012-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1392-01-01",
+      "g": "2013-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1393-01-01",
+      "g": "2014-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1394-01-01",
+      "g": "2015-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1395-01-01",
+      "g": "2016-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1396-01-01",
+      "g": "2017-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1397-01-01",
+      "g": "2018-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1398-01-01",
+      "g": "2019-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1399-01-01",
+      "g": "2020-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1400-01-01",
+      "g": "2021-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1401-01-01",
+      "g": "2022-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1402-01-01",
+      "g": "2023-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1403-01-01",
+      "g": "2024-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1404-01-01",
+      "g": "2025-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1405-01-01",
+      "g": "2026-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1406-01-01",
+      "g": "2027-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1407-01-01",
+      "g": "2028-03-20",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1408-01-01",
+      "g": "2029-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1409-01-01",
+      "g": "2030-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1410-01-01",
+      "g": "2031-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1411-01-01",
+      "g": "2032-03-20",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1412-01-01",
+      "g": "2033-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1413-01-01",
+      "g": "2034-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1414-01-01",
+      "g": "2035-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1415-01-01",
+      "g": "2036-03-20",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1416-01-01",
+      "g": "2037-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1417-01-01",
+      "g": "2038-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1418-01-01",
+      "g": "2039-03-21",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1419-01-01",
+      "g": "2040-03-20",
+      "leap": false,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1420-01-01",
+      "g": "2041-03-20",
+      "leap": true,
+      "sources": 3,
+      "kind": "nowruz"
+    },
+    {
+      "j": "1300-01-01",
+      "g": "1921-03-21",
+      "leap": true,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "start"
+    },
+    {
+      "j": "1357-11-22",
+      "g": "1979-02-11",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "22 Bahman 1357"
+    },
+    {
+      "j": "1399-12-30",
+      "g": "2021-03-20",
+      "leap": true,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "leap Esfand 30"
+    },
+    {
+      "j": "1403-01-01",
+      "g": "2024-03-20",
+      "leap": true,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "Nowruz 1403"
+    },
+    {
+      "j": "1403-12-29",
+      "g": "2025-03-19",
+      "leap": true,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "1403 last day"
+    },
+    {
+      "j": "1404-01-01",
+      "g": "2025-03-21",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "Nowruz 1404"
+    },
+    {
+      "j": "1404-12-29",
+      "g": "2026-03-20",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "1404 last day"
+    },
+    {
+      "j": "1405-01-01",
+      "g": "2026-03-21",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "Nowruz 1405"
+    },
+    {
+      "j": "1410-01-01",
+      "g": "2031-03-21",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "Nowruz 1410"
+    },
+    {
+      "j": "1450-01-01",
+      "g": "2071-03-21",
+      "leap": false,
+      "sources": 2,
+      "kind": "boundary",
+      "note": "range end"
+    }
+  ],
+  "summary": {
+    "total_cases": 41,
+    "multi_source_cases": 41,
+    "disputed_years": 0
+  }
+}

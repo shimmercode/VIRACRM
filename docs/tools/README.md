@@ -5,7 +5,7 @@
 | ابزار | نقش | نیازمندی | مثال |
 |---|---|---|---|
 | `host-compatibility-check.php` | بررسی نسخه PHP، Extensionها، Cron/FS، اتصال DB روی هاست کارفرما | PHP ≥ 8.0 | `php host-compatibility-check.php --text` |
-| `php-cli.mjs` | اجرای یک اسکریپت PHP واقعی (8.3) در Node با PHP-WASM | Node 18+، `@php-wasm/node@3.1.65` | `node docs/tools/php-cli.mjs docs/src/jalali-smoke-test.php` |
+| `php-cli.mjs` | اجرای یک اسکریپت PHP واقعی (8.3) در Node با PHP-WASM | Node 18+، `@php-wasm/node@3.1.65` | `node docs/tools/php-cli.mjs docs/src/jalali-golden-verify.php` |
 | `build_phase1_docs.py` | تولید RTM/داشبورد/شمارش تست از کاتالوگ‌های YAML | Python 3.9+، PyYAML | `python3 docs/tools/build_phase1_docs.py` |
 
 ## قواعد امنیتی

@@ -1,0 +1,121 @@
+{
+    "generated_at": "2026-11-22T19:16:26+00:00",
+    "php_version": "8.3.36",
+    "timezone": "Asia\/Tehran",
+    "design": "fire_date = due_date - lead_days on Gregorian DATE values; job guard compares Tehran calendar day",
+    "scope_note": "Verifies day arithmetic and keying. Does not verify the Laravel scheduler (no Artisan in sandbox; T-SCH-01 blocked).",
+    "checks": [
+        {
+            "check": "D-2 Nowruz 1405 boundary",
+            "status": "PASS",
+            "detail": "due=2026-03-21 fire=2026-03-19 expected=2026-03-19"
+        },
+        {
+            "check": "D-2 Gregorian year boundary",
+            "status": "PASS",
+            "detail": "due=2026-01-01 fire=2025-12-30 expected=2025-12-30"
+        },
+        {
+            "check": "D-2 Gregorian leap year (Feb 29)",
+            "status": "PASS",
+            "detail": "due=2024-03-01 fire=2024-02-28 expected=2024-02-28"
+        },
+        {
+            "check": "D-2 Nowruz 1404 (astronomical)",
+            "status": "PASS",
+            "detail": "due=2025-03-21 fire=2025-03-19 expected=2025-03-19"
+        },
+        {
+            "check": "D-2 month boundary",
+            "status": "PASS",
+            "detail": "due=2026-01-31 fire=2026-01-29 expected=2026-01-29"
+        },
+        {
+            "check": "D-2 year end",
+            "status": "PASS",
+            "detail": "due=2026-12-31 fire=2026-12-29 expected=2026-12-29"
+        },
+        {
+            "check": "D-2 is a date difference, not 48h",
+            "status": "PASS",
+            "detail": "00:05 and 23:59 on the fire day both fire; previous day never fires"
+        },
+        {
+            "check": "Tehran day of 00:30 local is still the same day",
+            "status": "PASS",
+            "detail": "2026-03-20 21:00Z == 2026-03-21 00:30 Tehran"
+        },
+        {
+            "check": "UTC day differs from Tehran day (proves why timezone must be pinned)",
+            "status": "PASS",
+            "detail": "UTC says 2026-03-20, Tehran says 2026-03-21"
+        },
+        {
+            "check": "No DST: constant +03:30 offset all year",
+            "status": "PASS",
+            "detail": "offsets=12600"
+        },
+        {
+            "check": "Same event yields identical unique key",
+            "status": "PASS",
+            "detail": "f739153ded9f125d…"
+        },
+        {
+            "check": "Invoice vs report are independent keys",
+            "status": "PASS",
+            "detail": "different event_type"
+        },
+        {
+            "check": "Different period yields different key",
+            "status": "PASS",
+            "detail": "different period"
+        },
+        {
+            "check": "Unique key is 64 hex chars (sha256)",
+            "status": "PASS",
+            "detail": "length=64"
+        },
+        {
+            "check": "Status: upcoming",
+            "status": "PASS",
+            "detail": "before due"
+        },
+        {
+            "check": "Status: due",
+            "status": "PASS",
+            "detail": "on due date"
+        },
+        {
+            "check": "Status: overdue",
+            "status": "PASS",
+            "detail": "after due"
+        },
+        {
+            "check": "Multiple periods -> distinct keys",
+            "status": "PASS",
+            "detail": "cf8a50a5, cedb6e69, 58e016a5"
+        },
+        {
+            "check": "Changed due date -> new key (old reminder cannot resurface)",
+            "status": "PASS",
+            "detail": "2026-03-19 -> 2026-04-03"
+        },
+        {
+            "check": "2028-03-01 minus 2 days crosses Feb 29",
+            "status": "PASS",
+            "detail": "2028-02-28"
+        },
+        {
+            "check": "2027-03-01 minus 2 days has no Feb 29",
+            "status": "PASS",
+            "detail": "2027-02-27"
+        },
+        {
+            "check": "Day math contains no Jalali conversion calls",
+            "status": "PASS",
+            "detail": "Jalali call-sites inside DayMath class body: 0"
+        }
+    ],
+    "failures": 0,
+    "verdict": "PASS"
+}

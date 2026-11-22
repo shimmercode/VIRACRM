@@ -1,5 +1,24 @@
 <?php
 /**
+ * ⚠️ SUPERSEDED — DO NOT USE IN THE PRODUCT  (2026-11-22)
+ * ========================================================
+ * This script implements a 2820-year ARITHMETIC calendar. That is NOT the official
+ * Iranian calendar, and it is WRONG for 1404 SH and 1437 SH:
+ *   - it puts Nowruz 1404 on 2025-03-20; the official calendar says 2025-03-21
+ *   - it calls 1404 leap (Esfand 30 days); the official year is common (Esfand 29)
+ *   - it calls 1403 common; the official year is leap (Esfand 30 = 2025-03-20)
+ *
+ * It is retained ONLY as a negative control — proof of the defect that was found.
+ * The production candidate is morilog/jalali v3.5.0, verified by:
+ *   docs/src/jalali-golden-verify.php   (41-case golden set, 11,323-day round trip)
+ *   docs/phase-1/19-calendar-date-policy.md
+ *   docs/phase-1/01-architecture-decision-record.md §8 (Addendum A)
+ *
+ * If you are reading this to understand the calendar layer: read 19-calendar-date-policy.md.
+ * --------------------------------------------------------
+ * Original header follows.
+ */
+/**
  * VIRA CRM — Phase 1 feasibility check #1: Jalali (Shamsi) date engine
  * -------------------------------------------------------------------
  * این اسکریپت با یک PHP 8.3 واقعی (PHP-WASM) اجرا می‌شود و صحت الگوریتم تبدیل تاریخ

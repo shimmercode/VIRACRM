@@ -2,35 +2,35 @@
 // Visual grouping by module; cardinality is drawn logically.
 digraph ViraCRM_ERD {
   graph [fontname="Vazirmatn", fontsize=11, rankdir=LR, nodesep=0.30, ranksep=1.25, splines=curved,
-         bgcolor="white", label="VIRA CRM — ERD (Phase 1, draft)\nLogical data model — 41 tables", labelloc="t", fontsize=16, pad=0.4];
+         bgcolor="white", label="VIRA CRM — ERD (Phase 1, draft)\nLogical data model - 40 tables (36 domain + 4 framework)", labelloc="t", fontsize=16, pad=0.4];
   node  [shape=plaintext, fontname="Vazirmatn", fontsize=8, width=2.3];
   edge  [fontname="Vazirmatn", fontsize=8, color="#64748b", arrowsize=0.7];
 
   // ── helpers (rendered as HTML-like tables) ──────────────────────────────
   // Identity & access
   users [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#eef2ff">
-    <TR><TD BGCOLOR="#c7d2fe"><B>users</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name, email, password</TD></TR>
-    <TR><TD ALIGN="LEFT">is_active, last_login_at, timestamps</TD></TR>
+    <TR><TD BGCOLOR="#c7d2fe" WIDTH="133.4" FIXEDSIZE="TRUE"><B>users</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="133.4" FIXEDSIZE="TRUE">id, name, email, password</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="133.4" FIXEDSIZE="TRUE">is_active, last_login_at, timestamps</TD></TR>
   </TABLE>>];
 
   roles [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#eef2ff">
-    <TR><TD BGCOLOR="#c7d2fe"><B>roles</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name (unique), label_fa</TD></TR>
+    <TR><TD BGCOLOR="#c7d2fe" WIDTH="101.2" FIXEDSIZE="TRUE"><B>roles</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="101.2" FIXEDSIZE="TRUE">id, name (unique), label_fa</TD></TR>
   </TABLE>>];
 
   permissions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#eef2ff">
-    <TR><TD BGCOLOR="#c7d2fe"><B>permissions</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name (unique), area</TD></TR>
+    <TR><TD BGCOLOR="#c7d2fe" WIDTH="89.1" FIXEDSIZE="TRUE"><B>permissions</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="89.1" FIXEDSIZE="TRUE">id, name (unique), area</TD></TR>
   </TABLE>>];
 
-  role_permissions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0e7ff"><B>role_permissions</B></TD></TR>
-    <TR><TD ALIGN="LEFT">role_id → roles</TD></TR><TR><TD ALIGN="LEFT">permission_id → permissions</TD></TR>
+  role_permissions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="109.2" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0e7ff" WIDTH="109.2" FIXEDSIZE="TRUE"><B>role_permissions</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="109.2" FIXEDSIZE="TRUE">role_id → roles</TD></TR><TR><TD ALIGN="LEFT" WIDTH="109.2" FIXEDSIZE="TRUE">permission_id → permissions</TD></TR>
   </TABLE>>];
-  user_roles [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0e7ff"><B>user_roles</B></TD></TR>
-    <TR><TD ALIGN="LEFT">model_id → users</TD></TR><TR><TD ALIGN="LEFT">role_id → roles</TD></TR>
+  user_roles [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="67.8" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0e7ff" WIDTH="67.8" FIXEDSIZE="TRUE"><B>user_roles</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="67.8" FIXEDSIZE="TRUE">model_id → users</TD></TR><TR><TD ALIGN="LEFT" WIDTH="67.8" FIXEDSIZE="TRUE">role_id → roles</TD></TR>
   </TABLE>>];
   users -> user_roles [label="N"];
   roles -> user_roles [label="N"];
@@ -39,58 +39,58 @@ digraph ViraCRM_ERD {
 
   // Customers
   customers [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#ecfdf5">
-    <TR><TD BGCOLOR="#a7f3d0"><B>customers</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, type(individual|company)</TD></TR>
-    <TR><TD ALIGN="LEFT">first_name, last_name, company_name</TD></TR>
-    <TR><TD ALIGN="LEFT">national_id, company_reg_id (TEXT, unique?)</TD></TR>
-    <TR><TD ALIGN="LEFT">phone_primary (TEXT, idx)</TD></TR>
-    <TR><TD ALIGN="LEFT">address, referral_source, internal_notes</TD></TR>
-    <TR><TD ALIGN="LEFT">archived_at, timestamps</TD></TR>
+    <TR><TD BGCOLOR="#a7f3d0" WIDTH="166.4" FIXEDSIZE="TRUE"><B>customers</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">id, type(individual|company)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">first_name, last_name, company_name</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">national_id, company_reg_id (TEXT, unique?)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">phone_primary (TEXT, idx)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">address, referral_source, internal_notes</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="166.4" FIXEDSIZE="TRUE">archived_at, timestamps</TD></TR>
   </TABLE>>];
-  customer_contacts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#d1fae5"><B>customer_contacts</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, customer_id → customers</TD></TR>
-    <TR><TD ALIGN="LEFT">label, phone (TEXT), is_primary</TD></TR>
+  customer_contacts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="117.9" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#d1fae5" WIDTH="117.9" FIXEDSIZE="TRUE"><B>customer_contacts</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="117.9" FIXEDSIZE="TRUE">id, customer_id → customers</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="117.9" FIXEDSIZE="TRUE">label, phone (TEXT), is_primary</TD></TR>
   </TABLE>>];
-  customer_websites [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#d1fae5"><B>customer_websites</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, customer_id → customers</TD></TR>
-    <TR><TD ALIGN="LEFT">domain (unique idx), url, is_primary</TD></TR>
+  customer_websites [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="132.1" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#d1fae5" WIDTH="132.1" FIXEDSIZE="TRUE"><B>customer_websites</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="132.1" FIXEDSIZE="TRUE">id, customer_id → customers</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="132.1" FIXEDSIZE="TRUE">domain (unique idx), url, is_primary</TD></TR>
   </TABLE>>];
   customers -> customer_contacts [label="1:N"];
   customers -> customer_websites [label="1:N"];
 
   // Contracts
   contracts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#fef3c7">
-    <TR><TD BGCOLOR="#fde68a"><B>contracts</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, customer_id → customers</TD></TR>
-    <TR><TD ALIGN="LEFT">contract_type_id → contract_types</TD></TR>
-    <TR><TD ALIGN="LEFT">title, party_one, party_two</TD></TR>
-    <TR><TD ALIGN="LEFT">amount_cents BIGINT (money)</TD></TR>
-    <TR><TD ALIGN="LEFT">start_date DATE, end_date DATE</TD></TR>
-    <TR><TD ALIGN="LEFT">status(draft|active|expiring|ended|renewed|cancelled)</TD></TR>
-    <TR><TD ALIGN="LEFT">renewed_from_id → contracts, notes</TD></TR>
+    <TR><TD BGCOLOR="#fde68a" WIDTH="198.1" FIXEDSIZE="TRUE"><B>contracts</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">id, customer_id → customers</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">contract_type_id → contract_types</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">title, party_one, party_two</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">amount_cents BIGINT (money)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">start_date DATE, end_date DATE</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">status(draft|active|expiring|ended|renewed|cancelled)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="198.1" FIXEDSIZE="TRUE">renewed_from_id → contracts, notes</TD></TR>
   </TABLE>>];
-  contract_types [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#fef3c7"><B>contract_types</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name, slug, is_active</TD></TR>
+  contract_types [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="91.5" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#fef3c7" WIDTH="91.5" FIXEDSIZE="TRUE"><B>contract_types</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="91.5" FIXEDSIZE="TRUE">id, name, slug, is_active</TD></TR>
   </TABLE>>];
-  contract_templates [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#fef3c7"><B>contract_templates</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name, body (placeholders)</TD></TR>
-    <TR><TD ALIGN="LEFT">version, is_active, created_by</TD></TR>
+  contract_templates [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="112.6" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#fef3c7" WIDTH="112.6" FIXEDSIZE="TRUE"><B>contract_templates</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="112.6" FIXEDSIZE="TRUE">id, name, body (placeholders)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="112.6" FIXEDSIZE="TRUE">version, is_active, created_by</TD></TR>
   </TABLE>>];
-  contract_versions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#fef3c7"><B>contract_versions</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, contract_id → contracts</TD></TR>
-    <TR><TD ALIGN="LEFT">version_no, body_snapshot</TD></TR>
-    <TR><TD ALIGN="LEFT">data_snapshot JSON (immutability)</TD></TR>
-    <TR><TD ALIGN="LEFT">is_final, finalized_at, finalized_by</TD></TR>
+  contract_versions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="134.7" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#fef3c7" WIDTH="134.7" FIXEDSIZE="TRUE"><B>contract_versions</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.7" FIXEDSIZE="TRUE">id, contract_id → contracts</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.7" FIXEDSIZE="TRUE">version_no, body_snapshot</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.7" FIXEDSIZE="TRUE">data_snapshot JSON (immutability)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.7" FIXEDSIZE="TRUE">is_final, finalized_at, finalized_by</TD></TR>
   </TABLE>>];
-  contract_files [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#fef3c7"><B>contract_files</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, contract_id → contracts</TD></TR>
-    <TR><TD ALIGN="LEFT">attachment_id → attachments, kind</TD></TR>
+  contract_files [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="130.3" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#fef3c7" WIDTH="130.3" FIXEDSIZE="TRUE"><B>contract_files</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="130.3" FIXEDSIZE="TRUE">id, contract_id → contracts</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="130.3" FIXEDSIZE="TRUE">attachment_id → attachments, kind</TD></TR>
   </TABLE>>];
   customers -> contracts [label="1:N"];
   contract_types -> contracts [label="1:N"];
@@ -101,36 +101,41 @@ digraph ViraCRM_ERD {
 
   // Projects
   projects [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#e0f2fe">
-    <TR><TD BGCOLOR="#bae6fd"><B>projects</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, customer_id → customers</TD></TR>
-    <TR><TD ALIGN="LEFT">contract_id → contracts (nullable)</TD></TR>
-    <TR><TD ALIGN="LEFT">type(seo|website_design)</TD></TR>
-    <TR><TD ALIGN="LEFT">name, domain, status, owner_id → users</TD></TR>
-    <TR><TD ALIGN="LEFT">start_date, end_date, amount_cents</TD></TR>
-    <TR><TD ALIGN="LEFT">is_finalized, timestamps</TD></TR>
+    <TR><TD BGCOLOR="#bae6fd" WIDTH="147.7" FIXEDSIZE="TRUE"><B>projects</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">id, customer_id → customers</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">contract_id → contracts (nullable)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">type(seo|website_design)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">name, domain, status, owner_id → users</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">start_date, end_date, amount_cents</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="147.7" FIXEDSIZE="TRUE">is_finalized, timestamps</TD></TR>
   </TABLE>>];
-  seo_project_details [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0f2fe"><B>seo_project_details</B></TD></TR>
-    <TR><TD ALIGN="LEFT">project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">package_id, financial_notes</TD></TR>
-    <TR><TD ALIGN="LEFT">renewal_date, internal_notes</TD></TR>
+  seo_project_details [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="109.2" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0f2fe" WIDTH="109.2" FIXEDSIZE="TRUE"><B>seo_project_details</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="109.2" FIXEDSIZE="TRUE">project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="109.2" FIXEDSIZE="TRUE">package_id, financial_notes</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="109.2" FIXEDSIZE="TRUE">renewal_date, internal_notes</TD></TR>
   </TABLE>>];
-  design_project_details [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0f2fe"><B>design_project_details</B></TD></TR>
-    <TR><TD ALIGN="LEFT">project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">website_type, services_description</TD></TR>
-    <TR><TD ALIGN="LEFT">extra_info, internal_notes</TD></TR>
+  seo_packages [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#e0f2fe">
+    <TR><TD BGCOLOR="#bae6fd" WIDTH="134.8" FIXEDSIZE="TRUE"><B>seo_packages</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.8" FIXEDSIZE="TRUE">id, name, keyword_limit, is_active</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="134.8" FIXEDSIZE="TRUE">reference table (settings-managed)</TD></TR>
   </TABLE>>];
-  project_keywords [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0f2fe"><B>project_keywords</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">keyword, status, position_note</TD></TR>
+  design_project_details [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="130.9" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0f2fe" WIDTH="130.9" FIXEDSIZE="TRUE"><B>design_project_details</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="130.9" FIXEDSIZE="TRUE">project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="130.9" FIXEDSIZE="TRUE">website_type, services_description</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="130.9" FIXEDSIZE="TRUE">extra_info, internal_notes</TD></TR>
   </TABLE>>];
-  project_assignments [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#e0f2fe"><B>project_assignments</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">employee_id → employees</TD></TR>
-    <TR><TD ALIGN="LEFT">role_on_project, assigned_at</TD></TR>
+  project_keywords [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="115.6" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0f2fe" WIDTH="115.6" FIXEDSIZE="TRUE"><B>project_keywords</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="115.6" FIXEDSIZE="TRUE">id, project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="115.6" FIXEDSIZE="TRUE">keyword, status, position_note</TD></TR>
+  </TABLE>>];
+  project_assignments [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="108.9" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#e0f2fe" WIDTH="108.9" FIXEDSIZE="TRUE"><B>project_assignments</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="108.9" FIXEDSIZE="TRUE">id, project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="108.9" FIXEDSIZE="TRUE">employee_id → employees</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="108.9" FIXEDSIZE="TRUE">role_on_project, assigned_at</TD></TR>
   </TABLE>>];
   customers -> projects [label="1:N"];
   contracts -> projects [label="1:N"];
@@ -138,55 +143,56 @@ digraph ViraCRM_ERD {
   projects -> design_project_details [label="1:0..1"];
   projects -> project_keywords [label="1:N"];
   projects -> project_assignments [label="1:N"];
+  seo_packages -> seo_project_details [label="1:N", style=dashed];
 
   // Credentials
   credential_types [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#fce7f3">
-    <TR><TD BGCOLOR="#fbcfe8"><B>credential_types</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, name, slug, fields JSON</TD></TR>
-    <TR><TD ALIGN="LEFT">is_required_for_seo, is_active</TD></TR>
+    <TR><TD BGCOLOR="#fbcfe8" WIDTH="111.8" FIXEDSIZE="TRUE"><B>credential_types</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="111.8" FIXEDSIZE="TRUE">id, name, slug, fields JSON</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="111.8" FIXEDSIZE="TRUE">is_required_for_seo, is_active</TD></TR>
   </TABLE>>];
   project_credentials [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#fce7f3">
-    <TR><TD BGCOLOR="#fbcfe8"><B>project_credentials</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">credential_type_id → credential_types</TD></TR>
-    <TR><TD ALIGN="LEFT">label, login_url, username</TD></TR>
-    <TR><TD ALIGN="LEFT">password_enc(AES-256-GCM), notes</TD></TR>
-    <TR><TD ALIGN="LEFT">key_id, updated_by</TD></TR>
+    <TR><TD BGCOLOR="#fbcfe8" WIDTH="141.6" FIXEDSIZE="TRUE"><B>project_credentials</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="141.6" FIXEDSIZE="TRUE">id, project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="141.6" FIXEDSIZE="TRUE">credential_type_id → credential_types</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="141.6" FIXEDSIZE="TRUE">label, login_url, username</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="141.6" FIXEDSIZE="TRUE">password_enc(AES-256-GCM), notes</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="141.6" FIXEDSIZE="TRUE">key_id, updated_by</TD></TR>
   </TABLE>>];
   projects -> project_credentials [label="1:N"];
   credential_types -> project_credentials [label="1:N"];
 
   // Invoices / SEO reports / reminders
   invoices [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#ede9fe">
-    <TR><TD BGCOLOR="#ddd6fe"><B>invoices</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">period_key (e.g. 1405-01)</TD></TR>
-    <TR><TD ALIGN="LEFT">planned_send_date DATE</TD></TR>
-    <TR><TD ALIGN="LEFT">status(pending|sent|overdue|cancelled)</TD></TR>
-    <TR><TD ALIGN="LEFT">invoice_number TEXT, amount_cents</TD></TR>
-    <TR><TD ALIGN="LEFT">issued_date, attachment_id</TD></TR>
-    <TR><TD ALIGN="LEFT">completed_at, notes</TD></TR>
+    <TR><TD BGCOLOR="#ddd6fe" WIDTH="148.0" FIXEDSIZE="TRUE"><B>invoices</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">id, project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">period_key (e.g. 1405-01)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">planned_send_date DATE</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">status(pending|sent|overdue|cancelled)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">invoice_number TEXT, amount_cents</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">issued_date, attachment_id</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="148.0" FIXEDSIZE="TRUE">completed_at, notes</TD></TR>
   </TABLE>>];
   seo_reports [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#ede9fe">
-    <TR><TD BGCOLOR="#ddd6fe"><B>seo_reports</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, project_id → projects</TD></TR>
-    <TR><TD ALIGN="LEFT">period_key, planned_report_date</TD></TR>
-    <TR><TD ALIGN="LEFT">status(pending|prepared|sent|overdue)</TD></TR>
-    <TR><TD ALIGN="LEFT">prepared_at, sent_at</TD></TR>
-    <TR><TD ALIGN="LEFT">attachment_id, notes</TD></TR>
+    <TR><TD BGCOLOR="#ddd6fe" WIDTH="145.7" FIXEDSIZE="TRUE"><B>seo_reports</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.7" FIXEDSIZE="TRUE">id, project_id → projects</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.7" FIXEDSIZE="TRUE">period_key, planned_report_date</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.7" FIXEDSIZE="TRUE">status(pending|prepared|sent|overdue)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.7" FIXEDSIZE="TRUE">prepared_at, sent_at</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.7" FIXEDSIZE="TRUE">attachment_id, notes</TD></TR>
   </TABLE>>];
   scheduled_events [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#ede9fe">
-    <TR><TD BGCOLOR="#ddd6fe"><B>scheduled_events</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, event_type(invoice_due|report_due)</TD></TR>
-    <TR><TD ALIGN="LEFT">subject_type, subject_id</TD></TR>
-    <TR><TD ALIGN="LEFT">due_date, fire_date, lead_days</TD></TR>
-    <TR><TD ALIGN="LEFT">unique_key (UNIQUE) ← idempotency</TD></TR>
-    <TR><TD ALIGN="LEFT">state(pending|dismissed|done), processed_at</TD></TR>
+    <TR><TD BGCOLOR="#ddd6fe" WIDTH="169.5" FIXEDSIZE="TRUE"><B>scheduled_events</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="169.5" FIXEDSIZE="TRUE">id, event_type(invoice_due|report_due)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="169.5" FIXEDSIZE="TRUE">subject_type, subject_id</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="169.5" FIXEDSIZE="TRUE">due_date, fire_date, lead_days</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="169.5" FIXEDSIZE="TRUE">unique_key (UNIQUE) ← idempotency</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="169.5" FIXEDSIZE="TRUE">state(pending|dismissed|done), processed_at</TD></TR>
   </TABLE>>];
-  job_runs [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#ede9fe"><B>job_runs</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, job_name, started_at, finished_at</TD></TR>
-    <TR><TD ALIGN="LEFT">status(success|failed), created_count, error</TD></TR>
+  job_runs [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="161.8" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#ede9fe" WIDTH="161.8" FIXEDSIZE="TRUE"><B>job_runs</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="161.8" FIXEDSIZE="TRUE">id, job_name, started_at, finished_at</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="161.8" FIXEDSIZE="TRUE">status(success|failed), created_count, error</TD></TR>
   </TABLE>>];
   projects -> invoices [label="1:N"];
   projects -> seo_reports [label="1:N"];
@@ -195,10 +201,10 @@ digraph ViraCRM_ERD {
 
   // Notes
   notes [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#fee2e2">
-    <TR><TD BGCOLOR="#fecaca"><B>notes</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, title, body, due_date</TD></TR>
-    <TR><TD ALIGN="LEFT">priority, status(open|done), done_at</TD></TR>
-    <TR><TD ALIGN="LEFT">customer_id?, contract_id?, project_id?</TD></TR>
+    <TR><TD BGCOLOR="#fecaca" WIDTH="145.2" FIXEDSIZE="TRUE"><B>notes</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">id, title, body, due_date</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">priority, status(open|done), done_at</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">customer_id?, contract_id?, project_id?</TD></TR>
   </TABLE>>];
   customers -> notes [label="0..N"];
   contracts -> notes [label="0..N"];
@@ -206,44 +212,44 @@ digraph ViraCRM_ERD {
 
   // Employees / Payroll
   employees [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f0fdfa">
-    <TR><TD BGCOLOR="#99f6e4"><B>employees</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, user_id → users (nullable)</TD></TR>
-    <TR><TD ALIGN="LEFT">full_name, national_id, phone, position</TD></TR>
-    <TR><TD ALIGN="LEFT">hired_at, employment_status</TD></TR>
-    <TR><TD ALIGN="LEFT">base_salary_cents</TD></TR>
+    <TR><TD BGCOLOR="#99f6e4" WIDTH="143.3" FIXEDSIZE="TRUE"><B>employees</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="143.3" FIXEDSIZE="TRUE">id, user_id → users (nullable)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="143.3" FIXEDSIZE="TRUE">full_name, national_id, phone, position</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="143.3" FIXEDSIZE="TRUE">hired_at, employment_status</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="143.3" FIXEDSIZE="TRUE">base_salary_cents</TD></TR>
   </TABLE>>];
-  employee_contracts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>employee_contracts</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, employee_id → employees</TD></TR>
-    <TR><TD ALIGN="LEFT">attachment_id, start_at, end_at</TD></TR>
+  employee_contracts [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="117.0" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="117.0" FIXEDSIZE="TRUE"><B>employee_contracts</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="117.0" FIXEDSIZE="TRUE">id, employee_id → employees</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="117.0" FIXEDSIZE="TRUE">attachment_id, start_at, end_at</TD></TR>
   </TABLE>>];
-  payroll_rules [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>payroll_rules</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, employee_id?, effective_from</TD></TR>
-    <TR><TD ALIGN="LEFT">per_project_cents, count_multiplier</TD></TR>
-    <TR><TD ALIGN="LEFT">version, created_by</TD></TR>
+  payroll_rules [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="131.7" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="131.7" FIXEDSIZE="TRUE"><B>payroll_rules</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="131.7" FIXEDSIZE="TRUE">id, employee_id?, effective_from</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="131.7" FIXEDSIZE="TRUE">per_project_cents, count_multiplier</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="131.7" FIXEDSIZE="TRUE">version, created_by</TD></TR>
   </TABLE>>];
-  payroll_periods [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>payroll_periods</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, year_jalali, month_jalali, status</TD></TR>
+  payroll_periods [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="126.1" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="126.1" FIXEDSIZE="TRUE"><B>payroll_periods</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="126.1" FIXEDSIZE="TRUE">id, year_jalali, month_jalali, status</TD></TR>
   </TABLE>>];
-  payroll_items [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>payroll_items</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, period_id → payroll_periods</TD></TR>
-    <TR><TD ALIGN="LEFT">employee_id → employees</TD></TR>
-    <TR><TD ALIGN="LEFT">base, project_amount, bonus, overtime</TD></TR>
-    <TR><TD ALIGN="LEFT">deduction, advance, net</TD></TR>
+  payroll_items [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="145.2" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="145.2" FIXEDSIZE="TRUE"><B>payroll_items</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">id, period_id → payroll_periods</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">employee_id → employees</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">base, project_amount, bonus, overtime</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.2" FIXEDSIZE="TRUE">deduction, advance, net</TD></TR>
   </TABLE>>];
-  payslips [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>payslips</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, period_id, employee_id, status</TD></TR>
-    <TR><TD ALIGN="LEFT">finalized_at, finalized_by</TD></TR>
+  payslips [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="124.9" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="124.9" FIXEDSIZE="TRUE"><B>payslips</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="124.9" FIXEDSIZE="TRUE">id, period_id, employee_id, status</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="124.9" FIXEDSIZE="TRUE">finalized_at, finalized_by</TD></TR>
   </TABLE>>];
-  payslip_versions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f0fdfa"><B>payslip_versions</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, payslip_id → payslips</TD></TR>
-    <TR><TD ALIGN="LEFT">version_no, items_snapshot JSON</TD></TR>
-    <TR><TD ALIGN="LEFT">reason, created_by, created_at</TD></TR>
+  payslip_versions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="129.4" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f0fdfa" WIDTH="129.4" FIXEDSIZE="TRUE"><B>payslip_versions</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="129.4" FIXEDSIZE="TRUE">id, payslip_id → payslips</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="129.4" FIXEDSIZE="TRUE">version_no, items_snapshot JSON</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="129.4" FIXEDSIZE="TRUE">reason, created_by, created_at</TD></TR>
   </TABLE>>];
   employees -> employee_contracts [label="1:N"];
   employees -> payroll_rules [label="1:N"];
@@ -256,27 +262,27 @@ digraph ViraCRM_ERD {
 
   // Files / Audit / Settings
   attachments [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f8fafc">
-    <TR><TD BGCOLOR="#e2e8f0"><B>attachments</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, disk, path, original_name, stored_name</TD></TR>
-    <TR><TD ALIGN="LEFT">mime, size, sha256, visibility</TD></TR>
-    <TR><TD ALIGN="LEFT">attachable_type/id (morph)</TD></TR>
-    <TR><TD ALIGN="LEFT">uploaded_by → users</TD></TR>
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="156.2" FIXEDSIZE="TRUE"><B>attachments</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="156.2" FIXEDSIZE="TRUE">id, disk, path, original_name, stored_name</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="156.2" FIXEDSIZE="TRUE">mime, size, sha256, visibility</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="156.2" FIXEDSIZE="TRUE">attachable_type/id (morph)</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="156.2" FIXEDSIZE="TRUE">uploaded_by → users</TD></TR>
   </TABLE>>];
   audit_logs [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f8fafc">
-    <TR><TD BGCOLOR="#e2e8f0"><B>audit_logs</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, user_id, action, entity_type, entity_id</TD></TR>
-    <TR><TD ALIGN="LEFT">ip, user_agent, meta JSON, created_at</TD></TR>
-    <TR><TD ALIGN="LEFT">append-only — no updated_at</TD></TR>
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="145.0" FIXEDSIZE="TRUE"><B>audit_logs</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.0" FIXEDSIZE="TRUE">id, user_id, action, entity_type, entity_id</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.0" FIXEDSIZE="TRUE">ip, user_agent, meta JSON, created_at</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="145.0" FIXEDSIZE="TRUE">append-only — no updated_at</TD></TR>
   </TABLE>>];
   settings [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f8fafc">
-    <TR><TD BGCOLOR="#e2e8f0"><B>settings</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, key (unique), value JSON, type</TD></TR>
-    <TR><TD ALIGN="LEFT">updated_by, updated_at</TD></TR>
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="125.7" FIXEDSIZE="TRUE"><B>settings</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="125.7" FIXEDSIZE="TRUE">id, key (unique), value JSON, type</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="125.7" FIXEDSIZE="TRUE">updated_by, updated_at</TD></TR>
   </TABLE>>];
-  settings_history [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
-    <TR><TD BGCOLOR="#f8fafc"><B>settings_history</B></TD></TR>
-    <TR><TD ALIGN="LEFT">id, setting_id → settings</TD></TR>
-    <TR><TD ALIGN="LEFT">old_value, new_value, changed_by, changed_at</TD></TR>
+  settings_history [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" WIDTH="173.3" FIXEDSIZE="TRUE">
+    <TR><TD BGCOLOR="#f8fafc" WIDTH="173.3" FIXEDSIZE="TRUE"><B>settings_history</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="173.3" FIXEDSIZE="TRUE">id, setting_id → settings</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="173.3" FIXEDSIZE="TRUE">old_value, new_value, changed_by, changed_at</TD></TR>
   </TABLE>>];
   settings -> settings_history [label="1:N"];
 
@@ -286,6 +292,23 @@ digraph ViraCRM_ERD {
   attachments -> seo_reports [label="0..N", style=dashed];
   attachments -> employee_contracts [label="0..N", style=dashed];
 
+  // ── framework tables (created by artisan migrate, no domain logic) ──────────
+  sessions [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f1f5f9">
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="102.9" FIXEDSIZE="TRUE"><B>sessions</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="102.9" FIXEDSIZE="TRUE">id, user_id → users, payload</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="102.9" FIXEDSIZE="TRUE">last_activity — framework</TD></TR>
+  </TABLE>>];
+  password_reset_tokens [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f1f5f9">
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="133.7" FIXEDSIZE="TRUE"><B>password_reset_tokens</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="133.7" FIXEDSIZE="TRUE">email (PK), token, created_at</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="133.7" FIXEDSIZE="TRUE">framework — hashed token, 1h TTL</TD></TR>
+  </TABLE>>];
+  failed_jobs [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="#f1f5f9">
+    <TR><TD BGCOLOR="#e2e8f0" WIDTH="157.4" FIXEDSIZE="TRUE"><B>failed_jobs</B></TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="157.4" FIXEDSIZE="TRUE">id, uuid (unique), connection, queue</TD></TR>
+    <TR><TD ALIGN="LEFT" WIDTH="157.4" FIXEDSIZE="TRUE">payload, exception, failed_at — framework</TD></TR>
+  </TABLE>>];
+
   // rank groups for readability
   { rank=same; users; roles; permissions; }
   { rank=same; customers; customer_contacts; customer_websites; }
@@ -293,4 +316,5 @@ digraph ViraCRM_ERD {
   { rank=same; credential_types; project_credentials; }
   { rank=same; invoices; seo_reports; scheduled_events; }
   { rank=same; audit_logs; settings; settings_history; }
+  { rank=same; sessions; password_reset_tokens; failed_jobs; }
 }

@@ -1,0 +1,18 @@
+{
+  "name": "vira-crm-docs-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Documentation tooling for VIRA CRM Phase 0/1: diagram rendering (ERD/architecture) and PHP-WASM CLI harness. Not a product dependency — the Laravel app will have its own package.json.",
+  "type": "module",
+  "scripts": {
+    "diagrams": "node docs/tools/render-diagrams.mjs",
+    "diagrams:erd": "node docs/tools/render-diagrams.mjs erd",
+    "diagrams:arch": "node docs/tools/render-diagrams.mjs architecture",
+    "php": "node docs/tools/php-cli.mjs"
+  },
+  "dependencies": {
+    "@viz-js/viz": "^3.31.0",
+    "sharp": "^0.35.5"
+  },
+  "license": "UNLICENSED"
+}

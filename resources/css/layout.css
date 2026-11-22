@@ -1,0 +1,822 @@
+/* ==========================================================================
+   VIRA CRM — Application shell
+   Sidebar on the RIGHT (RTL), topbar across the top, content in the middle.
+   ========================================================================== */
+
+/*
+ * .v-app is <body>. It must NOT be the flex container: the markup wraps the
+ * sidebar and the main column in `.v-shell`, so making the body a flex row put
+ * the shell itself in a flex item whose `min-width: auto` refused to shrink
+ * below a wide table — the page then scrolled sideways on phones.
+ *
+ * The shell (below) is the flex row. In RTL, `row` already places the first
+ * child on the RIGHT; forcing `row-reverse` would put it on the left.
+ */
+.v-app {
+    display: block;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+
+.v-sidebar {
+    width: var(--vira-sidebar-width);
+    flex: 0 0 var(--vira-sidebar-width);
+    background: var(--vira-surface);
+    border-inline-start: 1px solid var(--vira-border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    transition: width var(--vira-duration) var(--vira-ease),
+                flex-basis var(--vira-duration) var(--vira-ease);
+    z-index: 50;
+}
+
+.v-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    height: var(--vira-topbar-height);
+    padding: 0 var(--vira-space-4);
+    border-bottom: 1px solid var(--vira-border);
+    flex: 0 0 auto;
+}
+.v-sidebar__logo {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--vira-radius-sm);
+    background: var(--vira-primary);
+    color: var(--vira-text-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--vira-weight-bold);
+    font-size: var(--vira-text-base);
+    flex: 0 0 auto;
+}
+.v-sidebar__wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+}
+.v-sidebar__name {
+    font-weight: var(--vira-weight-bold);
+    font-size: var(--vira-text-base);
+    color: var(--vira-text);
+}
+.v-sidebar__tagline {
+    font-size: 10px;
+    color: var(--vira-text-muted);
+    letter-spacing: 0.02em;
+}
+
+.v-sidebar__nav {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: var(--vira-space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-1);
+}
+
+.v-nav-group__label {
+    font-size: 10px;
+    font-weight: var(--vira-weight-medium);
+    color: var(--vira-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: var(--vira-space-3) var(--vira-space-2) var(--vira-space-1);
+}
+
+.v-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    height: 36px;
+    padding: 0 var(--vira-space-3);
+    border-radius: var(--vira-radius-sm);
+    color: var(--vira-text-secondary);
+    font-size: var(--vira-text-sm);
+    font-weight: var(--vira-weight-medium);
+    transition: background var(--vira-duration-fast) var(--vira-ease),
+                color var(--vira-duration-fast) var(--vira-ease);
+    position: relative;
+}
+.v-nav-item:hover {
+    background: var(--vira-surface-hover);
+    color: var(--vira-text);
+    text-decoration: none;
+}
+.v-nav-item__icon {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    color: var(--vira-text-muted);
+    transition: color var(--vira-duration-fast) var(--vira-ease);
+}
+.v-nav-item:hover .v-nav-item__icon {
+    color: var(--vira-text-secondary);
+}
+.v-nav-item__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.v-nav-item__badge {
+    font-size: 10px;
+    font-weight: var(--vira-weight-medium);
+    background: var(--vira-neutral-soft);
+    color: var(--vira-text-secondary);
+    padding: 1px 6px;
+    border-radius: var(--vira-radius-full);
+    flex: 0 0 auto;
+}
+
+.v-nav-item--active {
+    background: var(--vira-primary-soft);
+    color: var(--vira-primary);
+    font-weight: var(--vira-weight-bold);
+}
+.v-nav-item--active .v-nav-item__icon {
+    color: var(--vira-primary);
+}
+/* Gold marks the active item — the single deliberate accent in the shell. */
+.v-nav-item--active::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 8px;
+    width: 3px;
+    border-radius: var(--vira-radius-full);
+    background: var(--vira-gold);
+}
+
+/* Disabled modules: visible so the roadmap is legible, but clearly not live. */
+.v-nav-item--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.v-nav-item__soon {
+    font-size: 9px;
+    border: 1px solid var(--vira-border-strong);
+    color: var(--vira-text-muted);
+    border-radius: var(--vira-radius-full);
+    padding: 0 5px;
+}
+
+.v-sidebar__footer {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--vira-border);
+    padding: var(--vira-space-3);
+}
+
+/* Collapsed state */
+.v-app--collapsed .v-sidebar {
+    width: var(--vira-sidebar-collapsed);
+    flex-basis: var(--vira-sidebar-collapsed);
+}
+.v-app--collapsed .v-sidebar__wordmark,
+.v-app--collapsed .v-nav-item__text,
+.v-app--collapsed .v-nav-item__badge,
+.v-app--collapsed .v-nav-item__soon,
+.v-app--collapsed .v-nav-group__label,
+.v-app--collapsed .v-sidebar__footer-text {
+    display: none;
+}
+.v-app--collapsed .v-nav-item {
+    justify-content: center;
+    padding: 0;
+}
+.v-app--collapsed .v-sidebar__brand {
+    justify-content: center;
+    padding: 0;
+}
+
+/* ── Main column ─────────────────────────────────────────────────────────── */
+
+.v-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Topbar ──────────────────────────────────────────────────────────────── */
+
+.v-topbar {
+    height: var(--vira-topbar-height);
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    padding: 0 var(--vira-space-5);
+    background: var(--vira-surface);
+    border-bottom: 1px solid var(--vira-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.v-topbar__search {
+    flex: 1 1 auto;
+    max-width: 420px;
+}
+.v-topbar__search .v-input {
+    height: 34px;
+    background: var(--vira-surface-sunken);
+    border-color: transparent;
+}
+.v-topbar__search .v-input:focus {
+    background: var(--vira-surface);
+    border-color: var(--vira-border-focus);
+}
+
+.v-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-1);
+    margin-inline-start: auto;
+}
+
+.v-topbar__divider {
+    width: 1px;
+    height: 20px;
+    background: var(--vira-border);
+    margin: 0 var(--vira-space-1);
+}
+
+.v-user-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+    padding: var(--vira-space-1) var(--vira-space-2);
+    border-radius: var(--vira-radius-sm);
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background var(--vira-duration-fast) var(--vira-ease);
+}
+.v-user-chip:hover {
+    background: var(--vira-surface-hover);
+}
+.v-user-chip__meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    text-align: start;
+}
+.v-user-chip__name {
+    font-size: var(--vira-text-sm);
+    font-weight: var(--vira-weight-medium);
+    color: var(--vira-text);
+}
+.v-user-chip__role {
+    font-size: 10px;
+    color: var(--vira-text-muted);
+}
+
+/* Notification dot on the bell. */
+.v-icon-btn--dot {
+    position: relative;
+}
+.v-icon-btn--dot::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    inset-inline-start: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--vira-danger);
+    border: 1.5px solid var(--vira-surface);
+}
+
+/* ── Content ─────────────────────────────────────────────────────────────── */
+
+.v-content {
+    flex: 1 1 auto;
+    padding: var(--vira-space-6) var(--vira-space-5) var(--vira-space-10);
+    max-width: var(--vira-content-max);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.v-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--vira-space-4);
+    margin-bottom: var(--vira-space-5);
+    flex-wrap: wrap;
+}
+.v-page-header__main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-2);
+}
+.v-page-title {
+    font-size: var(--vira-text-xl);
+    font-weight: var(--vira-weight-bold);
+    color: var(--vira-text);
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    flex-wrap: wrap;
+}
+.v-page-desc {
+    font-size: var(--vira-text-sm);
+    color: var(--vira-text-secondary);
+    max-width: 70ch;
+}
+.v-page-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+    flex-wrap: wrap;
+}
+
+/* ── Grids ───────────────────────────────────────────────────────────────── */
+
+.v-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--vira-space-3);
+    margin-bottom: var(--vira-space-5);
+}
+
+.v-split {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: var(--vira-space-5);
+    align-items: start;
+}
+
+/* ── Mobile navigation drawer ────────────────────────────────────────────── */
+
+.v-mobile-bar {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .v-sidebar {
+        position: fixed;
+        inset-block: 0;
+        inset-inline-end: 0;
+        transform: translateX(100%);
+        transition: transform var(--vira-duration) var(--vira-ease);
+        box-shadow: var(--vira-shadow-lg);
+        width: var(--vira-sidebar-width);
+    }
+    .v-app--drawer-open .v-sidebar {
+        transform: translateX(0);
+    }
+    .v-app--collapsed .v-sidebar {
+        width: var(--vira-sidebar-width);
+    }
+    .v-app--collapsed .v-nav-item__text,
+    .v-app--collapsed .v-nav-group__label,
+    .v-app--collapsed .v-sidebar__wordmark {
+        display: block;
+    }
+    .v-app--collapsed .v-nav-item {
+        justify-content: flex-start;
+        padding: 0 var(--vira-space-3);
+    }
+
+    .v-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(33, 27, 43, 0.4);
+        z-index: 45;
+        animation: vira-fade-in var(--vira-duration-fast) var(--vira-ease);
+    }
+
+    .v-topbar {
+        padding: 0 var(--vira-space-4);
+    }
+    .v-content {
+        padding: var(--vira-space-4) var(--vira-space-4) var(--vira-space-8);
+    }
+    .v-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .v-topbar__search {
+        display: none; /* global search moves into the drawer/command menu */
+    }
+    .v-topbar {
+        gap: var(--vira-space-2);
+    }
+    .v-user-chip__meta {
+        display: none;
+    }
+    .v-page-title {
+        font-size: var(--vira-text-lg);
+    }
+    .v-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .v-page-actions {
+        width: 100%;
+    }
+    .v-page-actions .v-btn {
+        flex: 1 1 auto;
+    }
+    .v-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .v-stat {
+        padding: var(--vira-space-3) var(--vira-space-4);
+    }
+    .v-stat__value {
+        font-size: var(--vira-text-xl);
+    }
+    .v-filters {
+        padding: var(--vira-space-3) var(--vira-space-4);
+    }
+    .v-filters__field {
+        max-width: none;
+        flex-basis: 100%;
+    }
+    .v-filters__actions {
+        width: 100%;
+        margin-inline-start: 0;
+    }
+    .v-filters__actions .v-btn {
+        flex: 1 1 auto;
+    }
+    .v-pagination {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 479px) {
+    .v-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   2-C responsive rules for the detail grid, forms and tables.
+
+   Breakpoints match the rest of the shell: 1023 / 767 / 479. The order is
+   deliberately desktop-first because the base styles above are the desktop
+   layout, and each query removes a column rather than adding one.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ≤1023px — the two-column detail page loses its aside to a stacked block. */
+@media (max-width: 1023px) {
+    .v-detail-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ≤767px — tablets and large phones: single-column forms, two-column
+   definition lists collapse, tables keep a readable minimum width and scroll
+   inside their own container instead of pushing the page sideways. */
+@media (max-width: 767px) {
+    .v-grid--2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-field--span2 {
+        grid-column: auto;
+    }
+
+    .v-dl--2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-parties {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-parties__divider {
+        display: none;
+    }
+
+    .v-repeat__row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-filterbar {
+        padding: var(--vira-space-3);
+    }
+
+    .v-filterbar__group {
+        flex: 1 1 45%;
+        min-width: 0;
+    }
+
+    .v-formactions {
+        flex-direction: column-reverse;
+    }
+
+    .v-formactions .v-btn {
+        width: 100%;
+    }
+
+    /* A table narrower than this is unreadable; below it, the wrapper scrolls. */
+    .v-table {
+        min-width: 620px;
+    }
+
+    .v-tablewrap {
+        border-inline: 0;
+    }
+
+    .v-fsection {
+        padding: var(--vira-space-4);
+    }
+}
+
+/* ≤479px — phones: everything is one column, and the filter selects stack. */
+@media (max-width: 479px) {
+    .v-filterbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .v-filterbar__group {
+        flex: 1 1 auto;
+    }
+
+    .v-stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-table {
+        min-width: 560px;
+    }
+
+    .v-detail-grid__aside,
+    .v-detail-grid__main {
+        gap: var(--vira-space-3);
+    }
+
+    .v-pagehead {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--vira-space-3);
+    }
+
+    .v-pagehead__actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Sidebar collapse + drawer wiring for the 2-C markup.
+
+   The shell toggled by app.js is the <body class="v-app">, and the state
+   classes are `v-app--collapsed` and `v-app--drawer-open`. The rules below
+   teach the sidebar those two states for the `.v-navlink` markup the views
+   actually emit (the original `.v-nav-item` rules above are kept for the
+   earlier markup and remain harmless).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Hidden by default; only the mobile breakpoint turns it into a drawer. */
+@media (min-width: 1024px) {
+    .v-drawer {
+        display: none !important;
+    }
+}
+
+/* ── Collapsed rail (desktop) ─────────────────────────────────────────── */
+.v-app--collapsed .v-sidebar {
+    width: var(--vira-sidebar-collapsed);
+    flex-basis: var(--vira-sidebar-collapsed);
+}
+
+.v-app--collapsed .v-navlink__label,
+.v-app--collapsed .v-navlink__note,
+.v-app--collapsed .v-brand__text {
+    display: none;
+}
+
+.v-app--collapsed .v-brand {
+    justify-content: center;
+}
+
+.v-app--collapsed .v-navlink {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+/* Tooltip substitute while collapsed: the label returns on hover/focus so the
+   icon is never the only affordance. */
+.v-app--collapsed .v-navlink:hover .v-navlink__label,
+.v-app--collapsed .v-navlink:focus-visible .v-navlink__label {
+    display: block;
+    position: absolute;
+    inset-inline-end: calc(100% + 8px);
+    z-index: 60;
+    padding: var(--vira-space-1) var(--vira-space-2);
+    white-space: nowrap;
+    color: var(--vira-surface);
+    background: var(--vira-ink);
+    border-radius: var(--vira-radius-sm);
+    font-size: var(--vira-text-xs);
+}
+
+.v-app--collapsed .v-navlink {
+    position: relative;
+}
+
+.v-app--collapsed .v-sidebar__foot .v-navlink {
+    overflow: visible;
+}
+
+@media (max-width: 1023px) {
+    /* The mobile drawer replaces the sticky sidebar entirely. */
+    .v-sidebar {
+        display: none;
+    }
+
+    .v-app--drawer-open .v-drawer {
+        display: block;
+    }
+}
+
+/* The burger is only relevant below the drawer breakpoint. */
+@media (min-width: 1024px) {
+    .v-topbar__burger {
+        display: none;
+    }
+}
+
+@media (max-width: 1023px) {
+    .v-topbar__collapse {
+        display: none;
+    }
+}
+
+/* The collapsed-rail rule must not apply on mobile, where the sidebar is
+   hidden outright and the drawer takes over. */
+@media (max-width: 1023px) {
+    .v-app--collapsed .v-sidebar {
+        width: var(--vira-sidebar-width);
+        flex-basis: var(--vira-sidebar-width);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Application shell — the two-column frame.
+
+   .v-shell had no rules at all, so the sidebar was a normal block element and
+   the content column simply flowed under it. In RTL that put the sidebar
+   wherever the block flow landed (118px short of the right edge at 1280px).
+   The shell is a flex row; because the document direction is RTL, the first
+   child renders on the RIGHT without any explicit ordering — the correct
+   behaviour, and one that would be wrong if it were hard-coded to `row-reverse`.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.v-shell {
+    display: flex;
+    min-height: 100vh;
+    align-items: stretch;
+    /* A flex item's default `min-width: auto` is the min-content size, which a
+       table with a min-width defeats. Zero lets the scroll wrapper do its job. */
+    min-width: 0;
+    width: 100%;
+}
+
+.v-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--vira-space-6) var(--vira-space-7) var(--vira-space-9);
+    max-width: 1180px;
+    margin-inline: auto;
+    width: 100%;
+}
+
+/* Skip link: visible only when focused, so keyboard users can jump the nav. */
+.v-skip {
+    position: absolute;
+    inset-inline-start: -9999px;
+    z-index: 100;
+    padding: var(--vira-space-2) var(--vira-space-4);
+    color: var(--vira-surface);
+    background: var(--vira-primary);
+    border-radius: var(--vira-radius-sm);
+    font-size: var(--vira-text-sm);
+    text-decoration: none;
+}
+
+.v-skip:focus {
+    inset-inline-start: var(--vira-space-4);
+    top: var(--vira-space-2);
+}
+
+@media (max-width: 1023px) {
+    .v-content {
+        padding: var(--vira-space-4) var(--vira-space-4) var(--vira-space-8);
+    }
+}
+
+@media (max-width: 479px) {
+    .v-content {
+        /* The top padding is deliberately larger than the sides: a 22px bold
+           Persian heading has ascenders that reach the top of its line box, so
+           a 12px gap reads as if the title were glued to the topbar. */
+        padding: var(--vira-space-5) var(--vira-space-3) var(--vira-space-7);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Overflow containment for wide tables.
+
+   A table has a `min-width` so its columns stay readable (see the ≤767px
+   block), and that minimum propagates up through every block-level ancestor
+   unless each one is explicitly allowed to shrink. Without `min-width: 0`
+   on the card, the card grew to 637px inside a 390px viewport and the whole
+   page scrolled sideways — which §12 forbids. The chain is: content column →
+   card → wrapper (scrolls) → table (min-width).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.v-content,
+.v-card,
+.v-card__body,
+.v-tablewrap {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.v-card {
+    overflow: hidden; /* keeps the rounded corners clipping the scroller */
+}
+
+/* The wrapper is the only element allowed to scroll horizontally. */
+.v-tablewrap {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Shell scrolling.
+
+   The topbar is `position: sticky; top: 0`, which only works if an ancestor is
+   the scroll container. With the page itself scrolling, the sticky bar was
+   clipped at the top by the body's new `overflow-x: hidden` (which creates a
+   scroll context). Making `.v-main` the scroll container fixes the topbar and
+   keeps the sidebar independently fixed — the arrangement both Linear and
+   Attio use.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.v-shell {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.v-main {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.v-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Scrollbar gutter keeps the content from shifting when it appears. */
+    scrollbar-gutter: stable;
+}
+
+.v-sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+}
+
+/* On phones the shell must still scroll as one page: there is no fixed
+   sidebar to keep in view. */
+@media (max-width: 1023px) {
+    .v-shell {
+        height: auto;
+        overflow: visible;
+        min-height: 100vh;
+    }
+
+    .v-main {
+        height: auto;
+        overflow: visible;
+        min-height: 100vh;
+    }
+
+    .v-content {
+        overflow: visible;
+    }
+}

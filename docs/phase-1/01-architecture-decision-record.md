@@ -136,3 +136,58 @@ silently change the architecture.
 
 _This ADR is part of the Phase 1 deliverable package and is not final until the employer approves
 it at the Phase 1 gate._
+
+---
+
+## 8. Addendum A — Calendar engine: withdrawing the 2820 arithmetic engine
+
+**Date:** 2026-11-22
+**Status:** Accepted (supersedes the calendar evidence cited in §2 of this ADR)
+**Related:** `19-calendar-date-policy.md`, Q-06
+
+### 8.1 What was decided wrong
+
+The original Phase 1 package verified Jalali conversion with a self-written
+**2820-year arithmetic** engine (`docs/src/jalali-smoke-test.php`). The evidence file it
+produced was cited as proof that the calendar layer was validated. That was a mistake on
+two counts:
+
+1. The 2820 arithmetic calendar is **not** the official Iranian calendar. Iran has used an
+   astronomical rule since 1304 SH: Nowruz is the day of the vernal equinox if the equinox
+   falls before solar noon in Tehran, otherwise the following day.
+2. The engine disagrees with the official calendar on **1404 SH and 1437 SH**. For 1404 the
+   arithmetic engine places Nowruz on 2025-03-20 and calls the year leap (Esfand 30 days);
+   the official calendar places Nowruz on **2025-03-21** and the year is **common**
+   (Esfand 29 days). It also mislabels 1403 SH as common when 1403 is leap.
+
+Because the expected lifetime of this system spans 1404–1410+, the wrong engine would have
+produced incorrect stored dates within the first year of production.
+
+### 8.2 Correction
+
+| Action | Result |
+|---|---|
+| Re-verified against three independent references | `morilog/jalali` v3.5.0 (Borkowski port), `jdatetime` (33-year cycle), `convertdate` (astronomical), plus the official equinox/Tehran-noon rule |
+| Agreement between morilog and astronomical calendar, 1398–1411 | **0 differences** |
+| Agreement between `jdatetime` and `convertdate`, 1 Farvardin 1390–1460 | **0 mismatches** |
+| Built a 41-case golden test set verified by ≥2 references | `docs/fixtures/jalali-golden-set.json` |
+| Wrote a verifier that implements the *published morilog source* | `docs/src/jalali-golden-verify.php` — PASS on PHP 8.2.35 and 8.3.36 |
+| Kept the 2820 engine **only as a negative control** that must fail | It fails exactly on 1404 and 1437 — as expected |
+
+### 8.3 Decision
+
+- `morilog/jalali` v3.5.0 is the proposed production converter (MIT licence; requires
+  `php ^7.1|^8.0`, `beberlei/assert ^3.0`, `nesbot/carbon ^1.21||^2.0||^3.0`).
+- The 2820 engine is **withdrawn from the product path** and must not be used in any
+  module. `docs/src/jalali-smoke-test.php` is retained only as documentation of the
+  correction and is marked superseded.
+- Calendar conversion is confined to a single presentation layer; storage stays Gregorian.
+  The reminder engine's day arithmetic does not depend on the calendar algorithm at all.
+
+### 8.4 Honest limits of this correction
+
+- The verifier tests the **algorithm**, not an installed Composer package. Composer is not
+  available in this sandbox, so `composer require morilog/jalali` and the package's own test
+  suite remain **BLOCKED** (T-INF-02).
+- The owner's calendar policy (Q-06) is still unapproved. Nothing in the data model depends
+  on it, which is why this does not block development.

@@ -1,5 +1,5 @@
 ﻿requirement_id,group,type,priority,title,modules,tests,status,phase
-REQ-01.01,REQ-01,brief,P0,استقلال کامل نرم‌افزار از وردپرس,Foundation,T-SEC-09,designed,معماری
+REQ-01.01,REQ-01,brief,P0,استقلال کامل نرم‌افزار از وردپرس,Foundation,T-SEC-09;T-OPS-07;T-OPS-08,designed,معماری
 REQ-01.02,REQ-01,brief,P0,دیتابیس مستقل و ساب‌دامین مستقل,Deployment,T-INF-04,designed,استقرار
 REQ-01.03,REQ-01,brief,P0,فایل‌های حساس خارج از Document Root,Deployment,T-SEC-10,designed,استقرار
 REQ-01.04,REQ-01,brief,P1,تاب‌آوری CRM در قطعی سایت اصلی,Foundation,,designed,معماری
@@ -33,10 +33,11 @@ REQ-05.04,REQ-05,doc,P1,فیلدهای پروژه طراحی سایت,DesignProj
 REQ-05.05,REQ-05,doc,P1,تخصیص مسئول/کارشناس به پروژه,Projects;Employees,T-PRJ-06,in-analysis,فاز چهار
 REQ-06.01,REQ-06,doc,P1,مدیریت دسترسی‌های پروژه,Credentials,T-CRD-01,in-analysis,فاز چهار
 REQ-06.02,REQ-06,doc,P0,فهرست دسترسی‌های اجباری سئو,Credentials;SeoProjects;Settings,T-CRD-02;T-PRJ-07,in-analysis,فاز چهار
-REQ-06.03,REQ-06,brief,P0,رمزنگاری رمزها (AES-256-GCM),Credentials;Security,T-CRD-03;T-SEC-01,in-analysis,فاز سه
+REQ-06.03,REQ-06,brief,P0,رمزنگاری رمزها (AES-256-GCM),Credentials;Security,T-CRD-03;T-SEC-01;T-KEY-01;T-KEY-02,in-analysis,فاز سه
 REQ-06.04,REQ-06,brief,P0,Audit مشاهده و دریافت خروجی محرمانه,Credentials;Audit,T-CRD-04;T-CRD-05,in-analysis,فاز چهار
 REQ-06.05,REQ-06,brief,P0,PDF محرمانه دسترسی‌ها,Credentials;Pdf,T-CRD-05;T-CRD-06;T-PDF-09;T-SEC-11,in-analysis,فاز چهار
 REQ-06.06,REQ-06,brief,P1,جداسازی اطلاعات عمومی و محرمانه پروژه,Projects;Credentials;Pdf,T-PDF-08;T-PDF-09,in-analysis,فاز چهار
+REQ-06.07,REQ-06,doc,P1,هشدار محرمانگی روی فایل حاوی رمز,Credentials;Pdf,T-CRD-07,in-analysis,فاز پنج
 REQ-07.01,REQ-07,doc,P1,پرونده پرسنل,Employees,T-EMP-01,in-analysis,فاز چهار
 REQ-07.02,REQ-07,doc,P0,قواعد قابل تنظیم حقوق (بدون فرمول خودساخته),Payroll;Settings,T-PAY-02;T-PAY-03,in-analysis,فاز چهار
 REQ-07.03,REQ-07,doc,P1,فیش حقوقی ماهانه (PDF فارسی RTL),Payroll;Pdf,T-PAY-04;T-PAY-05;T-PDF-10,in-analysis,فاز چهار
@@ -49,7 +50,7 @@ REQ-09.02,REQ-09,doc,P1,فیلترهای قرارداد و پروژه,Contracts;
 REQ-09.03,REQ-09,doc,P1,گزارش فاکتور و گزارش,Invoices;SeoReports,T-INV-06;T-SEO-06,in-analysis,فاز چهار
 REQ-09.04,REQ-09,doc,P1,گزارش قراردادها و پرسنل,Reports,T-RPT-01;T-RPT-02,in-analysis,فاز چهار
 REQ-09.05,REQ-09,doc,P1,خروجی PDF الزامی,Pdf,T-PDF-01;T-PDF-08;T-PDF-09;T-PDF-10,in-analysis,فاز چهار
-REQ-09.06,REQ-09,proposed,P2,خروجی Excel تکمیلی,Excel,T-XLS-01;T-XLS-02;T-XLS-03,in-analysis,فاز چهار
+REQ-09.06,REQ-09,proposed,P2,خروجی Excel تکمیلی,Excel,T-XLS-01;T-XLS-02;T-XLS-03,not-started,خارج از محدوده فاز ۲
 REQ-10.01,REQ-10,doc,P1,نسخه اول: فقط مدیر اصلی,Users;Security,T-SEC-02,in-analysis,فاز سه
 REQ-10.02,REQ-10,proposed,P2,نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما),Roles;Security,T-SEC-03,in-analysis,فاز سه
 REQ-10.03,REQ-10,doc,P0,مجوزهای مستقل به تفکیک حوزه,Permissions,T-SEC-03;T-SEC-04,in-analysis,فاز سه
@@ -60,7 +61,7 @@ REQ-10.07,REQ-10,brief,P1,سیاست رمز و مدیریت نشست,Security,T-
 REQ-11.01,REQ-11,doc,P1,UI فارسی RTL اختصاصی,UI,T-UI-01;T-UI-02,in-analysis,فاز دو
 REQ-11.02,REQ-11,doc,P0,Design System مشترک,UI,T-UI-03,in-analysis,فاز دو
 REQ-11.03,REQ-11,brief,P1,فونت فارسی پایدار و قانونی,UI,T-UI-04,designed,فاز دو
-REQ-11.04,REQ-11,doc,P0,تاریخ شمسی ورود/نمایش + ذخیره استاندارد,Jalali;UI,T-DATE-01;T-DATE-02;T-DATE-03,in-analysis,فاز سه
+REQ-11.04,REQ-11,doc,P0,تاریخ شمسی ورود/نمایش + ذخیره استاندارد,Jalali;UI,T-DATE-01;T-DATE-02;T-DATE-03;T-CAL-01;T-CAL-02;T-CAL-03;T-CAL-05;T-CAL-06;T-CAL-09;T-CAL-10,in-analysis,فاز سه
 REQ-11.05,REQ-11,doc,P1,حالت‌های Loading/Empty/Success/Error و اعتبارسنجی,UI,T-UI-03;T-UI-06,in-analysis,فاز دو
 REQ-12.01,REQ-12,doc,P0,یادآوری فاکتور دو روز تقویمی قبل,Invoices;Reminders,T-INV-01;T-INV-02,in-analysis,فاز چهار
 REQ-12.02,REQ-12,doc,P0,یادآوری روز سررسید فاکتور و عقب‌افتادگی,Invoices;Reminders,T-INV-02;T-INV-03,in-analysis,فاز چهار
@@ -69,14 +70,16 @@ REQ-12.04,REQ-12,doc,P0,یادآوری گزارش سئو (۲ روز قبل + ر�
 REQ-12.05,REQ-12,doc,P0,استقلال یادآوری فاکتور و گزارش + چند دوره,Reminders,T-INV-05;T-SEO-04;T-SEO-05,in-analysis,فاز چهار
 REQ-12.06,REQ-12,doc,P0,تغییر تاریخ: بازمحاسبه بدون تکرار، حفظ سوابق,Reminders;Invoices;SeoReports,T-INV-07;T-INV-08;T-SEO-07,in-analysis,فاز چهار
 REQ-12.07,REQ-12,doc,P0,زمان‌بندی واقعی، Idempotent و قابل مشاهده,Scheduler,T-SCH-01;T-SCH-02;T-SCH-03;T-SCH-04;T-INF-03,in-analysis,فاز سه
-REQ-12.08,REQ-12,doc,P0,تعریف روز تقویمی و Timezone,Scheduler;Settings,T-SCH-05;T-DATE-02,in-analysis,فاز سه
+REQ-12.08,REQ-12,doc,P0,تعریف روز تقویمی و Timezone,Scheduler;Settings,T-SCH-05;T-DATE-02;T-CAL-04;T-CAL-07;T-CAL-08,in-analysis,فاز سه
+REQ-12.09,REQ-12,doc,P1,ثبت مشخصات و فایل فاکتور پس از ارسال,Invoices;Files,T-INV-06,in-analysis,فاز پنج
+REQ-09.07,REQ-09,doc,P1,گزارش تعداد پروژه‌های فعال هر کارشناس,Reports;Employees,T-RPT-02,in-analysis,فاز پنج
 REQ-13.01,REQ-13,brief,P1,مرحله‌بندی و گیت تأیید,PM,,designed,PM
 REQ-13.02,REQ-13,brief,P1,بازبینی و تأیید هاست مقصد,Deployment,T-INF-01;T-INF-02,in-analysis,فاز صفر
 REQ-14.01,REQ-14,brief,P0,تست واقعی، بدون Pass صوری,QA,T-QA-01,in-analysis,فاز پنج
 REQ-14.02,REQ-14,derived,P0,Requirements Traceability Matrix,PM,T-QA-02,designed,فاز یک
-REQ-15.01,REQ-15,doc,P1,تنظیمات مدیریتی سامانه,Settings,T-SET-01;T-SET-02;T-PAY-01,in-analysis,فاز چهار
-REQ-15.02,REQ-15,brief,P0,Backup و Restore تست‌شده,Backup,T-BKP-01;T-BKP-02;T-BKP-03,in-analysis,فاز شش
+REQ-15.01,REQ-15,doc,P1,تنظیمات مدیریتی سامانه,Settings,T-SET-01;T-SET-02;T-PAY-01;T-OPS-05;T-OPS-06,in-analysis,فاز چهار
+REQ-15.02,REQ-15,brief,P0,Backup و Restore تست‌شده,Backup,T-BKP-01;T-BKP-02;T-BKP-03;T-OPS-01;T-OPS-02;T-OPS-03;T-OPS-04,in-analysis,فاز شش
 REQ-15.03,REQ-15,brief,P1,Installer امن,Installer,T-INS-01;T-INS-02,in-analysis,فاز شش
 REQ-15.04,REQ-15,brief,P1,مهاجرت و نسخه‌بندی,DevOps,T-INF-05,designed,فاز شش
-REQ-15.05,REQ-15,brief,P2,تنظیمات محیطی (بدون Hardcode),DevOps,T-SEC-17,designed,فاز شش
+REQ-15.05,REQ-15,brief,P2,تنظیمات محیطی (بدون Hardcode),DevOps,T-SEC-17;T-KEY-03,designed,فاز شش
 REQ-15.06,REQ-15,brief,P2,بسته مستندات فنی و کاربری,Docs,,in-analysis,فاز یک

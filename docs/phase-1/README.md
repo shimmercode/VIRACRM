@@ -30,6 +30,13 @@
 | 21 | شواهد اجرایی | [`evidence/`](evidence/) |
 | 22 | ابزار بررسی هاست و اجرای PHP | [`../tools/`](../tools/) |
 | 23 | گزارش اعتبارسنجی زنجیره ابزار و مستندات | [`../qa-toolchain-validation.md`](../qa-toolchain-validation.md) |
+| 24 | سیاست مدیریت کلید (Key Management) | [`16-key-management-policy.md`](16-key-management-policy.md) |
+| 25 | سیاست پشتیبان‌گیری و بازیابی | [`17-backup-restore-policy.md`](17-backup-restore-policy.md) |
+| 26 | پیکربندی و جداسازی محیط‌ها | [`18-environment-configuration.md`](18-environment-configuration.md) |
+| 27 | سیاست تقویم و تاریخ (+ تصحیح ۱۴۰۴) | [`19-calendar-date-policy.md`](19-calendar-date-policy.md) |
+| 28 | مجموعه آزمون طلایی تقویم (۴۱ مورد) | [`../fixtures/jalali-golden-set.json`](../fixtures/jalali-golden-set.json) |
+| 29 | مغایرت‌سنجی الزامات با سند اصلی | [`20-requirements-reconciliation.md`](20-requirements-reconciliation.md) |
+| 30 | **دفتر تصمیم‌های باز (برای کارفرما)** | [`21-open-decisions-register.md`](21-open-decisions-register.md) |
 
 ## وضعیت شفاف
 
@@ -50,5 +57,6 @@ python3 docs/tools/build_phase1_docs.py
 
 # اجرای واقعی بررسی‌های PHP (نیازمند @php-wasm/node)
 node docs/tools/php-cli.mjs docs/src/php-runtime-smoke-test.php
-node docs/tools/php-cli.mjs docs/src/jalali-smoke-test.php
+node docs/tools/php-cli.mjs docs/src/jalali-golden-verify.php
+node docs/tools/php-cli.mjs docs/src/d2-daymath-verify.php
 ```

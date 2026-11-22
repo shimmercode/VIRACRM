@@ -1,0 +1,597 @@
+[
+  {
+    "id": "T-UI-LOGIN",
+    "ok": true,
+    "detail": "login reached /"
+  },
+  {
+    "id": "T-STATUS-dashboard-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-dashboard-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-dashboard-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-dashboard-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-dashboard-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-dashboard-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-dashboard-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-dashboard-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-dashboard-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-dashboard-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-dashboard-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-dashboard-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-customers-list-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customers-list-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-customers-list-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customers-list-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-customers-list-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customers-list-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-customers-list-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customers-list-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-detail-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-customer-detail-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-detail-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-detail-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-customer-detail-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-detail-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-detail-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-customer-detail-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-detail-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-detail-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 offenders: v-stat__value v-stat__value--money"
+  },
+  {
+    "id": "T-RTL-customer-detail-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-detail-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-customer-form-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-form-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-customer-form-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-form-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-customer-form-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-customer-form-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-customer-form-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-form-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contracts-list-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-contracts-list-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contracts-list-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-contracts-list-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-contracts-list-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contracts-list-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-contracts-list-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-contracts-list-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contracts-list-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-contracts-list-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-contracts-list-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contracts-list-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-contract-detail-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-detail-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-contract-detail-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-detail-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-contract-detail-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-detail-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-contract-detail-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-detail-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px doc=1440/1440 "
+  },
+  {
+    "id": "T-RTL-contract-form-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-form-desktop-1440",
+    "ok": true,
+    "detail": "right=1440 (viewport 1440), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-laptop-1280",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-laptop-1280",
+    "ok": true,
+    "detail": "overflowX=0px doc=1280/1280 "
+  },
+  {
+    "id": "T-RTL-contract-form-laptop-1280",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-form-laptop-1280",
+    "ok": true,
+    "detail": "right=1280 (viewport 1280), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-tablet-1024",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-tablet-1024",
+    "ok": true,
+    "detail": "overflowX=0px doc=1024/1024 "
+  },
+  {
+    "id": "T-RTL-contract-form-tablet-1024",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-SIDEBAR-contract-form-tablet-1024",
+    "ok": true,
+    "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-phone-390",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px doc=390/390 "
+  },
+  {
+    "id": "T-RTL-contract-form-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-form-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-TYPE-MIN",
+    "ok": true,
+    "detail": "smallest rendered font 12px on phone"
+  },
+  {
+    "id": "T-TOUCH",
+    "ok": true,
+    "detail": "controls under 28px: 2"
+  },
+  {
+    "id": "T-TABLE-SCROLL",
+    "ok": true,
+    "detail": "table scrolls in wrapper=true, page overflow=0px"
+  },
+  {
+    "id": "T-HEAD-GAP",
+    "ok": true,
+    "detail": "topbar→title gap 20px (title 22px)"
+  },
+  {
+    "id": "T-FOCUS",
+    "ok": true,
+    "detail": "first Tab focuses A, ring: outline=solid 2px shadow=none"
+  },
+  {
+    "id": "T-KEY-ACTION",
+    "ok": true,
+    "detail": "primary action present and tabbable (tabIndex=0)"
+  }
+]

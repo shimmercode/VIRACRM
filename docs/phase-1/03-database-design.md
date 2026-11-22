@@ -7,13 +7,20 @@
 | موتور مقصد | MySQL 8.0+ / MariaDB 10.6+ · Charset `utf8mb4` · Collation `utf8mb4_0900_ai_ci` (یا `utf8mb4_unicode_ci` در MariaDB) |
 | موتور تست | SQLite (`:memory:`) — Migrationها سازگار با هر دو |
 | نمودار | [`erd.png`](../diagrams/erd.png) · منبع [`erd.dot`](../database/erd.dot) |
-| تعداد جداول | **۴۱** (۲۴ جدول پیشنهادی سند + ۱۷ جدول لازم برای دامنه واقعی) |
+| تعداد جداول | **۴۰** (۲۴ جدول پیشنهادی سند + ۱۶ جدول افزوده برای دامنه واقعی) |
 
 > **اصل:** سند کارفرما فهرست پیشنهادی ۲۴ جدول داده است. این طرح بر اساس روابط واقعی
 > بازطراحی شده: جدول `invoices` و `seo_reports` به **رکوردهای دوره‌ای مستقل** تبدیل شده‌اند
 > (REQ-12.05)، موتور یادآوری از `reminders` به `scheduled_events` + `job_runs` منتقل شده
-> (REQ-12.07)، و جداول `contract_types`/`project_types`/`seo_packages`/`credential_requirements`
-> که سند به‌صورت «قابل تعریف در تنظیمات» خواسته، به جداول مرجع تبدیل شده‌اند.
+> (REQ-12.07)، و `contract_types`/`seo_packages` که سند به‌صورت «قابل تعریف در تنظیمات»
+> خواسته، به جداول مرجع تبدیل شده‌اند.
+>
+> **دو مورد که آگاهانه «جدول» نشدند (نه حذف، بلکه ادغام — طبق قاعده «هیچ چیز بی‌صدا حذف نمی‌شود»):**
+> - `credential_requirements` → به ستون `credential_types.is_required_for_seo` تبدیل شد؛
+>   چون رابطه «نوع دسترسی ↔ الزام برای سئو» یک‌به‌یک است و جدول جدا فقط یک JOIN بی‌فایده اضافه می‌کرد.
+> - `project_types` → به `projects.type` با `ENUM(seo, website_design)` تبدیل شد؛
+>   نوع پروژه در سند فقط دو مقدار دارد و در تنظیمات قابل‌افزودن نیست، پس جدول مرجع لازم نیست.
+>   اگر کارفرما بعداً «نوع پروژه قابل‌تعریف در تنظیمات» بخواهد، این تصمیم باید بازبینی شود (رجوع به Q-33).
 
 ## ۱. اصول مدل داده
 
@@ -43,6 +50,7 @@
 | `user_roles` | model_id, role_id | spatie |
 | `sessions` *(اختیاری، Laravel)* | id, user_id, payload, last_activity | مدیریت خروج همه نشست‌ها |
 | `password_reset_tokens` | email, token, created_at | استاندارد Laravel |
+| `failed_jobs` | id, uuid(unique), connection, queue, payload, exception, failed_at | استاندارد Laravel؛ برای دیدن شکست Jobهای یادآوری (REQ-12.07) |
 
 ### ۲.۲ مشتریان
 
@@ -120,6 +128,44 @@
 | `payslips` | id · period_id · employee_id · status ENUM(draft,final) · finalized_at · finalized_by | پس از Final تغییر ممنوع |
 | `payslip_versions` | id · payslip_id · version_no · items_snapshot JSON · reason · created_by · created_at | اصلاحیه = نسخه جدید |
 
+#### ۲.۸.۱ ستون‌های **پیشنهادی** برای پوشش کامل انواع پرداخت
+
+> **وضعیت:** این‌ها **الزام سند کارفرما نیستند**. سند فقط «حقوق و دستمزد» را به‌صورت کلی
+> خواسته. موارد زیر پیشنهاد تیم برای پاسخ‌دادن به انواع رایج پرداخت در یک آژانس است
+> و **تا تأیید کارفرما (Q-08) در migration اجرا نمی‌شوند**. هیچ فرمولی هم در این‌جا
+> تعریف نشده — فقط ظرفیت مدل داده.
+
+| جدول | ستون پیشنهادی | چرا لازم است (سناریو) | الزام مرتبط |
+|---|---|---|---|
+| `employees` | `pay_type` ENUM(fixed,hourly,project,commission,mixed) | حقوق ثابت، ساعتی، پروژه‌ای و پورسانتی هم‌زمان در یک آژانس رخ می‌دهد | REQ-09.01 |
+| `employees` | `hourly_rate_cents` | برای همکار پارت‌تایم که فقط ساعت کار می‌کند | REQ-09.01 |
+| `employees` | `payment_method` ENUM(bank,cash,other) + `bank_iban` | فیش حقوقی باید مقصد پرداخت را نشان دهد | REQ-09.03 |
+| `employee_timesheets` *(جدید)* | id · employee_id · work_date · hours DECIMAL(5,2) · project_id? · note · approved_by · approved_at | مبنای حقوق ساعتی؛ بدون آن `hourly` قابل محاسبه نیست | REQ-09.01 |
+| `payroll_rules` | `commission_rate` DECIMAL(6,4) | درصد پورسانت از مبلغ قرارداد/پروژه (مقدار را کارفرما تعیین می‌کند) | REQ-09.02 |
+| `payroll_rules` | `commission_base` ENUM(contract_amount,invoice_paid,project_amount) | پورسانت روی «مبلغ قرارداد» یا «فاکتور پرداخت‌شده» محاسبه شود؟ **تفاوت مالی بزرگ** | REQ-09.02 |
+| `payroll_rules` | `overtime_rate` DECIMAL(8,4) — موجود | ضریب اضافه‌کاری | REQ-09.02 |
+| `payroll_rules` | `overtime_basis` ENUM(hourly,daily,monthly) | اضافه‌کاری از نرخ ساعتی یا روزانه محاسبه شود؟ | REQ-09.02 |
+| `payroll_items` | `hours_worked` DECIMAL(6,2) · `overtime_hours` DECIMAL(6,2) | ورودی‌های محاسبه در snapshot فیش بمانند | REQ-09.03 |
+| `payroll_items` | `commission_base_amount_cents` · `commission_rate_applied` | شفافیت: «۴٪ از ۲۰۰ میلیون» به‌جای یک عدد جادویی | REQ-09.03 |
+| `payroll_items` | `advance_balance_cents` | مانده مساعده پس از کسر | REQ-09.04 |
+| `payroll_items` | `calc_inputs_snapshot` JSON | همه ورودی‌های محاسبه، برای بازتولید نتیجه یک سال بعد | REQ-09.05 |
+| `employee_advances` *(جدید)* | id · employee_id · amount_cents · requested_at · paid_at · installment_count · settled_at · note | مساعده یک موجودیت مستقل با چرخه عمر است، نه یک عدد در فیش | REQ-09.04 |
+
+**دو نکته طراحی که باید کارفرما بداند:**
+
+1. **`commission_base` مهم‌ترین تصمیم مالی این جدول است.** اگر پورسانت روی «مبلغ قرارداد»
+   باشد، کارشناس فروش حتی اگر مشتری پرداخت نکند پورسانت می‌گیرد. اگر روی «فاکتور
+   پرداخت‌شده» باشد، پورسانت با نقدینگی هم‌راستا می‌شود. **این تصمیم تیم فنی نیست.**
+2. **`employee_timesheets` یک جدول جدید است (شمارش ۴۰ → ۴۱).** چون اگر اضافه شود،
+   شمارش جداول تغییر می‌کند و باید در سند و ERD هم‌زمان اصلاح شود. تا تأیید نشدن،
+   شمارش رسمی همان **۴۰** است.
+
+**آنچه عمداً تعریف نشده:**
+- هیچ فرمول (`net = base + ...`) در این سند نیست. فرمول‌ها در سرویس `PayrollCalculator`
+  و **پس از** دریافت قواعد واقعی کارفرما نوشته می‌شوند.
+- هیچ نرخ مالیات/بیمه‌ای فرض نشده (در ایران متغیر و مبتنی بر قانون سالانه است).
+- هیچ گردکردنی (rounding) فرض نشده؛ در سیستم پولی از `bcmath` و «ریال صحیح» استفاده می‌شود.
+
 ### ۲.۹ فایل، Audit، تنظیمات
 
 | جدول | ستون‌ها | نکته |
@@ -143,15 +189,62 @@
 | `project_keywords` | `idx_project_id` | شمارش کلمات |
 | `audit_logs` | `idx_entity` · `idx_user_created` | بررسی سوابق |
 | `project_credentials` | `idx_project_type` | نهایی‌سازی سئو |
+| `employees` | `uniq_national_id` · `idx_employment_status` | ضدتکرار، فیلتر پرسنل فعال |
+| `payroll_periods` | `uniq(year_jalali, month_jalali)` | یک دوره در هر ماه |
+| `payroll_items` | `uniq(period_id, employee_id)` · `idx_employee_period` | یک فیش در هر دوره، تاریخچه کارمند |
+| `payslips` | `uniq(period_id, employee_id)` · `idx_status` | جلوگیری از فیش تکراری |
+| `payslip_versions` | `uniq(payslip_id, version_no)` | نسخه‌بندی بدون تکرار |
+| `notes` | `idx_due_status` · `idx_customer` · `idx_project` | کارتابل، پرونده مشتری/پروژه |
+| `contract_versions` | `uniq(contract_id, version_no)` | نسخه نهایی یکتا |
+| `contract_files` | `idx_contract` | فهرست فایل قرارداد |
+| `attachments` | `idx_attachable` · `uniq_sha256_path` | پیوست چندریختی، ضدتکرار فایل |
+| `job_runs` | `idx_job_started` | بررسی شکست‌های Scheduler |
+| `settings` | `uniq_key` | دسترسی O(1) به تنظیمات |
+| `users` | `uniq_email` · `idx_is_active` | ورود، فهرست |
+| `sessions` | `idx_user_id` · `idx_last_activity` | خروج همه دستگاه‌ها |
+| `failed_jobs` | `uniq_uuid` | Laravel |
+| `customer_contacts` | `uniq(customer_id, phone)` | تماس تکراری در یک مشتری |
+| `project_assignments` | `uniq(project_id, employee_id)` | تخصیص تکراری |
 
-## ۴. چرا ۴۱ جدول؟
+### ۳.۱ قواعد ایندکس که رعایت شده‌اند
+
+| قاعده | دلیل |
+|---|---|
+| هر ستون FK ایندکس دارد | MySQL برای FK ایندکس می‌سازد، ولی ایندکس مرکب برای کوئری‌های واقعی لازم است |
+| ایندکس مرکب با ستون گزینشی‌تر **اول** | `(customer_id, status)` نه `(status, customer_id)` |
+| هیچ ایندکس روی ستون `TEXT` بدون پیشوند | جلوگیری از ایندکس غول‌آسا |
+| ایندکس روی `archived_at` ندارد | فیلتر آرشیو در کوئری حذف می‌شود (`WHERE archived_at IS NULL`) و ایندکس مرکب `idx_type_archived` کافی است |
+| `unique_key` از نوع `CHAR(64)` (hex) | ذخیره بهینه‌تر از `VARCHAR(255)` |
+
+### ۳.۲ تصمیم‌های حذف/نگهداری جدول (شفاف، بدون حذف بی‌صدا)
+
+| جدول | تصمیم | دلیل |
+|---|---|---|
+| `credential_requirements` | **حذف شد** (به ستون تبدیل) | رابطه یک‌به‌یک با `credential_types`؛ جدول جدا فقط JOIN اضافه می‌کرد |
+| `project_types` | **حذف شد** (به `ENUM` تبدیل) | سند فقط دو نوع دارد؛ Q-33 باز است تا اگر کارفرما قابل‌افزودن خواست بازبینی شود |
+| `reminders` (سند پیشنهادی) | **جایگزین شد** با `scheduled_events` + `job_runs` | idempotency و ردیابی اجرا لازم بود (REQ-12.07) |
+| `cache`, `cache_locks` | **ساخته نمی‌شود** | کش `file`؛ اگر Redis آمد، تصمیم بازبینی می‌شود |
+| `jobs`, `job_batches` | **ساخته نمی‌شود** | صف `sync` در نسخه ۱ (Q-34) |
+| `employee_timesheets`, `employee_advances` | **پیشنهاد، ساخته نمی‌شود** | نیازمند تأیید Q-41 و Q-08 |
+
+## ۴. چرا ۴۰ جدول؟
 
 | دسته | جداول | توضیح |
 |---|---|---|
 | سند پیشنهادی (۲۴) | users, roles, permissions, role_permissions, user_roles, customers, customer_contacts, customer_websites, contracts, contract_templates, contract_versions, contract_files, projects, project_keywords, project_assignments, project_credentials, credential_types, invoices, seo_reports, notes, employees, employee_contracts, payroll_rules, payslip_versions* | نگاشت مستقیم |
-| افزوده (۱۷) | credential_requirements→`is_required_for_seo` (ستون)، contract_types, seo_packages, seo_project_details, design_project_details, scheduled_events, job_runs, payroll_periods, payroll_items, payslips, attachments, audit_logs, settings, settings_history, sessions, password_reset_tokens, failed_jobs | لازم برای «قابل تعریف در تنظیمات»، «Idempotent»، «نسخه‌دار» و امنیت |
+| افزوده (۱۶) | contract_types, seo_packages, seo_project_details, design_project_details, scheduled_events, job_runs, payroll_periods, payroll_items, payslips, attachments, audit_logs, settings, settings_history, sessions, password_reset_tokens, failed_jobs | لازم برای «قابل تعریف در تنظیمات»، «Idempotent»، «نسخه‌دار» و امنیت |
+| **جمع** | **۴۰ = ۲۴ + ۱۶** | شمارش دقیق؛ با فهرست بخش ۲ و نام‌گذاری ERD یکی است |
 
 \* `payslip_versions` در سند پیشنهادی هست ولی `payslips` و `payroll_items`/`payroll_periods` جدا شده‌اند.
+
+> **تفکیک جدول‌های چارچوب از جدول‌های دامنه:** چهار جدول از این ۴۰ جدول، متعلق به خود Laravel
+> هستند و منطق دامنه ندارند: `sessions`، `password_reset_tokens`، `failed_jobs` و ستون‌های
+> چارچوب در `users`. این‌ها با `php artisan migrate` ساخته می‌شوند و در ERD با رنگ/یادداشت جدا
+> مشخص شده‌اند. بنابراین «۳۶ جدول دامنه + ۴ جدول چارچوب = ۴۰» خوانش درست است.
+>
+> **جدول‌هایی که عمداً ساخته نمی‌شوند:** `cache`/`cache_locks` (درایور کش = `file`)،
+> `jobs`/`job_batches` (صف = `sync` در نسخه ۱؛ اگر کارفرما صف دیتابیسی بخواهد، هر دو جدول
+> اضافه می‌شوند و شمارش به ۴۲ می‌رسد — این یک تصمیم باز است، Q-34).
 
 ## ۵. داده‌های حساس
 

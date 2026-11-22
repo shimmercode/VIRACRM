@@ -1,0 +1,43 @@
+digraph Arch {
+  graph [fontname="Vazirmatn", rankdir=TB, nodesep=0.35, ranksep=0.55, bgcolor="white", pad=0.3,
+         label="VIRA CRM — Logical Architecture (Phase 1)\nModular Monolith · Laravel 12 · standalone from WordPress", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Vazirmatn", fontsize=10, penwidth=0.8];
+  edge [fontname="Vazirmatn", fontsize=8, color="#475569", arrowsize=0.7];
+
+  subgraph cluster_client {
+    label="Clients"; style="rounded,dashed"; color="#94a3b8"; fontsize=11;
+    browser [label="Manager Browser\n(Blade + Alpine.js · RTL · Vazirmatn)", fillcolor="#e0f2fe"];
+  }
+  subgraph cluster_edge {
+    label="Edge"; style="rounded,dashed"; color="#94a3b8";
+    tls [label="HTTPS / TLS 1.2+\nHSTS · Secure cookies", fillcolor="#f1f5f9"];
+    wp [label="viraagency.co (WordPress)\nNo coupling / future API only", fillcolor="#f8fafc", style="rounded,filled,dashed"];
+  }
+  subgraph cluster_app {
+    label="Application — crm.viraagency.co (public/ only exposed)"; style="rounded"; color="#6366f1"; fontsize=11;
+    mw [label="Middleware\nAuth · CSRF · Throttle · no-store", fillcolor="#eef2ff"];
+    mods [label="Modules (Modular Monolith)\nCustomers · Contracts · Templates · Projects (SEO / Design)\nCredentials · Invoices · SEO Reports · Reminders · Notes\nEmployees · Payroll · Dashboard · Search · Reports\nPDF · Excel · Files · Users · Roles · Audit · Settings", fillcolor="#eef2ff"];
+    svc [label="Services + Policies + FormRequests\n(transactions, bcmath money, Jalali clock, AES-256-GCM)", fillcolor="#eef2ff"];
+    sched [label="Scheduler\ncron → schedule:run (1 min)\nReminderEngine (idempotent)", fillcolor="#ede9fe"];
+    jobs [label="Queue / Job Runs\nPDF · Excel · Backup · Notifications", fillcolor="#ede9fe"];
+  }
+  subgraph cluster_data {
+    label="Data & Storage"; style="rounded,dashed"; color="#94a3b8";
+    db [label="MySQL 8 / MariaDB 10.6+\n(independent schema)", fillcolor="#ecfdf5"];
+    storage [label="Private storage\n(outside web root)", fillcolor="#fef3c7"];
+    cache [label="Cache / Session\n(file | redis)", fillcolor="#f1f5f9"];
+    audit [label="Audit log\n(append-only)", fillcolor="#fce7f3"];
+  }
+  subgraph cluster_ops {
+    label="Operations"; style="rounded,dashed"; color="#94a3b8";
+    backup [label="Backup & Restore\n(tested)", fillcolor="#f8fafc"];
+    deploy [label="Deploy: .env-driven\nstaging → production", fillcolor="#f8fafc"];
+  }
+
+  browser -> tls -> mw -> mods -> svc;
+  mods -> sched [style=dashed, label="same app"];
+  svc -> db; svc -> storage; svc -> cache; svc -> audit;
+  sched -> db; jobs -> db;
+  wp -> mw [style=dashed, label="future API (opt-in)", color="#cbd5e1"];
+  db -> backup; storage -> backup; deploy -> mw [style=dotted];
+}

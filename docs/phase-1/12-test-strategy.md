@@ -56,10 +56,11 @@
 
 | اجرا | نتیجه | شاهد JSON |
 |---|---|---|
-| Jalali engine (۸ مورد مرجع + ۲۴۲۴ invariant + D-2 + Timezone) | PASS، ۰ خطا | `jalali-smoke-test.json` |
+| الگوریتم تقویم `morilog/jalali` v3.5.0 (۴۱ مورد Golden Set + ۱۱٬۳۲۳ روز رفت‌وبرگشت + الگوی کبیسه + رد تاریخ نامعتبر + کنترل منفی ۲۸۲۰) | PASS، ۰ خطا (PHP ۸.۲ و ۸.۳) | `jalali-golden-verify.json` |
+| محاسبه D-2 به‌عنوان دو روز تقویمی (مرز نیمه‌شب، آفست ثابت، پایداری `unique_key`، استقلال از تبدیل شمسی) | PASS، ۲۲/۲۲ (PHP ۸.۲ و ۸.۳) | `d2-daymath-verify.json` |
 | PHP runtime capabilities (AES-GCM، bcmath، bcrypt، HMAC، Persian normalization، SQLite، JSON، random) | PASS، ۱۰/۱۰ | `php-runtime-smoke-test.json` |
 
-> این دو اجرا **تست ماژول محصول نیستند**؛ اثبات امکان‌پذیری و درستی الگوریتم‌های زیربنایی‌اند
+> این سه اجرا **تست ماژول محصول نیستند**؛ اثبات امکان‌پذیری و درستی الگوریتم‌های زیربنایی‌اند
 > و در کاتالوگ تست محصول (T-*) حساب نمی‌شوند.
 
 ## ۴. معیار خروج از فاز ۵ (تست)

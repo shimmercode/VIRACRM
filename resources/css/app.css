@@ -1,0 +1,116 @@
+@import 'tokens.css';
+@import 'components.css';
+@import 'layout.css';
+@import 'pages.css';
+
+/* ==========================================================================
+   Base / reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--vira-font);
+    font-size: var(--vira-text-base);
+    line-height: var(--vira-leading);
+    color: var(--vira-text);
+    background: var(--vira-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote {
+    margin: 0;
+}
+
+h1, h2, h3, h4 {
+    font-weight: var(--vira-weight-bold);
+    line-height: var(--vira-leading-tight);
+}
+
+a {
+    color: var(--vira-primary);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+ul, ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+img, svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Persian numerals look wrong in a monospace fallback; force the family. */
+[data-num] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+}
+
+:focus-visible {
+    outline: 2px solid var(--vira-primary);
+    outline-offset: 2px;
+}
+
+/* Only screen-reader users get this text. */
+.vira-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Skip link: keyboard users must be able to jump past the sidebar. */
+.vira-skip-link {
+    position: absolute;
+    inset-inline-start: 50%;
+    transform: translateX(50%) translateY(-120%);
+    background: var(--vira-primary);
+    color: #fff;
+    padding: var(--vira-space-2) var(--vira-space-4);
+    border-radius: 0 0 var(--vira-radius) var(--vira-radius);
+    z-index: 200;
+    transition: transform var(--vira-duration) var(--vira-ease);
+}
+.vira-skip-link:focus {
+    transform: translateX(50%) translateY(0);
+}
+
+/* Prevent the page behind a modal from scrolling. */
+body.vira-no-scroll {
+    overflow: hidden;
+}

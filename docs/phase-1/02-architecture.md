@@ -118,6 +118,27 @@ app/
 قواعد:
 - هر ماژول فقط از طریق **Service عمومی خودش** با ماژول دیگر حرف می‌زند؛ مدل‌ها cross-module کوئری مستقیم نمی‌شوند.
 - ماژول `Credentials` تنها جایی است که رمزها رمزگشایی می‌شوند.
+
+### ۳.۱ شمارش دقیق ماژول‌ها (رفع ابهام «۲۳ یا ۲۵؟»)
+
+در نسخه‌های قبلی این بسته عدد «۲۳ ماژول» گفته شده بود، در حالی که درخت بالا **۲۵** پوشه
+زیر `app/Modules/` دارد. اختلاف از دو جاست و این‌جا شفاف می‌شود:
+
+| شمارش | عدد | توضیح |
+|---|---|---|
+| پوشه‌های سطح اول `app/Modules/` | **۲۵** | عدد درست برای «تعداد پوشه» |
+| ماژول‌های دامنه مستقل | **۲۳** | اگر `Projects` را یک ماژول حساب کنیم و `SeoProjects`/`DesignProjects` زیرماژول باشند |
+| ماژول‌های قابل پیکربندی مستقل | **۲۶** | اگر `SeoProjects` و `DesignProjects` و `ContractTemplates` را مستقل بشماریم |
+
+**عدد رسمی این پروژه: ۲۵ پوشه ماژول** (شامل ۲۳ دامنه مستقل + ۲ زیرماژول نوع پروژه
+زیر `Projects`). دلیلش این است که `SeoProjects` و `DesignProjects` از یک جدول `projects`
+با `type` استفاده می‌کنند و منطق مشترک زیادی دارند؛ جدا کردنشان به دو ماژول کامل،
+دو ماژول با کوپلینگ بالا می‌ساخت.
+
+> **قاعده شمارش برای RTM:** برچسب‌های ماژول در کاتالوگ الزامات (۳۶ برچسب) شامل ماژول‌های
+> دامنه (۲۵) و «قابلیت‌های عرضی» است که پوشه مستقل ندارند: `Security`، `UI`، `Jalali`
+> (زیر `Support/`)، `Docs`، `QA`، `DevOps`، `Deployment`، `Foundation`، `PM`.
+> این‌ها ماژول نیستند؛ برچسب ردیابی‌اند. جدول نگاشت در `05-traceability-matrix.md` است.
 - `Audit` فقط از طریق Event Listenerها ثبت می‌کند (نه فراخوانی دستی پخش‌شده).
 
 ---
@@ -279,3 +300,67 @@ Cron: * * * * * cd /home/virauser/vira-crm && php artisan schedule:run >> storag
 3. ماژول مشتری → قرارداد → قالب/PDF → داشبورد → پروژه‌ها → یادآوری → دسترسی‌ها → پرسنل/حقوق → Excel.
 4. اجرای ۱۱۹ سناریوی تست و ثبت شواهد واقعی.
 5. آماده‌سازی استقرار و انتقال با گزارش هاست.
+
+---
+
+## ۱۰. قرارداد هر ماژول (Module Contract)
+
+سند اصلی برای هر ماژول فقط «نام و کار» را داشت. برای این‌که پیاده‌سازی بدون ابهام شروع
+شود، هر ۲۵ پوشه یک قرارداد دارد: **مسئولیت / ورودی / خروجی / موجودیت‌ها / وابستگی /
+رویداد Audit / خطاهای قابل انتظار / تست‌ها**. این جدول جای سند تفصیلی هر ماژول را در
+فاز ۲ می‌گیرد و از «طراحی مبهم» جلوگیری می‌کند.
+
+### ۱۰.۱ جدول قرارداد ماژول‌ها
+
+| ماژول | مسئولیت (و فقط همین) | موجودیت‌ها | وابسته به | رویداد Audit | خطاهای شاخص |
+|---|---|---|---|---|---|
+| `Auth` | ورود/خروج، نشست، سیاست رمز، rate limit، بازیابی رمز | users (خواندن/نوشتن رمز) | Users, Audit | `login`, `logout`, `failed_login`, `password.changed` | `429` قفل، `401` نشست منقضی |
+| `Users` | کاربران، نقش‌ها، مجوزها (spatie) | users, roles, permissions, role_permissions, user_roles | Audit | `user.created/updated/deactivated`, `role.changed` | `403` مجوز، `409` ایمیل تکراری |
+| `Audit` | ثبت append-only همه رویدادها + نمایش فیلترشده | audit_logs | — (هیچ ماژولی به آن وابسته نیست) | — (خودش) | `403` مشاهده |
+| `Settings` | کلید-مقدار نسخه‌دار + تاریخچه تغییرات | settings, settings_history | Audit | `settings.changed` | `422` مقدار نامعتبر |
+| `Customers` | مشتری حقیقی/حقوقی، تماس‌ها، وب‌سایت‌ها، تشخیص تکرار، آرشیو | customers, customer_contacts, customer_websites | Audit | `customer.created/updated/archived`, `customer.duplicate_override` | `409` تکرار، `422` نوع/فیلد ناسازگار، `409` آرشیو با قرارداد فعال |
+| `Contracts` | قرارداد، وضعیت، تمدید، فایل‌های قرارداد | contracts, contract_types, contract_files, contract_versions | Customers, ContractTemplates, Files, Audit | `contract.created/updated/finalized/renewed/cancelled` | `422` تاریخ پایان < شروع، `409` نهایی‌شده قابل ویرایش نیست |
+| `ContractTemplates` | قالب، نسخه، موتور Placeholder، پیش‌نمایش | contract_templates, contract_versions | Customers, Contracts | `template.created/updated` | `422` Placeholder ناشناخته |
+| `Projects` | پروژه پایه (نوع، وضعیت، تخصیص‌ها) | projects, project_assignments | Customers, Contracts, Employees, Audit | `project.created/updated/status_changed` | `422` نوع نامعتبر |
+| `SeoProjects` | فیلدهای سئو، کلمات کلیدی، نهایی‌سازی | seo_project_details, project_keywords, seo_packages | Projects, Credentials | `seo.finalized`, `keyword.added/removed` | `422` دسترسی اجباری ناقص (فهرست موارد) |
+| `DesignProjects` | فیلدهای طراحی سایت | design_project_details | Projects | `design.updated` | `422` |
+| `Credentials` | **تنها جایی که رمز رمزگشایی می‌شود**؛ انواع، الزامات، reveal، PDF محرمانه | credential_types, project_credentials | Projects, Files, Audit, Crypto | `credential.created/updated/revealed/pdf_downloaded` | `403` مجوز/re-auth، `500` کلید ناموجود (بدون نشت) |
+| `Invoices` | فاکتور دوره‌ای + وضعیت + فایل | invoices | Projects, Files, Reminders | `invoice.created/sent/cancelled` | `409` دوره تکراری، `422` مبلغ نامعتبر |
+| `SeoReports` | گزارش دوره‌ای سئو + وضعیت + فایل | seo_reports | Projects, Files, Reminders | `report.prepared/sent` | `409` دوره تکراری |
+| `Reminders` | موتور D-2، `scheduled_events`, کارتابل، idempotency | scheduled_events, job_runs | Invoices, SeoReports, Notes, Contracts | `reminder.fired/dismissed/done` | `500` شکست Job (ثبت در job_runs) |
+| `Notes` | یادداشت دستی + اتصال به مشتری/قرارداد/پروژه + یادآور | notes | Customers, Contracts, Projects, Reminders | `note.created/done` | `422` مرجع نامعتبر |
+| `Employees` | پرسنل، قرارداد پرسنل، تخصیص به پروژه | employees, employee_contracts, project_assignments | Files, Users, Audit | `employee.created/updated/terminated` | `409` کد ملی تکراری |
+| `Payroll` | قواعد، دوره، اقلام، فیش، نسخه، اصلاحیه | payroll_rules, payroll_periods, payroll_items, payslips, payslip_versions | Employees, Projects, Settings, Audit | `payroll.calculated/finalized/amended` | `409` دوره نهایی‌شده، `422` قاعده ناقص (Q-08) |
+| `Dashboard` | KPIها + کارتابل تجمیعی (فقط خواندن) | — (خواندن از دیگران) | همه ماژول‌های دامنه | — | — |
+| `Search` | جستجوی سراسری نرمال‌شده (فارسی) | — (خواندن) | Customers, Contracts, Projects, Notes | — | `403` نتیجه بر اساس مجوز فیلتر می‌شود |
+| `Reports` | گزارش‌های مدیریتی + Export | — (خواندن) | همه دامنه‌ها, Excel, Pdf | `report.exported` | `403`، `422` بازه نامعتبر |
+| `Pdf` | موتور PDF فارسی + قالب‌ها + تحویل امن | — (تولید) | Fonts, Files | `pdf.generated` | `500` فونت/فایل ناموجود |
+| `Excel` | XLSX واقعی + ضد Formula Injection | — (تولید) | — | `excel.exported` | `422` |
+| `Files` | آپلود، اعتبارسنجی MIME/پسوند/حجم، Storage خصوصی، دانلود کنترل‌شده | attachments | Storage | `file.uploaded/downloaded/deleted` | `422` نوع/حجم، `403` دانلود |
+| `Backup` | گرفتن بکاپ + بازیابی + تست بازیابی | — (سیستم) | DB, Storage, Crypto | `backup.created`, `restore.executed` | `500` شکست dump/کلید |
+| `Installer` | نصب امن + قفل پس از نصب | users (اولیه) | DB, Settings | `install.completed` | `403` پس از نصب |
+
+### ۱۰.۲ قواعد مشترک همه ماژول‌ها
+
+| قاعده | چرا |
+|---|---|
+| هر ماژول فقط از **Service عمومی** خود با بقیه حرف می‌زند | جلوگیری از کوپلینگ و کوئری cross-module |
+| هیچ ماژولی مستقیماً به جدول ماژول دیگر DML نمی‌زند | مدل داده یک مالک دارد |
+| هر عملیات نوشتنی در `transaction` است | جلوگیری از داده نیمه‌کاره |
+| هر عملیات نوشتنی یک رویداد Audit دارد | ردیابی‌پذیری (REQ-10.03) |
+| هر FormRequest پیام فارسی دارد | UX و REQ-11.01 |
+| هر Policy یک `before()` برای مدیر کل دارد | سادگی نسخه ۱ + آمادگی نسخه بعد |
+| خطای `500` هرگز جزئیات فنی به کاربر نمی‌دهد | امنیت؛ فقط کد پیگیری |
+
+### ۱۰.۳ ماژول‌هایی که **نباید** ساخته شوند (ضد-الزام)
+
+| ضد-الزام | چرا |
+|---|---|
+| ماژول «WordPress Bridge» | استقلال کامل الزام است (REQ-15.01) |
+| ماژول «Elementor Template Loader» | UI باید اختصاصی باشد (REQ-11.01) |
+| ماژول «SMS Provider» | در نسخه ۱ الزام نیست (Q-32) |
+| ماژول «Multi-tenant» | نسخه ۱ برای یک سازمان است |
+| ماژول «Accounting/دفتر کل» | فقط فاکتور و حقوق خواسته شده؛ حسابداری کامل نیست |
+
+> این جدول مهم است: در فاز ۲ هر پیشنهاد «ماژول جدید» باید اول ثابت کند در این فهرست
+> ضد-الزام نیست.

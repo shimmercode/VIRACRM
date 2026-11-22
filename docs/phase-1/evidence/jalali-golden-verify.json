@@ -1,0 +1,45 @@
+{
+    "generated_at": "2026-11-22T19:16:26+00:00",
+    "php_version": "8.3.36",
+    "algorithm_under_test": "morilog\/jalali v3.5.0 (port of published CalendarUtils source)",
+    "golden_set": {
+        "file": "docs\/fixtures\/jalali-golden-set.json",
+        "cases": 41,
+        "generated_at": "2026-11-22T19:02:52+00:00"
+    },
+    "checks": {
+        "forward_jalali_to_gregorian": {
+            "failures": 0,
+            "total": 41
+        },
+        "reverse_gregorian_to_jalali": {
+            "failures": 0,
+            "total": 41
+        },
+        "roundtrip_days": {
+            "failures": 0,
+            "days": 11323
+        },
+        "leap_and_month_length": {
+            "failures": 0
+        },
+        "invalid_date_rejection": {
+            "failures": 0
+        },
+        "negative_control_2820": {
+            "failures": 0,
+            "disagreements": [
+                "1404: 2820 says 2025-03-20, references say 2025-03-21",
+                "1404: 2820 says 2025-03-20, references say 2025-03-21"
+            ]
+        }
+    },
+    "disputed_year_1404": {
+        "nowruz_gregorian": "2025-03-21",
+        "is_leap": false,
+        "esfand_days": 29
+    },
+    "scope_note": "Verifies the algorithm. Composers install of the package is NOT performed in this sandbox and remains blocked (T-INF-02).",
+    "failures": 0,
+    "verdict": "PASS"
+}

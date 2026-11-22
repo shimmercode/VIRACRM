@@ -149,8 +149,11 @@ def build_rtm(req_doc: dict, test_doc: dict) -> dict:
         lines.append("")
 
     # CSV export
+    # lineterminator="\n" keeps the CSV byte-identical to the committed file and matches
+    # .gitattributes (eol=lf). Without it Python writes CRLF, which made every regeneration
+    # show up as a whole-file diff.
     with (OUT / "05-traceability-matrix.csv").open("w", newline="", encoding="utf-8-sig") as fh:
-        w = csv.writer(fh)
+        w = csv.writer(fh, lineterminator="\n")
         w.writerow(["requirement_id", "group", "type", "priority", "title", "modules", "tests", "status", "phase"])
         for r in reqs:
             w.writerow([r["id"], r["group"], r["type"], r["priority"], r["title"],
@@ -209,13 +212,29 @@ def build_status(req_doc: dict, test_doc: dict) -> str:
         "",
         "## وضعیت تست‌ها (واقعی)",
         "",
-        md_table(["وضعیت تست", "تعداد"], [[k, tstat.get(k, 0)] for k in ["pass", "fail", "blocked", "not-tested"]]),
+        md_table(
+            ["وضعیت تست", "تعداد", "معنا"],
+            [
+                ["PASS", tstat.get("PASS", 0), "اجرا شد و مطابق انتظار بود (با شاهد)"],
+                ["FAIL", tstat.get("FAIL", 0), "اجرا شد و مغایر انتظار بود"],
+                ["BLOCKED", tstat.get("BLOCKED", 0), "وابستگی بیرونی مانع اجراست"],
+                ["NOT_RUN", tstat.get("NOT_RUN", 0) + tstat.get("not-tested", 0), "اجرا نشده (کد محصول وجود ندارد)"],
+                ["NOT_APPLICABLE", tstat.get("NOT_APPLICABLE", 0), "خارج از محدوده با تصمیم ثبت‌شده"],
+            ],
+        ),
         "",
         f"سناریوهای ثبت‌شده: **{len(tests)}** (حداقل الزامی بریف: {test_doc['meta']['min_scenarios_required']}).",
         "",
-        "تنها تست‌های `pass` دو تست فرآیندی QA هستند (کامل بودن کاتالوگ و RTM). "
-        "هفت تست `blocked` به عدم دسترسی به هاست یا عدم وجود فرمول تأییدشده حقوق وابسته‌اند (ابهام Q-05، Q-08). "
-        "بقیه `not-tested` هستند چون کد محصول هنوز وجود ندارد.",
+        "**تفکیک مهم:** تست‌های `PASS` دو دسته‌اند و نباید با هم اشتباه شوند:",
+        "",
+        "1. **تست فرآیندی QA** (T-QA-01، T-QA-02) — کامل بودن کاتالوگ و RTM.",
+        "2. **تست الگوریتم/ابزار** (T-CAL-01..04، T-CAL-08، T-CAL-10، T-OPS-07، T-OPS-08) —",
+        "   روی PHP-WASM واقعی یا با بازبینی ایستای کد اجرا شده‌اند و شاهد JSON دارند.",
+        "",
+        "**هیچ‌کدام از این‌ها تست ماژول محصول نیستند**، چون کد محصول وجود ندارد.",
+        "تست‌های `BLOCKED` به سه دلیل‌اند: نبود دسترسی به هاست، نبود محیط staging،",
+        "یا عدم تأیید قواعد حقوق/تقویم توسط کارفرما (Q-06، Q-08) — دلیل هرکدام در",
+        "فیلد `blocked_reason` همان تست ثبت شده است.",
         "",
         "## درصد پیشرفت به تفکیک گروه (وزنی، طراحی‌شده در برابر پیاده‌شده)",
         "",

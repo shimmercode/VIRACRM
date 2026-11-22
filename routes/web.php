@@ -1,0 +1,81 @@
+<?php
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Contracts\ContractController;
+use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| VIRA CRM — routes
+|--------------------------------------------------------------------------
+|
+| Every authenticated route declares the permission it needs. The check runs
+| in middleware on the server, so typing a URL directly is refused exactly the
+| same way as clicking a hidden link. Hiding the link is a usability decision,
+| never a security one (REQ-10.03).
+|
+*/
+
+// ── Guest ──────────────────────────────────────────────────────────────────
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('login.store');
+});
+
+// ── Authenticated ──────────────────────────────────────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // Password change must stay reachable even when `must_change_password` is
+    // set, otherwise the user is trapped in a redirect loop.
+    Route::get('/password', [PasswordController::class, 'edit'])->name('password.change');
+    Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
+
+    // Everything below additionally requires a settled password.
+    Route::middleware(['password.settled'])->group(function () {
+        // The dashboard is the landing page for every signed-in user; the
+        // individual counts inside it are permission-gated per area (§2).
+        Route::get('/', DashboardController::class)->name('dashboard');
+
+        // ── Customers (§3) ─────────────────────────────────────────────
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])
+                ->middleware('permission:customers.view')->name('index');
+            Route::get('/create', [CustomerController::class, 'create'])
+                ->middleware('permission:customers.create')->name('create');
+            Route::post('/', [CustomerController::class, 'store'])
+                ->middleware('permission:customers.create')->name('store');
+            Route::get('/{customer}', [CustomerController::class, 'show'])
+                ->middleware('permission:customers.view')->name('show');
+            Route::get('/{customer}/edit', [CustomerController::class, 'edit'])
+                ->middleware('permission:customers.update')->name('edit');
+            Route::put('/{customer}', [CustomerController::class, 'update'])
+                ->middleware('permission:customers.update')->name('update');
+            Route::delete('/{customer}', [CustomerController::class, 'destroy'])
+                ->middleware('permission:customers.delete')->name('destroy');
+        });
+
+        // ── Contracts (§4) ─────────────────────────────────────────────
+        Route::prefix('contracts')->name('contracts.')->group(function () {
+            Route::get('/', [ContractController::class, 'index'])
+                ->middleware('permission:contracts.view')->name('index');
+            Route::get('/create', [ContractController::class, 'create'])
+                ->middleware('permission:contracts.create')->name('create');
+            Route::post('/', [ContractController::class, 'store'])
+                ->middleware('permission:contracts.create')->name('store');
+            Route::get('/{contract}', [ContractController::class, 'show'])
+                ->middleware('permission:contracts.view')->name('show');
+            Route::get('/{contract}/edit', [ContractController::class, 'edit'])
+                ->middleware('permission:contracts.update')->name('edit');
+            Route::put('/{contract}', [ContractController::class, 'update'])
+                ->middleware('permission:contracts.update')->name('update');
+            Route::delete('/{contract}', [ContractController::class, 'destroy'])
+                ->middleware('permission:contracts.delete')->name('destroy');
+        });
+    });
+});

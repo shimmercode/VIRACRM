@@ -29,4 +29,7 @@
 .DS_Store
 Thumbs.db
 
+# scratch space for one-off diagnostic scripts (never part of the deliverable)
+/.arena/
+
 # jupyter/pandas etc not needed

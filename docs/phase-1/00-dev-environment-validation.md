@@ -25,8 +25,9 @@
 | E-07 | محاسبات پولی `bcmath` (بدون float) | **PASS** | همان فایل، RT-05 |
 | E-08 | `password_hash` (bcrypt) و verify | **PASS** | همان فایل، RT-03 |
 | E-09 | PDO SQLite برای تست‌های خودکار + FK | **PASS** | همان فایل، RT-07 |
-| E-10 | موتور تاریخ شمسی (J↔G، D-2، مرز روز) | **PASS** — ۰ خطا از ۸ مورد مرجع + ۲۴۲۴ بررسی invariant | `docs/phase-1/evidence/jalali-smoke-test.json` |
-| E-11 | Timezone `Asia/Tehran` بدون DST (بعد از ۲۰۲۲) | **PASS** — offset ثابت +12600 ثانیه | همان فایل |
+| E-10 | الگوریتم تقویم شمسی `morilog/jalali` v3.5.0 (J↔G، ۴۱ مورد Golden Set، ۱۱٬۳۲۳ روز رفت‌وبرگشت، الگوی کبیسه، رد تاریخ نامعتبر) | **PASS** — ۰ خطا در همه بررسی‌ها | `docs/phase-1/evidence/jalali-golden-verify.json` |
+| E-10b | موتور حسابی ۲۸۲۰ (منسوخ) — به‌عنوان **کنترل منفی** | **PASS** (کنترل درست کار می‌کند: فقط ۱۴۰۴ و ۱۴۳۷ اختلاف دارد) | همان فایل، بررسی ۷ |
+| E-11 | محاسبه D-2 = دو روز تقویمی + مرز نیمه‌شب تهران/UTC + آفست ثابت +۰۳:۳۰ بدون DST | **PASS** — ۲۲ بررسی، ۰ خطا | `docs/phase-1/evidence/d2-daymath-verify.json` |
 | E-12 | تولید دیاگرام Graphviz (نصب رسمی از npm) | **PASS** — SVG/PNG با فونت فارسی Vazirmatn | `docs/diagrams/*.svg` |
 | E-13 | اعتبارسنجی syntax سه اسکریپت PHP با `token_get_all(TOKEN_PARSE)` | **PASS** — ALL SYNTAX OK | خروجی اجرا در همین نشست |
 | E-14 | صحت لینک‌های داخلی ۲۰ سند Markdown | **PASS** — ۰ لینک شکسته | بررسی اسکریپتی در همین نشست |

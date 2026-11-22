@@ -1,0 +1,640 @@
+/* ==========================================================================
+   VIRA CRM — Page-specific composition
+   Only layout arrangements that belong to a single screen. Shared visual
+   language lives in components.css.
+   ========================================================================== */
+
+/* ── Login ───────────────────────────────────────────────────────────────── */
+
+/*
+ * The grid lives on .v-auth__layout, NOT on .v-auth (which is <body>).
+ *
+ * An earlier version put `display: grid; grid-template-columns: 1fr 1fr` on
+ * the body itself. Body's first child is the wrapper, so the wrapper was
+ * placed in column one at half width while the visual panel — also a child of
+ * the wrapper — filled the right half. The rendered result was a purple band
+ * occupying an eighth of the screen. One grid, on the wrapper.
+ */
+.v-auth {
+    min-height: 100vh;
+    background: var(--vira-bg);
+}
+
+.v-auth__aside {
+    background: var(--vira-primary);
+    color: var(--vira-text-inverse);
+    padding: var(--vira-space-10);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+/* A single subtle radial mark — no gradient soup. */
+.v-auth__aside::after {
+    content: '';
+    position: absolute;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    background: rgba(210, 171, 103, 0.1);
+    inset-block-end: -180px;
+    inset-inline-start: -140px;
+}
+.v-auth__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    position: relative;
+    z-index: 1;
+}
+.v-auth__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--vira-radius);
+    background: var(--vira-surface);
+    color: var(--vira-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--vira-weight-bold);
+}
+.v-auth__brand-name {
+    font-size: var(--vira-text-lg);
+    font-weight: var(--vira-weight-bold);
+}
+.v-auth__pitch {
+    position: relative;
+    z-index: 1;
+    max-width: 34ch;
+}
+.v-auth__pitch h2 {
+    font-size: var(--vira-text-2xl);
+    line-height: 1.35;
+    margin-bottom: var(--vira-space-3);
+}
+.v-auth__pitch p {
+    font-size: var(--vira-text-sm);
+    color: rgba(255, 255, 255, 0.78);
+    line-height: var(--vira-leading-loose);
+}
+.v-auth__points {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-3);
+    margin-top: var(--vira-space-6);
+    position: relative;
+    z-index: 1;
+}
+.v-auth__point {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--vira-space-3);
+    font-size: var(--vira-text-sm);
+    color: rgba(255, 255, 255, 0.9);
+}
+.v-auth__point svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    margin-top: 3px;
+    color: var(--vira-gold);
+}
+.v-auth__foot {
+    font-size: var(--vira-text-xs);
+    color: rgba(255, 255, 255, 0.6);
+    position: relative;
+    z-index: 1;
+}
+
+.v-auth__panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--vira-space-8) var(--vira-space-6);
+}
+.v-auth__card {
+    width: 100%;
+    max-width: 380px;
+}
+.v-auth__mobile-brand {
+    display: none;
+    align-items: center;
+    gap: var(--vira-space-2);
+    margin-bottom: var(--vira-space-6);
+}
+.v-auth__title {
+    font-size: var(--vira-text-xl);
+    font-weight: var(--vira-weight-bold);
+    margin-bottom: var(--vira-space-1);
+}
+.v-auth__subtitle {
+    font-size: var(--vira-text-sm);
+    color: var(--vira-text-secondary);
+    margin-bottom: var(--vira-space-6);
+}
+.v-auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-4);
+}
+.v-auth__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vira-space-3);
+    font-size: var(--vira-text-xs);
+}
+.v-auth__security {
+    margin-top: var(--vira-space-6);
+    padding-top: var(--vira-space-4);
+    border-top: 1px solid var(--vira-border);
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+}
+.v-auth__security svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+@media (max-width: 1023px) {
+    .v-auth {
+        grid-template-columns: 1fr;
+    }
+    .v-auth__aside {
+        display: none;
+    }
+    .v-auth__mobile-brand {
+        display: flex;
+    }
+}
+
+/* ── Detail page hero ────────────────────────────────────────────────────── */
+
+.v-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--vira-space-4);
+    padding: var(--vira-space-5);
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius);
+    margin-bottom: var(--vira-space-5);
+}
+.v-hero__main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-2);
+}
+.v-hero__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    flex-wrap: wrap;
+}
+.v-hero__title {
+    font-size: var(--vira-text-xl);
+    font-weight: var(--vira-weight-bold);
+    line-height: 1.3;
+}
+.v-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-4);
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+.v-hero__meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-1);
+}
+.v-hero__meta-item svg {
+    width: 13px;
+    height: 13px;
+}
+
+@media (max-width: 767px) {
+    .v-hero {
+        flex-direction: column;
+        padding: var(--vira-space-4);
+    }
+    .v-hero__title {
+        font-size: var(--vira-text-lg);
+    }
+}
+
+/* ── Dashboard ───────────────────────────────────────────────────────────── */
+
+.v-dash-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: var(--vira-space-5);
+    align-items: start;
+}
+@media (max-width: 1023px) {
+    .v-dash-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Task rows in the کارتابل. */
+.v-task {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--vira-space-3);
+    padding: var(--vira-space-3) var(--vira-space-4);
+    border-bottom: 1px solid var(--vira-border);
+    transition: background var(--vira-duration-fast) var(--vira-ease);
+}
+.v-task:last-child {
+    border-bottom: none;
+}
+.v-task:hover {
+    background: var(--vira-surface-hover);
+}
+.v-task__marker {
+    width: 3px;
+    align-self: stretch;
+    border-radius: var(--vira-radius-full);
+    background: var(--vira-border-strong);
+    flex: 0 0 auto;
+}
+.v-task--overdue .v-task__marker {
+    background: var(--vira-danger);
+}
+.v-task--today .v-task__marker {
+    background: var(--vira-warning);
+}
+.v-task--future .v-task__marker {
+    background: var(--vira-info);
+}
+.v-task__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.v-task__title {
+    font-size: var(--vira-text-sm);
+    font-weight: var(--vira-weight-medium);
+    color: var(--vira-text);
+}
+.v-task__meta {
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-2);
+}
+.v-task__side {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+}
+
+/* ── 403 / 404 ───────────────────────────────────────────────────────────── */
+
+.v-errorpage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--vira-space-6);
+    background: var(--vira-bg);
+}
+.v-errorpage__inner {
+    text-align: center;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--vira-space-3);
+}
+.v-errorpage__code {
+    font-size: 3.5rem;
+    font-weight: var(--vira-weight-bold);
+    line-height: 1;
+    color: var(--vira-primary);
+    letter-spacing: -0.03em;
+}
+.v-errorpage__title {
+    font-size: var(--vira-text-lg);
+    font-weight: var(--vira-weight-bold);
+}
+.v-errorpage__text {
+    font-size: var(--vira-text-sm);
+    color: var(--vira-text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Login / auth page — the 2-C markup.
+
+   The page is a two-column grid that must fill the viewport. `.v-auth` is on
+   <body>, so the wrapper is what carries the grid; putting the grid on <body>
+   and an unstyled wrapper inside it produced a half-height purple panel and a
+   copyright stranded in the middle of the form.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.v-auth {
+    margin: 0;
+    background: var(--vira-bg);
+}
+
+.v-auth__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+/* ── Left (visual) panel ──────────────────────────────────────────────── */
+.v-auth__aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--vira-space-6);
+    padding: var(--vira-space-9) var(--vira-space-8);
+    color: var(--vira-surface);
+    background: var(--vira-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+/* One restrained circular accent; no gradient mesh. */
+.v-auth__aside::after {
+    content: '';
+    position: absolute;
+    inset-block-end: -200px;
+    inset-inline-start: -160px;
+    width: 440px;
+    height: 440px;
+    border-radius: var(--vira-radius-full);
+    background: rgb(210 171 103 / 0.12);
+    pointer-events: none;
+}
+
+.v-auth__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-3);
+    position: relative;
+    z-index: 1;
+}
+
+.v-brand__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    font-size: var(--vira-text-md);
+    font-weight: 700;
+    color: var(--vira-primary);
+    background: var(--vira-surface);
+    border-radius: var(--vira-radius-sm);
+}
+
+.v-brand__mark--lg {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    font-size: var(--vira-text-lg);
+}
+
+/* On the purple panel the mark needs no white chip. */
+.v-auth__aside .v-brand__mark {
+    color: var(--vira-primary);
+    background: var(--vira-surface);
+}
+
+.v-brand__name {
+    font-size: var(--vira-text-md);
+    font-weight: 700;
+}
+
+.v-brand__name--lg {
+    font-size: var(--vira-text-xl);
+}
+
+.v-auth__tagline {
+    max-width: 30ch;
+    margin: 0;
+    font-size: var(--vira-text-lg);
+    line-height: 1.7;
+    color: rgb(255 255 255 / 0.92);
+    position: relative;
+    z-index: 1;
+}
+
+.v-auth__rule {
+    flex: 1 1 auto;
+    min-height: var(--vira-space-8);
+    position: relative;
+    z-index: 1;
+}
+
+.v-auth__foot {
+    margin: 0;
+    font-size: var(--vira-text-xs);
+    letter-spacing: 0.02em;
+    color: rgb(255 255 255 / 0.66);
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Right (form) panel ───────────────────────────────────────────────── */
+.v-auth__panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--vira-space-6);
+    padding: var(--vira-space-8) var(--vira-space-6);
+    background: var(--vira-surface);
+}
+
+.v-auth__box {
+    width: 100%;
+    max-width: 380px;
+}
+
+.v-auth__mobile-brand {
+    display: none;
+    align-items: center;
+    gap: var(--vira-space-2);
+    margin-bottom: var(--vira-space-6);
+}
+
+.v-auth__title {
+    margin: 0 0 var(--vira-space-2);
+    font-size: var(--vira-text-xl);
+    font-weight: 700;
+    color: var(--vira-ink);
+}
+
+.v-auth__lead {
+    margin: 0 0 var(--vira-space-5);
+    font-size: var(--vira-text-sm);
+    line-height: 1.7;
+    color: var(--vira-text-secondary);
+}
+
+.v-auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-4);
+    margin-top: var(--vira-space-5);
+}
+
+.v-auth__help {
+    margin: var(--vira-space-5) 0 0;
+    font-size: var(--vira-text-xs);
+    line-height: 1.7;
+    color: var(--vira-text-muted);
+}
+
+.v-auth__copyright {
+    margin: 0;
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+
+/* The alert inside the login box must not stretch the column. */
+.v-auth__box .v-alert {
+    margin-bottom: var(--vira-space-2);
+}
+
+@media (max-width: 899px) {
+    .v-auth__layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v-auth__aside {
+        display: none;
+    }
+
+    .v-auth__mobile-brand {
+        display: flex;
+    }
+
+    .v-auth__panel {
+        justify-content: flex-start;
+        padding-block: var(--vira-space-10) var(--vira-space-8);
+        min-height: 100vh;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Dashboard stat strip.
+
+   `.v-stats` had no rules at all, so the five cards stacked vertically and the
+   dashboard became a column of full-width boxes — the opposite of the calm,
+   scannable summary §2 asks for.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.v-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+    gap: var(--vira-space-3);
+    margin-bottom: var(--vira-space-5);
+}
+
+.v-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--vira-space-4);
+    text-decoration: none;
+    color: inherit;
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius);
+    transition: border-color var(--vira-duration-fast) var(--vira-ease),
+                box-shadow var(--vira-duration-fast) var(--vira-ease);
+}
+
+a.v-stat:hover {
+    border-color: var(--vira-border-strong);
+    box-shadow: var(--vira-shadow-sm);
+}
+
+a.v-stat:focus-visible {
+    outline: 2px solid var(--vira-focus-ring);
+    outline-offset: 2px;
+}
+
+.v-stat__label {
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-secondary);
+}
+
+.v-stat__value {
+    font-size: var(--vira-text-2xl);
+    font-weight: 700;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+    color: var(--vira-ink);
+}
+
+.v-stat__hint {
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+
+/* Semantic emphasis only where the number is actionable. */
+.v-stat--warn .v-stat__value { color: var(--vira-gold-ink); }
+.v-stat--danger .v-stat__value { color: var(--vira-danger); }
+
+.v-stats--compact .v-stat {
+    padding: var(--vira-space-3) var(--vira-space-4);
+}
+
+.v-stats--compact .v-stat__value {
+    font-size: var(--vira-text-xl);
+}
+
+.v-stat__value--money {
+    font-size: var(--vira-text-lg);
+}
+
+@media (max-width: 767px) {
+    .v-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Mobile filter bar.
+
+   The filter bar becomes a column below 480px. `.v-filterbar__search` is
+   declared `flex: 1 1 260px`, and in a column flex container that 260px basis
+   applies to the HEIGHT — the search field rendered 260px tall with the input
+   pinned to its top. The basis must be reset when the axis changes.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 479px) {
+    .v-filterbar__search {
+        flex: 0 0 auto;
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* The icon is absolutely positioned; with a zero-height wrapper it would
+       float outside the field. Anchor it to the input's box instead. */
+    .v-filterbar__search input {
+        height: 38px;
+    }
+
+    .v-filterbar__icon {
+        top: 19px;
+    }
+}

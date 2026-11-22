@@ -1,0 +1,183 @@
+/* ==========================================================================
+   VIRA CRM — Design Tokens
+   --------------------------------------------------------------------------
+   Single source of truth for every colour, space, radius, shadow and type
+   value in the product. Components may not introduce raw hex values; if a
+   value is missing here, add it here first.
+
+   Direction: VIRA DESIGN DIRECTION (Attio × Linear × Monday inspiration).
+   Not a copy of those products — the palette, spacing rhythm and Persian
+   typography are VIRA's own.
+   ========================================================================== */
+
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('../fonts/Vazirmatn-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('../fonts/Vazirmatn-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('../fonts/Vazirmatn-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    /* ── Brand ──────────────────────────────────────────────────────────
+       Primary is the action colour. Gold is an *accent*: it marks the one
+       thing on screen that deserves attention and nothing else. */
+    --vira-primary: #450073;
+    --vira-primary-hover: #5a0095;
+    --vira-primary-active: #360058;
+    --vira-primary-soft: #f3e9fa;
+    --vira-primary-border: #dcc3ee;
+
+    --vira-ink: #211b2b;
+    --vira-gold: #d2ab67;
+    --vira-gold-soft: #faf4e8;
+    --vira-gold-border: #ecdcbc;
+    /* Gold text on the soft gold surface. Dark enough for 4.5:1 on #faf4e8. */
+    --vira-gold-ink: #7a5a1d;
+
+    /* ── Surfaces ───────────────────────────────────────────────────────
+       The canvas is warm-neutral, not pure white, so white cards read as
+       raised without needing heavy shadows. */
+    --vira-bg: #f6f5f8;
+    --vira-surface: #ffffff;
+    --vira-surface-sunken: #faf9fb;
+    --vira-surface-hover: #f4f2f6;
+    --vira-surface-selected: var(--vira-primary-soft);
+
+    /* ── Text ───────────────────────────────────────────────────────────
+       Four steps only. More than four and the hierarchy stops meaning
+       anything. */
+    --vira-text: #211b2b;
+    --vira-text-secondary: #5c5566;
+    /* Darkened from #8b8494: the original was 3.60:1 on white, below WCAG AA
+       for body-size text. #6f6a77 measures 5.24:1 on white and 4.83:1 on the
+       page background, so it is legible in both contexts. */
+    --vira-text-muted: #6f6a77;
+    --vira-text-inverse: #ffffff;
+
+    /* ── Lines ──────────────────────────────────────────────────────────*/
+    --vira-border: #e6e2ea;
+    --vira-border-strong: #d5cfdb;
+    --vira-border-focus: var(--vira-primary);
+
+    /* ── Status ─────────────────────────────────────────────────────────
+       Each carries one meaning. Never reuse "warning" for emphasis. */
+    --vira-success: #1c7c54;
+    --vira-success-soft: #e6f4ee;
+    --vira-success-border: #b7dfcd;
+
+    --vira-warning: #9a6100;
+    --vira-warning-soft: #fdf2df;
+    --vira-warning-border: #f0d9a8;
+
+    --vira-danger: #a5263b;
+    --vira-danger-soft: #fcebed;
+    --vira-danger-border: #f2c4ca;
+
+    --vira-info: #1a5c8a;
+    --vira-info-soft: #e8f2f9;
+    --vira-info-border: #bcd8ea;
+
+    --vira-neutral: #5c5566;
+    --vira-neutral-soft: #f0eef2;
+    --vira-neutral-border: #ddd8e2;
+
+    /* ── Spacing scale (4px base) ───────────────────────────────────────*/
+    --vira-space-1: 0.25rem;   /*  4 */
+    --vira-space-2: 0.5rem;    /*  8 */
+    --vira-space-3: 0.75rem;   /* 12 */
+    --vira-space-4: 1rem;      /* 16 */
+    --vira-space-5: 1.25rem;   /* 20 */
+    --vira-space-6: 1.5rem;    /* 24 */
+    --vira-space-7: 1.75rem;   /* 28 */
+    --vira-space-8: 2rem;      /* 32 */
+    --vira-space-9: 2.25rem;   /* 36 */
+    --vira-space-10: 2.5rem;   /* 40 */
+    --vira-space-11: 2.75rem;  /* 44 */
+    --vira-space-12: 3rem;     /* 48 */
+
+    /* ── Radius ─────────────────────────────────────────────────────────
+       One family. Sharp enough to feel precise, soft enough to feel modern. */
+    --vira-radius-sm: 6px;
+    --vira-radius: 10px;
+    --vira-radius-lg: 14px;
+    --vira-radius-full: 999px;
+
+    /* ── Elevation ──────────────────────────────────────────────────────
+       Shadows are barely visible by design; borders do the separating. */
+    --vira-shadow-xs: 0 1px 2px rgba(33, 27, 43, 0.04);
+    --vira-shadow-sm: 0 1px 3px rgba(33, 27, 43, 0.06), 0 1px 2px rgba(33, 27, 43, 0.04);
+    --vira-shadow-md: 0 4px 12px rgba(33, 27, 43, 0.08), 0 1px 3px rgba(33, 27, 43, 0.05);
+    --vira-shadow-lg: 0 12px 32px rgba(33, 27, 43, 0.12), 0 4px 8px rgba(33, 27, 43, 0.06);
+
+    /* ── Typography ─────────────────────────────────────────────────────
+       Sizes chosen for Persian legibility: Persian needs more line-height
+       and slightly larger minimum size than Latin. */
+    --vira-font: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --vira-text-xs: 0.75rem;    /* 12 — badges, meta */
+    --vira-text-sm: 0.8125rem;  /* 13 — table cells, labels */
+    --vira-text-base: 0.875rem; /* 14 — body */
+    --vira-text-md: 1rem;       /* 16 — emphasised body */
+    --vira-text-lg: 1.125rem;   /* 18 — card titles */
+    --vira-text-xl: 1.375rem;   /* 22 — page titles */
+    --vira-text-2xl: 1.75rem;   /* 28 — login heading */
+
+    --vira-leading-tight: 1.4;
+    --vira-leading: 1.7;        /* Persian needs the extra room */
+    --vira-leading-loose: 1.9;
+
+    --vira-weight-regular: 400;
+    --vira-weight-medium: 500;
+    --vira-weight-bold: 700;
+
+    /* ── Layout ─────────────────────────────────────────────────────────
+       Sidebar sits on the RIGHT because the interface is RTL. */
+    --vira-sidebar-width: 264px;
+    --vira-sidebar-collapsed: 68px;
+    --vira-topbar-height: 60px;
+    --vira-content-max: 1400px;
+
+    /* ── Motion ─────────────────────────────────────────────────────────
+       Short and functional. Nothing decorative. */
+    --vira-ease: cubic-bezier(0.2, 0, 0.13, 1);
+    --vira-duration-fast: 120ms;
+    --vira-duration: 180ms;
+    --vira-duration-slow: 260ms;
+
+    /* ── Focus ──────────────────────────────────────────────────────────*/
+    --vira-focus-ring: 0 0 0 3px rgba(69, 0, 115, 0.18);
+    --vira-focus-ring-danger: 0 0 0 3px rgba(165, 38, 59, 0.18);
+}
+
+/* Respect the operating system's reduced-motion setting. Everything that
+   animates must degrade to an instant state change. */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --vira-duration-fast: 0ms;
+        --vira-duration: 0ms;
+        --vira-duration-slow: 0ms;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
