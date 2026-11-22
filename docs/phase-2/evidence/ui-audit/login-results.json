@@ -1,0 +1,122 @@
+[
+  {
+    "id": "T-LOGIN-STATUS-desktop-1440",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "id": "T-LOGIN-RESP-desktop-1440",
+    "ok": true,
+    "detail": "overflowX=0px"
+  },
+  {
+    "id": "T-LOGIN-RTL-desktop-1440",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-LOGIN-FORM-desktop-1440",
+    "ok": true,
+    "detail": "fields=true, submit visible=true"
+  },
+  {
+    "id": "T-LOGIN-TYPE-desktop-1440",
+    "ok": true,
+    "detail": "smallest font 12px"
+  },
+  {
+    "id": "T-LOGIN-GRID-desktop-1440",
+    "ok": true,
+    "detail": "body display=block"
+  },
+  {
+    "id": "T-LOGIN-STATUS-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "id": "T-LOGIN-RESP-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px"
+  },
+  {
+    "id": "T-LOGIN-RTL-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-LOGIN-FORM-tablet-768",
+    "ok": true,
+    "detail": "fields=true, submit visible=true"
+  },
+  {
+    "id": "T-LOGIN-TYPE-tablet-768",
+    "ok": true,
+    "detail": "smallest font 12px"
+  },
+  {
+    "id": "T-LOGIN-GRID-tablet-768",
+    "ok": true,
+    "detail": "body display=block"
+  },
+  {
+    "id": "T-LOGIN-STATUS-phone-430",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "id": "T-LOGIN-RESP-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px"
+  },
+  {
+    "id": "T-LOGIN-RTL-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-LOGIN-FORM-phone-430",
+    "ok": true,
+    "detail": "fields=true, submit visible=true"
+  },
+  {
+    "id": "T-LOGIN-TYPE-phone-430",
+    "ok": true,
+    "detail": "smallest font 12px"
+  },
+  {
+    "id": "T-LOGIN-GRID-phone-430",
+    "ok": true,
+    "detail": "body display=block"
+  },
+  {
+    "id": "T-LOGIN-STATUS-phone-390",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "id": "T-LOGIN-RESP-phone-390",
+    "ok": true,
+    "detail": "overflowX=0px"
+  },
+  {
+    "id": "T-LOGIN-RTL-phone-390",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-LOGIN-FORM-phone-390",
+    "ok": true,
+    "detail": "fields=true, submit visible=true"
+  },
+  {
+    "id": "T-LOGIN-TYPE-phone-390",
+    "ok": true,
+    "detail": "smallest font 12px"
+  },
+  {
+    "id": "T-LOGIN-GRID-phone-390",
+    "ok": true,
+    "detail": "body display=block"
+  }
+]

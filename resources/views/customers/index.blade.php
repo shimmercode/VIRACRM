@@ -14,10 +14,15 @@
         </div>
 
         @if (auth()->user()->hasPermission('customers.create'))
-            <a href="{{ route('customers.create') }}" class="v-btn v-btn--primary">
-                <x-icon name="plus" :size="16" />
-                مشتری جدید
-            </a>
+            {{-- Wrap in the actions slot so the header flex can place it;
+                 an unwrapped child becomes a third flex item and drops to
+                 its own row below 1024px. --}}
+            <div class="v-pagehead__actions">
+                <a href="{{ route('customers.create') }}" class="v-btn v-btn--primary">
+                    <x-icon name="plus" :size="16" />
+                    مشتری جدید
+                </a>
+            </div>
         @endif
     </header>
 

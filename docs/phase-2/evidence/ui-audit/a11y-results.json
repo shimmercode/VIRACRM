@@ -1,0 +1,52 @@
+[
+  {
+    "id": "T-LOGOUT-phone-390",
+    "ok": true,
+    "detail": "sign-out reachable"
+  },
+  {
+    "id": "T-LOGOUT-tablet-768",
+    "ok": true,
+    "detail": "sign-out reachable"
+  },
+  {
+    "id": "T-LOGOUT-desktop-1440",
+    "ok": true,
+    "detail": "sign-out reachable"
+  },
+  {
+    "id": "T-DRAWER-FOCUS",
+    "ok": true,
+    "detail": "focus inside panel=true, on scrim=false"
+  },
+  {
+    "id": "T-DRAWER-TRAP",
+    "ok": true,
+    "detail": "0 of 24 Tab presses escaped the dialog"
+  },
+  {
+    "id": "T-DRAWER-ESCAPE",
+    "ok": true,
+    "detail": "closed=true, focus restored to trigger=true"
+  },
+  {
+    "id": "T-ALERT-LIVE",
+    "ok": true,
+    "detail": "1 live region(s); roles: alert"
+  },
+  {
+    "id": "T-ERROR-SUMMARY",
+    "ok": true,
+    "detail": "summary present, tabindex=-1, focused=true"
+  },
+  {
+    "id": "T-FIELD-INVALID",
+    "ok": true,
+    "detail": "1 field(s) aria-invalid, all referencing their error text=true"
+  },
+  {
+    "id": "T-ACCESS-NAME",
+    "ok": true,
+    "detail": "all visible controls have accessible names"
+  }
+]

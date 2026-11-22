@@ -37,8 +37,12 @@
                 <x-alert type="info" :dismissible="true">{{ session('status') }}</x-alert>
             @endif
 
+            {{-- tabindex="-1" makes the summary programmatically focusable so a
+                 keyboard or screen-reader user is taken to it after a failed
+                 submit, instead of being left at the top of a long form with no
+                 indication that anything happened. --}}
             @if ($errors->any() && ! isset($suppressErrorSummary))
-                <x-alert type="danger" :dismissible="true">
+                <x-alert type="danger" :dismissible="true" id="error-summary" tabindex="-1">
                     <strong>لطفاً خطاهای زیر را بررسی کنید:</strong>
                     <ul class="v-alert__list">
                         @foreach ($errors->all() as $error)

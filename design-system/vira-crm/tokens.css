@@ -1,0 +1,141 @@
+# Design Tokens
+
+Machine-readable companion to `MASTER.md` §2–§4. The canonical definitions live in
+`resources/css/tokens.css`; this file explains intent and records the contrast evidence.
+
+## Primitive → semantic mapping
+
+Vira uses a flat token set (not a Tailwind-style primitive ramp). Every token is
+semantic already — there is no `--vira-purple-700`, only `--vira-primary`. That is
+deliberate: with one brand hue, a primitive ramp invites invented steps.
+
+```
+Brand identity         Semantic role              Component use
+─────────────────────────────────────────────────────────────────────
+#450073  ──────────►  --vira-primary        ──►  .v-btn--primary, focus ring
+                       --vira-primary-hover
+                       --vira-primary-active
+                       --vira-primary-soft   ──►  selected nav row, soft badge
+#211B2B  ──────────►  --vira-ink / --vira-text ──► body copy, titles
+#F6F5F8  ──────────►  --vira-bg             ──►  page canvas
+#FFFFFF  ──────────►  --vira-surface        ──►  cards, inputs, panels
+#D2AB67  ──────────►  --vira-gold           ──►  expiry accent (limited)
+                       --vira-gold-ink       ──►  gold text, AA-safe
+```
+
+## Full token set
+
+### Colour
+
+```css
+/* Brand */
+--vira-primary: #450073;
+--vira-primary-hover: #5a0095;
+--vira-primary-active: #360058;
+--vira-primary-soft: #f3e9fa;
+--vira-primary-border: #dcc3ee;
+
+/* Ink and surfaces */
+--vira-ink: #211b2b;
+--vira-bg: #f6f5f8;
+--vira-surface: #ffffff;
+--vira-surface-sunken: #faf9fb;
+--vira-surface-hover: #f4f2f6;
+--vira-surface-selected: var(--vira-primary-soft);
+
+/* Text */
+--vira-text: #211b2b;            /* 15.39:1 on bg, 16.72:1 on surface */
+--vira-text-secondary: #5c5566;  /*  7.13:1 */
+--vira-text-muted: #6f6a77;      /*  5.24:1 */
+--vira-text-inverse: #ffffff;    /* 13.99:1 on primary */
+
+/* Borders */
+--vira-border: #e6e2ea;
+--vira-border-strong: #d5cfdb;
+--vira-border-focus: var(--vira-primary);
+
+/* Accent */
+--vira-gold: #d2ab67;
+--vira-gold-soft: #faf4e8;
+--vira-gold-border: #ecdcbc;
+--vira-gold-ink: #7a5a1d;        /*  5.80:1 on gold-soft */
+
+/* Status */
+--vira-success: #1c7c54;  --vira-success-soft: #e6f4ee;  --vira-success-border: #b7dfcd;
+--vira-warning: #9a6100;  --vira-warning-soft: #fdf2df;  --vira-warning-border: #f0d9a8;
+--vira-danger:  #a5263b;  --vira-danger-soft:  #fcebed;  --vira-danger-border:  #f2c4ca;
+--vira-info:    #1a5c8a;  --vira-info-soft:    #e8f2f9;  --vira-info-border:    #bcd8ea;
+```
+
+### Type
+
+```css
+--vira-text-xs: 0.75rem;    /* 12 */
+--vira-text-sm: 0.8125rem;  /* 13 */
+--vira-text-base: 0.875rem; /* 14 */
+--vira-text-md: 1rem;       /* 16 */
+--vira-text-lg: 1.125rem;   /* 18 */
+--vira-text-xl: 1.375rem;   /* 22 */
+```
+
+### Space
+
+```css
+--vira-space-1: 0.25rem;  /*  4 */   --vira-space-7:  1.75rem; /* 28 */
+--vira-space-2: 0.5rem;   /*  8 */   --vira-space-8:  2rem;    /* 32 */
+--vira-space-3: 0.75rem;  /* 12 */   --vira-space-9:  2.25rem; /* 36 */
+--vira-space-4: 1rem;     /* 16 */   --vira-space-10: 2.5rem;  /* 40 */
+--vira-space-5: 1.25rem;  /* 20 */   --vira-space-11: 2.75rem; /* 44 */
+--vira-space-6: 1.5rem;   /* 24 */   --vira-space-12: 3rem;    /* 48 */
+```
+
+### Shape, elevation, motion
+
+```css
+--vira-radius-sm: 6px;
+--vira-radius: 10px;
+--vira-radius-lg: 14px;
+--vira-radius-full: 999px;
+
+--vira-shadow-xs: 0 1px 2px rgba(33, 27, 43, 0.04);
+--vira-shadow-sm: 0 1px 3px rgba(33, 27, 43, 0.06), 0 1px 2px rgba(33, 27, 43, 0.04);
+--vira-shadow-md: 0 4px 12px rgba(33, 27, 43, 0.08), 0 1px 3px rgba(33, 27, 43, 0.05);
+--vira-shadow-lg: 0 12px 32px rgba(33, 27, 43, 0.12), 0 4px 8px rgba(33, 27, 43, 0.06);
+
+--vira-ease: cubic-bezier(0.2, 0, 0.13, 1);
+--vira-duration-fast: 120ms;
+--vira-duration: 180ms;
+--vira-duration-slow: 260ms;
+/* all three become 0ms under prefers-reduced-motion: reduce */
+```
+
+### Layout
+
+```css
+--vira-sidebar-width: 264px;
+--vira-sidebar-collapsed: 68px;
+--vira-content-max: 1400px;
+```
+
+## Contrast evidence
+
+Measured by `tools/checks/contrast.mjs` against the WCAG 2.1 relative-luminance formula.
+
+| Pair | Ratio | Threshold | Result |
+|------|-------|-----------|--------|
+| body text on page canvas | 15.39:1 | 4.5 | PASS |
+| body text on surface | 16.72:1 | 4.5 | PASS |
+| secondary text on surface | 7.13:1 | 4.5 | PASS |
+| muted text on surface | 5.24:1 | 4.5 | PASS |
+| primary on surface | 13.99:1 | 4.5 | PASS |
+| white on primary | 13.99:1 | 4.5 | PASS |
+| danger on surface | 7.14:1 | 4.5 | PASS |
+| gold-ink on gold-soft | 5.80:1 | 4.5 | PASS |
+
+
+## Declared-but-unused
+
+Three tokens are defined as scale completeness rather than because a component
+consumes them: `--vira-surface-selected`, `--vira-space-11`, `--vira-duration-slow`.
+`tools/checks/tokens.mjs` reports them, which is intended — it is a warning, not a
+failure. The check fails only on *undefined* references.

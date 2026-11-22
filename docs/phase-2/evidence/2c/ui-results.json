@@ -65,6 +65,46 @@
     "detail": "right=1024 (viewport 1024), visible=true"
   },
   {
+    "id": "T-STATUS-dashboard-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-dashboard-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-dashboard-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-dashboard-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-dashboard-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-dashboard-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-dashboard-phone-390",
     "ok": true,
     "detail": "HTTP 200 for /"
@@ -143,6 +183,46 @@
     "id": "T-SIDEBAR-customers-list-tablet-1024",
     "ok": true,
     "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-customers-list-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customers-list-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-customers-list-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customers-list-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
   },
   {
     "id": "T-STATUS-customers-list-phone-390",
@@ -225,6 +305,46 @@
     "detail": "right=1024 (viewport 1024), visible=true"
   },
   {
+    "id": "T-STATUS-customer-detail-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 offenders: v-stat__value v-stat__value--money"
+  },
+  {
+    "id": "T-RTL-customer-detail-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-detail-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-detail-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-customer-detail-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-detail-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-customer-detail-phone-390",
     "ok": true,
     "detail": "HTTP 200 for /customers/4"
@@ -303,6 +423,46 @@
     "id": "T-SIDEBAR-customer-form-tablet-1024",
     "ok": true,
     "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-customer-form-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-form-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-customer-form-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-form-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
   },
   {
     "id": "T-STATUS-customer-form-phone-390",
@@ -385,6 +545,46 @@
     "detail": "right=1024 (viewport 1024), visible=true"
   },
   {
+    "id": "T-STATUS-contracts-list-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-contracts-list-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contracts-list-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contracts-list-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-contracts-list-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contracts-list-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-contracts-list-phone-390",
     "ok": true,
     "detail": "HTTP 200 for /contracts"
@@ -463,6 +663,46 @@
     "id": "T-SIDEBAR-contract-detail-tablet-1024",
     "ok": true,
     "detail": "right=1024 (viewport 1024), visible=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-contract-detail-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-detail-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-contract-detail-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-detail-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
   },
   {
     "id": "T-STATUS-contract-detail-phone-390",
@@ -545,6 +785,46 @@
     "detail": "right=1024 (viewport 1024), visible=true"
   },
   {
+    "id": "T-STATUS-contract-form-tablet-768",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-tablet-768",
+    "ok": true,
+    "detail": "overflowX=0px doc=768/768 "
+  },
+  {
+    "id": "T-RTL-contract-form-tablet-768",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-form-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-phone-430",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-phone-430",
+    "ok": true,
+    "detail": "overflowX=0px doc=430/430 "
+  },
+  {
+    "id": "T-RTL-contract-form-phone-430",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-form-phone-430",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-contract-form-phone-390",
     "ok": true,
     "detail": "HTTP 200 for /contracts/create"
@@ -578,6 +858,21 @@
     "id": "T-TABLE-SCROLL",
     "ok": true,
     "detail": "table scrolls in wrapper=true, page overflow=0px"
+  },
+  {
+    "id": "T-DL-ALIGN",
+    "ok": true,
+    "detail": "Latin values align with their labels"
+  },
+  {
+    "id": "T-PAGEHEAD-tablet-768",
+    "ok": true,
+    "detail": "same row=true, title precedes action in RTL=true"
+  },
+  {
+    "id": "T-PAGEHEAD-desktop-1440",
+    "ok": true,
+    "detail": "same row=true, title precedes action in RTL=true"
   },
   {
     "id": "T-HEAD-GAP",

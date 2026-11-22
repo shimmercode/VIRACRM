@@ -88,5 +88,18 @@
                 @endif
             @endforeach
         </nav>
+
+        {{-- The rail's footer (sign out) has to be repeated here. The drawer is
+             the only navigation a phone user gets, so omitting this made signing
+             out impossible below 1024px — the rail is display:none there. --}}
+        <div class="v-sidebar__foot">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="v-navlink v-navlink--button">
+                    <x-icon name="logout" />
+                    <span class="v-navlink__label">خروج از حساب</span>
+                </button>
+            </form>
+        </div>
     </div>
 </div>

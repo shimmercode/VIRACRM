@@ -111,10 +111,15 @@ const PAGES = [
   ['contract-form', '/contracts/create', true],
 ];
 
+// The five widths the audit brief requires, plus 1280 for a common laptop.
+// 430 is a large phone (16 Pro Max); 768 is the tablet breakpoint where the
+// sidebar rail disappears, so it is the most likely place for a layout to break.
 const WIDTHS = [
   ['desktop-1440', 1440, 900],
   ['laptop-1280', 1280, 800],
   ['tablet-1024', 1024, 768],
+  ['tablet-768', 768, 1024],
+  ['phone-430', 430, 932],
   ['phone-390', 390, 844],
 ];
 
@@ -249,6 +254,89 @@ record('T-TYPE-MIN', phone.smallest >= 11, `smallest rendered font ${phone.small
 record('T-TOUCH', phone.tiny <= 2, `controls under 28px: ${phone.tiny}`);
 record('T-TABLE-SCROLL', phone.tableScrolls !== false && phone.pageOverflow <= 1,
   `table scrolls in wrapper=${phone.tableScrolls}, page overflow=${phone.pageOverflow}px`);
+// ── Latin values must align with their RTL label ─────────────────────────
+// `dir="ltr"` fixes character order but sets `text-align: start` to the LEFT
+// edge. On a full-width <dd> in a right-aligned RTL column, the label sat right
+// and its value far left, on separate lines. This measures the edges.
+{
+  await page.setViewportSize({ width: 430, height: 932 });
+  await page.goto(`${BASE}${CUSTOMER_ID}`, { waitUntil: 'domcontentloaded' });
+
+  const misaligned = await page.evaluate(() => {
+    // A value is misaligned when the text starts opposite its label. With an
+    // LTR element inside an RTL column, `text-align: start` resolves to the
+    // LEFT edge while the parent's edge is on the RIGHT — so compare the ink
+    // box edges, not the computed `text-align` keyword (which cannot tell them
+    // apart: `start` is "left" here and "right" on the parent).
+    const items = [...document.querySelectorAll('.v-dl > div')]
+      .filter((d) => d.querySelector('dd[dir="ltr"]'));
+
+    return items
+      .filter((d) => {
+        const dt = d.querySelector('dt');
+        const dd = d.querySelector('dd[dir="ltr"]');
+        if (!dt || !dd) return false;
+
+        const range = document.createRange();
+        range.selectNodeContents(dd);
+        const ink = range.getBoundingClientRect();
+        const label = dt.getBoundingClientRect();
+        if (!ink.width || !label.width) return false;
+
+        // Distance from the label's right edge minus the value's right edge.
+        // Both should end at the same column edge in an RTL document.
+        return Math.abs(label.right - ink.right) > 8;
+      })
+      .map((d) => (d.querySelector('dd')?.textContent || '').trim().slice(0, 18));
+  });
+
+  record(
+    'T-DL-ALIGN',
+    misaligned.length === 0,
+    misaligned.length === 0 ? 'Latin values align with their labels' : `misaligned: ${misaligned.join(', ')}`
+  );
+}
+
+// ── the page header must keep its title and its action on one row ────────
+// An action rendered as a bare child of `.v-pagehead` became a third flex item
+// and dropped onto its own row below 1024px, leaving the title stranded at the
+// top alone. Measured at 768 and 1440: below ~600px stacking is the correct
+// behaviour, so a wrap there is not a defect.
+for (const [label, w, h] of [['tablet-768', 768, 1024], ['desktop-1440', 1440, 900]]) {
+  await page.setViewportSize({ width: w, height: h });
+  await page.goto(`${BASE}/customers`, { waitUntil: 'domcontentloaded' });
+
+  const header = await page.evaluate(() => {
+    const head = document.querySelector('.v-pagehead');
+    if (!head) return { found: false };
+
+    const title = head.querySelector('.v-pagehead__title');
+    const action = head.querySelector('.v-pagehead__actions a, .v-pagehead__actions button');
+
+    if (!title || !action) return { found: true, hasAction: false };
+
+    const t = title.getBoundingClientRect();
+    const a = action.getBoundingClientRect();
+
+    return {
+      found: true,
+      hasAction: true,
+      sameRow: Math.abs((t.top + t.bottom) / 2 - (a.top + a.bottom) / 2) < Math.max(t.height, a.height),
+      titleRight: t.right >= a.right,
+    };
+  });
+
+  record(
+    `T-PAGEHEAD-${label}`,
+    header.found && header.hasAction && header.sameRow && header.titleRight,
+    !header.found
+      ? 'no page header'
+      : header.hasAction === false
+        ? 'no primary action in header'
+        : `same row=${header.sameRow}, title precedes action in RTL=${header.titleRight}`
+  );
+}
+
 record('T-HEAD-GAP', phone.headGap !== null && phone.headGap >= 16,
   `topbar→title gap ${phone.headGap}px (title ${phone.headFont}px)`);
 

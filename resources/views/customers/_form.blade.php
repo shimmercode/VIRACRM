@@ -17,6 +17,18 @@
     $val = fn (string $field) => old($field, $customer->{$field} ?? '');
     $err = fn (string $field) => $errors->has($field) ? ' is-invalid' : '';
 
+    // A field marked invalid visually must also say so to assistive tech, and
+    // its error text must be referenced rather than merely placed after it.
+    // `aria-describedby` lists the hint always, then the error when present.
+    $errState = function (string $field, string $hint = '') use ($errors): string {
+        if (! $errors->has($field)) {
+            return $hint ? ' aria-describedby="' . $hint . '"' : '';
+        }
+        $ids = implode(' ', array_filter([$hint, $field . '-error']));
+
+        return ' aria-invalid="true" aria-describedby="' . $ids . '"';
+    };
+
     $currentType = old('type', $customer->type?->value ?? 'legal');
 @endphp
 
@@ -60,9 +72,9 @@
                 <input id="company_name" name="company_name" type="text"
                        class="v-input{{ $err('company_name') }}" value="{{ $val('company_name') }}"
                        :required="type === 'legal'"
-                       aria-describedby="company_name-hint">
+                       {!! $errState('company_name', 'company_name-hint') !!}>
                 <p class="v-hint" id="company_name-hint">همان‌طور که در اسناد رسمی آمده است.</p>
-                @error('company_name')<p class="v-error">{{ $message }}</p>@enderror
+                @error('company_name')<p class="v-error" id="company_name-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="v-field">

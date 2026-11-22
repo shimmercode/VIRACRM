@@ -47,7 +47,10 @@
             document.body.classList.add('v-app--drawer-open', 'is-locked');
             var trigger = document.querySelector('[data-drawer-open]');
             if (trigger) trigger.setAttribute('aria-expanded', 'true');
-            var first = drawer.querySelector('a, button');
+            // Scope to the dialog, not the whole drawer: the scrim is a
+            // <button> that comes first in the DOM, so querying the drawer put
+            // focus on the backdrop behind the panel instead of inside it.
+            var first = focusable()[0];
             if (first) first.focus();
         }
 
@@ -66,6 +69,21 @@
             el.addEventListener('click', close);
         });
 
+        // The dialog's own focusable controls. The scrim is excluded on
+        // purpose: it is a click target for dismissing, not part of the dialog,
+        // and tabbing to it means tabbing to something the user cannot see.
+        function focusable() {
+            var panel = drawer.querySelector('.v-drawer__panel');
+            if (!panel) return [];
+
+            return Array.prototype.filter.call(
+                panel.querySelectorAll('a[href], button:not([disabled]), input, select, textarea, [tabindex]'),
+                function (el) {
+                    return el.tabIndex >= 0 && el.offsetParent !== null;
+                }
+            );
+        }
+
         // Escape closes, and focus stays inside while open. Without trapping,
         // tabbing moves into the page behind the scrim, which is invisible and
         // confusing on a phone.
@@ -73,11 +91,16 @@
             if (e.key === 'Escape') { close(); return; }
             if (e.key !== 'Tab') return;
 
-            var focusable = drawer.querySelectorAll('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])');
-            if (!focusable.length) return;
+            var items = focusable();
+            if (!items.length) return;
 
-            var first = focusable[0];
-            var last = focusable[focusable.length - 1];
+            var first = items[0];
+            var last = items[items.length - 1];
+
+            // If focus somehow left the dialog, pull it back in.
+            if (!drawer.contains(document.activeElement) || document.activeElement === drawer.querySelector('.v-drawer__scrim')) {
+                e.preventDefault(); first.focus(); return;
+            }
 
             if (e.shiftKey && document.activeElement === first) {
                 e.preventDefault(); last.focus();
@@ -209,6 +232,19 @@
         });
     }
 
+    // ── Error summary focus ───────────────────────────────────────────────
+    // After a failed submit the page re-renders with an error summary at the
+    // top. A sighted user sees it; a keyboard or screen-reader user is left at
+    // the top of a long form with no signal that anything happened. Moving
+    // focus to the summary announces it and gives a starting point.
+    function initErrorSummary() {
+        var summary = document.getElementById('error-summary');
+        if (!summary) return;
+
+        // Only when this is a re-render after a submit — not on a fresh GET.
+        summary.focus({ preventScroll: false });
+    }
+
     function boot() {
         initPasswordToggles();
         initDrawer();
@@ -218,6 +254,7 @@
         initConfirm();
         initSubmitGuard();
         initDateMasks();
+        initErrorSummary();
     }
 
     if (document.readyState === 'loading') {

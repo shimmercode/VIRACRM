@@ -2407,3 +2407,36 @@ a.v-list__main:hover .v-list__title {
     gap: var(--vira-space-2);
     margin-top: var(--vira-space-5);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Latin / numeric values inside the RTL document.
+
+   Codes, phone numbers, domains, emails and national IDs are marked
+   dir="ltr" so their character order is right — but `dir` only changes the
+   inline base direction, not alignment: `text-align: start` resolves to the
+   LEFT edge once the element itself is LTR. The element is full-width, so in
+   a right-aligned RTL column the label sat on the right and its value on the
+   far left, on a different line, reading as two unrelated rows.
+
+   These all belong to the right-aligned column, so they are pulled back to
+   the parent's edge. Real LTR contexts (the search field, the login form's
+   password input) are excluded below.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:where(.v-dl dd, .v-dl dt, .v-field .v-input, .v-field .v-hint)[dir='ltr'],
+:where(.v-dl dd, .v-field .v-input)[dir='ltr'] {
+    text-align: right;
+}
+
+/* A field the user types a Latin value into should start at the right edge of
+   its column, aligning with its label above it. */
+[dir='rtl'] .v-field input[dir='ltr'],
+[dir='rtl'] .v-field textarea[dir='ltr'] {
+    text-align: right;
+}
+
+/* Phone/ID inputs: right-aligned to match the label, but digits still read LTR
+   because `dir` is what orders the characters. */
+[dir='rtl'] .v-input[inputmode='numeric'][dir='ltr'] {
+    text-align: right;
+}
