@@ -1,0 +1,10 @@
+# Normalize line endings; binary assets handled by Git automatically.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.xlsx binary
+*.zip binary

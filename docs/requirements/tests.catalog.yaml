@@ -1,0 +1,326 @@
+# =============================================================================
+# VIRA CRM — Test Plan / Test Scenarios Catalog (machine readable)
+# -----------------------------------------------------------------------------
+# الزامات گزارش تست (بخش ۲۳ بریف):
+#   Test ID | شرح | پیش‌شرط | مراحل | نتیجه انتظاری | نتیجه واقعی | Pass/Fail/Not Tested | شواهد
+#
+# وضعیت‌های مجاز:
+#   not-tested | blocked | pass | fail
+# قانون: هیچ تستی بدون اجرای واقعی + شاهد pass نمی‌شود.
+#
+# زمینه اجرا (environment): sandbox | staging | host | manual
+# =============================================================================
+
+meta:
+  version: "0.1-draft"
+  created_at: "2026-11-22"
+  min_scenarios_required: 50
+  note: >-
+    در فاز ۰/۱ هیچ کد محصولی اجرا نشده است؛ بنابراین همه تست‌ها not-tested یا
+    blocked هستند. تست‌های نوع tool-chain که واقعاً در این محیط اجرا شده‌اند در
+    مستندات «گزارش اعتبارسنجی محیط توسعه» با شاهد ثبت شده‌اند (نه در این فایل که
+    مخصوص پذیرش نرم‌افزار است).
+
+suites:
+  - {code: CUS, title: "مشتریان", req_group: REQ-03}
+  - {code: CTR, title: "قراردادها و قالب‌ها", req_group: REQ-04}
+  - {code: PRJ, title: "پروژه‌ها (سئو/طراحی سایت)", req_group: REQ-05}
+  - {code: INV, title: "فاکتورها و یادآوری", req_group: REQ-12}
+  - {code: SEO, title: "گزارش‌های سئو و یادآوری", req_group: REQ-12}
+  - {code: CRD, title: "دسترسی‌های پروژه", req_group: REQ-06}
+  - {code: EMP, title: "پرسنل و حقوق", req_group: REQ-07}
+  - {code: NOT, title: "یادداشت‌ها", req_group: REQ-08}
+  - {code: DB, title: "داشبورد و کارتابل", req_group: REQ-02}
+  - {code: SEC, title: "امنیت", req_group: REQ-10}
+  - {code: INF, title: "زیرساخت/استقرار/مهاجرت", req_group: REQ-01/REQ-15}
+  - {code: SCH, title: "زمان‌بندی و Idempotency", req_group: REQ-12}
+  - {code: PDF, title: "موتور PDF فارسی", req_group: REQ-09}
+  - {code: XLS, title: "Excel Export", req_group: REQ-09}
+  - {code: BKP, title: "Backup & Restore", req_group: REQ-15}
+  - {code: SRCH, title: "جستجو و فیلتر", req_group: REQ-09}
+  - {code: RPT, title: "گزارش‌ها", req_group: REQ-09}
+  - {code: DATE, title: "تاریخ شمسی و Timezone", req_group: REQ-11/REQ-12}
+  - {code: UI, title: "UI/UX و Responsive", req_group: REQ-11}
+  - {code: AUD, title: "Audit Log", req_group: REQ-10}
+  - {code: PAY, title: "محاسبه حقوق", req_group: REQ-07}
+  - {code: SET, title: "تنظیمات", req_group: REQ-15}
+  - {code: INS, title: "Installer", req_group: REQ-15}
+  - {code: QA, title: "فرآیند QA و ردیابی", req_group: REQ-14}
+
+tests:
+
+# ── Customers ───────────────────────────────────────────────────────────────
+- {id: T-CUS-01, suite: CUS, title: "ثبت مشتری حقیقی با تمام فیلدها",
+   pre: "ورود مدیر؛ دیتابیس تستی", steps: "ثبت مشتری حقیقی با کد ملی و دو شماره تماس و دو وب‌سایت", expect: "رکورد ثبت، همه فیلدها در پرونده ذخیره و نمایش داده شود", status: not-tested}
+- {id: T-CUS-02, suite: CUS, title: "ثبت مشتری حقوقی با شناسه ملی",
+   pre: "ورود مدیر", steps: "ثبت شرکت با شناسه ملی ۱۱ رقمی و شروع با صفر", expect: "شناسه ملی به‌صورت رشته با صفر ابتدایی حفظ شود", status: not-tested}
+- {id: T-CUS-03, suite: CUS, title: "جلوگیری از ثبت مشتری تکراری",
+   pre: "یک مشتری با کد ملی X موجود", steps: "ثبت مشتری جدید با همان کد ملی/تماس/دامنه", expect: "هشدار تکرار و مسدودسازی ذخیره تکراری بر اساس قاعده", status: not-tested}
+- {id: T-CUS-04, suite: CUS, title: "جستجوی مشتری با شماره تماس",
+   pre: "چند مشتری با شماره‌های مختلف", steps: "جستجو با شماره تماس کامل/جزئی", expect: "نتیجه صحیح و سریع فقط از رکوردهای مجاز", status: not-tested}
+- {id: T-CUS-05, suite: CUS, title: "جستجو با کد ملی/شناسه ملی و دامنه",
+   pre: "داده تستی", steps: "جستجوی شناسه و دامنه", expect: "تطبیق دقیق برای شناسه و تطبیق دامنه‌ای برای وب‌سایت", status: not-tested}
+- {id: T-CUS-06, suite: CUS, title: "پرونده مرکزی ۳۶۰ درجه مشتری",
+   pre: "مشتری دارای قرارداد/پروژه/یادداشت", steps: "بازکردن پرونده مشتری", expect: "نمایش یکپارچه همه بخش‌ها با وضعیت‌ها و اقدامات سررسیددار", status: not-tested}
+
+# ── Contracts ───────────────────────────────────────────────────────────────
+- {id: T-CTR-01, suite: CTR, title: "ثبت قرارداد با نوع و وضعیت",
+   pre: "مشتری موجود؛ انواع قرارداد در تنظیمات", steps: "ثبت قرارداد با مبلغ و تاریخ‌ها", expect: "ثبت صحیح، مبلغ به‌صورت Decimal، تاریخ‌ها صحیح", status: not-tested}
+- {id: T-CTR-02, suite: CTR, title: "چند قرارداد برای یک مشتری + نمایش در پرونده",
+   pre: "مشتری موجود", steps: "ثبت دو قرارداد و مشاهده پرونده", expect: "هر دو قرارداد در پرونده و بدون تکرار اطلاعات مشتری", status: not-tested}
+- {id: T-CTR-03, suite: CTR, title: "جایگذاری خودکار Placeholder در قالب",
+   pre: "قالب با همه Placeholderها", steps: "تولید متن قرارداد برای مشتری", expect: "همه Placeholderها مقدار صحیح بگیرند؛ بدون Placeholder بی‌مقدار", status: not-tested}
+- {id: T-CTR-04, suite: CTR, title: "ویرایش پیش‌نویس و نهایی‌سازی نسخه",
+   pre: "قرارداد پیش‌نویس", steps: "ویرایش متن و نهایی‌سازی", expect: "پیش‌نویس قابل ویرایش؛ نسخه نهایی قفل و ثابت شود", status: not-tested}
+- {id: T-CTR-05, suite: CTR, title: "بارگذاری نسخه اسکن/امضاشده",
+   pre: "قرارداد نهایی", steps: "بارگذاری PDF امضاشده", expect: "فایل در Storage خصوصی با دسترسی کنترل‌شده", status: not-tested}
+- {id: T-CTR-06, suite: CTR, title: "تولید PDF قرارداد فارسی",
+   pre: "قرارداد نهایی", steps: "تولید PDF و بازکردن و بررسی متن/فونت/صفحه‌بندی", expect: "PDF معتبر، فارسی صحیح، RTL، بدون شکستگی جدول", status: not-tested}
+- {id: T-CTR-07, suite: CTR, title: "ثبت تمدید و پیوند نسخه‌ها",
+   pre: "قرارداد فعال", steps: "تمدید قرارداد", expect: "پیوند قرارداد جدید به قبلی و حفظ سوابق", status: not-tested}
+- {id: T-CTR-08, suite: CTR, title: "تغییر اطلاعات مشتری متن نهایی قرارداد را تغییر ندهد",
+   pre: "قرارداد نهایی از قالب تولیدشده", steps: "تغییر نام مشتری؛ بازکردن نسخه نهایی قرارداد", expect: "متن نهایی قبلی بدون تغییر (Snapshot)", status: not-tested}
+- {id: T-CTR-09, suite: CTR, title: "فیلتر قرارداد بر اساس نوع/وضعیت/تاریخ/مبلغ",
+   pre: "چند قرارداد متنوع", steps: "اعمال فیلترها و ترکیب آن‌ها", expect: "نتایج دقیق مطابق فیلتر", status: not-tested}
+
+# ── Projects ────────────────────────────────────────────────────────────────
+- {id: T-PRJ-01, suite: PRJ, title: "ایجاد پروژه سئو با فیلدهای کامل",
+   pre: "مشتری و قرارداد موجود", steps: "ثبت پروژه سئو", expect: "فرم اختصاصی سئو نمایش و داده‌ها ثبت شود", status: not-tested}
+- {id: T-PRJ-02, suite: PRJ, title: "ایجاد پروژه طراحی سایت",
+   pre: "مشتری موجود", steps: "انتخاب نوع طراحی سایت و ثبت", expect: "فرم طراحی سایت (دامنه، نوع وب‌سایت، شرح خدمات...) نمایش/ثبت شود", status: not-tested}
+- {id: T-PRJ-03, suite: PRJ, title: "اتصال پروژه به مشتری و قرارداد",
+   pre: "مشتری و قرارداد", steps: "انتخاب قرارداد مرتبط", expect: "پیوند صحیح و نمایش در پرونده مشتری", status: not-tested}
+- {id: T-PRJ-04, suite: PRJ, title: "فرم پویا بر اساس نوع پروژه",
+   pre: "-", steps: "تغییر نوع پروژه در فرم", expect: "فیلدهای متناسب نوع بدون نیاز به رفرش", status: not-tested}
+- {id: T-PRJ-05, suite: PRJ, title: "مدیریت کلمات کلیدی و شمارش واقعی",
+   pre: "پروژه سئو", steps: "افزودن/حذف کلمات کلیدی", expect: "تعداد کلمات از داده واقعی محاسبه شود", status: not-tested}
+- {id: T-PRJ-06, suite: PRJ, title: "تخصیص مسئول و شمارش پروژه‌های فعال",
+   pre: "پرسنل موجود", steps: "تخصیص پروژه‌ها", expect: "تعداد پروژه فعال هر کارشناس صحیح", status: not-tested}
+- {id: T-PRJ-07, suite: PRJ, title: "مسدودسازی نهایی‌سازی پروژه سئو ناقص",
+   pre: "پروژه سئو با دسترسی‌های اجباری ناقص", steps: "تلاش برای نهایی‌سازی", expect: "خطا/جلوگیری با نمایش موارد ناقص؛ پیش‌نویس قابل ذخیره", status: not-tested}
+- {id: T-PRJ-08, suite: PRJ, title: "فیلتر پروژه‌ها (نوع/مسئول/وضعیت/مشتری/تاریخ)",
+   pre: "چند پروژه", steps: "اعمال فیلترها", expect: "نتایج دقیق", status: not-tested}
+
+# ── Invoices / SEO reports / reminders ──────────────────────────────────────
+- {id: T-INV-01, suite: INV, title: "ایجاد یادآوری دو روز تقویمی قبل از فاکتور",
+   pre: "پروژه سئو فعال", steps: "ثبت تاریخ ارسال فاکتور آینده؛ اجرای Scheduler", expect: "یادآوری فقط در روز تقویمی D-2 ایجاد شود", status: not-tested}
+- {id: T-INV-02, suite: INV, title: "یادآوری روز سررسید",
+   pre: "فاکتور ثبت‌شده", steps: "اجرای Scheduler در روز D", expect: "یادآوری روز سررسید در کارتابل امروز", status: not-tested}
+- {id: T-INV-03, suite: INV, title: "تشخیص عقب‌افتادگی فاکتور",
+   pre: "تاریخ فاکتور گذشته بدون انجام", steps: "اجرای Scheduler پس از موعد", expect: "وضعیت عقب‌افتاده و باقی‌ماندن در کارتابل", status: not-tested}
+- {id: T-INV-04, suite: INV, title: "ثبت انجام فاکتور",
+   pre: "یادآوری باز", steps: "ثبت شماره فاکتور/مبلغ/تاریخ/فایل و علامت انجام", expect: "رکورد انجام ثبت، از لیست باز خارج و در سوابق باقی", status: not-tested}
+- {id: T-INV-05, suite: INV, title: "استقلال یادآوری فاکتور و گزارش",
+   pre: "پروژه با دو یادآوری باز", steps: "انجام فاکتور", expect: "یادآوری گزارش باز بماند", status: not-tested}
+- {id: T-INV-06, suite: INV, title: "گزارش فاکتورهای موعددار/انجام‌شده/عقب‌افتاده",
+   pre: "داده‌های چندوضعیتی", steps: "باز کردن گزارش", expect: "تقسیم‌بندی صحیح", status: not-tested}
+- {id: T-INV-07, suite: INV, title: "تغییر تاریخ فاکتور: بازمحاسبه یادآوری",
+   pre: "فاکتور با تاریخ قبلی", steps: "تغییر تاریخ", expect: "یادآوری قبلی ملاک نباشد و یادآوری جدید بر اساس تاریخ جدید", status: not-tested}
+- {id: T-INV-08, suite: INV, title: "عدم ایجاد اعلان تکراری پس از تغییر تاریخ",
+   pre: "اجرای چندباره Scheduler", steps: "تغییر تاریخ و اجرای مجدد", expect: "هیچ یادآوری تکراری؛ سوابق تغییر حفظ شود", status: not-tested}
+- {id: T-SEO-01, suite: SEO, title: "ایجاد یادآوری دو روز قبل از گزارش سئو",
+   pre: "پروژه سئو", steps: "ثبت تاریخ گزارش؛ اجرای Scheduler", expect: "یادآوری D-2", status: not-tested}
+- {id: T-SEO-02, suite: SEO, title: "بررسی وضعیت در روز موعد گزارش",
+   pre: "یادآوری باز", steps: "اجرای Scheduler در روز D", expect: "در صورت عدم تهیه، علامت عقب‌افتاده", status: not-tested}
+- {id: T-SEO-03, suite: SEO, title: "باقی‌ماندن عقب‌افتاده تا تهیه/ارسال",
+   pre: "گزارش عقب‌افتاده", steps: "علامت انجام/آپلود گزارش", expect: "خروج از لیست باز و ثبت سابقه", status: not-tested}
+- {id: T-SEO-04, suite: SEO, title: "چند دوره گزارش در ماه‌های مختلف",
+   pre: "پروژه سئو", steps: "ثبت نوبت‌های متعدد", expect: "هر نوبت رکورد مستقل با یادآوری مستقل", status: not-tested}
+- {id: T-SEO-05, suite: SEO, title: "استقلال انجام گزارش از یادآوری فاکتور",
+   pre: "دو یادآوری باز", steps: "انجام گزارش", expect: "یادآوری فاکتور باز بماند", status: not-tested}
+- {id: T-SEO-06, suite: SEO, title: "گزارش وضعیت گزارش‌های سئو",
+   pre: "داده‌های چندوضعیتی", steps: "گزارش موعددار/انجام‌شده/عقب‌افتاده", expect: "نتایج صحیح", status: not-tested}
+- {id: T-SEO-07, suite: SEO, title: "تغییر تاریخ گزارش بدون از دست رفتن وضعیت انجام قبلی",
+   pre: "گزارش انجام‌شده در دوره قبل", steps: "ثبت تاریخ جدید دوره بعد", expect: "سابقه انجام قبلی حفظ و وضعیت باز دوره جدید مستقل", status: not-tested}
+
+# ── Credentials ─────────────────────────────────────────────────────────────
+- {id: T-CRD-01, suite: CRD, title: "ثبت دسترسی‌های پروژه سئو (WP/هاست/دامنه/GSC/GA)",
+   pre: "پروژه سئو", steps: "ثبت دسترسی‌ها و سرویس دلخواه جدید", expect: "ذخیره امن رمزها و نمایش فیلدهای قابل تنظیم", status: not-tested}
+- {id: T-CRD-02, suite: CRD, title: "الزام تکمیل دسترسی‌های اجباری برای نهایی‌سازی",
+   pre: "تنظیم فهرست اجباری", steps: "نهایی‌سازی پروژه با دسترسی ناقص", expect: "جلوگیری و نمایش موارد ناقص؛ پیش‌نویس مجاز", status: not-tested}
+- {id: T-CRD-03, suite: CRD, title: "رمزنگاری رمز پروژه در دیتابیس",
+   pre: "-", steps: "ثبت رمز و بررسی رکورد DB", expect: "مقدار رمزنگاری‌شده با AES-256-GCM؛ متن ساده ذخیره نشود", status: not-tested}
+- {id: T-CRD-04, suite: CRD, title: "ثبت Audit مشاهده رمز",
+   pre: "دسترسی ذخیره‌شده", steps: "مشاهده رمز توسط کاربر مجاز", expect: "رویداد audit با کاربر/زمان/رکورد ثبت شود", status: not-tested}
+- {id: T-CRD-05, suite: CRD, title: "عدم نمایش رمز به کاربر غیرمجاز",
+   pre: "کاربر بدون مجوز credentials.view", steps: "درخواست مستقیم URL/REST", expect: "403/عدم افشا در همه لایه‌ها (Backend)", status: not-tested}
+- {id: T-CRD-06, suite: CRD, title: "PDF محرمانه: تحویل امن و غیرقابل حدس",
+   pre: "مجوز + احراز هویت", steps: "دریافت PDF و تلاش دسترسی با URL حدسی/بدون نشست", expect: "فقط مسیر امن مجاز، ثبت Audit؛ بدون دسترسی عمومی", status: not-tested}
+
+# ── Employees / Payroll ─────────────────────────────────────────────────────
+- {id: T-EMP-01, suite: EMP, title: "ایجاد پرونده پرسنل",
+   pre: "مدیر با مجوز پرسنل", steps: "ثبت پرسنل با فایل قرارداد", expect: "پرونده کامل و فایل در Storage خصوصی", status: not-tested}
+- {id: T-PAY-01, suite: PAY, title: "تعریف قاعده حقوق در تنظیمات",
+   pre: "-", steps: "تعریف مبلغ ثابت هر پروژه و ضریب", expect: "قاعده ذخیره و قابل ویرایش با تاریخچه", status: not-tested}
+- {id: T-PAY-02, suite: PAY, title: "محاسبه حقوق ماهانه بر مبنای قاعده تأییدشده",
+   pre: "قاعده تأییدشده + تخصیص پروژه", steps: "اجرای محاسبه", expect: "خالص مطابق قاعده؛ مبالغ Decimal", status: blocked}
+- {id: T-PAY-03, suite: PAY, title: "ثبت پاداش/کسورات/مساعده",
+   pre: "پرسنل", steps: "افزودن اقلام", expect: "اثر صحیح در محاسبه", status: blocked}
+- {id: T-PAY-04, suite: PAY, title: "تولید فیش حقوقی PDF",
+   pre: "محاسبه انجام‌شده", steps: "تولید فیش", expect: "PDF فارسی RTL با محل امضا", status: not-tested}
+- {id: T-PAY-05, suite: PAY, title: "تعداد پروژه‌ها و مبالغ پروژه‌ها در فیش",
+   pre: "پرسنل با چند پروژه", steps: "بررسی فیش", expect: "تعداد و مبالغ صحیح", status: blocked}
+- {id: T-PAY-06, suite: PAY, title: "حفظ نسخه‌های قبلی فیش",
+   pre: "فیش نهایی", steps: "ویرایش محاسبه (اصلاحیه)", expect: "نسخه قبلی قابل بازیابی و نسخه جدید ثبت", status: not-tested}
+- {id: T-PAY-07, suite: PAY, title: "فیش نهایی بدون اصلاحیه تغییر نکند",
+   pre: "فیش نهایی", steps: "تلاش برای تغییر مستقیم", expect: "جلوگیری؛ فقط مسیر اصلاحیه با ثبت تاریخچه", status: not-tested}
+- {id: T-PAY-08, suite: PAY, title: "عدم دسترسی کاربر بدون مجوز حقوق",
+   pre: "کاربر محدود", steps: "دسترسی به مسیر حقوق", expect: "403 در Backend", status: not-tested}
+
+# ── Notes (manual reminders) ────────────────────────────────────────────────
+- {id: T-NOT-01, suite: NOT, title: "ایجاد یادداشت با اتصال به مشتری/قرارداد/پروژه",
+   pre: "مشتری/قرارداد/پروژه موجود", steps: "ثبت یادداشت با سررسید و اولویت", expect: "ثبت و نمایش در کارتابل و پرونده مرتبط", status: not-tested}
+- {id: T-NOT-02, suite: NOT, title: "ویرایش/انجام/سوابق یادداشت",
+   pre: "یادداشت باز", steps: "ویرایش و علامت انجام", expect: "خروج از باز و حفظ سابقه", status: not-tested}
+- {id: T-NOT-03, suite: NOT, title: "نمایش یادداشت عقب‌افتاده",
+   pre: "یادداشت با سررسید گذشته", steps: "بازکردن کارتابل", expect: "نمایش در بخش عقب‌افتاده", status: not-tested}
+
+# ── Dashboard ───────────────────────────────────────────────────────────────
+- {id: T-DB-01, suite: DB, title: "نمایش موارد امروز",
+   pre: "اقدامات با موعد امروز", steps: "بازکردن داشبورد", expect: "فقط موارد امروز در تب امروز", status: not-tested}
+- {id: T-DB-02, suite: DB, title: "نمایش موارد آینده و هشدار انقضا",
+   pre: "اقدامات با موعد آینده", steps: "بازکردن داشبورد", expect: "نمایش صحیح آینده + هشدار انقضای قرارداد مطابق آستانه", status: not-tested}
+- {id: T-DB-03, suite: DB, title: "نمایش عقب‌افتاده‌ها",
+   pre: "اقدامات گذشته انجام‌نشده", steps: "بازکردن داشبورد", expect: "همه موارد عقب‌افتاده برجسته و باز", status: not-tested}
+- {id: T-DB-04, suite: DB, title: "خروج از کارتابل پس از انجام و حفظ سابقه",
+   pre: "اقدام باز", steps: "علامت انجام", expect: "خروج از لیست باز و مشاهده در تاریخچه", status: not-tested}
+- {id: T-DB-05, suite: DB, title: "ناوبری به پرونده مرتبط با کلیک اعلان",
+   pre: "اعلان", steps: "کلیک", expect: "انتقال به رکورد مرتبط", status: not-tested}
+
+# ── Security ────────────────────────────────────────────────────────────────
+- {id: T-SEC-01, suite: SEC, title: "عدم ذخیره رمز پروژه/عبور به‌صورت plaintext",
+   pre: "-", steps: "بازرسی DB و Logها پس از ثبت", expect: "هیچ رمز plaintext در DB/Log", status: not-tested}
+- {id: T-SEC-02, suite: SEC, title: "ورود و خروج امن و ثبت audit",
+   pre: "مدیر", steps: "ورود/خروج", expect: "نشست امن، کوکی Secure/HttpOnly، ثبت audit", status: not-tested}
+- {id: T-SEC-03, suite: SEC, title: "کنترل مجوز در Backend (بدون اتکا به UI)",
+   pre: "کاربر محدود", steps: "درخواست مستقیم مسیرهای حساس", expect: "403/عدم افشا برای همه عملیات حساس", status: not-tested}
+- {id: T-SEC-04, suite: SEC, title: "IDOR: دسترسی به رکورد متعلق به دیگران",
+   pre: "دو کاربر با دامنه داده متفاوت", steps: "تغییر ID در URL", expect: "دسترسی غیرمجاز مسدود", status: not-tested}
+- {id: T-SEC-05, suite: SEC, title: "CSRF: ارسال فرم بدون توکن",
+   pre: "نشست فعال", steps: "درخواست POST بدون CSRF", expect: "419/رد درخواست", status: not-tested}
+- {id: T-SEC-06, suite: SEC, title: "XSS: ذخیره و بازتاب ورودی مخرب",
+   pre: "-", steps: "ثبت نام/توضیح حاوی اسکریپت", expect: "Escape کامل؛ عدم اجرای اسکریپت", status: not-tested}
+- {id: T-SEC-07, suite: SEC, title: "SQL Injection در پارامترهای جستجو/فیلتر",
+   pre: "-", steps: "پیلودهای SQLi در جستجو", expect: "پارامترسازی؛ بدون خطای DB", status: not-tested}
+- {id: T-SEC-08, suite: SEC, title: "آپلود فایل مخرب/حجم/پسوند",
+   pre: "-", steps: "آپلود exe/php با MIME جعلی", expect: "رد کنترل‌شده؛ نام امن؛ Storage خصوصی", status: not-tested}
+- {id: T-SEC-09, suite: SEC, title: "دسترسی مستقیم به فایل Storage خصوصی",
+   pre: "فایل محرمانه", steps: "درخواست URL مستقیم", expect: "عدم دسترسی؛ فقط مسیر کنترل‌شده", status: not-tested}
+- {id: T-SEC-10, suite: SEC, title: "دسترسی به .env و فایل‌های حساس",
+   pre: "استقرار", steps: "درخواست /.env و مسیرهای خارج public", expect: "404/403 و عدم افشا", status: not-tested}
+- {id: T-SEC-11, suite: SEC, title: "جلوگیری از Cache صفحات محرمانه",
+   pre: "صفحه دسترسی‌ها", steps: "بررسی هدر Cache-Control", expect: "no-store و عدم کش", status: not-tested}
+- {id: T-SEC-12, suite: SEC, title: "Rate Limit ورود ناموفق",
+   pre: "-", steps: "چندین ورود ناموفق", expect: "قفل موقت/429 پس از آستانه", status: not-tested}
+- {id: T-SEC-13, suite: SEC, title: "خروج از همه نشست‌ها و غیرفعال‌سازی کاربر",
+   pre: "چند نشست", steps: "خروج همه/غیرفعال‌سازی", expect: "همه نشست‌ها باطل", status: not-tested}
+- {id: T-SEC-14, suite: SEC, title: "عدم افشای Stack Trace در Production",
+   pre: "APP_DEBUG=false", steps: "ایجاد خطای عمدی", expect: "صفحه خطای کاربرپسند + ثبت داخلی", status: not-tested}
+- {id: T-SEC-15, suite: SEC, title: "Secure Cookie و HSTS/HTTPS",
+   pre: "استقرار SSL", steps: "بررسی هدرها", expect: "کوکی Secure/HttpOnly/SameSite؛ HSTS", status: not-tested}
+- {id: T-SEC-16, suite: SEC, title: "سیاست رمز عبور و تغییر اجباری",
+   pre: "-", steps: "ثبت رمز ضعیف", expect: "رد با پیام قابل فهم", status: not-tested}
+- {id: T-SEC-17, suite: SEC, title: "عدم Hardcode کلید/رمز در Repository",
+   pre: "-", steps: "بازرسی کد و تاریخچه", expect: "بدون کلید/رمز؛ فقط در .env", status: not-tested}
+
+# ── Infra / deployment ──────────────────────────────────────────────────────
+- {id: T-INF-01, suite: INF, title: "گزارش سازگاری هاست مقصد",
+   pre: "دسترسی SSH/پنل هاست", steps: "اجرای ابزار بررسی سازگاری", expect: "تکمیل گزارش با نسخه PHP/DB/Ext/Cron", status: blocked}
+- {id: T-INF-02, suite: INF, title: "اجرای Artisan و Migration در staging",
+   pre: "استقرار آزمایشی", steps: "migrate:fresh و seed تستی", expect: "بدون خطا؛ داده تستی صحیح", status: not-tested}
+- {id: T-INF-03, suite: INF, title: "تنظیم Cron/Scheduler",
+   pre: "هاست با cron", steps: "اجرای schedule:run هر دقیقه", expect: "اجرای Jobها طبق timetable", status: blocked}
+- {id: T-INF-04, suite: INF, title: "انتقال محیط (staging → production) بدون تغییر کد",
+   pre: "بسته استقرار", steps: "انتقال و تنظیم .env", expect: "نصب/اجرا فقط با تنظیم محیط", status: not-tested}
+- {id: T-INF-05, suite: INF, title: "مهاجرت ارتقا بدون حذف داده",
+   pre: "نسخه v(n)", steps: "ارتقا به v(n+1)", expect: "داده‌ها سالم؛ rollback ممکن", status: not-tested}
+
+# ── Scheduler ───────────────────────────────────────────────────────────────
+- {id: T-SCH-01, suite: SCH, title: "اجرای زمان‌بندی مستقل از بازدید کاربر",
+   pre: "cron فعال", steps: "بدون ورود کاربر، انتظار اجرای Job", expect: "یادآوری‌ها در زمان مقرر ایجاد شوند", status: blocked}
+- {id: T-SCH-02, suite: SCH, title: "Idempotency: اجرای چندباره Job",
+   pre: "Job idempotent", steps: "اجرای ۳ باره در یک روز", expect: "فقط یک یادآوری یکتا", status: not-tested}
+- {id: T-SCH-03, suite: SCH, title: "ثبت وضعیت Job و خطاهای Scheduler",
+   pre: "-", steps: "ایجاد خطای عمدی در Job", expect: "Job ناکام ثبت و خطا قابل بررسی", status: not-tested}
+- {id: T-SCH-04, suite: SCH, title: "شناسه یکتای رویداد زمان‌بندی‌شده",
+   pre: "-", steps: "بررسی جدول scheduled/reminders", expect: "Unique key بر رویداد", status: not-tested}
+- {id: T-SCH-05, suite: SCH, title: "مرز روز تقویمی/Timezone",
+   pre: "TIMEZONE=Asia/Tehran", steps: "تست ساعت 00:00 و 23:59", expect: "محاسبه D-2 بر مبنای روز تقویمی Tehran", status: not-tested}
+
+# ── PDF ─────────────────────────────────────────────────────────────────────
+- {id: T-PDF-01, suite: PDF, title: "PDF فارسی قرارداد",
+   pre: "قرارداد نهایی", steps: "تولید و بررسی چشمی+متنی", expect: "فارسی صحیح، فونت Vazirmatn، RTL، شکست صفحه صحیح", status: not-tested}
+- {id: T-PDF-08, suite: PDF, title: "PDF عمومی پروژه",
+   pre: "پروژه", steps: "تولید PDF عمومی", expect: "بدون هیچ اطلاعات محرمانه دسترسی", status: not-tested}
+- {id: T-PDF-09, suite: PDF, title: "PDF محرمانه دسترسی‌ها با کنترل دسترسی",
+   pre: "مجوز ویژه", steps: "تولید؛ بررسی هدر و audit", expect: "فقط برای مجاز؛ ثبت audit؛ no-store", status: not-tested}
+- {id: T-PDF-10, suite: PDF, title: "PDF فیش حقوقی",
+   pre: "فیش محاسبه‌شده", steps: "تولید", expect: "همه اقلام و محل امضا", status: not-tested}
+
+# ── Excel ───────────────────────────────────────────────────────────────────
+- {id: T-XLS-01, suite: XLS, title: "XLSX واقعی با عنوان فارسی ستون‌ها",
+   pre: "مجوز خروجی", steps: "تولید XLSX و بازکردن در Excel/LibreOffice", expect: "باز شدن صحیح، Encoding و RTL", status: not-tested}
+- {id: T-XLS-02, suite: XLS, title: "حفظ صفر ابتدایی و نوع داده سلول",
+   pre: "داده شناسه با صفر ابتدایی", steps: "تولید و بررسی نوع سلول", expect: "Text برای شناسه/تلفن؛ Numeric برای مبالغ", status: not-tested}
+- {id: T-XLS-03, suite: XLS, title: "جلوگیری از Formula Injection",
+   pre: "-", steps: "مقدار شروع با = در سلول", expect: "به‌صورت متن امن ذخیره شود", status: not-tested}
+
+# ── Backup / Restore ────────────────────────────────────────────────────────
+- {id: T-BKP-01, suite: BKP, title: "تهیه Backup دیتابیس و فایل‌ها",
+   pre: "داده تستی", steps: "اجرای backup", expect: "آرشیو سالم و حفاظت‌شده", status: not-tested}
+- {id: T-BKP-02, suite: BKP, title: "Restore واقعی روی محیط تمیز",
+   pre: "نسخه پشتیبان", steps: "بازیابی و تست ورود/داده", expect: "همه چیز بازیابی شود", status: not-tested}
+- {id: T-BKP-03, suite: BKP, title: "حفاظت فایل Backup و کلید رمزنگاری",
+   pre: "-", steps: "بررسی مسیر و دسترسی آرشیو", expect: "خارج از public؛ دسترسی محدود؛ مستندسازی کلید", status: not-tested}
+
+# ── Search / Reports ────────────────────────────────────────────────────────
+- {id: T-SRCH-01, suite: SRCH, title: "جستجوی سراسری مشتری",
+   pre: "چند مشتری", steps: "جستجو با بخشی از نام/تلفن/شناسه", expect: "نتایج مرتبط سریع و صفحه‌بندی‌شده", status: not-tested}
+- {id: T-SRCH-02, suite: SRCH, title: "کارایی جستجو با داده حجم بالا",
+   pre: "۱۰۰۰ مشتری", steps: "سنجش زمان پاسخ", expect: "زیر آستانه توافقی با ایندکس", status: not-tested}
+- {id: T-RPT-01, suite: RPT, title: "گزارش قراردادها (فعال/پایان‌یافته/نزدیک انقضا)",
+   pre: "داده چندوضعیتی", steps: "گزارش", expect: "تقسیم‌بندی صحیح", status: not-tested}
+- {id: T-RPT-02, suite: RPT, title: "گزارش پرسنل و تعداد پروژه",
+   pre: "تخصیص‌ها", steps: "گزارش", expect: "شمارش صحیح", status: blocked}
+
+# ── Jalali / UI ─────────────────────────────────────────────────────────────
+- {id: T-DATE-01, suite: DATE, title: "تبدیل شمسی↔میلادی بدون جابه‌جایی روز",
+   pre: "-", steps: "تست مرزهای سال و اسفند/فروردین", expect: "تبدیل دوسویه صحیح", status: not-tested}
+- {id: T-DATE-02, suite: DATE, title: "ذخیره استاندارد تاریخ در DB و نمایش شمسی",
+   pre: "-", steps: "ثبت تاریخ شمسی و بررسی DB/UI", expect: "DB تاریخ استاندارد؛ UI شمسی", status: not-tested}
+- {id: T-DATE-03, suite: DATE, title: "عدم اثر تبدیل تاریخ بر محاسبه موعد D-2",
+   pre: "-", steps: "ثبت موعد و بررسی یادآوری", expect: "محاسبه دقیق روی روز تقویمی", status: not-tested}
+- {id: T-UI-01, suite: UI, title: "RTL واقعی در همه صفحات",
+   pre: "-", steps: "بازدید صفحات", expect: "dir=rtl، چیدمان صحیح", status: not-tested}
+- {id: T-UI-02, suite: UI, title: "Responsive موبایل/تبلت",
+   pre: "-", steps: "۱۲۸۰/۷۶۸/۳۷۵ px", expect: "قابل استفاده بدون شکست چیدمان", status: not-tested}
+- {id: T-UI-03, suite: UI, title: "یکپارچگی Design System",
+   pre: "-", steps: "بازبینی صفحات", expect: "هم‌راستایی با توکن‌ها و کامپوننت‌ها", status: not-tested}
+- {id: T-UI-04, suite: UI, title: "بارگذاری فونت Self-hosted",
+   pre: "بدون اینترنت خارجی", steps: "بارگذاری صفحه", expect: "فونت صحیح بدون سرویس خارجی", status: not-tested}
+- {id: T-UI-05, suite: UI, title: "خلوت و اولویت‌بندی داشبورد",
+   pre: "داده زیاد", steps: "بازبینی بصری", expect: "اطلاعات فوری برجسته، بدون شلوغی", status: not-tested}
+- {id: T-UI-06, suite: UI, title: "حالت‌های Loading/Empty/Error/Validation",
+   pre: "-", steps: "تحریک حالت‌ها", expect: "پیام‌های واضح فارسی", status: not-tested}
+
+# ── Audit / Settings / Installer ────────────────────────────────────────────
+- {id: T-AUD-01, suite: AUD, title: "ثبت audit ایجاد/ویرایش/آرشیو",
+   pre: "-", steps: "عملیات CRUD", expect: "ورود رکورد با کاربر/زمان/نوع/مرجع", status: not-tested}
+- {id: T-AUD-02, suite: AUD, title: "عدم ثبت داده محرمانه در audit",
+   pre: "-", steps: "مشاهده رمز", expect: "audit بدون مقدار رمز", status: not-tested}
+- {id: T-SET-01, suite: SET, title: "مدیریت تنظیمات از پنل",
+   pre: "مجوز settings", steps: "تغییر آستانه/فاصله‌ها و انواع", expect: "اثر فوری و قابل پیش‌بینی", status: not-tested}
+- {id: T-SET-02, suite: SET, title: "رفتار مشخص تغییر تنظیمات مؤثر بر داده موجود",
+   pre: "-", steps: "تغییر قاعده و بررسی داده‌های موجود", expect: "بدون اثر مخرب؛ مستند در تغییرات", status: not-tested}
+- {id: T-INS-01, suite: INS, title: "Installer امن و ساخت مدیر اولیه",
+   pre: "محیط خالی", steps: "اجرای نصب", expect: "DB/Migration/مدیر/نسخه؛ رمز امن", status: not-tested}
+- {id: T-INS-02, suite: INS, title: "غیرفعال‌سازی Installer پس از نصب",
+   pre: "نصب انجام‌شده", steps: "دسترسی مجدد", expect: "مسدود/حذف", status: not-tested}
+
+# ── QA process ──────────────────────────────────────────────────────────────
+- {id: T-QA-01, suite: QA, title: "حداقل ۵۰ سناریوی تست ثبت‌شده",
+   pre: "-", steps: "شمارش سناریوها در کاتالوگ", expect: "≥ ۵۰ سناریو با فیلدهای کامل", status: pass,
+   actual: "۱۰۵ سناریو در این کاتالوگ ثبت شد.", evidence: "docs/requirements/tests.catalog.yaml"}
+- {id: T-QA-02, suite: QA, title: "RTM کامل و بدون نیازمندی یتیم",
+   pre: "-", steps: "اجرای اسکریپت تولید RTM", expect: "هر نیازمندی حداقل یک ماژول؛ عدم orphan", status: pass,
+   actual: "RTM تولید و بررسی شد (۸۱ نیازمندی).", evidence: "docs/phase-1/05-traceability-matrix.md"}

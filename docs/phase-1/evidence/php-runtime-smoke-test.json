@@ -1,0 +1,81 @@
+{
+    "generated_at": "2026-11-22T18:48:19+00:00",
+    "php_version": "8.3.36",
+    "extensions": [
+        "openssl",
+        "bcmath",
+        "curl",
+        "hash",
+        "gd",
+        "json",
+        "mbstring",
+        "pdo_mysql",
+        "pdo_sqlite",
+        "random",
+        "zip"
+    ],
+    "checks": [
+        {
+            "id": "RT-01",
+            "title": "AES-256-GCM encrypt\/decrypt + AAD + tamper detection",
+            "status": "PASS",
+            "detail": "format=v1.nonce.tag.cipher, tamper\/AAD\/key rejection verified"
+        },
+        {
+            "id": "RT-02",
+            "title": "Key separation per purpose (credentials vs attachments)",
+            "status": "PASS",
+            "detail": "HKDF-SHA256 purpose-separated subkeys verified"
+        },
+        {
+            "id": "RT-03",
+            "title": "password_hash + password_verify (bcrypt\/argon2 available)",
+            "status": "PASS",
+            "detail": "available=bcrypt; bcrypt verified"
+        },
+        {
+            "id": "RT-04",
+            "title": "HMAC-signed download token (expiry + binding)",
+            "status": "PASS",
+            "detail": "urlsafe token + constant-time compare verified"
+        },
+        {
+            "id": "RT-05",
+            "title": "Decimal money math with bcmath (no float)",
+            "status": "PASS",
+            "detail": "exact split + remainder distribution verified"
+        },
+        {
+            "id": "RT-06",
+            "title": "Persian search normalization (Arabic yeh\/kaf, ZWNJ, digits)",
+            "status": "PASS",
+            "detail": "yeh\/kaf\/digits\/ZWNJ normalization verified"
+        },
+        {
+            "id": "RT-07",
+            "title": "PDO SQLite available for automated tests (strict FK + text ids + integer cents)",
+            "status": "PASS",
+            "detail": "text ids, integer cents, FK enforcement verified"
+        },
+        {
+            "id": "RT-08",
+            "title": "JSON encode\/decode with Persian text and no escaping loss",
+            "status": "PASS",
+            "detail": "ok"
+        },
+        {
+            "id": "RT-09",
+            "title": "DateTimeImmutable + Asia\/Tehran + immutable day math",
+            "status": "PASS",
+            "detail": "offset=12600s year-round (+03:30)"
+        },
+        {
+            "id": "RT-10",
+            "title": "random_bytes-based opaque identifiers (no guessable paths)",
+            "status": "PASS",
+            "detail": "128-bit random hex verified"
+        }
+    ],
+    "failures": 0,
+    "verdict": "PASS"
+}

@@ -1,0 +1,469 @@
+# =============================================================================
+# VIRA CRM — Requirements Catalog (machine readable, single source of truth)
+# -----------------------------------------------------------------------------
+# این فایل، نسخه‌ی ماشین‌خوانِ استخراج نیازمندی‌های سند مرجع
+# (Vira_CRM_Requirements_FA.docx — ۱۵ بخش) به‌همراه الزامات بریف توسعه است.
+#
+# قواعد:
+#   * type: doc        → الزام صریح سند مرجع ۱۵ بخشی (بخش ۵ بریف)
+#   * type: brief      → الزام صریح بریف توسعه (بخش‌های ۲–۳۰ بریف)
+#   * type: proposed   → تصمیم/قابلیت پیشنهادی تیم مهندسی (سند سکوت کرده یا صریحاً
+#                        «تکمیلی» اعلام شده) — نیازمند تأیید کارفرما
+#   * type: derived    → الزام مهندسی مشتق‌شده از الزامات صریح (مثل ایندکس، N+1)
+#   * priority: P0 بلوکه‌کننده تحویل | P1 الزام نسخه ۱ | P2 ارزش بالا | P3 تکمیلی
+#   * status:   not-started | in-analysis | designed | implemented | tested
+#               (هیچ الزامی بدون اجرای واقعی تست، implemented/tested اعلام نمی‌شود)
+#   * weight:   وزن نسبی برای محاسبه درصد پیشرفت واقعی (پیش‌فرض 3)
+# =============================================================================
+
+meta:
+  document: "Vira_CRM_Requirements_FA.docx"
+  document_status: "NOT_AVAILABLE_IN_REPO"
+  document_note: >-
+    فایل سند مرجع ۱۵ بخشی در مخزن/محیط توسعه موجود نیست. مواد این کاتالوگ از
+    بریف توسعه (که خلاصه ۱۵ بخش سند را بازگو می‌کند) استخراج شده است؛ پس از دریافت
+    سند اصلی، هر الزام با بند دقیق سند تطبیق (verify_doc_ref) می‌شود.
+  brief_sections_covered: "1..32"
+  version: "0.1-draft"
+  extracted_at: "2026-11-22"
+  language: "fa-IR"
+
+# گروه‌های نیازمندی — هر گروه متناظر یک بخش سند مرجع
+groups:
+  - {code: REQ-01, title: "اهداف، اصول و معماری غیرقابل مذاکره", doc_section: 1}
+  - {code: REQ-02, title: "داشبورد و کارتابل", doc_section: 2}
+  - {code: REQ-03, title: "مدیریت مشتریان", doc_section: 3}
+  - {code: REQ-04, title: "مدیریت قراردادها و بانک قرارداد", doc_section: 4}
+  - {code: REQ-05, title: "مدیریت پروژه‌ها", doc_section: 5}
+  - {code: REQ-06, title: "دسترسی‌های پروژه و PDF محرمانه", doc_section: 6}
+  - {code: REQ-07, title: "پرسنل و حقوق و دستمزد", doc_section: 7}
+  - {code: REQ-08, title: "یادداشت‌ها و یادآوری دستی", doc_section: 8}
+  - {code: REQ-09, title: "جستجو، فیلتر و گزارش‌گیری", doc_section: 9}
+  - {code: REQ-10, title: "کاربران، نقش‌ها و امنیت", doc_section: 10}
+  - {code: REQ-11, title: "طراحی UI/UX و هویت بصری", doc_section: 11}
+  - {code: REQ-12, title: "موتور یادآوری خودکار و گردش‌کارها", doc_section: 12}
+  - {code: REQ-13, title: "اولویت‌بندی و برنامه اجرا", doc_section: 13}
+  - {code: REQ-14, title: "معیارهای پذیرش", doc_section: 14}
+  - {code: REQ-15, title: "تنظیمات مدیریتی و قابلیت استقرار", doc_section: 15}
+
+requirements:
+
+# ───────────────────────────────── REQ-01 ─────────────────────────────────
+- {id: REQ-01.01, group: REQ-01, type: brief, priority: P0, weight: 5,
+   title: "استقلال کامل نرم‌افزار از وردپرس",
+   text: "CRM یک Standalone Web Application است؛ نه افزونه وردپرس، نه وابسته به قالب/Elementor، نه وابسته به جدول‌ها و کاربران وردپرس.",
+   modules: [Foundation], tests: [T-SEC-09], status: designed, phase: "معماری"}
+
+- {id: REQ-01.02, group: REQ-01, type: brief, priority: P0, weight: 5,
+   title: "دیتابیس مستقل و ساب‌دامین مستقل",
+   text: "دیتابیس CRM مستقل از وردپرس؛ ساب‌دامین crm.viraagency.co با Document Root اختصاصی به پوشه public.",
+   modules: [Deployment], tests: [T-INF-04], status: designed, phase: "استقرار"}
+
+- {id: REQ-01.03, group: REQ-01, type: brief, priority: P0, weight: 4,
+   title: "فایل‌های حساس خارج از Document Root",
+   text: "فایل‌های برنامه و داده‌های حساس خارج از مسیر عمومی وب؛ فقط public قابل دسترس. در صورت محدودیت هاست، امن‌ترین معماری سازگار.",
+   modules: [Deployment], tests: [T-SEC-10], status: designed, phase: "استقرار"}
+
+- {id: REQ-01.04, group: REQ-01, type: brief, priority: P1, weight: 3,
+   title: "تاب‌آوری CRM در قطعی سایت اصلی",
+   text: "قطعی/به‌روزرسانی وب‌سایت وردپرسی نباید CRM را مختل کند؛ اتصال آینده فقط از طریق API مستقل.",
+   modules: [Foundation], tests: [], status: designed, phase: "معماری"}
+
+# ───────────────────────────────── REQ-02 ─────────────────────────────────
+- {id: REQ-02.01, group: REQ-02, type: doc, priority: P1, weight: 4,
+   title: "شاخص‌های داشبورد",
+   text: "تعداد مشتریان، قراردادهای فعال، قراردادهای نزدیک انقضا، پروژه‌های فعال، کارهای سررسیدشده، فاکتورهای موعددار، گزارش‌های موعددار، یادداشت‌های باز، موارد عقب‌افتاده، اقدامات انجام‌شده.",
+   modules: [Dashboard], tests: [T-DB-01, T-DB-02, T-DB-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-02.02, group: REQ-02, type: doc, priority: P1, weight: 4,
+   title: "کارتابل تفکیک‌شده",
+   text: "کارتابل چهار بخشی: امروز، روزهای آینده، عقب‌افتاده، انجام‌شده. موارد عقب‌افتاده تا تعیین تکلیف باقی می‌مانند.",
+   modules: [Dashboard, Reminders], tests: [T-DB-01, T-DB-02, T-DB-03, T-DB-04], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-02.03, group: REQ-02, type: doc, priority: P1, weight: 3,
+   title: "ناوبری مستقیم از اعلان به رکورد",
+   text: "کلیک روی هر اعلان کاربر را به پرونده مشتری/قرارداد/پروژه مرتبط منتقل کند.",
+   modules: [Dashboard], tests: [T-DB-05], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-02.04, group: REQ-02, type: doc, priority: P1, weight: 3,
+   title: "هشدار انقضای قرارداد با آستانه قابل تنظیم",
+   text: "هشدار پیش از انقضای قرارداد با مقدار پیش‌فرض ۳/۷/۱۵/۳۰ روز و قابل تغییر توسط مدیر.",
+   modules: [Dashboard, Settings, Contracts], tests: [T-DB-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-02.05, group: REQ-02, type: doc, priority: P1, weight: 2,
+   title: "داشبورد خلوت و کاربردی",
+   text: "اولویت‌بندی اطلاعات فوری/عقب‌افتاده بدون شلوغی؛ انتقال سریع به پرونده مرتبط.",
+   modules: [Dashboard, UI], tests: [T-UI-05], status: in-analysis, phase: "فاز دو"}
+
+# ───────────────────────────────── REQ-03 ─────────────────────────────────
+- {id: REQ-03.01, group: REQ-03, type: doc, priority: P1, weight: 5,
+   title: "پرونده مشتری حقیقی",
+   text: "نام، نام خانوادگی، تماس اصلی، تماس‌های دیگر، کد ملی، آدرس، وب‌سایت(ها)، نحوه آشنایی با ویرا، یادداشت داخلی.",
+   modules: [Customers], tests: [T-CUS-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.02, group: REQ-03, type: doc, priority: P1, weight: 5,
+   title: "پرونده مشتری حقوقی",
+   text: "نام شرکت، تماس اصلی، تماس‌های دیگر، شناسه ملی، آدرس، وب‌سایت(ها)، نحوه آشنایی با ویرا، توضیحات داخلی.",
+   modules: [Customers], tests: [T-CUS-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.03, group: REQ-03, type: doc, priority: P1, weight: 4,
+   title: "فرم پویا بر اساس نوع شخص",
+   text: "فیلدهای الزامی/نمایشیِ فرم با نوع شخص حقیقی/حقوقی تغییر کند (اعتبارسنجی سمت سرور).",
+   modules: [Customers], tests: [T-CUS-01, T-CUS-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.04, group: REQ-03, type: doc, priority: P1, weight: 4,
+   title: "چرخه عمر مشتری",
+   text: "ایجاد، ویرایش، مشاهده پرونده، آرشیو (بدون حذف سوابق مرتبط).",
+   modules: [Customers], tests: [T-CUS-01, T-CUS-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.05, group: REQ-03, type: doc, priority: P0, weight: 4,
+   title: "جلوگیری از ثبت مشتری تکراری",
+   text: "تشخیص تکراری بر پایه کد ملی/شناسه ملی، شماره تماس، دامنه وب‌سایت با هشدار پیش از ثبت.",
+   modules: [Customers], tests: [T-CUS-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.06, group: REQ-03, type: doc, priority: P1, weight: 3,
+   title: "جستجوی مشتری بر اساس نام/تماس/شناسه/دامنه",
+   text: "جستجو بر اساس نام، شماره تماس، کد ملی/شناسه ملی و دامنه؛ با ایندکس مناسب.",
+   modules: [Customers, Search], tests: [T-CUS-04, T-CUS-05, T-SRCH-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.07, group: REQ-03, type: doc, priority: P1, weight: 5,
+   title: "پرونده مرکزی مشتری 360°",
+   text: "نمایش یکپارچه اطلاعات پایه، قراردادها، پروژه‌ها، فاکتورها، یادداشت‌ها، سوابق، فایل‌ها، وضعیت قرارداد/پروژه و اقدامات سررسیددار.",
+   modules: [Customers], tests: [T-CUS-06], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-03.08, group: REQ-03, type: doc, priority: P0, weight: 4,
+   title: "یک‌بار ثبت اطلاعات مشتری",
+   text: "اطلاعات مشتری فقط یک بار ثبت و در قرارداد/پروژه/فاکتور ارجاع داده شود (Single Source of Truth).",
+   modules: [Customers, Contracts], tests: [T-CTR-02], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-04 ─────────────────────────────────
+- {id: REQ-04.01, group: REQ-04, type: doc, priority: P1, weight: 5,
+   title: "مدل داده قرارداد",
+   text: "مشتری، عنوان، نوع (از تنظیمات)، طرف اول/دوم، مبلغ، تاریخ شروع/پایان، وضعیت، توضیحات، فایل‌های مرتبط.",
+   modules: [Contracts], tests: [T-CTR-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.02, group: REQ-04, type: doc, priority: P1, weight: 4,
+   title: "وضعیت‌های قرارداد",
+   text: "پیش‌نویس، فعال، در آستانه انقضا، پایان‌یافته، تمدیدشده، لغوشده (قابل تنظیم در تنظیمات).",
+   modules: [Contracts, Settings], tests: [T-CTR-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.03, group: REQ-04, type: doc, priority: P1, weight: 4,
+   title: "چند قرارداد برای یک مشتری + اتصال به پرونده",
+   text: "ثبت چند قرارداد برای یک مشتری و نمایش قراردادها در پرونده مرکزی.",
+   modules: [Contracts, Customers], tests: [T-CTR-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.04, group: REQ-04, type: doc, priority: P1, weight: 5,
+   title: "بانک قالب قرارداد",
+   text: "تعریف/ویرایش/استفاده مجدد از قالب قرارداد (Contract Template) با Placeholder قابل تعریف.",
+   modules: [ContractTemplates], tests: [T-CTR-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.05, group: REQ-04, type: doc, priority: P1, weight: 5,
+   title: "موتور Template قرارداد",
+   text: "جایگذاری خودکار اطلاعات مشتری/قرارداد در قالب؛ Placeholderهای پیشنهادی: نام مشتری، نام شرکت، کد/شناسه ملی، تماس، آدرس، مبلغ، تاریخ شروع/پایان، نوع خدمات، عنوان قرارداد.",
+   modules: [ContractTemplates], tests: [T-CTR-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.06, group: REQ-04, type: doc, priority: P1, weight: 4,
+   title: "ویرایش متن قرارداد پیش از نهایی‌سازی",
+   text: "متن تولیدشده از قالب قابل ویرایش و ذخیره نسخه نهایی باشد.",
+   modules: [Contracts], tests: [T-CTR-04], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.07, group: REQ-04, type: doc, priority: P0, weight: 5,
+   title: "تثبیت نسخه نهایی قرارداد",
+   text: "نسخه نهایی ثابت و بازیابی‌پذیر؛ تغییر اطلاعات مشتری در آینده متن نهایی قبلی را تغییر ندهد (Snapshot).",
+   modules: [Contracts], tests: [T-CTR-04, T-CTR-08], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.08, group: REQ-04, type: doc, priority: P1, weight: 4,
+   title: "تاریخچه و نسخه‌های قرارداد",
+   text: "نگهداری تاریخچه تغییرات و نسخه‌های قبلی قرارداد؛ بارگذاری نسخه اسکن/امضاشده؛ تولید PDF.",
+   modules: [Contracts], tests: [T-CTR-05, T-CTR-06, T-CTR-07], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.09, group: REQ-04, type: doc, priority: P1, weight: 3,
+   title: "جستجو و فیلتر قرارداد",
+   text: "فیلتر بر اساس مشتری، نوع، وضعیت، تاریخ شروع/پایان و مبلغ.",
+   modules: [Contracts, Search], tests: [T-CTR-09], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-04.10, group: REQ-04, type: doc, priority: P1, weight: 3,
+   title: "ثبت تمدید قرارداد",
+   text: "ثبت تمدید و حفظ پیوند با قرارداد قبلی و نسخه‌ها.",
+   modules: [Contracts], tests: [T-CTR-07], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-05 ─────────────────────────────────
+- {id: REQ-05.01, group: REQ-05, type: doc, priority: P1, weight: 4,
+   title: "اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور",
+   text: "هر پروژه متصل به مشتری و در صورت وجود به قرارداد؛ انتخاب نوع پروژه فرم متناسب را نمایش دهد.",
+   modules: [Projects], tests: [T-PRJ-03, T-PRJ-04], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-05.02, group: REQ-05, type: doc, priority: P1, weight: 5,
+   title: "فیلدهای پروژه سئو",
+   text: "نام، مشتری، آدرس سایت، قرارداد، پکیج/سطح خدمات، مبلغ، توضیحات مالی، تاریخ شروع/پایان یا تمدید، فهرست کلمات کلیدی، تعداد کلمات، مسئول/کارشناس، توضیحات داخلی، تاریخ صدور ارسال فاکتور، تاریخ ارسال گزارش، وضعیت اقدامات زمان‌بندی‌شده.",
+   modules: [SeoProjects], tests: [T-PRJ-01, T-PRJ-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-05.03, group: REQ-05, type: doc, priority: P1, weight: 4,
+   title: "مدیریت ساختارمند کلمات کلیدی",
+   text: "کلمات کلیدی قابل مدیریت (CRUD) و تعداد کلمات از داده واقعی محاسبه شود، نه دستی.",
+   modules: [SeoProjects], tests: [T-PRJ-05], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-05.04, group: REQ-05, type: doc, priority: P1, weight: 4,
+   title: "فیلدهای پروژه طراحی سایت",
+   text: "نام، مشتری، دامنه، نوع وب‌سایت، شرح خدمات، قرارداد، مبلغ، تاریخ شروع/پایان، وضعیت، دسترسی‌ها، مسئول، یادداشت‌ها و اطلاعات تکمیلی.",
+   modules: [DesignProjects], tests: [T-PRJ-02, T-PRJ-04], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-05.05, group: REQ-05, type: doc, priority: P1, weight: 3,
+   title: "تخصیص مسئول/کارشناس به پروژه",
+   text: "اتصال پروژه به کارشناس و مشاهده تعداد پروژه‌های فعال هر کارشناس.",
+   modules: [Projects, Employees], tests: [T-PRJ-06], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-06 ─────────────────────────────────
+- {id: REQ-06.01, group: REQ-06, type: doc, priority: P1, weight: 5,
+   title: "مدیریت دسترسی‌های پروژه",
+   text: "دسترسی وردپرس، هاست، دامنه، Google Search Console، Google Analytics و سرویس‌های دیگر با فیلدهای قابل تنظیم.",
+   modules: [Credentials], tests: [T-CRD-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-06.02, group: REQ-06, type: doc, priority: P0, weight: 5,
+   title: "فهرست دسترسی‌های اجباری سئو",
+   text: "تا تکمیل همه دسترسی‌های اجباری، پروژه سئو نهایی/فعال نشود؛ ذخیره پیش‌نویس ناقص مجاز و متمایز؛ فهرست از تنظیمات قابل مدیریت.",
+   modules: [Credentials, SeoProjects, Settings], tests: [T-CRD-02, T-PRJ-07], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-06.03, group: REQ-06, type: brief, priority: P0, weight: 5,
+   title: "رمزنگاری رمزها (AES-256-GCM)",
+   text: "رمزنگاری سمت سرور با AES-256-GCM، کلید خارج از دیتابیس و خارج از Repository، عدم لاگ رمز، محدودسازی مشاهده/خروجی.",
+   modules: [Credentials, Security], tests: [T-CRD-03, T-SEC-01], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-06.04, group: REQ-06, type: brief, priority: P0, weight: 4,
+   title: "Audit مشاهده و دریافت خروجی محرمانه",
+   text: "ثبت رویداد مشاهده رمز و دریافت PDF محرمانه؛ جلوگیری از ارسال رمز در URL و Cache شدن صفحات محرمانه.",
+   modules: [Credentials, Audit], tests: [T-CRD-04, T-CRD-05], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-06.05, group: REQ-06, type: brief, priority: P0, weight: 4,
+   title: "PDF محرمانه دسترسی‌ها",
+   text: "تولید PDF محرمانه فقط با احراز هویت+مجوز(+تأیید مجدد اختیاری)، ثبت در Audit، تحویل امن و غیرقابل حدس، عدم انتشار عمومی.",
+   modules: [Credentials, Pdf], tests: [T-CRD-05, T-CRD-06, T-PDF-09, T-SEC-11], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-06.06, group: REQ-06, type: brief, priority: P1, weight: 3,
+   title: "جداسازی اطلاعات عمومی و محرمانه پروژه",
+   text: "PDF عمومی پروژه و PDF محرمانه دسترسی‌ها دو خروجی مجزا با کنترل دسترسی مستقل.",
+   modules: [Projects, Credentials, Pdf], tests: [T-PDF-08, T-PDF-09], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-07 ─────────────────────────────────
+- {id: REQ-07.01, group: REQ-07, type: doc, priority: P1, weight: 4,
+   title: "پرونده پرسنل",
+   text: "نام، اطلاعات هویتی، تماس، سمت، تاریخ شروع همکاری، وضعیت، حقوق پایه، روش محاسبه، فایل قرارداد پرسنل، پروژه‌های تخصیص‌یافته، تعداد پروژه‌های فعال.",
+   modules: [Employees], tests: [T-EMP-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-07.02, group: REQ-07, type: doc, priority: P0, weight: 5,
+   title: "قواعد قابل تنظیم حقوق (بدون فرمول خودساخته)",
+   text: "مبلغ ثابت هر پروژه، ضریب/قاعده بر اساس تعداد پروژه، پاداش، اضافه‌کاری، کسورات، مساعده و اقلام دیگر به‌صورت قابل تنظیم؛ فرمول بدون تأیید کارفرما اختراع نشود.",
+   modules: [Payroll, Settings], tests: [T-PAY-02, T-PAY-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-07.03, group: REQ-07, type: doc, priority: P1, weight: 5,
+   title: "فیش حقوقی ماهانه (PDF فارسی RTL)",
+   text: "نام پرسنل، ماه/سال، حقوق پایه، تعداد پروژه، مبالغ پروژه‌ها، پاداش، کسورات، خالص؛ قابل چاپ با محل امضای پرسنل و مدیر.",
+   modules: [Payroll, Pdf], tests: [T-PAY-04, T-PAY-05, T-PDF-10], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-07.04, group: REQ-07, type: doc, priority: P0, weight: 4,
+   title: "تاریخچه و تثبیت فیش‌ها",
+   text: "حفظ سوابق ماه‌های گذشته، نسخه قبلی قابل بازیابی، ثبت چه کسی/چه زمانی محاسبه را تغییر داده؛ فیش نهایی بدون اصلاحیه تغییر نکند.",
+   modules: [Payroll], tests: [T-PAY-06, T-PAY-07], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-07.05, group: REQ-07, type: doc, priority: P0, weight: 4,
+   title: "دسترسی مستقل اطلاعات حقوقی",
+   text: "مجوز مستقل برای مشاهده/ویرایش پرسنل و حقوق؛ عدم دسترسی کاربران فاقد مجوز.",
+   modules: [Payroll, Security], tests: [T-PAY-08, T-SEC-03], status: in-analysis, phase: "فاز سه"}
+
+# ───────────────────────────────── REQ-08 ─────────────────────────────────
+- {id: REQ-08.01, group: REQ-08, type: doc, priority: P1, weight: 3,
+   title: "مدل یادداشت",
+   text: "عنوان، شرح، تاریخ سررسید، اولویت، وضعیت انجام؛ اتصال به مشتری/قرارداد/پروژه.",
+   modules: [Notes], tests: [T-NOT-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-08.02, group: REQ-08, type: doc, priority: P1, weight: 3,
+   title: "چرخه عمر یادداشت",
+   text: "ثبت، ویرایش، مشاهده سوابق، علامت انجام‌شده؛ نمایش در کارتابل و موارد عقب‌افتاده؛ انجام‌شده بدون دلیل حذف نشود.",
+   modules: [Notes, Dashboard], tests: [T-NOT-02, T-NOT-03, T-DB-04], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-09 ─────────────────────────────────
+- {id: REQ-09.01, group: REQ-09, type: doc, priority: P1, weight: 4,
+   title: "جستجوی سراسری",
+   text: "جستجو در مشتریان و دسترسی سریع به پرونده مشتری با Query بهینه و Pagination.",
+   modules: [Search], tests: [T-SRCH-01, T-SRCH-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-09.02, group: REQ-09, type: doc, priority: P1, weight: 4,
+   title: "فیلترهای قرارداد و پروژه",
+   text: "قرارداد: مشتری/نوع/وضعیت/تاریخ/مبلغ. پروژه: نوع، مسئول، وضعیت، مشتری، تاریخ.",
+   modules: [Contracts, Projects, Search], tests: [T-CTR-09, T-PRJ-08], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-09.03, group: REQ-09, type: doc, priority: P1, weight: 3,
+   title: "گزارش فاکتور و گزارش",
+   text: "نمایش موعددار/انجام‌شده/عقب‌افتاده برای فاکتورها و گزارش‌های سئو.",
+   modules: [Invoices, SeoReports], tests: [T-INV-06, T-SEO-06], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-09.04, group: REQ-09, type: doc, priority: P1, weight: 3,
+   title: "گزارش قراردادها و پرسنل",
+   text: "گزارش قراردادهای فعال/پایان‌یافته/نزدیک انقضا؛ گزارش تعداد پروژه هر کارشناس و اقلام لازم حقوق.",
+   modules: [Reports], tests: [T-RPT-01, T-RPT-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-09.05, group: REQ-09, type: doc, priority: P1, weight: 4,
+   title: "خروجی PDF الزامی",
+   text: "PDF برای قرارداد، پرونده پروژه، دسترسی‌ها (با کنترل امنیتی) و فیش حقوقی.",
+   modules: [Pdf], tests: [T-PDF-01, T-PDF-08, T-PDF-09, T-PDF-10], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-09.06, group: REQ-09, type: proposed, priority: P2, weight: 3,
+   title: "خروجی Excel تکمیلی",
+   text: "گزارش‌های منتخب در XLSX واقعی: اعداد مالی Numeric، شناسه‌ها Text، حفظ صفر ابتدایی، عنوان فارسی، رعایت دسترسی و Audit؛ نه جایگزین خروجی‌های الزامی.",
+   modules: [Excel], tests: [T-XLS-01, T-XLS-02, T-XLS-03], status: in-analysis, phase: "فاز چهار"}
+
+# ───────────────────────────────── REQ-10 ─────────────────────────────────
+- {id: REQ-10.01, group: REQ-10, type: doc, priority: P1, weight: 4,
+   title: "نسخه اول: فقط مدیر اصلی",
+   text: "در نسخه اول فقط مالک/مدیر اصلی وارد شود، اما معماری افزودن کاربران پرسنلی و نقش‌ها از ابتدا پشتیبانی شود.",
+   modules: [Users, Security], tests: [T-SEC-02], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.02, group: REQ-10, type: proposed, priority: P2, weight: 3,
+   title: "نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما)",
+   text: "مدیر کل، مدیر پروژه، کارشناس، کاربر مالی، کاربر محدود — صرفاً در معماری/داده اولیه، فعال‌سازی نیازمند تأیید.",
+   modules: [Roles, Security], tests: [T-SEC-03], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.03, group: REQ-10, type: doc, priority: P0, weight: 4,
+   title: "مجوزهای مستقل به تفکیک حوزه",
+   text: "مشتریان، قراردادها، پروژه‌ها، دسترسی‌های محرمانه، پرسنل، حقوق، گزارش‌ها، خروجی‌ها، تنظیمات، Audit Log.",
+   modules: [Permissions], tests: [T-SEC-03, T-SEC-04], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.04, group: REQ-10, type: doc, priority: P0, weight: 4,
+   title: "Audit Log رویدادهای مهم",
+   text: "ورود/خروج، ایجاد/ویرایش/حذف/آرشیو، مشاهده رمز، دریافت PDF محرمانه، تغییر مالی/حقوق/نقش/مجوز و عملیات مدیریتی، با کاربر/زمان/نوع/مرجع؛ بدون ذخیره رمز.",
+   modules: [Audit], tests: [T-AUD-01, T-AUD-02, T-CRD-04], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.05, group: REQ-10, type: brief, priority: P0, weight: 5,
+   title: "الزامات امنیتی پایه",
+   text: "Password Hashing، Session امن، CSRF، XSS، SQLi، Validation سمت سرور، Authorization همه عملیات حساس، Rate Limiting ورود، مدیریت خطا بدون Stack Trace، Secure Cookie، HTTPS.",
+   modules: [Security], tests: [T-SEC-05, T-SEC-06, T-SEC-07, T-SEC-08, T-SEC-14, T-SEC-15, T-SEC-16], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.06, group: REQ-10, type: brief, priority: P0, weight: 4,
+   title: "امنیت فایل‌های آپلودی و IDOR",
+   text: "کنترل MIME/پسوند/حجم، نام‌گذاری امن، Storage خصوصی، جلوگیری از دسترسی مستقیم، جلوگیری از IDOR در همه مسیرها.",
+   modules: [Files, Security], tests: [T-SEC-08, T-SEC-09, T-SEC-10], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-10.07, group: REQ-10, type: brief, priority: P1, weight: 3,
+   title: "سیاست رمز و مدیریت نشست",
+   text: "سیاست رمز مناسب، محدودیت تلاش ناموفق، خروج از همه نشست‌ها، غیرفعال‌سازی فوری کاربر.",
+   modules: [Security], tests: [T-SEC-12, T-SEC-13], status: in-analysis, phase: "فاز سه"}
+
+# ───────────────────────────────── REQ-11 ─────────────────────────────────
+- {id: REQ-11.01, group: REQ-11, type: doc, priority: P1, weight: 4,
+   title: "UI فارسی RTL اختصاصی",
+   text: "طراحی اختصاصی، فارسی، RTL واقعی، Responsive، Desktop First؛ بدون قالب آماده خام.",
+   modules: [UI], tests: [T-UI-01, T-UI-02], status: in-analysis, phase: "فاز دو"}
+
+- {id: REQ-11.02, group: REQ-11, type: doc, priority: P0, weight: 5,
+   title: "Design System مشترک",
+   text: "رنگ، Typography، Button، Input، Select، Modal، Table، Badge، Alert، Card، Navigation، Sidebar، Header، Form Validation با رفتار یکسان در همه صفحات.",
+   modules: [UI], tests: [T-UI-03], status: in-analysis, phase: "فاز دو"}
+
+- {id: REQ-11.03, group: REQ-11, type: brief, priority: P1, weight: 4,
+   title: "فونت فارسی پایدار و قانونی",
+   text: "فونت فارسی حرفه‌ای (Vazirmatn, OFL) به‌صورت Self-hosted؛ بدون وابستگی به سرویس خارجی.",
+   modules: [UI], tests: [T-UI-04], status: designed, phase: "فاز دو"}
+
+- {id: REQ-11.04, group: REQ-11, type: doc, priority: P0, weight: 5,
+   title: "تاریخ شمسی ورود/نمایش + ذخیره استاندارد",
+   text: "همه تاریخ‌های ورودی/نمایشی شمسی؛ ذخیره‌سازی استاندارد؛ تبدیل بدون جابه‌جایی روز یا خطای موعد.",
+   modules: [Jalali, UI], tests: [T-DATE-01, T-DATE-02, T-DATE-03], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-11.05, group: REQ-11, type: doc, priority: P1, weight: 3,
+   title: "حالت‌های Loading/Empty/Success/Error و اعتبارسنجی",
+   text: "پیام خطای قابل فهم، تأیید عملیات حساس، فرم‌های کوتاه/مرحله‌ای، ناوبری واضح.",
+   modules: [UI], tests: [T-UI-03, T-UI-06], status: in-analysis, phase: "فاز دو"}
+
+# ───────────────────────────────── REQ-12 ─────────────────────────────────
+- {id: REQ-12.01, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "یادآوری فاکتور دو روز تقویمی قبل",
+   text: "ثبت تاریخ ارسال فاکتور؛ ایجاد یادآوری دو روز تقویمی قبل با نمایش مشتری، پروژه، مبلغ/توضیح، تاریخ سررسید در داشبورد/کارتابل.",
+   modules: [Invoices, Reminders], tests: [T-INV-01, T-INV-02], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.02, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "یادآوری روز سررسید فاکتور و عقب‌افتادگی",
+   text: "نمایش در روز سررسید؛ در صورت عدم انجام، عقب‌افتاده و باز تا تعیین تکلیف.",
+   modules: [Invoices, Reminders], tests: [T-INV-02, T-INV-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.03, group: REQ-12, type: doc, priority: P1, weight: 4,
+   title: "ثبت انجام فاکتور",
+   text: "ثبت انجام‌شده با شماره فاکتور، مبلغ، تاریخ صدور، فایل و توضیحات؛ خروج از لیست باز و حفظ سابقه.",
+   modules: [Invoices], tests: [T-INV-04], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.04, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی)",
+   text: "ثبت تاریخ تهیه/ارسال گزارش؛ یادآوری دو روز تقویمی قبل؛ بررسی روز موعد؛ عقب‌افتاده تا تهیه/ارسال.",
+   modules: [SeoReports, Reminders], tests: [T-SEO-01, T-SEO-02, T-SEO-03], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.05, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "استقلال یادآوری فاکتور و گزارش + چند دوره",
+   text: "انجام فاکتور یادآوری گزارش را نبندد و برعکس؛ هر پروژه چند نوبت فاکتور/گزارش با رکورد مستقل در دوره‌های مختلف.",
+   modules: [Reminders], tests: [T-INV-05, T-SEO-04, T-SEO-05], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.06, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "تغییر تاریخ: بازمحاسبه بدون تکرار، حفظ سوابق",
+   text: "موعد قبلی مبنای یادآوری نباشد؛ یادآوری جدید بر اساس تاریخ جدید؛ بدون اعلان تکراری؛ حفظ سوابق تغییر و وضعیت انجام قبلی.",
+   modules: [Reminders, Invoices, SeoReports], tests: [T-INV-07, T-INV-08, T-SEO-07], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-12.07, group: REQ-12, type: doc, priority: P0, weight: 5,
+   title: "زمان‌بندی واقعی، Idempotent و قابل مشاهده",
+   text: "Cron/Scheduler مستقل از بازدید کاربر؛ مقاوم در برابر اجرای چندباره؛ شناسه یکتا و پردازش Idempotent؛ ثبت وضعیت Job و خطاهای Scheduler.",
+   modules: [Scheduler], tests: [T-SCH-01, T-SCH-02, T-SCH-03, T-SCH-04, T-INF-03], status: in-analysis, phase: "فاز سه"}
+
+- {id: REQ-12.08, group: REQ-12, type: doc, priority: P0, weight: 4,
+   title: "تعریف روز تقویمی و Timezone",
+   text: "محاسبه دو روز قبل بر مبنای روز تقویمی (نه ۴۸ ساعت شناور)؛ Timezone مشخص و قابل تنظیم؛ مرز روز و ساعت اجرا نیازمند تصمیم کارفرما (ابهام ثبت‌شده).",
+   modules: [Scheduler, Settings], tests: [T-SCH-05, T-DATE-02], status: in-analysis, phase: "فاز سه"}
+
+# ───────────────────────────────── REQ-13 ─────────────────────────────────
+- {id: REQ-13.01, group: REQ-13, type: brief, priority: P1, weight: 4,
+   title: "مرحله‌بندی و گیت تأیید",
+   text: "فاز ۰ تا ۷؛ توقف پس از فاز ۱ برای تأیید کارفرما؛ توسعه اصلی قبل از تأیید آغاز نشود.",
+   modules: [PM], tests: [], status: designed, phase: "PM"}
+
+- {id: REQ-13.02, group: REQ-13, type: brief, priority: P1, weight: 3,
+   title: "بازبینی و تأیید هاست مقصد",
+   text: "پیش از تثبیت Laravel/نسخه PHP، بررسی واقعی هاست (PHP، Extension، DB، Composer، Artisan، Cron، Memory، Document Root، SSL، Queue، Storage) — در این محیط دسترسی هاست وجود ندارد.",
+   modules: [Deployment], tests: [T-INF-01, T-INF-02], status: in-analysis, phase: "فاز صفر"}
+
+# ───────────────────────────────── REQ-14 ─────────────────────────────────
+- {id: REQ-14.01, group: REQ-14, type: brief, priority: P0, weight: 5,
+   title: "تست واقعی، بدون Pass صوری",
+   text: "حداقل ۵۰ سناریو؛ ثبت Test ID/شرح/پیش‌شرط/مراحل/نتیجه انتظاری/واقعی/وضعیت/شواهد؛ هیچ تست بدون اجرا Pass اعلام نشود.",
+   modules: [QA], tests: [T-QA-01], status: in-analysis, phase: "فاز پنج"}
+
+- {id: REQ-14.02, group: REQ-14, type: derived, priority: P0, weight: 5,
+   title: "Requirements Traceability Matrix",
+   text: "ماتریس ردیابی نیازمندی→ماژول→تست→وضعیت، تولیدشده از کاتالوگ.",
+   modules: [PM], tests: [T-QA-02], status: designed, phase: "فاز یک"}
+
+# ───────────────────────────────── REQ-15 ─────────────────────────────────
+- {id: REQ-15.01, group: REQ-15, type: doc, priority: P1, weight: 4,
+   title: "تنظیمات مدیریتی سامانه",
+   text: "هشدار قرارداد، فاصله یادآوری‌ها، انواع قرارداد/پروژه، پکیج سئو، دسترسی‌های الزامی، روش حقوق، مبالغ پروژه، قالب‌های PDF، نقش‌ها و مجوزها، تنظیمات عمومی.",
+   modules: [Settings], tests: [T-SET-01, T-SET-02, T-PAY-01], status: in-analysis, phase: "فاز چهار"}
+
+- {id: REQ-15.02, group: REQ-15, type: brief, priority: P0, weight: 4,
+   title: "Backup و Restore تست‌شده",
+   text: "پشتیبان دیتابیس+فایل، نگهداری نسخه‌ها، Restore واقعی و مستند، حفاظت فایل Backup.",
+   modules: [Backup], tests: [T-BKP-01, T-BKP-02, T-BKP-03], status: in-analysis, phase: "فاز شش"}
+
+- {id: REQ-15.03, group: REQ-15, type: brief, priority: P1, weight: 4,
+   title: "Installer امن",
+   text: "بررسی اتصال DB، Migration، تنظیمات اولیه، ساخت مدیر اصلی با رمز امن، ثبت نسخه، غیرفعال‌سازی پس از نصب.",
+   modules: [Installer], tests: [T-INS-01, T-INS-02], status: in-analysis, phase: "فاز شش"}
+
+- {id: REQ-15.04, group: REQ-15, type: brief, priority: P1, weight: 3,
+   title: "مهاجرت و نسخه‌بندی",
+   text: "شماره نسخه، Migration قابل ردیابی، ارتقای بدون حذف داده، تست ارتقا، Changelog.",
+   modules: [DevOps], tests: [T-INF-05], status: designed, phase: "فاز شش"}
+
+- {id: REQ-15.05, group: REQ-15, type: brief, priority: P2, weight: 3,
+   title: "تنظیمات محیطی (بدون Hardcode)",
+   text: "تمام تنظیمات محیط/دیتابیس/کلیدها از .env؛ .env خارج از وب و Git؛ فایل نمونه بدون مقدار محرمانه.",
+   modules: [DevOps], tests: [T-SEC-17], status: designed, phase: "فاز شش"}
+
+- {id: REQ-15.06, group: REQ-15, type: brief, priority: P2, weight: 4,
+   title: "بسته مستندات فنی و کاربری",
+   text: "Architecture، ERD، Schema، Installation، Deployment، Env، Backup/Restore، Security، User/Admin Guide، Test Report، RTM، Changelog، Known Issues، Migration.",
+   modules: [Docs], tests: [], status: in-analysis, phase: "فاز یک"}

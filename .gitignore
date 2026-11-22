@@ -1,0 +1,32 @@
+# dependencies
+/vendor/
+/node_modules/
+
+# environment / secrets
+.env
+.env.*
+!.env.example
+*.key
+!docs/**/*.key
+
+# build artifacts
+/public/build
+/public/hot
+/bootstrap/cache/*.php
+
+# runtime
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/app/private/*
+!/storage/app/private/.gitkeep
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# jupyter/pandas etc not needed

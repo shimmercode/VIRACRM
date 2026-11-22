@@ -1,0 +1,104 @@
+{
+    "generated_at": "2026-11-22T22:18:21+03:30",
+    "php_version": "8.3.36",
+    "checks": [
+        {
+            "case": "نوروز ۱۴۰۳",
+            "in_jalali": "1403-01-01",
+            "expected_gregorian": "2024-03-20",
+            "got_gregorian": "2024-03-20",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "پایان اسفند ۱۴۰۳ (۲۹ اسفند)",
+            "in_jalali": "1403-12-29",
+            "expected_gregorian": "2025-03-19",
+            "got_gregorian": "2025-03-19",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "اول ژانویه ۲۰۲۴ = ۱۱ دی ۱۴۰۲",
+            "in_jalali": "1402-10-11",
+            "expected_gregorian": "2024-01-01",
+            "got_gregorian": "2024-01-01",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "نوروز ۱۴۰۰",
+            "in_jalali": "1400-01-01",
+            "expected_gregorian": "2021-03-21",
+            "got_gregorian": "2021-03-21",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "۲۲ بهمن ۱۳۵۷",
+            "in_jalali": "1357-11-22",
+            "expected_gregorian": "1979-02-11",
+            "got_gregorian": "1979-02-11",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "سال کبیسه ۱۳۹۹",
+            "in_jalali": "1399-12-30",
+            "expected_gregorian": "2021-03-20",
+            "got_gregorian": "2021-03-20",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "نوروز ۱۴۰۵ (مبنا: تقویم نجومی؛ همخوان با الگوریتم حساب)",
+            "in_jalali": "1405-01-01",
+            "expected_gregorian": "2026-03-21",
+            "got_gregorian": "2026-03-21",
+            "roundtrip": true,
+            "status": "PASS"
+        },
+        {
+            "case": "پایان سال عادی ۱۴۰۲",
+            "in_jalali": "1402-12-29",
+            "expected_gregorian": "2024-03-19",
+            "got_gregorian": "2024-03-19",
+            "roundtrip": true,
+            "status": "PASS"
+        }
+    ],
+    "d_minus_two": [
+        [
+            "2026-03-21",
+            "2026-03-19",
+            "عید نوروز ۱۴۰۵ → D-2"
+        ],
+        [
+            "2026-01-01",
+            "2025-12-30",
+            "عبور از مرز سال میلادی"
+        ],
+        [
+            "2025-03-20",
+            "2025-03-18",
+            "مرز پایان سال شمسی"
+        ],
+        [
+            "2024-03-01",
+            "2024-02-28",
+            "سال کبیسه میلادی (۲۹ فوریه)"
+        ]
+    ],
+    "invariant_failures": 0,
+    "timezone_ok": true,
+    "reference_discrepancy": [
+        {
+            "date": "1404-01-01",
+            "arithmetic_2820_cycle": "2025-03-20",
+            "astronomical": "2025-03-21",
+            "engine_output": "2025-03-20"
+        }
+    ],
+    "failures": 0,
+    "verdict": "PASS"
+}
