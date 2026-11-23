@@ -14,7 +14,7 @@
 |------|-------|
 | شاخه | `arena/3b43de84-viracrm` |
 | Commit پایه (پیش از این دور) | `9b5aafe` |
-| Commit نهایی این دور | `{{FINAL_COMMIT}}` |
+| Commit نهایی این دور | ``6d4d8bf`` |
 | تعداد فایل تغییریافته | ۱۹ فایل مرحله‌شده + ۵ مسیر جدید |
 
 **فایل‌های تغییریافته در این دور:**
@@ -43,7 +43,45 @@
 
 ## ۲. Git Status و Push
 
-{{GIT_STATUS}}
+```
+$ git status --short --branch
+## arena/3b43de84-viracrm
+
+$ git rev-list --left-right --count origin/arena/3b43de84-viracrm...HEAD
+0	0
+```
+
+**درخت کاری تمیز است** — هیچ فایل تغییر‌یافته یا مرحله‌نشده‌ای باقی نمانده.
+
+**Push انجام شد:**
+
+```
+$ git push origin arena/3b43de84-viracrm
+To https://github.com/shimmercode/VIRACRM.git
+   9b5aafe..6d4d8bf  arena/3b43de84-viracrm -> arena/3b43de84-viracrm
+```
+
+`0 0` یعنی شاخهٔ محلی و ریموت **کاملاً همگام**اند: نه چیزی برای push مانده، نه چیزی روی
+ریموت هست که محلی نداشته باشد.
+
+**تأیید نبود رمز واقعی در کامیت:** مقدار واقعی رمز از فایل محلی خوانده شد و در diff
+مرحله‌شده جست‌وجو شد:
+
+```
+$ git check-ignore -v .arena/admin-password
+.gitignore:33:/.arena/	.arena/admin-password
+
+OK: real password does NOT appear in staged diff
+```
+
+یعنی رمز واقعی **در Git نیست**، و فایلش هم با `.gitignore` کنار گذاشته شده است.
+
+**هیچ تغییر Backend/Database/Permission در این کامیت نیست:**
+
+```
+$ git diff --name-only 9b5aafe -- app/ database/ config/ routes/
+(خالی)
+```
 
 ---
 
@@ -165,7 +203,7 @@ exit 0
 | ۱۵ | ui-shots | ۱۷۸ | ~141s |
 | ۱۶ | table-cards | ۲۱ | ~38s |
 | ۱۷ | overflow-1024 | ۴۴ | ~87s |
-| ۱۸ | design-system | ۲۰ | ~30s |
+| ۱۸ | design-system | ۲۱ | ~32s |
 | ۱۹ | filter-chips | ۲۲ | ~72s |
 | ۲۰ | regression-matrix | ۱۸۷ | ~184s |
 | ۲۱ | runner-contract | ۱۱ | ~51s |
