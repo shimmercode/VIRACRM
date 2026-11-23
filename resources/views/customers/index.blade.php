@@ -151,12 +151,12 @@
                                 <td class="v-table__actions">
                                     <div class="v-actions">
                                         <a class="v-iconbtn v-iconbtn--sm" href="{{ route('customers.show', $customer) }}"
-                                           aria-label="مشاهدهٔ {{ $customer->display_name }}" title="مشاهده">
+                                           aria-label="مشاهدهٔ {{ $customer->display_name }}" title="مشاهده" data-tooltip="مشاهده">
                                             <x-icon name="eye" :size="16" />
                                         </a>
                                         @if (auth()->user()->hasPermission('customers.update'))
                                             <a class="v-iconbtn v-iconbtn--sm" href="{{ route('customers.edit', $customer) }}"
-                                               aria-label="ویرایش {{ $customer->display_name }}" title="ویرایش">
+                                               aria-label="ویرایش {{ $customer->display_name }}" title="ویرایش" data-tooltip="ویرایش">
                                                 <x-icon name="edit" :size="16" />
                                             </a>
                                         @endif

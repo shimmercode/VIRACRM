@@ -33,3 +33,4 @@ Thumbs.db
 /.arena/
 
 # jupyter/pandas etc not needed
+/image-search/

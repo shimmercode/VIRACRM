@@ -46,7 +46,11 @@
                 <x-alert type="danger">{{ $errors->first('username') }}</x-alert>
             @endif
 
-            <form method="POST" action="{{ route('login.store') }}" class="v-auth__form" novalidate>
+            {{-- `data-guard` gives the submit a busy state: the button is disabled and an
+                 in-flight ring replaces its label while the request is outstanding. Login
+                 was the only form without it, so the most-used submit in the product gave
+                 no feedback at all and a double click looked reasonable. --}}
+            <form method="POST" action="{{ route('login.store') }}" class="v-auth__form" novalidate data-guard>
                 @csrf
 
                 <div class="v-field">

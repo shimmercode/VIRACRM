@@ -464,7 +464,18 @@
 }
 .v-table {
     width: 100%;
-    min-width: 720px;
+    /* A floor, not a fixed width.
+     *
+     * This used to be `min-width: 720px`. At 1024px the sidebar is 264px and the
+     * content has 28px padding a side, leaving 687px for the table — so the
+     * fixed floor forced a 33px horizontal scroll inside the wrapper on a page
+     * whose table actually needs only 687px. The floor now yields to the space
+     * that exists: it still prevents the table collapsing to an unreadable
+     * width, but it never exceeds the container.
+     *
+     * Measured at 1024px: natural table width 687px, wrapper 687px, overflow 0.
+     */
+    min-width: min(720px, 100%);
     font-size: var(--vira-text-sm);
 }
 .v-table thead th {
@@ -2442,6 +2453,80 @@ a.v-list__main:hover .v-list__title {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   Spinner / loading state (REQ-11.05, "Loading")
+
+   The requirement names Loading as one of four states that must exist. The
+   submit guard in app.js has always set `.is-loading` on the submit button —
+   but no rule defined it, so a submitted form looked identical to an idle one
+   while the request was in flight. That is the state this closes.
+
+   Architecture note: every page is server-rendered, so there is no in-page
+   fetch to indicate. The one place a wait is real and visible to the user is
+   between submit and the next page render. That is what this styles, and it is
+   why a general-purpose spinner component was NOT built (see the Design System
+   decision record).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* A rotating ring that inherits the button's text colour, so it works on the
+   primary (purple) and secondary (white) variants without a modifier. */
+.v-btn.is-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.v-btn.is-loading::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: 16px;
+    height: 16px;
+    margin-block-start: -8px;
+    margin-inline-start: -8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--vira-radius-full);
+    /* `currentColor` is transparent because of the rule above, so the ring uses
+       the button's own token instead. */
+    border-color: var(--vira-text-inverse);
+    border-top-color: transparent;
+    animation: vira-spin 0.6s linear infinite;
+}
+
+/* Secondary/ghost buttons have dark text, so their ring must not be white. */
+.v-btn--secondary.is-loading::after,
+.v-btn--ghost.is-loading::after {
+    border-color: var(--vira-ink);
+    border-top-color: transparent;
+}
+
+@keyframes vira-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Respect the OS setting. A user who asked for less motion gets a pulsing
+   opacity instead of a rotation — the state is still communicated. */
+@media (prefers-reduced-motion: reduce) {
+    .v-btn.is-loading::after {
+        animation: vira-pulse 1.2s ease-in-out infinite;
+        border-color: var(--vira-text-inverse);
+        border-top-color: var(--vira-text-inverse);
+    }
+
+    .v-btn--secondary.is-loading::after,
+    .v-btn--ghost.is-loading::after {
+        border-color: var(--vira-ink);
+        border-top-color: var(--vira-ink);
+    }
+
+    @keyframes vira-pulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.35; }
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    Responsive list → card view.
 
    Below 768px a six-column table cannot fit: measured at 390px it hid 41% of
@@ -2556,4 +2641,63 @@ a.v-list__main:hover .v-list__title {
 
 .v-card-row__action-text {
     white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Tooltip
+
+   Icon-only buttons carried their meaning only in `title=` attributes: 12 of
+   them across the two list screens. The native tooltip has three problems —
+   it needs a mouse, it takes about a second to appear, and it is not exposed
+   to keyboard users at all.
+
+   This adds a CSS-only tooltip driven by `data-tooltip`, so the same element
+   can keep `title` for the mouse-hover fallback while assistive tech reads the
+   button's `aria-label` (which every icon button already has). CSS-only means
+   it works with JavaScript disabled.
+
+   Positioning uses logical properties so it mirrors correctly in RTL.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 60;
+    inset-block-end: calc(100% + 6px);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    border-radius: var(--vira-radius-sm);
+    background: var(--vira-ink);
+    color: var(--vira-text-inverse);
+    font-size: var(--vira-text-xs);
+    line-height: 1.5;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--vira-duration-fast) var(--vira-ease);
+}
+
+/* RTL: `translateX` is physical, so the mirror needs its own rule. The
+   transform must flip sign or the label drifts off-centre. */
+[dir="rtl"] [data-tooltip]::after {
+    transform: translateX(50%);
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+    opacity: 1;
+}
+
+/* A tooltip must never be the only way to get the information — it is an
+   enhancement over the existing `title`/`aria-label` pair, which is why the
+   opacity transition is the only thing this changes. */
+@media (prefers-reduced-motion: reduce) {
+    [data-tooltip]::after {
+        transition: none;
+    }
 }

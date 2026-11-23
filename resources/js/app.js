@@ -198,15 +198,37 @@
     }
 
     // ── Prevent double submit ─────────────────────────────────────────────
+    // REQ-11.05 names "Loading" as one of four required states. Between submit
+    // and the next page render there is a real wait, and before this the form
+    // looked idle during it: the button was disabled but visually unchanged, so
+    // a second click looked reasonable and nothing said "working".
+    //
+    // The visible ring is pure CSS (`.v-btn.is-loading`). This function is
+    // responsible for the two things CSS cannot do: telling assistive tech the
+    // form is busy, and refusing the second submit.
     function initSubmitGuard() {
         document.querySelectorAll('form[data-guard]').forEach(function (form) {
             form.addEventListener('submit', function () {
                 var btn = form.querySelector('[type="submit"]');
-                if (btn && !form.dataset.submitted) {
-                    form.dataset.submitted = '1';
-                    btn.disabled = true;
-                    btn.classList.add('is-loading');
-                }
+                if (!btn || form.dataset.submitted) return;
+
+                form.dataset.submitted = '1';
+                btn.disabled = true;
+                btn.classList.add('is-loading');
+
+                // `aria-busy` on the form makes the in-flight state programmatic
+                // rather than only visual.
+                form.setAttribute('aria-busy', 'true');
+
+                // A live region exists only for the duration of the request; it
+                // announces once and is left in the DOM so the message is not
+                // cut off mid-utterance.
+                var status = document.createElement('span');
+                status.className = 'vira-sr-only';
+                status.setAttribute('role', 'status');
+                status.setAttribute('aria-live', 'polite');
+                status.textContent = btn.getAttribute('data-loading-label') || 'در حال ارسال…';
+                form.appendChild(status);
             });
         });
     }

@@ -132,7 +132,7 @@
   {
     "id": "T-RESP-customers-list-desktop-1440",
     "ok": true,
-    "detail": "overflowX=0px doc=1440/1440 "
+    "detail": "overflowX=0px doc=1440/1440 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-customers-list-desktop-1440",
@@ -152,7 +152,7 @@
   {
     "id": "T-RESP-customers-list-laptop-1280",
     "ok": true,
-    "detail": "overflowX=0px doc=1280/1280 "
+    "detail": "overflowX=0px doc=1280/1280 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-customers-list-laptop-1280",
@@ -172,7 +172,7 @@
   {
     "id": "T-RESP-customers-list-tablet-1024",
     "ok": true,
-    "detail": "overflowX=0px doc=1024/1024 "
+    "detail": "overflowX=0px doc=1024/1024 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-customers-list-tablet-1024",
@@ -192,7 +192,7 @@
   {
     "id": "T-RESP-customers-list-tablet-768",
     "ok": true,
-    "detail": "overflowX=0px doc=768/768 "
+    "detail": "overflowX=0px doc=768/768 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-customers-list-tablet-768",
@@ -492,7 +492,7 @@
   {
     "id": "T-RESP-contracts-list-desktop-1440",
     "ok": true,
-    "detail": "overflowX=0px doc=1440/1440 "
+    "detail": "overflowX=0px doc=1440/1440 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-contracts-list-desktop-1440",
@@ -512,7 +512,7 @@
   {
     "id": "T-RESP-contracts-list-laptop-1280",
     "ok": true,
-    "detail": "overflowX=0px doc=1280/1280 "
+    "detail": "overflowX=0px doc=1280/1280 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-contracts-list-laptop-1280",
@@ -532,7 +532,7 @@
   {
     "id": "T-RESP-contracts-list-tablet-1024",
     "ok": true,
-    "detail": "overflowX=0px doc=1024/1024 "
+    "detail": "overflowX=0px doc=1024/1024 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-contracts-list-tablet-1024",
@@ -552,7 +552,7 @@
   {
     "id": "T-RESP-contracts-list-tablet-768",
     "ok": true,
-    "detail": "overflowX=0px doc=768/768 "
+    "detail": "overflowX=0px doc=768/768 offenders: v-actions,v-iconbtn v-iconbtn--sm,v-iconbtn v-iconbtn--sm,v-actions,v-iconbtn v-iconbtn--sm"
   },
   {
     "id": "T-RTL-contracts-list-tablet-768",

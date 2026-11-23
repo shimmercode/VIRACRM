@@ -155,12 +155,12 @@
                                 <td class="v-table__actions">
                                     <div class="v-actions">
                                         <a class="v-iconbtn v-iconbtn--sm" href="{{ route('contracts.show', $contract) }}"
-                                           aria-label="مشاهدهٔ {{ $contract->title }}" title="مشاهده">
+                                           aria-label="مشاهدهٔ {{ $contract->title }}" title="مشاهده" data-tooltip="مشاهده">
                                             <x-icon name="eye" :size="16" />
                                         </a>
                                         @if (auth()->user()->hasPermission('contracts.update'))
                                             <a class="v-iconbtn v-iconbtn--sm" href="{{ route('contracts.edit', $contract) }}"
-                                               aria-label="ویرایش {{ $contract->title }}" title="ویرایش">
+                                               aria-label="ویرایش {{ $contract->title }}" title="ویرایش" data-tooltip="ویرایش">
                                                 <x-icon name="edit" :size="16" />
                                             </a>
                                         @endif
