@@ -68,6 +68,42 @@
         @endif
     </form>
 
+    @php
+        // One chip per active filter. `status` is translated through the same
+        // map the select uses, so the chip never shows a raw enum value in
+        // Latin where the UI shows a Persian label.
+        $filterChips = [];
+
+        if ($filters['q'] !== '') {
+            $filterChips[] = ['key' => 'q', 'label' => 'جست‌وجو', 'value' => $filters['q']];
+        }
+        if ($filters['type'] !== '') {
+            $filterChips[] = [
+                'key' => 'type',
+                'label' => 'نوع',
+                'value' => $filters['type'] === 'legal' ? 'حقوقی' : 'حقیقی',
+            ];
+        }
+        if ($filters['status'] !== '') {
+            $statusLabels = [
+                'lead' => 'سرنخ',
+                'prospect' => 'در مذاکره',
+                'active' => 'مشتری فعال',
+                'inactive' => 'غیرفعال',
+                'archived' => 'بایگانی',
+            ];
+            $filterChips[] = [
+                'key' => 'status',
+                'label' => 'وضعیت',
+                'value' => $statusLabels[$filters['status']] ?? $filters['status'],
+            ];
+        }
+
+        $anyFilter = $filters['q'] !== '' || $filters['type'] !== '' || $filters['status'] !== '';
+    @endphp
+
+    <x-filter-chips :chips="$filterChips" :clear-href="$anyFilter ? route('customers.index') : null" />
+
     <div class="v-card">
         @if ($customers->isEmpty())
             @if ($filters['q'] !== '' || $filters['type'] !== '' || $filters['status'] !== '')

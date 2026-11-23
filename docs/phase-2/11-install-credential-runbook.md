@@ -103,6 +103,78 @@ php artisan vira:reset-admin-password --password-file=/run/secrets/admin_pw
 
 ---
 
+## 4b. Shell history, terminal logging and process arguments
+
+The review asked for the one-shot print path to be examined on three surfaces. Measured
+against the implementation, not assumed:
+
+### Shell history
+
+| Path | Enters shell history? | Why |
+|------|----------------------|-----|
+| `--generate` | **No secret.** The command line contains only the flag. | `vira:reset-admin-password --generate` has no secret in it; the value is produced inside PHP and printed to stdout. |
+| `--password-file=/path` | **Path only.** | The argument is a filesystem path. The secret lives in the file. |
+| Seeder with `SEED_ADMIN_PASSWORD_FILE` | **Path only.** | Same reasoning. |
+| Seeder with `SEED_ADMIN_PASSWORD='…'` | **Yes — the secret is in history.** | This is the acknowledged weakness of path 2, and why it is not the recommended path. |
+| `head -c 24 /dev/urandom \| base64 > /run/secrets/admin_pw` | **No secret.** | The redirect happens in the shell; the value never appears as an argument. |
+
+**Rule for operators:** never put a secret after `=` on a command line. Use a redirection
+(path 1) or `--generate`. Both are documented above as the recommended paths.
+
+### Terminal logging
+
+| Surface | Exposure |
+|---------|----------|
+| The terminal itself | On `--generate`, the secret is printed **once**, by design — the operator must be able to read it. Anyone watching the screen sees it. This is why path 1 exists for unattended installs. |
+| `script` / `tee` / CI job logs | If the operator pipes output to a log, a generated secret is captured. **Mitigation:** the file path never prints the secret (`secret appears in output: no`, asserted), and `--generate` is not used in automation. |
+| Application logs | **None.** Neither the seeder nor the reset command contains a `Log::` call (verified by grep). A secret cannot reach `storage/logs/`. |
+| Overflow / crash dumps | A generated secret lives in a local variable only. It is never written to a file, a cache or a session. |
+
+### Process arguments
+
+`ps` and `/proc/<pid>/cmdline` show the full command line to any user who can run `ps`.
+
+| Invocation | Visible in `ps` |
+|------------|-----------------|
+| `vira:reset-admin-password --generate` | the flag only — **no secret** |
+| `vira:reset-admin-password --password-file=/run/secrets/admin_pw` | the **path** — no secret |
+| `SEED_ADMIN_PASSWORD='…' php artisan …` | the **secret**, because it is an argument of `php` |
+
+That last row is the concrete reason path 1 is the recommendation. It is also why the reset
+command deliberately has **no** `--password=` option: offering one would create a convenient
+way to put a credential in `ps` and in history.
+
+### `/run/secrets/admin_pw` and mode 0600
+
+| Property | Assessment |
+|----------|------------|
+| Location | `/run` is a **tmpfs**: RAM-backed, cleared on reboot, not written to disk. A credential there does not survive a power cycle and is not in any backup. |
+| Permissions | `0600` (`rw-------`), owner = the deploying user. Only that user (and root) can read it. Verified in the install simulation: `mode: 0600`. |
+| Directory | `/run/secrets/` should itself be `0700`. It is created by the operator or by the platform's secret manager. |
+| Lifetime | Deleted by the seeder immediately after it is read, so it exists only between "written" and "consumed". |
+| Caveat | `tmpfs` means the file is **gone after a reboot**. If the install is interrupted by a reboot, the operator regenerates — which is the correct behaviour: a credential that persists across reboots is a credential nobody remembers creating. |
+
+**Verified in this phase:** `file: /run/secrets/admin_pw`-equivalent path, `mode: 0600`,
+`on disk but not yet consumed: yes`, then `exists after seeding: no — deleted`.
+
+## 4c. Operational prerequisite: shell access
+
+**Recovery requires shell access to the host.** `vira:reset-admin-password` is an artisan
+command, deliberately not an HTTP route. This is a **deployment prerequisite**, not a bug:
+
+- A host with no shell (restricted shared hosting, a container with no exec) has **no
+  supported recovery path** if the superadmin credential is lost.
+- The workaround on such a host would be restoring a database backup or asking the hosting
+  provider to run the command — both are slower and both are out of scope here.
+
+**This must be confirmed before deployment:** pick a host where the operator can run
+`php artisan`. That is also the same access level required to install the application, so in
+practice a host that could deploy it can recover it.
+
+**No web endpoint for password reset exists, and none was added.** A reset endpoint would be
+a second authentication surface to defend against enumeration, CSRF and brute force, for an
+event that happens approximately never. The requirement does not ask for self-service reset.
+
 ## 5. The defect this phase fixed
 
 The seeder resolved the secret with `getenv()` **alone**. Under the PHP-WASM runtime used for

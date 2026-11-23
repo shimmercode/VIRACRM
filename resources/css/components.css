@@ -713,48 +713,6 @@
     border-radius: var(--vira-radius-sm);
 }
 
-/* ── Tabs ────────────────────────────────────────────────────────────────── */
-
-.v-tabs {
-    display: flex;
-    gap: var(--vira-space-1);
-    border-bottom: 1px solid var(--vira-border);
-    overflow-x: auto;
-}
-.v-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--vira-space-2);
-    padding: var(--vira-space-3) var(--vira-space-3);
-    font-size: var(--vira-text-sm);
-    font-weight: var(--vira-weight-medium);
-    color: var(--vira-text-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    white-space: nowrap;
-    background: none;
-    border-top: none;
-    border-inline: none;
-    cursor: pointer;
-    transition: color var(--vira-duration-fast) var(--vira-ease),
-                border-color var(--vira-duration-fast) var(--vira-ease);
-}
-.v-tab:hover {
-    color: var(--vira-text);
-    text-decoration: none;
-}
-.v-tab--active {
-    color: var(--vira-primary);
-    border-bottom-color: var(--vira-primary);
-}
-.v-tab__count {
-    font-size: var(--vira-text-xs);
-    color: var(--vira-text-muted);
-    background: var(--vira-neutral-soft);
-    padding: 0 5px;
-    border-radius: var(--vira-radius-sm);
-}
-
 /* ── Empty / loading / error states ──────────────────────────────────────── */
 
 .v-state {
@@ -1223,6 +1181,80 @@
     font-size: var(--vira-text-xs);
     font-weight: 500;
     color: var(--vira-text-secondary);
+}
+
+/* ── Active filter chips ────────────────────────────────────────────────
+   Each chip removes exactly one filter. Rendered by
+   components/filter-chips.blade.php; see that file for the why.
+
+   The chip is an <a>, so it inherits link behaviour (keyboard focus, middle
+   click, works with JS off) rather than pretending to be a button. */
+.v-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--vira-space-2);
+    margin-bottom: var(--vira-space-4);
+}
+
+.v-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+    /* 28px floor: the same touch-target bar as the rest of the product. */
+    min-height: 28px;
+    padding-inline: var(--vira-space-3) var(--vira-space-2);
+    border: 1px solid var(--vira-border-strong);
+    border-radius: var(--vira-radius-full);
+    background: var(--vira-surface);
+    color: var(--vira-ink);
+    font-size: var(--vira-text-xs);
+    text-decoration: none;
+    transition: border-color var(--vira-duration-fast) var(--vira-ease),
+                background var(--vira-duration-fast) var(--vira-ease);
+}
+
+.v-chip:hover {
+    border-color: var(--vira-primary);
+    background: var(--vira-surface-hover);
+}
+
+.v-chip:focus-visible {
+    outline: 2px solid var(--vira-focus-ring);
+    outline-offset: 2px;
+}
+
+.v-chip__key {
+    color: var(--vira-text-muted);
+}
+
+.v-chip__value {
+    font-weight: 600;
+}
+
+.v-chip__x {
+    color: var(--vira-text-muted);
+    flex: 0 0 auto;
+}
+
+.v-chip:hover .v-chip__x {
+    color: var(--vira-primary);
+}
+
+.v-chips__clear {
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    /* Tappable at the same 28px bar as the chips themselves. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding-inline: var(--vira-space-2);
+}
+
+.v-chips__clear:hover {
+    color: var(--vira-primary);
 }
 
 /* ── Grid for forms ───────────────────────────────────────────────────── */

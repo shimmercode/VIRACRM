@@ -1,271 +1,499 @@
-# Final report — phase 2-E
+# گزارش نهایی فاز ۲-E — تثبیت، بررسی و شواهد
 
-**Date:** 2026-11-22 · **Branch:** `arena/3b43de84-viracrm` · **Approval:** still withheld by the user
+**Vira CRM** · تاریخ: ۲ آذر ۱۴۰۵ (2026-11-23) · شاخه: `arena/3b43de84-viracrm`
 
-Every number below came from running the thing described. Where something is unfinished,
-it is listed as unfinished.
-
----
-
-## 1. Commit and branch
-
-| | |
-|---|---|
-| Branch | `arena/3b43de84-viracrm` (active) |
-| Previous phase | `ac01e5e` (docs: final report for the six priorities) |
-| This phase | see `git log -1` after the commit |
-| Pushed | `origin/arena/3b43de84-viracrm` |
-| Working tree | clean |
+این گزارش دقیقاً بر اساس نُه بخشِ درخواستیِ دستور تثبیت نوشته شده است. هر ادعا با خروجی
+تست، اسکرین‌شات یا شاهد قابل بررسی در همین مخزن پشتیبانی می‌شود. هرجا شاهدی ندارم، صریح
+نوشته‌ام که شاهد ندارم.
 
 ---
 
-## 2. Git status
+## ۱. Commit و Branch نهایی
 
-`git status --short` is empty after the commit. Nothing staged, nothing ahead of origin.
+| مورد | مقدار |
+|------|-------|
+| شاخه | `arena/3b43de84-viracrm` |
+| Commit پایه (پیش از این دور) | `9b5aafe` |
+| Commit نهایی این دور | `{{FINAL_COMMIT}}` |
+| تعداد فایل تغییریافته | ۱۹ فایل مرحله‌شده + ۵ مسیر جدید |
+
+**فایل‌های تغییریافته در این دور:**
+
+| فایل | نوع تغییر |
+|------|-----------|
+| `resources/views/components/filter-chips.blade.php` | **جدید** — کامپوننت چیپ فیلتر |
+| `resources/views/customers/index.blade.php` | +۳۶ خط — سیم‌کشی `$filterChips` |
+| `resources/views/contracts/index.blade.php` | +۷۳ خط — سیم‌کشی + برچسب‌های شمسی |
+| `resources/css/components.css` | `.v-chips`…`v-chips__clear` اضافه، **`.v-tabs` حذف** |
+| `tools/checks/filter-chips.mjs` | **جدید** — ۲۲ اَسِرشِن |
+| `tools/checks/regression-matrix.mjs` | **جدید** — ۱۸۷ اَسِرشِن |
+| `tools/checks/runner-contract.mjs` | **جدید** — ۱۱ اَسِرشِن |
+| `tools/checks/run-all.mjs` | +۲۶ خط — ثبت سه سوییت جدید + قلاب `VIRA_RUNNER_SUITES_FILE` |
+| `tools/checks/design-system.mjs` | اثبات نبودِ `.v-tabs` در DOM **و** استایل‌شیت + رفع ریسِ تست Spinner |
+| `docs/phase-2/06-design-system-gap-matrix.md` | G4 بسته شد + بخش چیپ فیلتر |
+| `docs/phase-2/09-design-reference-research.md` | پیشنهاد Grouped Headers (بدون پیاده‌سازی) |
+| `docs/phase-2/11-install-credential-runbook.md` | تحلیل امنیتی §4b و §4c |
+| `docs/phase-2/evidence/filter-chips/*.png` | **جدید** — ۶ اسکرین‌شات قبل/بعد |
+
+**هیچ تغییری در این مسیرها رخ نداده است:** `app/` (به‌جز فرمان کنسول فاز قبل)، `database/`،
+`config/`، `routes/`. با `git diff --name-only 9b5aafe -- app/ database/ config/ routes/`
+بررسی شد: خروجی خالی است. **معماری، Backend، Database و Permissionها دست‌نخورده‌اند.**
 
 ---
 
-## 3. Regression suite — the structural fix
+## ۲. Git Status و Push
 
-### What was wrong
+{{GIT_STATUS}}
 
-`run-all.mjs` printed `REGRESSION SUITE PASSED` and **exited 0** while `--fast` skipped five
-browser suites. A skip was invisible in the verdict.
+---
 
-### What it does now
+## ۳. تست‌های اجراشده و نتایج واقعی
 
-| Requirement | Implementation | Proven |
-|-------------|----------------|--------|
-| Full run is the default | no flag = all 18 suites | `18 total · 18 executed` |
-| No required test skipped without declaration | every suite is `required: true`; `--fast` is the only skip, it is global and printed | `SKIP … (--fast: explicitly skipped)` |
-| Executed / Passed / Failed / Skipped always reported | one summary line, all four numbers, every run | `432 executed · 432 passed · 0 failed · 0 skipped` |
-| Any unrun required suite ⇒ not PASSED | verdict becomes `INCOMPLETE` | tested |
-| Non-zero exit when a required test is skipped | `exit 2` | tested: `EXIT: 2` |
-| Two consecutive full runs identical | `--repeat 2` compares per-suite totals | `pass 2 matches pass 1` |
+### ۳-۱. Regression Suite — دو اجرای کامل متوالی
 
-**Exit codes** are now three-way and each was verified by breaking something on purpose:
-
-| Code | Meaning | How it was proven |
-|------|---------|-------------------|
-| `0` | PASSED | full run, 432/432 |
-| `1` | FAILED | injected a failure into `tokens.mjs` → `EXIT with genuine failure: 1` |
-| `2` | INCOMPLETE | `--fast` → `EXIT: 2` |
-
-### Two consecutive full runs
+دستور: `node tools/checks/run-all.mjs --repeat 2`
 
 ```
-suites     18 total · 18 executed · 18 passed · 0 failed · 0 skipped
-assertions 432 executed · 432 passed · 0 failed · 0 skipped
+══════════ pass 1 of 2 ══════════
+RUN   unit            Unit + feature tests … ✓ 7/7  (6.8s)
+RUN   views           Blade compilation … ✓ 30/30  (1.9s)
+RUN   authorization   Authorization (PHP) … ✓ OK  (2.0s)
+RUN   flow-login      Flow: login … ✓ 8/8  (17.4s)
+RUN   flow-authed     Flow: authenticated … ✓ 20/20  (39.6s)
+RUN   flow-authz      Flow: authorization … ✓ 11/11  (26.6s)
+RUN   flow-crud       Flow: CRUD … ✓ 18/18  (44.1s)
+RUN   css-audit       Token discipline … ✓ 42/42  (0.0s)
+RUN   contrast        Contrast … ✓ OK  (0.0s)
+RUN   unstyled        Unstyled classes … ✓ OK  (0.0s)
+RUN   tokens          Undefined tokens … ✓ OK  (0.0s)
+RUN   calendar        Jalali calendar … ✓ OK  (26.7s)
+RUN   a11y            Accessibility … ✓ 10/10  (71.3s)
+RUN   login-shots     Login page … ✓ 24/24  (13.4s)
+RUN   ui-shots        Layout (7 pages x 6 widths) … ✓ 178/178  (154.2s)
+RUN   table-cards     Responsive tables (cards on phones) … ✓ 21/21  (41.3s)
+RUN   overflow-1024   No overflow at 768/1024/1440 … ✓ 44/44  (87.3s)
+RUN   design-system   Design System components … ✓ 21/21  (31.7s)
+RUN   filter-chips    Active filter chips … ✓ 22/22  (78.1s)
+RUN   regression-matrix 6 widths x 4 pages … ✓ 187/187  (186.1s)
+RUN   runner-contract Runner exit codes 0/1/2 … ✓ 11/11  (50.8s)
+
+══════════ pass 2 of 2 ══════════
+RUN   unit            Unit + feature tests … ✓ 7/7  (6.7s)
+RUN   views           Blade compilation … ✓ 30/30  (1.9s)
+RUN   authorization   Authorization (PHP) … ✓ OK  (2.1s)
+RUN   flow-login      Flow: login … ✓ 8/8  (18.0s)
+RUN   flow-authed     Flow: authenticated … ✓ 20/20  (40.9s)
+RUN   flow-authz      Flow: authorization … ✓ 11/11  (25.7s)
+RUN   flow-crud       Flow: CRUD … ✓ 18/18  (44.5s)
+RUN   css-audit       Token discipline … ✓ 42/42  (0.0s)
+RUN   contrast        Contrast … ✓ OK  (0.0s)
+RUN   unstyled        Unstyled classes … ✓ OK  (0.0s)
+RUN   tokens          Undefined tokens … ✓ OK  (0.0s)
+RUN   calendar        Jalali calendar … ✓ OK  (28.0s)
+RUN   a11y            Accessibility … ✓ 10/10  (70.6s)
+RUN   login-shots     Login page … ✓ 24/24  (12.5s)
+RUN   ui-shots        Layout (7 pages x 6 widths) … ✓ 178/178  (153.7s)
+RUN   table-cards     Responsive tables (cards on phones) … ✓ 21/21  (46.6s)
+RUN   overflow-1024   No overflow at 768/1024/1440 … ✓ 44/44  (90.8s)
+RUN   design-system   Design System components … ✓ 21/21  (33.2s)
+RUN   filter-chips    Active filter chips … ✓ 22/22  (82.7s)
+RUN   regression-matrix 6 widths x 4 pages … ✓ 187/187  (190.3s)
+RUN   runner-contract Runner exit codes 0/1/2 … ✓ 11/11  (53.7s)
+
+── shared database untouched ──
+  ok  customers    7 -> 7
+  ok  contracts    5 -> 5
+  ok  projects     3 -> 3
+  ok  work_items   9 -> 9
+  ok  users        2 -> 2
+  ok  sessions     21 -> 21
+  ok  audit_logs   232 -> 232
+
+── repeatability ──
+  ok  pass 2 matches pass 1
+  ok  suite totals are identical across 2 runs
+
+══════════════════════════════════════════
+suites     21 total · 21 executed · 21 passed · 0 failed · 0 skipped
+assertions 654 executed · 654 passed · 0 failed · 0 skipped
 isolation  shared database untouched
 repeatable yes
+
 REGRESSION SUITE PASSED
 exit 0
 ```
 
-Shared database row counts identical across the whole run (`sessions 217 → 217`,
-`audit_logs 218 → 218`).
+**دو اجرای متوالی، هر دو بدون هیچ شکست، شمارش یکسان، دیتابیس مشترک دست‌نخورده،
+کد خروج ۰.**
 
-### Suite inventory (18)
+### ۳-۲. تست مستقل Exit Codeها (بند ۱ دستور)
 
-unit · views · authorization(PHP) · flow-login 8/8 · flow-authed 20/20 · flow-authz 11/11 ·
-flow-crud 18/18 · css-audit 42/42 · contrast · unstyled · tokens · calendar · a11y 10/10 ·
-login-shots 24/24 · ui-shots 178/178 · table-cards 21/21 · **overflow 44/44** (new) ·
-**design-system 20/20** (new)
+فایل `tools/checks/runner-contract.mjs` — **۱۱ از ۱۱ قبول**. این تست خودِ runner را به‌عنوان
+فرزند اجرا می‌کند و بر اساس **کد خروج** تصمیم می‌گیرد، نه متن خروجی:
 
----
+| اَسِرشِن | چه چیزی را اثبات می‌کند | نتیجه |
+|---------|------------------------|-------|
+| `T-RUNNER-exit0` | اجرای سالم → کد خروج **۰** | ✓ |
+| `T-RUNNER-exit1` | سوییت شکست‌خورده → کد خروج **۱** | ✓ |
+| `T-RUNNER-exit2` | `--fast` با سوییت رد‌شده → کد خروج **۲** | ✓ |
+| `T-RUNNER-exit2-not-pass` | همه سبز ولی یکی رد‌شده → **باز هم ۲، نه ۰** | ✓ |
+| `T-RUNNER-distinct` | ۰ و ۲ فقط از روی کد قابل تفکیک‌اند | ✓ |
+| `T-RUNNER-all-required` | همهٔ ۲۱ سوییت `required: true` | ✓ |
 
-## 4. Admin credential delivery — the real arrangement
+**چرا این مهم است:** کد ۲ از کد ۱ جدا شده است. یعنی CI می‌تواند «شکست واقعی» را از
+«تست اجرا نشد» تفکیک کند. اگر فقط متن خروجی را می‌خواندیم، یک سوییت ردشده می‌توانست
+شبیه موفقیت به نظر برسد — این همان چیزی است که قبلاً به‌درستی به من تذکر داده شد.
 
-Full runbook: `docs/phase-2/11-install-credential-runbook.md`
+### ۳-۳. فهرست کامل سوییت‌ها (۲۱ سوییت، همه الزامی)
 
-An install was **simulated step by step** on a throwaway database:
+| # | سوییت | اَسِرشِن | مدت |
+|---|-------|---------|-----|
+| ۱ | unit | ۷ | ~6s |
+| ۲ | views | ۳۰ | ~2s |
+| ۳ | authorization | OK | ~2s |
+| ۴ | flow-login | ۸ | ~17s |
+| ۵ | flow-authed | ۲۰ | ~38s |
+| ۶ | flow-authz | ۱۱ | ~24s |
+| ۷ | flow-crud | ۱۸ | ~45s |
+| ۸ | css-audit | ۴۲ | ~0s |
+| ۹ | contrast | OK | ~0s |
+| ۱۰ | unstyled | OK | ~0s |
+| ۱۱ | tokens | OK | ~0s |
+| ۱۲ | calendar | OK | ~27s |
+| ۱۳ | a11y | ۱۰ | ~69s |
+| ۱۴ | login-shots | ۲۴ | ~14s |
+| ۱۵ | ui-shots | ۱۷۸ | ~141s |
+| ۱۶ | table-cards | ۲۱ | ~38s |
+| ۱۷ | overflow-1024 | ۴۴ | ~87s |
+| ۱۸ | design-system | ۲۰ | ~30s |
+| ۱۹ | filter-chips | ۲۲ | ~72s |
+| ۲۰ | regression-matrix | ۱۸۷ | ~184s |
+| ۲۱ | runner-contract | ۱۱ | ~51s |
+
+**محدودیت `--repeat` که مستند مانده است:** `--repeat` دو اجرا را پشت سر هم انجام می‌دهد و
+**مقایسهٔ تطبیقی بین دو اجرا انجام نمی‌دهد** — یعنی اگر یک سوییت در هر دو اجرا متفاوت رفتار
+کند ولی هر دو بار «سبز» باشد، گزارش نمی‌شود. این محدودیت طبق دستور **حل نشد** و تغییری
+برای آن ایجاد نشد؛ فقط مستند شده است. آنچه واقعاً انجام می‌شود: هر اجرا مستقل شمارش
+می‌شود و شمارش‌ها در جدول بالا و در لاگ خام قابل مقایسه‌اند.
+
+### ۳-۴. یک نقص واقعی در تست پیدا و رفع شد (Spinner)
+
+در اجرای اولِ ثبت‌شده، سوییت `design-system` نتیجهٔ **۱۴/۲۰** داد و هر شش اَسِرشِن
+`T-DS-SPINNER-*` با هم شکست خوردند. این را به‌عنوان «نوسان تست» رد نکردم و ریشه‌اش را
+پیدا کردم:
+
+**ریشهٔ واقعی:** حالت «در حال ارسال» فقط بین `submit` و ناوبری بعدی وجود دارد. تست با
+`btn.click({ noWaitAfter: true }).catch(() => {})` تلاش می‌کرد آن را ببیند. `click()` تنها
+وقتی برمی‌گردد که **ناوبریِ ناشی از کلیک** ثبت شده باشد؛ چون پاسخ ساختگی ۳ ثانیه نگه داشته
+می‌شد، زیر بار سیستم کلیک به تایم‌اوت می‌خورد و خطایش با `.catch` **بلعیده** می‌شد. نتیجه:
+listener هرگز اجرا نمی‌شد و هر شش اَسِرشِن با هم قرمز می‌شدند — دقیقاً شبیه «محصول حالت
+busy را از دست داده».
+
+**تلاش دوم هم شکست خورد و این را هم ثبت می‌کنم:** `form.requestSubmit()` را امتحان کردم؛
+آن هم ناوبری می‌کند و context صفحه را پیش از خواندن DOM نابود می‌کند
+(`Execution context was destroyed`). این را با یک probe جداگانه اثبات کردم.
+
+**راه‌حل قطعی:** فقط **خودِ ناوبری** در فاز capture لغو می‌شود:
+
+```js
+document.addEventListener('submit', (e) => e.preventDefault(), true);
+document.querySelector('form.v-auth__form').requestSubmit();
+```
+
+listener مربوط به capture **قبل** از listener برنامه اجرا می‌شود، و `preventDefault()` جلوی
+انتشار رویداد را نمی‌گیرد. پس `app.js` واقعی — همان بستهٔ ساخته‌شدهٔ واقعی — همان
+`.is-loading` و `aria-busy` و live region را می‌گذارد که برای کاربر واقعی می‌گذارد؛ فقط
+صفحه جابه‌جا نمی‌شود تا بتوان خواند.
+
+**اثبات اینکه تست هنوز واقعاً چیزی را می‌سنجد:** یک نقص واقعی تزریق کردم (حذف
+`btn.classList.add('is-loading')` از `app.js`)، بسته را بازسازی کردم و تست را اجرا کردم:
 
 ```
-STEP 1  operator generates the secret
-        mode: 0600 · length: 24 chars · on disk, not yet consumed
-STEP 2  seeder runs
-        account created: yes
-        must_change_password: 1 · is_superadmin: 1 · hash: $2y$12$
-STEP 3  file consumed? exists after seeding: no — deleted
-STEP 4  interrupted install: stale file is inert; nothing reads it until the seeder runs
+PASS  T-DS-SPINNER-guard             submit handler ran=true
+FAIL  T-DS-SPINNER-class             .is-loading applied=false
+FAIL  T-DS-SPINNER-ring              ::after ring width=auto animation=none
+PASS  T-DS-SPINNER-busy              form aria-busy=true
 ```
 
-Answers to each question asked:
+یعنی تست نقص واقعی را می‌گیرد، و اَسِرشِن جدیدِ `T-DS-SPINNER-guard` سبز می‌ماند — پس
+«تست خراب بوده» را از «محصول خراب بوده» تفکیک می‌کند. سپس `app.js` از نسخهٔ پشتیبان
+بازگردانده شد (`git diff` خالی = بازگردانی دقیق) و تست **۲۱/۲۱** شد.
 
-| Question | Answer |
-|----------|--------|
-| How is it generated? | `random_bytes(18)` → ~144 bits, or operator-supplied file/env |
-| How does the admin get it? | They write it (path 1) or it is printed once (path 3) |
-| Where does the file live? | `/run/secrets/admin_pw` recommended (RAM, not disk) |
-| Permissions? | `0600` under `umask 077` — measured `mode: 0600` |
-| When deleted? | Immediately after reading, before the account is created |
-| Install interrupted? | File is inert; re-running consumes it once and deletes it |
-| Weak/wrong password? | **Refused before any account is created** — 3 cases executed, `admin rows created: 0` each |
-| Forced change? | **Yes**, every path; `T-AUTH-12` shows the 302 to `/password` |
+**درس ثبت‌شده برای آینده:** هر تستی که وضعیت درون‌پروازی را می‌سنجد باید ناوبری را
+قطعی متوقف کند، نه اینکه به تایم‌اوت یا `.catch` تکیه کند.
 
-**Recovery** was the gap with no answer before. `UserSeeder` refuses to touch an existing
-admin, so a lost credential had no supported path. Now:
+### ۳-۵. جایی که صادقانه باید بگویم شاهد ندارم
 
-```bash
-php artisan vira:reset-admin-password --generate
-php artisan vira:reset-admin-password --password-file=/run/secrets/admin_pw
+در یکی از اجراهای میانی، سوییت `flow-crud` و `login-shots` شکست خوردند. علت را پیدا کردم:
+**خودم** هم‌زمان یک سوییت را دستی اجرا کرده بودم و آن اجرا پوشهٔ
+`.arena/flows/crud/database.sqlite` را که اجرای اصلی داشت استفاده می‌کرد، پاک کرد. خطای
+واقعی در `storage/logs/laravel.log` این بود:
+
+```
+Database file at path [/home/user/VIRACRM/.arena/flows/crud/database.sqlite] does not exist
 ```
 
-Verified: `before must_change: 0` → reset → `after must_change: 1`, exit 0, file deleted,
-**secret does not appear in the output** for the file path (`secret appears in output: no`).
-
-No password appears in this report, in Git, in a screenshot, or in any recorded output.
-
----
-
-## 5. The 1024px overflow — fixed
-
-**Cause, measured:** `.v-table` had `min-width: 720px`. At 1024px the sidebar is 264px and
-`.v-content` has 28px padding a side, leaving **687px**. The table's natural width is exactly
-687px — the *floor*, not the content, caused the overflow: `720 − 687 = 33`.
-
-**Fix:** `min-width: min(720px, 100%)` — the floor yields to the space that exists.
-
-| Width | Before | After |
-|-------|--------|-------|
-| 768 | 0 | 0 (table) |
-| **1024** | **33px** | **0** |
-| 1280 | 0 | 0 |
-| 1440 | 0 | 0 |
-| 390 | 0 (cards) | 0 (cards — unchanged) |
-
-Gate: `tools/checks/overflow.mjs`, **44/44**, validated by restoring the bug — it failed with
-`table wrapper overflow 33px`, and only at 1024px.
-
-Screenshots: `evidence/overflow-1024/before-*.png` / `after-*.png` at 768, 1024 and 1440.
-
-**Card view below 768px was not broken** — asserted in the same suite
-(`T-OVF-*-390-cards`: 7 and 5 cards, table `display: none`, 0px overflow).
+پس از پاک‌سازی همهٔ پروسه‌ها و اجرای مجدد با دسترسی انحصاری، `flow-crud` دوباره **۱۸/۱۸**
+شد. **پس این یک نقص محصول نبود؛ آلودگی محیط تست بود و در گزارش به‌عنوان نقص ثبت نمی‌شود.**
+دو اجرای رسمیِ ثبت‌شده در بخش ۳-۱ بدون هیچ پروسهٔ هم‌زمان انجام شده‌اند.
 
 ---
 
-## 6. Design reference research — actually done this time
+## ۴. وضعیت امنیت رمز مدیر
 
-Full report: `docs/phase-2/09-design-reference-research.md`
+### ۴-۱. چهار مسیر ورود رمز و سطح افشای هر یک
 
-**Three real products inspected with visible evidence:**
+| مسیر | رمز در `ps`؟ | رمز در Shell History؟ | وضعیت |
+|------|--------------|----------------------|-------|
+| `--generate` | **نه** — فقط فلگ | **نه** | توصیه‌شده |
+| `SEED_ADMIN_PASSWORD_FILE=/path` | نه — فقط مسیر | نه — فقط مسیر | توصیه‌شده |
+| `head -c 24 /dev/urandom > /run/secrets/admin_pw` | نه | نه | توصیه‌شده |
+| `SEED_ADMIN_PASSWORD='…'` | **بله** | **بله** | **رد شده** — مسیر قدیمی که حذف شد |
 
-| Product | What was seen |
-|---------|---------------|
-| **Attio** | Sidebar IA, record list (`Company · ICP Score · Owner`), dashboard with KPI cards + funnel + trend + bar + donut |
-| **Linear** | Grouped list with counted headers (`Backlog 8`, `Todo 71`, `In Progress 3`, `Done 53`) |
-| **Close CRM** | Dense lead table, filter chips with `×`, **actions revealed only on hover at the row's far end** |
+### ۴-۲. بررسی سه سطح درخواستی
 
-Plus two catalogue pages (saasui.design: 115 CRM screens, 160 table screens) for pattern frequency.
+**Shell History:** `vira:reset-admin-password --generate` هیچ رمزی در خط فرمان ندارد.
+مسیر `--password-file` فقط یک مسیر است. تنها مسیری که رمز را وارد history می‌کند
+`SEED_ADMIN_PASSWORD='…'` است که **حذف شده** و در مستندات به‌عنوان مسیر ردشده ثبت است.
 
-**Screenshots kept:** `evidence/design-system/attio-crm-table-view-dashboard-screensho-1.webp`,
-`linear-app-issues-list-table-view-dark-s-1.webp`, `linear-app-issues-list-table-view-dark-s-2.png`.
+**Terminal Logging:** دستور `--generate` رمز را **یک بار** روی صفحه چاپ می‌کند — این
+طبق طراحی است، چون اپراتور باید بتواند بخواند. اگر خروجی به فایل/CI لاگ هدایت شود، رمز
+ثبت می‌شود؛ به همین دلیل `--generate` در اتوماسیون توصیه نشده و مسیر فایل توصیه شده است.
+**هیچ `Log::` در فرمان seed یا reset وجود ندارد** (با grep تأیید شد) — پس رمز به
+`storage/logs/` نمی‌رسد.
 
-**Key finding, and it is mostly negative:**
+**Process Arguments:** `--generate` فقط فلگ نشان می‌دهد. `--password-file` فقط مسیر.
+فرمان reset عمداً گزینهٔ `--password=` **ندارد**، تا راه راحتی برای قرار دادن رمز در
+`ps` ساخته نشود.
 
-- Close CRM's hover-revealed row actions are the industry default *and* the exact cause of the
-  mobile defect this project fixed. Fine with a mouse; unusable on touch, and worse in RTL
-  because the actions column is at the far end of the reading direction. **Rejected for Vira.**
-- Attio's chart-heavy dashboard would bury the overdue-reminder list that REQ-11.05 makes the
-  dashboard's job. **Rejected.**
-- Linear's grouped counted headers are a genuine improvement — but a **behaviour change** to a
-  list that currently passes 178 assertions. **Documented as a candidate, not implemented.**
-- Close's filter chips (removable pills) are worth adopting — same reason: behaviour change,
-  awaits approval.
+### ۴-۳. فایل `/run/secrets/admin_pw` و مجوز 0600
 
-Not usable as evidence and therefore not cited: mobbin, dribbble, behance (app shells /
-infinite feeds return no inspectable structure).
+| ویژگی | ارزیابی |
+|-------|---------|
+| مکان | `/run` یک tmpfs است — در RAM، با ری‌استارت پاک می‌شود، در بکاپ نمی‌آید |
+| مجوز | `0600` — فقط مالک. در شبیه‌سازی نصب تأیید شد |
+| عمر | بعد از خواندن توسط seeder **حذف می‌شود** |
+| نکته | چون tmpfs است، بعد از ری‌بوت از بین می‌رود — که رفتار درست است |
 
----
+**تأیید شده در این فاز:** `mode: 0600` · `exists after seeding: no — deleted`
 
-## 7. Design System — six items decided
+### ۴-۴. بازیابی رمز
 
-Full contract: `docs/phase-2/10-component-contract.md`
+`php artisan vira:reset-admin-password --generate` — فقط CLI.
 
-| Item | In requirements? | Decision | Implemented | Tested | RTL |
-|------|------------------|----------|-------------|--------|-----|
-| **Tooltip** | Not named, but `title=` was the only affordance on 12 icon buttons (mouse-only) | **Implemented** — CSS-only `data-tooltip`, works with JS off | yes | 6 assertions | logical props + mirrored `translateX` |
-| **Spinner** | **Yes — REQ-11.05 "Loading"** | **Implemented** — `.v-btn.is-loading` was set by JS but had *no CSS* | yes | 6 assertions | inherits button, direction-neutral |
-| **Checkbox** | Used on 2 screens | **Already existed** as `.v-check` — my earlier "no checkbox" claim was a **false gap** | was already there | 4 assertions | native, RTL-safe |
-| **Tabs** | **No** — no requirement, no screen | **Not needed.** Dead `.v-tabs` rule; recommendation is to remove it | no | asserts it stays unused | n/a |
-| **Skeleton** | Not named | **Not needed.** Server-rendered app: no client-side wait to fill | no | asserts it stays unused | n/a |
-| **Component contract** | — | **Written** | n/a | — | includes RTL rules |
+### ۴-۵. پیش‌نیاز عملیاتی: نبود Shell Access روی هاست نهایی
 
-### Two corrections to my previous report
+**ثبت شد به‌عنوان پیش‌نیاز استقرار، نه نقص.** روی هاستی که دسترسی shell ندارد (هاست
+اشتراکی محدود، کانتینر بدون exec) **هیچ مسیر بازیابی پشتیبانی‌شده‌ای وجود ندارد** اگر رمز
+سوپرادمین گم شود. راه‌حل جایگزین فقط بازگرداندن بکاپ دیتابیس است. **قبل از استقرار باید
+تأیید شود که اپراتور می‌تواند `php artisan` اجرا کند.**
 
-1. **Checkbox was never missing.** I grepped `.v-checkbox` and concluded from zero matches
-   for a class that does not exist. The component is `.v-check` and has 6 rules.
-2. **"Remember me" is implemented.** I wrote that it was not, "because the session lifetime is
-   a server decision". `LoginController.php:75` passes it to `Auth::attempt()`. Both errors are
-   corrected in `06-design-system-gap-matrix.md`.
+### ۴-۶. هیچ Endpoint وب برای Reset ساخته نشد
 
-### A real defect found while doing this
+`grep` روی `routes/` هیچ مسیر reset رمز نشان نمی‌دهد. هیچ مسیری اضافه نشد. دلیل: یک
+endpoint reset، سطح حملهٔ دوم برای enumeration و CSRF و brute-force می‌سازد، برای رویدادی
+که تقریباً هرگز رخ نمی‌دهد.
 
-The login form was the **only** form without `data-guard`, so the most-used submit in the
-product showed no busy state at all. It now has one, with `aria-busy`, a `role="status"`
-announcement, and `prefers-reduced-motion` support.
+### ۴-۷. رمز واقعی در هیچ‌کجای این دور نیست
 
----
-
-## 8. Before / after screenshots
-
-| Change | Before | After |
-|--------|--------|-------|
-| 1024px overflow | `evidence/overflow-1024/before-customers-1024.png` | `evidence/overflow-1024/after-customers-1024.png` |
-| 1024px overflow (contracts) | `before-contracts-1024.png` | `after-contracts-1024.png` |
-| 768 / 1440 regression | `before-*-{768,1440}.png` | `after-*-{768,1440}.png` |
-| Login loading state | (was invisible — no CSS) | `evidence/design-system/login-loading-form-detail.png` |
-| Login checkbox | `login-after-checkbox-1440.png` | (unchanged component, now documented) |
-| Tooltip | `title=` only, mouse-only | `evidence/design-system/tooltip-hover-row.png` |
-| Mobile tables (previous phase) | `evidence/mobile-tables/before-*-390.png` | `after-*-390.png` |
+- در گزارش: هیچ رمزی نیست، فقط نام مسیرها و مکانیزم‌ها.
+- در Git: `.arena/admin-password` با مجوز 0600 و در `.gitignore` است. با
+  `git check-ignore -v .arena/admin-password` تأیید شد.
+- در اسکرین‌شات: هیچ صفحه‌ای که رمز را نشان دهد اسکرین‌شات نشده است.
 
 ---
 
-## 9. Design System status
+## ۵. Filter Chips و وضعیت آن
 
-12/12 components named by REQ-11.02 exist. Of the six previously-listed gaps: **two were
-false** (Checkbox existed; Spinner's class existed but was unstyled — that part was real),
-**two are now implemented and tested** (Tooltip, Spinner), **two are documented as not
-required** (Tabs, Skeleton), and **the contract is written**.
+### ۵-۱. چه چیزی ساخته شد
 
-Brand colours `#450073` and `#D2AB67` are unchanged. `css-audit` 42/42, `tokens` 0 undefined.
+کامپوننت `resources/views/components/filter-chips.blade.php` — فیلترهای فعال به شکل
+قرص‌های قابل حذف. **هر چیپ یک `<a>` است** به همان آدرس با **فقط همان یک پارامتر** حذف‌شده:
+
+```php
+$urlWithout = function (string $key) use ($query, $base): string {
+    $next = $query;
+    unset($next[$key]);          // فقط کلید خودش
+    return $next === [] ? $base : $base . '?' . http_build_query($next);
+};
+```
+
+**چرا `<a>` و نه `<button>`:** بدون JavaScript کار می‌کند، با کیبورد قابل دسترسی است، و
+به‌عنوان لینک اعلام می‌شود نه دکمه. پارامترهای دیگر (از جمله `sort`/`dir`) حفظ می‌شوند.
+
+### ۵-۲. نتیجهٔ تست — ۲۲ از ۲۲
+
+| اَسِرشِن | نتیجه |
+|---------|-------|
+| مشتریان: ۳ چیپ برای `q`+`type`+`status` | ✓ |
+| هر چیپ **فقط کلید خودش** را حذف می‌کند، بقیه + `sort`/`dir` می‌مانند | ✓ |
+| `T-CHIP-CUST-follow` — بعد از حذف status، ۲ چیپ می‌ماند و select خالی می‌شود | ✓ |
+| حالت خالی → ۰ چیپ و **بدون** «حذف همه» | ✓ |
+| قراردادها: `?q=فروشگاه&status=draft&type=seo` → ۳ چیپ | ✓ |
+| `T-CHIP-CONT-jalali` → برچسب `"از تاریخ ۱۴۰۵/۰۴/۱۰"` (شمسی، نه میلادی) | ✓ |
+| سرریز افقی ۰px در ۳۹۰/۴۳۰/۷۶۸/۱۰۲۴/۱۴۴۰ | ✓ |
+
+### ۵-۳. اعتبارسنجی خودِ تست
+
+برای اطمینان از اینکه تست واقعاً چیزی را می‌سنجد، کامپوننت را موقتاً طوری تغییر دادم که
+همهٔ پارامترها را بیندازد → **۱۸ شکست** ثبت شد. سپس از نسخهٔ پشتیبان بازگرداندم. پس تست
+توخالی نیست.
+
+### ۵-۴. Grouped List Headers — پیاده‌سازی **نشد**
+
+طبق دستور فقط مستند شد در `docs/phase-2/09-design-reference-research.md`. محل کاربرد
+احتمالی: `/contracts` (چون status ستون درجه‌یک است). برای `/customers` مناسب دانسته نشد.
+سه پیش‌نیاز ثبت شد: ترتیب کوئری، تعامل گروه‌بندی با pagination، و اینکه تغییر رفتار است.
+
+### ۵-۵. حذف `.v-tabs` — فقط پس از اثبات
+
+| اثبات | نتیجه |
+|-------|-------|
+| ارجاع در `resources/views/` | ۰ |
+| ارجاع در `resources/js/` | ۰ |
+| ارجاع در PHP | ۳ — همه داخل `design-system.mjs` |
+| هر selector داخل بلوک با `.v-tab` شروع می‌شود | بله |
+| حجم بلوک | ۱۱۶۰ بایت |
+| CSS ساخته‌شده | ۱۲۳.۹ → **۱۲۲.۶ KB** |
+| `grep -cE "\.v-tabs?\b"` در سورس و build | ۰ |
+| `.v-table` دست‌نخورده | ۴۰ ارجاع |
+
+سپس `T-DS-TABS-absent` تقویت شد تا نبودِ قانون را هم در DOM و هم در **استایل‌شیت** بررسی
+کند (از طریق `document.styleSheets`/`cssRules`) — چون فقط نبودِ کلاس در DOM ثابت نمی‌کند
+که قانون CSS حذف شده است.
+
+### ۵-۶. Card View موبایل، RTL و اکشن‌های لمسی
+
+`table-cards` **۲۱/۲۱** · `regression-matrix` در هر صفحه×عرض بررسی می‌کند که
+`data-cards="ready"` باشد و اکشن‌های ردیف در حالت کارت **گم نشوند**. RTL در هر ۲۴ ترکیب
+با `dir=rtl lang=fa` تأیید شد.
 
 ---
 
-## 10. Known limitations
+## ۶. Regression در شش عرض
 
-1. **Verification is PHP-WASM, not the customer's host.** No native PHP here. Behaviour under
-   real `php-fpm`/Apache is not proven in this environment.
-2. **`--fast` still exists.** It now exits 2 and prints INCOMPLETE, but a CI job that ignored
-   exit codes could still misread it. CI must check the exit code, not the word.
-3. **The `--repeat` comparison is per-suite totals, not per-assertion.** Two runs could in
-   principle produce the same totals with different individual assertions passing.
-4. **Recovery requires shell access.** `vira:reset-admin-password` is deliberately not an HTTP
-   route; a host with no shell has no supported recovery.
-5. **No password complexity rule beyond length**, and no breach-corpus check. Length alone is
-   enforced (12 chars).
-6. **The reset command has no rate limit.** It needs shell access, which is already database-level
-   trust.
-7. **Card view loses column alignment** — comparing one field down ten rows is harder on a phone.
-   Accepted trade-off, documented.
-8. **`getenv()` never works under WASM.** Any future config read must use `$_ENV`/`$_SERVER` or
-   it fails silently — the exact bug fixed in `UserSeeder`.
-9. **mobbin / dribbble / behance were not inspectable.** Not cited as evidence.
-10. **`.arena/flows/` accumulates** if a suite crashes before `close()`. Git-ignored, safe to
-    delete, not cleaned automatically.
-11. **`is-loading` leaves the button label hidden** for the whole request. If a request takes
-    very long the user sees only a ring. Acceptable, but it is a real trade-off.
+### ۶-۱. ماتریس شش‌گانه — ۱۸۷ از ۱۸۷
+
+فایل `tools/checks/regression-matrix.mjs`: ۴ صفحه × ۶ عرض = ۲۴ ترکیب.
+
+| عرض | مشتریان | قراردادها | داشبورد | ورود |
+|-----|---------|-----------|---------|------|
+| ۳۹۰ | ✓ | ✓ | ✓ | ✓ |
+| ۴۳۰ | ✓ | ✓ | ✓ | ✓ |
+| ۷۶۸ | ✓ | ✓ | ✓ | ✓ |
+| ۱۰۲۴ | ✓ | ✓ | ✓ | ✓ |
+| ۱۲۸۰ | ✓ | ✓ | ✓ | ✓ |
+| ۱۴۴۰ | ✓ | ✓ | ✓ | ✓ |
+
+**چه چیزی در هر ترکیب بررسی می‌شود:**
+
+| بررسی | معیار |
+|-------|-------|
+| `ovf` | `scrollWidth <= clientWidth + 1` — بدون سرریز ناخواسته |
+| `rtl` | `dir="rtl"` و `lang="fa"` |
+| `type` | کوچک‌ترین فونت ≥ ۱۲px |
+| `date` | هیچ تاریخ میلادی پیدا نشود |
+| `kbd` | حداقل ۳ عنصر قابل فوکوس |
+| `brand` | `#450073` و `#D2AB67` در صفحه (بی‌توجه به بزرگی/کوچکی حرف) |
+| `wrap`/`rows`/`primary`/`actions` | برای صفحات لیستی: جدول یا کارت، و اکشن‌ها هرگز گم نشوند |
+| `T-MX-focusring` | اولین `Tab` به یک `<A>` با حلقهٔ فوکوس دیده‌شدنی می‌رسد |
+
+### ۶-۲. سرریز افقی — ۴۴ از ۴۴
+
+`overflow-1024.mjs` جداگانه ۴۴ اَسِرشِن روی ۷۶۸/۱۰۲۴/۱۴۴۰ اجرا می‌کند.
+
+### ۶-۳. Accessibility — ۱۰ از ۱۰
+
+`a11y.mjs` — کنتراست، نام‌های قابل دسترس، ترتیب هدینگ‌ها، فوکوس.
+
+### ۶-۴. رنگ‌های برند
+
+`#450073` و `#d2ab67` هر دو در `resources/css/` موجود و در ۲۴ ترکیب تأیید شدند.
+**یک نکتهٔ صادقانه:** در استایل‌شیت طلا با حروف کوچک نوشته شده (`#d2ab67`) و در سند با
+حروف بزرگ (`#D2AB67`). **همان رنگ است.** مقایسه را حساس‌نبودن به حروف کردم؛ توکن را
+**تغییر ندادم** چون تغییرش دلیلی نداشت و دستور گفته رنگ‌ها حفظ شوند.
 
 ---
 
-## 11. Nothing awaiting a backend change
+## ۷. Screenshots قبل و بعد
 
-No backend, database, contract, permission or project-structure change was made for this phase
-except **one new artisan command** (`vira:reset-admin-password`), which was required to answer
-the user's own question about recovering the initial credential.
+مسیر: `docs/phase-2/evidence/filter-chips/`
 
-Awaiting the user's decision:
+| فایل | چه چیزی نشان می‌دهد |
+|------|---------------------|
+| `before-customers-1280.png` | مشتریان ۱۲۸۰ — فیلتربار با ۳ select، **بدون چیپ** |
+| `after-customers-1280.png` | همان صفحه — ۳ قرص با `×` + «حذف همه» داخل کارت فیلتر |
+| `before-customers-390.png` | مشتریان ۳۹۰ — موبایل، بدون چیپ |
+| `after-customers-390.png` | همان — چیپ‌ها به ۲ سطر می‌شکنند، «حذف همه» درون‌خطی، کارت‌ویو سالم |
+| `after-customers-390-full.png` | تمام‌صفحهٔ ۳۹۰ برای دیدن کل صفحه |
+| `after-contracts-1280.png` | قراردادها ۱۲۸۰ — چیپ تاریخ با برچسب شمسی |
 
-1. **Filter chips** and **grouped list headers** — behaviour changes, not implemented.
-2. **Remove the dead `.v-tabs` rule** — recommended.
-3. **Approval** of this phase.
+هر دو جفت before/after **هش متفاوت** دارند (`md5sum`) — یعنی واقعاً دو تصویر متفاوت‌اند،
+نه یک فایل کپی‌شده. هر ۶ فایل با چشم بررسی شدند: هیچ ۴۰۴، صفحهٔ ناقص یا ریدایرکت در آن‌ها
+نیست.
+
+---
+
+## ۸. Known Limitations
+
+۱. **`--repeat` مقایسهٔ تطبیقی انجام نمی‌دهد.** دو اجرا را پشت سر هم می‌برد، اما اگر یک
+   سوییت در هر دو اجرا «سبز ولی متفاوت» باشد، چیزی گزارش نمی‌شود. طبق دستور برای حل آن
+   تغییری ایجاد نشد؛ فقط در بخش ۳-۳ مستند شد.
+
+۲. **Regression Suite باید انحصاری اجرا شود.** اگر هنگام اجرای کامل، کس دیگری (یا خودتان)
+   سوییتی را دستی اجرا کند، پوشهٔ `.arena/flows/<id>/` مشترک است و دیتابیس جداسازی پاک
+   می‌شود. این را در این دور عملاً دیدم و در بخش ۳-۴ صادقانه ثبت شد. **راه‌حل: پیش از
+   اجرای ثبت‌شده، هیچ پروسهٔ هم‌زمانی روی مخزن نباشد.**
+
+۳. **جلسهٔ مرورگرِ بازِ خودتان نوشتن در دیتابیس مشترک حساب می‌شود.** اگر روی پورت ۸۰۸۰
+   لاگین باشید، `sessions` زیاد می‌شود و runner گزارش `SHARED DATABASE WAS MODIFIED` می‌دهد.
+
+۴. **هیچ مسیر بازیابی رمز روی هاست بدون shell وجود ندارد.** محدودیت پذیرفته‌شده، نه نقص
+   (بخش ۴-۵).
+
+۵. **Grouped List Headers پیاده‌سازی نشد** — طبق دستور، فقط پیشنهاد مستند شد.
+
+۶. **تست‌ها روی SQLite و PHP-WASM اجرا می‌شوند**، نه روی MySQL واقعی. رفتار SQL در
+   محیط واقعی می‌تواند متفاوت باشد (مثلاً collation فارسی).
+
+۷. **`T-MX-focusring` فقط اولین عنصر فوکوس را بررسی می‌کند**، نه کل مسیر Tab در صفحه.
+
+۸. **حالت «در حال ارسال» فقط با listener ساختگیِ capture قابل مشاهده است.** در دنیای واقعی
+   این حالت کوتاه است و صفحه جابه‌جا می‌شود. تست ما ناوبری را لغو می‌کند تا بتواند بخواند؛
+   این یعنی **خودِ ناوبریِ واقعی پس از submit در تست پوشش داده نمی‌شود** (پوشش آن با
+   `flow-login` است که واقعاً submit می‌کند). این را به‌عنوان محدودیت ثبت می‌کنم، نه پوشش کامل.
+
+---
+
+## ۹. مواردی که برای استقرار روی هاست واقعی باید بررسی شوند
+
+| # | مورد | چرا |
+|---|------|-----|
+| ۱ | **دسترسی shell برای `php artisan`** | بدون آن هیچ مسیر بازیابی رمز وجود ندارد (بخش ۴-۵) |
+| ۲ | مجوز `/run/secrets/` = `0700` و فایل = `0600` | تنها چیزی که رمز را از کاربران دیگر جدا می‌کند |
+| ۳ | `SEED_ADMIN_PASSWORD` هرگز در env هاست ست نشود | رمز در `/proc/<pid>/environ` دیده می‌شود |
+| ۴ | `APP_DEBUG=false` | در غیر این صورت صفحهٔ خطا مسیرها و تنظیمات را لو می‌دهد |
+| ۵ | `APP_ENV=production` و `APP_KEY` تولیدشدهٔ واقعی | کلید تستی در بکاپ نباشد |
+| ۶ | رمز سوپرادمین را در اولین ورود عوض کنید | قبلاً سیاستش مستند شده |
+| ۷ | `storage/` و `bootstrap/cache/` قابل نوشتن برای وب‌سرور | وگرنه صفحهٔ خطا |
+| ۸ | هدرهای امنیتی (HSTS، CSP، `X-Content-Type-Options`) | در محیط dev ست نمی‌شوند |
+| ۹ | بررسی `sessions` روی MySQL واقعی در ساعات شلوغی | SQLite تست‌شده، MySQL نه |
+| ۱۰ | collation دیتابیس برای جست‌وجوی فارسی | `_ci` یا `_ai` لازم است |
+| ۱۱ | زمان‌بند (`schedule:run`) برای یادآوری‌های عقب‌افتاده | اگر کرون نباشد کار نمی‌کند |
+| ۱۲ | بکاپ دیتابیس و آزمایش بازیابی | بازیابی رمز آخرین راه است |
+| ۱۳ | اجرای `run-all.mjs` روی همان هاست | تا محیط واقعی هم همان ۲۱ سوییت را پاس کند |
+
+---
+
+## پیوست: لاگ خام دو اجرا
+
+لاگ خام کامل: `/tmp/FINAL3.log` (روی همان ماشین). خلاصهٔ آن عیناً در بخش ۳-۱ نقل شده است.
+
+**نکتهٔ صادقانه دربارهٔ تعداد اَسِرشِن‌ها:** در اجرای پیشین ۶۵۳ اَسِرشِن بود و اکنون ۶۵۴
+است. دلیلش اضافه‌شدن `T-DS-SPINNER-guard` است (بخش ۳-۴) — یک اَسِرشِن واقعی، نه تغییر
+عدد برای زیبا شدن گزارش.
+
+---
+
+**پایان گزارش.** هیچ ادعایی در این سند بدون خروجی تست، اسکرین‌شات یا شاهد قابل بررسی
+ثبت نشده است. منتظر تأیید شما هستم.

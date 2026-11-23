@@ -73,7 +73,23 @@ const NODE = process.execPath;
  * `required: true` on every entry. The list is not order-dependent any more —
  * `--repeat` proves it — but a stable order keeps output readable.
  */
-const SUITES = [
+/**
+ * The suite list, optionally replaced by `VIRA_RUNNER_SUITES_FILE`.
+ *
+ * That hook exists so `runner-contract.mjs` can test this runner's exit codes
+ * against stub suites in seconds instead of running all 18. It is read from a
+ * file rather than an env var so a long list does not have to survive shell
+ * quoting. In production the variable is unset and the list below is used.
+ */
+const SUITES = (() => {
+  const override = process.env.VIRA_RUNNER_SUITES_FILE;
+
+  if (override && fs.existsSync(override)) {
+    const parsed = JSON.parse(fs.readFileSync(override, 'utf8'));
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  }
+
+  return [
   { id: 'unit', label: 'Unit + feature tests', kind: 'php', script: 'tests/run.php', required: true },
   { id: 'views', label: 'Blade compilation', kind: 'php', script: 'tools/checks/views.php', required: true },
   { id: 'authorization', label: 'Authorization (PHP)', kind: 'php', script: 'tools/checks/authz.php', required: true },
@@ -91,8 +107,12 @@ const SUITES = [
   { id: 'ui-shots', label: 'Layout (7 pages x 6 widths)', kind: 'browser', script: 'tools/checks/ui-shots.mjs', required: true },
   { id: 'table-cards', label: 'Responsive tables (cards on phones)', kind: 'browser', script: 'tools/checks/table-cards.mjs', required: true },
   { id: 'overflow-1024', label: 'No overflow at 768/1024/1440', kind: 'browser', script: 'tools/checks/overflow.mjs', required: true },
-  { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
-];
+    { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
+    { id: 'filter-chips', label: 'Active filter chips', kind: 'browser', script: 'tools/checks/filter-chips.mjs', required: true },
+    { id: 'regression-matrix', label: '6 widths x 4 pages', kind: 'browser', script: 'tools/checks/regression-matrix.mjs', required: true },
+    { id: 'runner-contract', label: 'Runner exit codes 0/1/2', kind: 'node', script: 'tools/checks/runner-contract.mjs', required: true },
+  ];
+})();
 
 /** Run a script and capture its output plus a parsed "passed/total". */
 function run(suite) {

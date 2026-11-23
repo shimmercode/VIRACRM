@@ -65,6 +65,79 @@
         @endif
     </form>
 
+    @php
+        // One chip per active filter. This view has no controls for
+        // `customer_id`, `from` or `to`, but the controller and the model scope
+        // both honour them — a link from a customer page arrives with
+        // customer_id set. Without a chip the list is filtered by something the
+        // user cannot see or clear, so those are chipped too.
+        $filterChips = [];
+
+        if ($filters['q'] !== '') {
+            $filterChips[] = ['key' => 'q', 'label' => 'جست‌وجو', 'value' => $filters['q']];
+        }
+
+        if ($filters['status'] !== '') {
+            $filterChips[] = [
+                'key' => 'status',
+                'label' => 'وضعیت',
+                'value' => $statuses[$filters['status']] ?? $filters['status'],
+            ];
+        }
+
+        if ($filters['type'] !== '') {
+            $typeTitle = $types->firstWhere('code', $filters['type'])?->title;
+            $filterChips[] = [
+                'key' => 'type',
+                'label' => 'نوع قرارداد',
+                'value' => $typeTitle ?? $filters['type'],
+            ];
+        }
+
+        if ($filters['customer_id'] !== '') {
+            // Resolved server-side from the already-loaded list so the chip
+            // shows a name, not an id.
+            $customerName = \App\Models\Customer::query()
+                ->whereKey($filters['customer_id'])
+                ->first()?->display_name;
+
+            $filterChips[] = [
+                'key' => 'customer_id',
+                'label' => 'مشتری',
+                'value' => $customerName ?? $filters['customer_id'],
+            ];
+        }
+
+        // Dates must render Jalali. `from`/`to` arrive as Gregorian `Y-m-d`
+        // (the model scope uses whereDate), so they go through the same
+        // JalaliDate path as every other date in the UI. A raw `2026-07-01`
+        // chip would be the one Gregorian date on the screen.
+        $jalaliLabel = function (string $value): string {
+            try {
+                return \App\Support\JalaliDate::fromCarbon(
+                    \Carbon\CarbonImmutable::parse($value)
+                )->formatPersian();
+            } catch (\Throwable) {
+                // An unparseable date is a filter the user cannot interpret, so
+                // show it as-is rather than hiding it.
+                return $value;
+            }
+        };
+
+        if ($filters['from'] !== '') {
+            $filterChips[] = ['key' => 'from', 'label' => 'از تاریخ', 'value' => $jalaliLabel($filters['from'])];
+        }
+
+        if ($filters['to'] !== '') {
+            $filterChips[] = ['key' => 'to', 'label' => 'تا تاریخ', 'value' => $jalaliLabel($filters['to'])];
+        }
+
+        $anyFilter = $filters['q'] !== '' || $filters['status'] !== '' || $filters['type'] !== ''
+            || $filters['customer_id'] !== '' || $filters['from'] !== '' || $filters['to'] !== '';
+    @endphp
+
+    <x-filter-chips :chips="$filterChips" :clear-href="$anyFilter ? route('contracts.index') : null" />
+
     <div class="v-card">
         @if ($contracts->isEmpty())
             @if ($filters['q'] !== '' || $filters['status'] !== '' || $filters['type'] !== '')

@@ -71,12 +71,32 @@ const flow = await startBrowserFlow('design-system', { viewport: { width: 1440, 
 
   await page.fill('#username', 'admin');
   await page.fill('#password', flow.password);
-  const btn = await page.$('form.v-auth__form button[type="submit"]');
-  await btn.click({ noWaitAfter: true }).catch(() => {});
+
+  // ── Make the in-flight window observable, deterministically ───────────
+  // The busy state exists only between submit and the navigation that follows.
+  // Two earlier attempts to observe it were races:
+  //   * `btn.click({ noWaitAfter: true }).catch(() => {})` — the click resolves
+  //     only once its navigation commits; under load the timeout fired and the
+  //     error was swallowed, so the handler never ran and all six assertions
+  //     failed together (seen once, 14/20, then 20/20 on identical code).
+  //   * `form.requestSubmit()` with a 3s `route.fulfill` stub — the POST
+  //     navigation still committed and destroyed the execution context before
+  //     the poll could read the DOM (`Execution context was destroyed`).
+  //
+  // Cancelling the *navigation* only, in the capture phase, removes the race
+  // without touching what is under test: the capture listener runs before the
+  // app's form listener, `preventDefault()` does not stop propagation, so
+  // app.js still applies `.is-loading`, `aria-busy` and the live region
+  // exactly as it does for a real user — the page simply stays put long enough
+  // to read them. The real form and the real bundled script are still used.
+  await page.evaluate(() => {
+    document.addEventListener('submit', (e) => e.preventDefault(), true);
+    document.querySelector('form.v-auth__form').requestSubmit();
+  });
 
   // Poll for the in-flight state instead of sleeping a fixed time.
   let busy = null;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     busy = await page.evaluate(() => {
       const b = document.querySelector('form.v-auth__form button[type="submit"]');
       const form = b?.closest('form');
@@ -91,6 +111,10 @@ const flow = await startBrowserFlow('design-system', { viewport: { width: 1440, 
         ringWidth: after ? after.width : '0px',
         ringAnim: after ? after.animationName : 'none',
         statusPos: status ? getComputedStyle(status).position : null,
+        // Separates "the guard never ran" (harness problem) from "the guard ran
+        // but set the wrong things" (a real product defect). Without this, both
+        // look like six identical failures.
+        handlerRan: form ? form.dataset.submitted === '1' : false,
       };
     }).catch(() => null);
 
@@ -98,6 +122,8 @@ const flow = await startBrowserFlow('design-system', { viewport: { width: 1440, 
     await page.waitForTimeout(100);
   }
 
+  record('T-DS-SPINNER-guard', !!busy?.handlerRan,
+    `submit handler ran=${busy?.handlerRan}`);
   record('T-DS-SPINNER-class', !!busy?.loadingClass, `.is-loading applied=${busy?.loadingClass}`);
   record('T-DS-SPINNER-ring', busy?.ringWidth !== '0px' && busy?.ringWidth !== 'auto',
     `::after ring width=${busy?.ringWidth} animation=${busy?.ringAnim}`);
@@ -203,13 +229,24 @@ const flow = await startBrowserFlow('design-system', { viewport: { width: 1440, 
   const absent = await page.evaluate(() => ({
     tabs: document.querySelectorAll('.v-tabs').length,
     skeleton: document.querySelectorAll('.v-skeleton').length,
+    // The tab RULES were removed after proving nothing referenced them, so a
+    // screen carrying `.v-tabs` would now render completely unstyled. Assert
+    // both the markup and the stylesheet, so a reintroduction cannot pass
+    // unnoticed as an "unstyled but present" component.
+    tabsRule: [...document.styleSheets].some((sheet) => {
+      try {
+        return [...sheet.cssRules].some((r) => r.selectorText && /\.v-tabs?\b/.test(r.selectorText));
+      } catch {
+        return false;
+      }
+    }),
   }));
 
   // These are not failures — they record the decision that neither component
   // is used by any screen. If someone adds one without styling or testing it,
   // this flips and asks for a decision.
-  record('T-DS-TABS-absent', absent.tabs === 0,
-    `.v-tabs in DOM: ${absent.tabs} (no requirement asks for tabs)`);
+  record('T-DS-TABS-absent', absent.tabs === 0 && absent.tabsRule === false,
+    `.v-tabs in DOM: ${absent.tabs}, rule in stylesheet: ${absent.tabsRule} (removed)`);
   record('T-DS-SKELETON-absent', absent.skeleton === 0,
     `.v-skeleton in DOM: ${absent.skeleton} (no async surface to attach it to)`);
 

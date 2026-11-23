@@ -47,7 +47,16 @@ the product grows.
 | G1 | **No Tooltip component.** `.v-tooltip` has 0 rules; hover reveals use the native `title` attribute. | Native `title` is not keyboard-reachable and takes ~1s to appear. Icon-only buttons on desktop rely on it. Mitigated on touch: card view adds visible text labels. | Medium |
 | ~~G2~~ | **CORRECTED — a Checkbox component does exist.** It is `.v-check` (6 rules, `components.css:246`), used on the login screen ("مرا به خاطر بسپار") and in the duplicate-customer confirmation. My earlier claim that `.v-checkbox` had 0 rules was true but irrelevant: I checked the wrong class name and drew a conclusion from it. | — | **Closed, was a false gap.** |
 | ~~G3~~ | **CORRECTED AND CLOSED — implemented this phase.** `app.js` set `.is-loading` on the submit button but **no CSS rule defined it**, so a submitted form looked idle while the request was in flight. `REQ-11.05` names Loading as one of four required states, so this was a real gap. Now: `.v-btn.is-loading` ring, `aria-busy` on the form, and a `role="status"` announcement. `prefers-reduced-motion` swaps the rotation for a pulse. | — | **Closed.** |
-| G4 | **`.v-tabs` exists (1 rule, `components.css:718`) but no screen uses it, and no requirement asks for tabs.** | Dead CSS that has never been rendered. Decision: **remove it** rather than ship an untested component, or leave it and stop counting it as a gap. Recommendation: remove. | Low — awaiting a decision |
+| ~~G4~~ | **CLOSED — removed.** Proof of zero dependency was gathered first: 0 references in `resources/views/`, 0 in `resources/js/`, and the only PHP references were this matrix's own assertion. The block was then removed (1160 bytes), with a guard that every selector in it began `.v-tab*` and that nothing outside it referenced those selectors. `design-system.mjs` now asserts both the markup **and** the stylesheet rule are absent, so it cannot return unnoticed. | — | **Closed.** |
+
+### Filter chips (added this phase)
+
+The filter bar kept state in the querystring with no visible representation, so a user
+arriving with filters set could not see what was filtered without scrolling back to three
+selects. Worse, on a phone those selects can be off-screen entirely while the results below
+are filtered. `components/filter-chips.blade.php` renders one removable pill per active
+filter; each is an `<a>` whose `href` drops exactly that one parameter and preserves every
+other filter plus the sort. Verified by `filter-chips.mjs` (22/22).
 | G5 | **Skeleton loading state absent.** `.v-skeleton` has 3 rules but no view uses it. | Same reason as G3 — nothing loads client-side yet. | Low |
 | G6 | **No documented component contract.** Each component works, but there is no single page stating "a `.v-btn--primary` is used for exactly one action per view", etc. | This is what keeps a design system from drifting. It is documentation, not code. | Medium |
 

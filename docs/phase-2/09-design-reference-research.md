@@ -73,6 +73,37 @@ Adopt filter chips as a candidate; do not implement this phase.
 
 ---
 
+### Grouped list headers — proposal only, NOT implemented
+
+Per the review, this is documented rather than built. It is recorded here so the pattern and
+its intended home are not lost, and explicitly **not** implemented in this phase.
+
+**The pattern (Linear).** Rows grouped by a status column, each group carrying its own count
+in the header: `In Progress 3`, `Todo 71`, `Done 53`. Collapsible, and the header sticks while
+its group scrolls.
+
+**Where it would apply in Vira CRM, and where it would not:**
+
+| Page | Suitable? | Why |
+|------|-----------|-----|
+| `/contracts` | **Yes** | Status is a first-class column (`draft`, `active`, `expiring`, `expired`, `cancelled`) and the contract lifecycle is the thing a user is scanning for. Grouping by status would answer "what needs attention" without a filter visit. |
+| `/customers` | **Partly** | Status exists (`lead`, `prospect`, `active`, `inactive`, `archived`), but the list is small and sorted by recency. Grouping 7 records into 5 groups adds more chrome than insight. Not worth it until volume grows. |
+| `/customers/{id}` sub-lists | No | These are already scoped to one customer; grouping would be noise. |
+| `/` dashboard | No | Not a list. |
+
+**Prerequisites before it could be built:**
+
+1. The controller must return rows ordered by status first, then by the existing sort — a
+   grouping UI over an arbitrary order would produce duplicated group headers.
+2. Pagination and grouping interact badly: 20 rows per page split across groups shows partial
+   groups, and the counts would describe the page, not the whole set. The count would have to
+   come from a separate aggregate query.
+3. It is a **behaviour change** to a list that currently passes 178 layout assertions plus the
+   new 44 overflow and 187 matrix assertions.
+
+**Recommendation:** defer until `/contracts` has enough rows for grouping to pay for itself,
+and until pagination-versus-count semantics are decided. Not a phase-2 change.
+
 ## Pattern 3 — KPI cards with inline deltas (Attio)
 
 **What the pattern is.** A small number of cards, each one metric with its own change
