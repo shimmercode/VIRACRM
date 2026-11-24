@@ -1,3 +1,33 @@
+## [Decision Closure] — ۲ آذر ۱۴۰۵
+
+**دامنه:** فقط اسناد و تصمیم‌ها. صفر کد عملیاتی، صفر Migration، صفر تغییر Schema، صفر خرید.
+
+### افزوده
+- `docs/FILE_WORKSPACE_DECISION_REGISTER.md` — ۳۶ تصمیم × ۱۵ فیلد، با قاعدهٔ قابل‌بازتولید برای «مسدودکننده».
+- `docs/FILE_ORGANIZATIONAL_MODEL.md` — ممیزی واقعی CRM (کد + DB) و دو مدل سازمانی A/B با مقایسهٔ وزنی.
+- `docs/FILE_WORKSPACE_ADR_EVIDENCE.md` — سطح‌بندی ۱۱ مؤلفهٔ ADR-FILE-001: ۴ `PROVEN`، ۵ `DESIGN-ONLY`، ۲ `NEEDS PoC`.
+- `docs/FILE_WORKSPACE_CLIENT_DECISION_PACK.md` — فقط ۸ تصمیم کارفرما + ۵ زیرساخت، هر یک با پیش‌فرض مشخص.
+- `tools/checks/docs-integrity.mjs`: گارد `T-DOC-referenced-paths` — هر مسیر مشخصِ نام‌برده‌شده در اسناد فایل باید وجود داشته باشد.
+
+### اصلاح خطاهای F0
+- **«۱۳ مسدودکننده» بی‌مبنا بود.** شمارش واقعی: **۳۶ تصمیم / ۱۶ مسدودکننده**. جدول خلاصه در
+  `FILE_WORKSPACE_OPEN_DECISIONS.md` و ادعای `OPEN_DECISIONS.md` اصلاح شد؛ عدد ۱۳ حذف شد.
+- **`FILE_WORKSPACE_ERD.md`** به `docs/database/file-erd.dot` ارجاع می‌داد که هرگز ساخته نشد — ارجاع حذف شد.
+- **`FILE_COLLABORATION_RESEARCH.md` §۲.۴:** ادعای «فایل > ۴GB هرگز کار نمی‌کند» حذف شد.
+  صفحهٔ رسمی Win32 هیچ سقف حجمی مستند نمی‌کند؛ ۴ GiB فقط **عرض `REG_DWORD`** است، نه محدودیت اثبات‌شده.
+  سه ادعای MinIO / Seafile / Windows WebClient به‌تفکیک با منبع، محدودیت نسخه و سطح اطمینان ثبت شدند (§۲.۷).
+- ارجاع نادرست «`composer.lock` = OD-118» به **OD-135** اصلاح شد.
+
+### بازآرایی
+- ۳۶ تصمیم فایل در شش دسته: **۸** کارفرما · **۲۳** فنی Arena · **۵** زیرساخت · **۰** بلوکه · **۰** Approved · **۰** Closed.
+  هر شناسه دقیقاً یک‌بار؛ **هیچ حذف، ادغام یا شمارش مجددی رخ نداد** و **هیچ وضعیتی به Approved/Closed تغییر نکرد**.
+
+### کیفیت
+- `docs-integrity`: **۴۴/۴۴** PASS (قبلاً ۳۹/۳۹).
+- Regression: **۲۵ سوییت · ۹۰۴ اَسِرشِن · ۰ شکست · exit 0**؛ دیتابیس مشترک دست‌نخورده.
+
+---
+
 # چرخهٔ تغییر — VIRA CRM
 
 **فرمت:** Keep a Changelog · **تاریخ‌ها:** شمسی

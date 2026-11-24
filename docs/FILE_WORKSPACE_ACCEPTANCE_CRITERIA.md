@@ -31,7 +31,7 @@
 | A-F0-04 | ADR ثبت‌شده | `docs/adr/ADR-FILE-001…` | ✅ |
 | A-F0-05 | ۹۹ نیازمندی با شناسهٔ یکتا | `FILE_WORKSPACE_REQUIREMENTS.md` | ✅ |
 | A-F0-06 | ردیابی ۹۹/۹۹ | `FILE_WORKSPACE_TRACEABILITY.md` | ✅ |
-| A-F0-07 | ۳۰ تصمیم باز ثبت‌شده | `FILE_WORKSPACE_OPEN_DECISIONS.md` | ✅ |
+| A-F0-07 | ۳۶ تصمیم باز ثبت‌شده (۱۶ مسدودکننده) | `FILE_WORKSPACE_OPEN_DECISIONS.md` · `FILE_WORKSPACE_DECISION_REGISTER.md` | ✅ |
 | A-F0-08 | هیچ کد Production تغییر نکرده | `git diff` فقط `docs/` | ✅ |
 | A-F0-09 | هیچ Migration نوشته نشده | `git diff` روی `database/` خالی | ✅ |
 | A-F0-10 | هیچ تغییری در دیتابیس | baseline دست‌نخورده | ✅ |

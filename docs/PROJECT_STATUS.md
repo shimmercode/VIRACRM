@@ -23,10 +23,10 @@
 |------|-------|------|
 | اسناد F0 (۱۸ سند) | `PASS` | `docs/FILE_*.md`, `docs/WEBDAV_*.md`, `docs/WINDOWS_*.md`, `docs/ONLINE_*.md` |
 | نمودارها (۱۰×۳) | `PASS` | `docs/diagrams/file-module/` — `.dot`+`.svg`+`.png` |
-| یکپارچگی مستندات | `PASS` | `docs-integrity` — **۳۹/۳۹** (قبلاً ۱۹) |
+| یکپارچگی مستندات | `PASS` | `docs-integrity` — **۴۴/۴۴** (+۵: ۴ سند جدید و گارد مسیرهای ارجاع‌شده) |
 | ردیابی نیازمندی‌های فایل | `PASS` | ۹۹/۹۹ · `generate-file-traceability.mjs --check` |
 | کاتالوگ نیازمندی‌ها | `PASS` | **۹۶** نیازمندی (۸۴ + ۱۲ مورد `REQ-16`) |
-| تصمیم‌های باز فایل | **`NEEDS APPROVAL`** | ۳۶ مورد OD-101…OD-136 · ۱۳ مسدودکننده |
+| تصمیم‌های باز فایل | **`NEEDS APPROVAL`** | ۳۶ مورد OD-101…OD-136 · **۱۶** مسدودکننده |
 | کد ماژول فایل | `NOT IMPLEMENTED` | صفر خط — طبق دستور F0 |
 | Migration ماژول فایل | `NOT IMPLEMENTED` | صفر فایل — طبق دستور §25 |
 | تست‌های ماژول فایل | `NOT TESTED` | ۰ از ۲۴۰ |
@@ -35,6 +35,30 @@
 | بکاپ/بازیابی فایل | `BLOCKED` | صفر کد بکاپ در پروژه |
 
 > **دامنهٔ F0 فقط مستندات بود.** هیچ کد Production، Migration، تغییر DB یا Storage انجام نشد.
+
+---
+
+## ۰.۱. فاز جاری — Decision Closure (بعد از F0)
+
+> **محدودیت فاز:** بدون کد عملیاتی، بدون Migration، بدون تغییر Schema، بدون خرید زیرساخت.
+
+| مورد | وضعیت | شاهد |
+|------|-------|------|
+| تفکیک ۳۶ تصمیم با ۱۵ فیلد | `PASS` | `FILE_WORKSPACE_DECISION_REGISTER.md` — ۳۶/۳۶ |
+| بازمحاسبهٔ مسدودکننده‌ها | `PASS` | **۱۶** بر قاعدهٔ ثبت‌شده (§۰.۱ همان سند) — عدد قبلی «۱۳» بی‌مبنا بود |
+| ممیزی سازمانی (OD-104/105) | `PASS` | `FILE_ORGANIZATIONAL_MODEL.md` — ممیزی از کد و DB، نه حافظه |
+| دو مدل سازمانی + مقایسه | `PASS` | مدل A = ۸.۴ · مدل B = ۵.۹ → پیشنهاد A |
+| سطح‌بندی شواهد ADR | `PASS` | `FILE_WORKSPACE_ADR_EVIDENCE.md` — ۴ `PROVEN` · ۵ `DESIGN-ONLY` · ۲ `NEEDS PoC` |
+| تفکیک ادعاهای پژوهشی | `PASS` | `FILE_COLLABORATION_RESEARCH.md` §۲.۷ — MinIO/Seafile/Windows جدا |
+| بستهٔ تصمیم کارفرما | `PASS` | `FILE_WORKSPACE_CLIENT_DECISION_PACK.md` — ۸ تصمیم + ۵ زیرساخت |
+| بازآرایی شش‌دسته‌ای | `PASS` | `OPEN_DECISIONS.md` — ۸ کارفرما · ۲۳ Arena · ۵ زیرساخت · ۰ بلوکه · ۰ Approved · ۰ Closed |
+| تصمیم تصویب‌شده | **صفر** | هیچ ID به `Approved` یا `Closed` نرفت — نه با نوشتن پیشنهاد |
+| نیازمندی‌های فایل | `Proposed` | ۹۹/۹۹ — هیچ‌کدام `Implemented` نیست |
+| آمادگی شروع F1 | **`BLOCKED`** | منتظر ۸ تصمیم کارفرما + VPS + ۹ تصمیم فنی Arena |
+
+**تصحیح مهم ثبت‌شده در این فاز:** دو عدد نادرست در F0 یافت و اصلاح شد —
+(۱) «۱۳ مسدودکننده» → **۱۶**؛ (۲) ارجاع ERD به یک فایل `.dot` که هرگز ساخته نشد.
+برای دومی یک گارد خودکار اضافه شد (`T-DOC-referenced-paths`) تا این نوع خطا تکرار نشود.
 > هیچ ادعای «Production Ready» یا «سازگار با Windows» در هیچ سندی مطرح نشده است.
 
 ---
@@ -43,7 +67,7 @@
 
 | مورد | وضعیت | شاهد |
 |------|-------|------|
-| Regression Suite | `PASS` | ۲۵ سوییت · **۸۹۹ اَسِرشِن** · ۰ شکست · exit 0 |
+| Regression Suite | `PASS` | ۲۵ سوییت · **۹۰۴ اَسِرشِن** · ۰ شکست · exit 0 |
 | **Execution Lock** | **`PASS`** | `lock-concurrency.mjs` — ۱۵ اَسِرشِن، شامل SIGKILL |
 | Exit Code Contract | `PASS` | ۰/۱/۲/۳ — `runner-contract.mjs` ۱۱ اَسِرشِن |
 | Repeatability | `PASS` | ۵ بُعد مقایسه + artifact در `.arena/` |

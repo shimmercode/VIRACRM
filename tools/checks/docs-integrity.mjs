@@ -72,6 +72,10 @@ const FILE_DOCS = [
   ['FILE_ACCEPTANCE', 'docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md'],
   ['FILE_TRACEABILITY', 'docs/FILE_WORKSPACE_TRACEABILITY.md'],
   ['FILE_ADR', 'docs/adr/ADR-FILE-001-file-workspace-architecture.md'],
+  ['FILE_DECISION_REGISTER', 'docs/FILE_WORKSPACE_DECISION_REGISTER.md'],
+  ['FILE_CLIENT_PACK', 'docs/FILE_WORKSPACE_CLIENT_DECISION_PACK.md'],
+  ['FILE_ORG_MODEL', 'docs/FILE_ORGANIZATIONAL_MODEL.md'],
+  ['FILE_ADR_EVIDENCE', 'docs/FILE_WORKSPACE_ADR_EVIDENCE.md'],
 ];
 REQUIRED.push(...FILE_DOCS);
 
@@ -99,6 +103,29 @@ check('T-DOC-traceability-current', regen.status === 0,
 const fileTrace = spawnSync(process.execPath, ['docs/tools/generate-file-traceability.mjs', '--check'], {
   cwd: ROOT, encoding: 'utf8', timeout: 60_000,
 });
+// F0 lesson: a document promised docs/database/file-erd.dot and a renderer
+// invocation that never existed. A dangling path reference is a documentation
+// defect that reads as fact, so every concrete repo path named in the FILE docs
+// must resolve. Only paths under directories that exist and hold real files are
+// scanned, which keeps this free of false positives.
+const FILE_DOC_FILES = FILE_DOCS.map(([, rel]) => rel);
+const PATH_RE = /`((?:docs|tools)\/(?:diagrams|database|tools|adr)?[^`\s]*?\.(?:dot|svg|png|mjs|md))`/g;
+const dangling = [];
+for (const rel of FILE_DOC_FILES) {
+  const abs = path.join(ROOT, rel);
+  if (!fs.existsSync(abs)) continue;
+  const text = fs.readFileSync(abs, 'utf8');
+  for (const m of text.matchAll(PATH_RE)) {
+    const ref = m[1];
+    if (ref.includes('*') || ref.includes('…')) continue;
+    if (!fs.existsSync(path.join(ROOT, ref))) dangling.push(`${path.basename(rel)} → ${ref}`);
+  }
+}
+check('T-DOC-referenced-paths', dangling.length === 0,
+  dangling.length === 0
+    ? 'every concrete path named in the FILE docs exists'
+    : `${dangling.length} dangling: ${dangling.slice(0, 3).join(' · ')}`);
+
 check('T-DOC-file-traceability-current', fileTrace.status === 0,
   fileTrace.status === 0
     ? 'file requirements traceability matches its source'
