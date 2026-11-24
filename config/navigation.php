@@ -46,15 +46,13 @@ return [
             'enabled' => true,
         ],
 
-        // Named in §5 and §6; scheduled for stage 2-D. Shown disabled so the
-        // user can see the shape of the product without being sent to a 404.
+        // §5 — project module (M3).
         [
             'label' => 'پروژه‌ها',
             'icon' => 'folder',
-            'route' => null,
+            'route' => 'projects.index',
             'permission' => 'projects.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
 
         [

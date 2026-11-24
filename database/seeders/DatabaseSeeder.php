@@ -8,7 +8,8 @@ use Illuminate\Database\Seeder;
  * REQ-10.01 — baseline data for a real install.
  *
  * ONLY configuration-grade data is seeded here: permissions, roles, contract
- * types, settings and the single superadmin. No customers, no contracts, no
+ * types, project dictionaries (types and SEO packages), settings and the single
+ * superadmin. No customers, no contracts, no
  * projects.
  *
  * The phase brief forbids sample data presented as a real product. Demo
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             ContractTypeSeeder::class,
+            ProjectDictionarySeeder::class,
             SettingsSeeder::class,
             UserSeeder::class,
         ]);

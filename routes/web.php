@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
 use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +77,24 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:contracts.update')->name('update');
             Route::delete('/{contract}', [ContractController::class, 'destroy'])
                 ->middleware('permission:contracts.delete')->name('destroy');
+        });
+
+        // ── Projects (§5) ──────────────────────────────────────────────
+        Route::prefix('projects')->name('projects.')->group(function () {
+            Route::get('/', [ProjectController::class, 'index'])
+                ->middleware('permission:projects.view')->name('index');
+            Route::get('/create', [ProjectController::class, 'create'])
+                ->middleware('permission:projects.create')->name('create');
+            Route::post('/', [ProjectController::class, 'store'])
+                ->middleware('permission:projects.create')->name('store');
+            Route::get('/{project}', [ProjectController::class, 'show'])
+                ->middleware('permission:projects.view')->name('show');
+            Route::get('/{project}/edit', [ProjectController::class, 'edit'])
+                ->middleware('permission:projects.update')->name('edit');
+            Route::put('/{project}', [ProjectController::class, 'update'])
+                ->middleware('permission:projects.update')->name('update');
+            Route::delete('/{project}', [ProjectController::class, 'destroy'])
+                ->middleware('permission:projects.delete')->name('destroy');
         });
     });
 });

@@ -254,6 +254,35 @@
         });
     }
 
+    // ── Project type switch (project form) ────────────────────────────────
+    // §5 splits project fields by type: an SEO project asks for a package and a
+    // keyword count, a design project asks for a domain and a site type. The
+    // form carries both fieldsets; this shows the relevant one.
+    //
+    // The hidden fieldset is also disabled, so the browser does not submit
+    // fields the user cannot see. The server independently ignores the wrong
+    // type's fields, so this is a nicety rather than the guarantee — if JS is
+    // off, both fieldsets render and the request still does the right thing.
+    function initProjectTypeSwitch() {
+        var select = document.querySelector('[data-project-type]');
+        if (!select) return;
+
+        var sections = document.querySelectorAll('[data-type-section]');
+
+        function apply() {
+            sections.forEach(function (section) {
+                var match = section.getAttribute('data-type-section') === select.value;
+                section.hidden = !match;
+                section.querySelectorAll('input, select, textarea').forEach(function (field) {
+                    field.disabled = !match;
+                });
+            });
+        }
+
+        select.addEventListener('change', apply);
+        apply();
+    }
+
     // ── Error summary focus ───────────────────────────────────────────────
     // After a failed submit the page re-renders with an error summary at the
     // top. A sighted user sees it; a keyboard or screen-reader user is left at
@@ -276,6 +305,7 @@
         initConfirm();
         initSubmitGuard();
         initDateMasks();
+        initProjectTypeSwitch();
         initErrorSummary();
     }
 
