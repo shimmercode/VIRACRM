@@ -1,0 +1,29 @@
+digraph FileOp {
+  graph [fontname="Helvetica", rankdir=LR, nodesep=0.25, ranksep=0.55, bgcolor="white", pad=0.3,
+         label="WebDAV File Operation Sequence — PUT as new version (F1)\nStorage write is committed only after authorization and hashing succeed", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=8.5, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  we [label="Windows\nExplorer", fillcolor="#dbeafe"];
+  dv [label="sabre/dav\nPUT handler", fillcolor="#ffedd5"];
+  br [label="Bridge", fillcolor="#fef3c7"];
+  cr [label="CRM\n/api/dav/authorize", fillcolor="#ede9fe"];
+  cm [label="CRM\n/api/dav/commit", fillcolor="#ede9fe"];
+  st [label="Object store\n(VPS)", fillcolor="#ffedd5"];
+  db [label="file_versions\nfile_nodes", fillcolor="#e0e7ff"];
+
+  we -> dv [label="PUT /dav/Projects/ACME/report.docx\nIf: (<lock-token>)"];
+  dv -> br [label="authorize(PUT, path, lock)"];
+  br -> cr [label="HMAC POST authorize", color="#450073", penwidth=1.2];
+  cr -> br [label="allow=upload|edit, node_id,\nexpected_version, quota_left", color="#059669"];
+  br -> dv [label="permit"];
+  dv -> st [label="stream body to temp key\n/tmp/{session}.part\n(never public)", color="#B45309"];
+  dv -> dv [label="sha256 while streaming\nsize check vs quota"];
+  dv -> cm [label="POST /api/dav/commit\n{node_id, sha, size, temp_key}", color="#450073", penwidth=1.2];
+  cm -> db [label="BEGIN\nSELECT ... FOR UPDATE\nverify expected_version\ninsert file_version\ninsert file_blob (if new sha)\nCOMMIT"];
+  cm -> st [label="promote temp → content key\n(blobs/{sha[0:2]}/{sha})"];
+  cm -> cm [label="if hash mismatch or quota\nexceeded → reject"];
+  cm -> dv [label="201 Created + new version no."];
+  dv -> we [label="201 Created\nETag = sha256"];
+  cm -> db [label="audit: version_created", style=dotted];
+}

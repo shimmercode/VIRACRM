@@ -50,6 +50,31 @@ const REQUIRED = [
   ['CHANGELOG', 'docs/CHANGELOG.md'],
 ];
 
+// F0 — the eighteen file-workspace documents. They are listed here for the same
+// reason as the fifteen above: a document set that silently loses a file rots.
+const FILE_DOCS = [
+  ['FILE_RESEARCH', 'docs/FILE_COLLABORATION_RESEARCH.md'],
+  ['FILE_STORAGE_ARCH', 'docs/FILE_STORAGE_ARCHITECTURE.md'],
+  ['FILE_REQUIREMENTS', 'docs/FILE_WORKSPACE_REQUIREMENTS.md'],
+  ['FILE_PERMISSION_MATRIX', 'docs/FILE_PERMISSION_MATRIX.md'],
+  ['FILE_ERD', 'docs/FILE_WORKSPACE_ERD.md'],
+  ['FILE_VERSIONING_LOCKING', 'docs/FILE_VERSIONING_AND_LOCKING.md'],
+  ['WINDOWS_WEBDAV', 'docs/WINDOWS_WEBDAV_COMPATIBILITY.md'],
+  ['WEBDAV_VPS_ARCH', 'docs/WEBDAV_VPS_ARCHITECTURE.md'],
+  ['WEBDAV_BRIDGE', 'docs/WEBDAV_CRM_AUTHORIZATION_BRIDGE.md'],
+  ['ONLINE_OFFICE', 'docs/ONLINE_OFFICE_INTEGRATION.md'],
+  ['FILE_THREAT_MODEL', 'docs/FILE_SECURITY_THREAT_MODEL.md'],
+  ['FILE_CAPACITY', 'docs/FILE_STORAGE_CAPACITY_PLAN.md'],
+  ['FILE_TEST_PLAN', 'docs/FILE_WORKSPACE_TEST_PLAN.md'],
+  ['FILE_DEPLOYMENT', 'docs/FILE_WORKSPACE_DEPLOYMENT.md'],
+  ['FILE_BACKUP', 'docs/FILE_BACKUP_AND_RECOVERY.md'],
+  ['FILE_OPEN_DECISIONS', 'docs/FILE_WORKSPACE_OPEN_DECISIONS.md'],
+  ['FILE_ACCEPTANCE', 'docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md'],
+  ['FILE_TRACEABILITY', 'docs/FILE_WORKSPACE_TRACEABILITY.md'],
+  ['FILE_ADR', 'docs/adr/ADR-FILE-001-file-workspace-architecture.md'],
+];
+REQUIRED.push(...FILE_DOCS);
+
 for (const [name, rel] of REQUIRED) {
   const abs = path.join(ROOT, rel);
   const exists = fs.existsSync(abs);
@@ -68,6 +93,16 @@ check('T-DOC-traceability-current', regen.status === 0,
   regen.status === 0
     ? 'document matches the catalogue'
     : (regen.stderr || regen.stdout || '').trim().split('\n')[0]);
+
+// F0 file-workspace traceability is generated from the requirements document;
+// like the main matrix it must not be hand-edited or left stale.
+const fileTrace = spawnSync(process.execPath, ['docs/tools/generate-file-traceability.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 60_000,
+});
+check('T-DOC-file-traceability-current', fileTrace.status === 0,
+  fileTrace.status === 0
+    ? 'file requirements traceability matches its source'
+    : (fileTrace.stderr || fileTrace.stdout || '').trim().split('\n')[0]);
 
 // The status map must cover the catalogue exactly — an unmapped requirement is
 // invisible, and an unknown id means the catalogue renamed something.

@@ -1,0 +1,38 @@
+digraph AuthSeq {
+  graph [fontname="Helvetica", rankdir=LR, nodesep=0.28, ranksep=0.6, bgcolor="white", pad=0.3,
+         label="WebDAV Authentication Sequence (F1)\nWindows Explorer → VPS → CRM authorization bridge · fail-closed", labelloc="t", fontsize=15,
+         splines=ortho];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=8.5, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  we [label="Windows\nWebClient", fillcolor="#dbeafe"];
+  ng [label="nginx\n(VPS)", fillcolor="#ffedd5"];
+  dv [label="sabre/dav\n(VPS)", fillcolor="#ffedd5"];
+  br [label="Bridge client\n(VPS)", fillcolor="#fef3c7"];
+  cr [label="CRM authorize\nendpoint", fillcolor="#ede9fe"];
+  au [label="audit_logs", fillcolor="#e0e7ff"];
+
+  t1 [label="1. OPTIONS /dav/", shape=note, fillcolor="#f8fafc", style=filled];
+  we -> ng -> dv -> t1 [style=invis];
+  we -> ng [label="OPTIONS (no creds)"];
+  ng -> dv [label="proxy"];
+  dv -> we [label="401 WWW-Authenticate: Basic\nrealm=\"Vira Drive\", charset=UTF-8", color="#B45309"];
+
+  t2 [label="2. credentials", shape=note, fillcolor="#f8fafc", style=filled];
+  we -> ng [label="PROPFIND /dav/\nAuthorization: Basic(base64)"];
+  ng -> dv;
+  dv -> br [label="verify(user, password)"];
+  br -> cr [label="POST /api/dav/authorize\nHMAC-signed body + mTLS\n{user, method, path, lock_token}", color="#450073", penwidth=1.3];
+  cr -> cr [label="constant-time compare\nactive? locked? role? grant?"];
+  cr -> au [label="write dav.auth.ok / fail", style=dotted];
+  cr -> br [label="200 {allow, may[], node_id, version, quota}\n| 401 | 403", color="#450073", penwidth=1.3];
+  br -> dv [label="principal + grants\n(cached ≤ 30s, key = user+node)"];
+  dv -> we [label="207 Multi-Status\n(only permitted children)", color="#059669"];
+
+  t3 [label="3. failure path — fail-closed", shape=note, fillcolor="#fef2f2", style=filled];
+  br -> cr [label="POST /api/dav/authorize", color="#dc2626"];
+  cr -> br [label="timeout / 5xx / bad HMAC", color="#dc2626"];
+  br -> dv [label="DENY (no cache fallback)", color="#dc2626"];
+  dv -> we [label="503 Service Unavailable\nRetry-After: 30", color="#dc2626"];
+  cr -> au [label="dav.auth.unavailable", style=dotted];
+}

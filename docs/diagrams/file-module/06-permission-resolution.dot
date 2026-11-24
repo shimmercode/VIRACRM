@@ -1,0 +1,34 @@
+digraph PermFlow {
+  graph [fontname="Helvetica", rankdir=TB, nodesep=0.3, ranksep=0.42, bgcolor="white", pad=0.3,
+         label="Permission Resolution Flow — decide(user, node, capability)\nOrder is normative: deny wins, CRM module access is a hard gate", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  start [label="request for node N", shape=oval, fillcolor="#dbeafe"];
+  g0 [label="0 · user active?\nsession/ token valid?", shape=diamond, fillcolor="#fff7ed"];
+  g1 [label="1 · CRM module gate\ncan_read_project / can_read_contract?\n(parent entity permission)", shape=diamond, fillcolor="#fff7ed"];
+  g2 [label="2 · classification gate\nessential: Restricted requires explicit grant", shape=diamond, fillcolor="#fff7ed"];
+  g3 [label="3 · walk ancestors root → N\ncollect permission rows (user/role/group/dept/project)"];
+  g4 [label="4 · inheritance\nfolder inherit=1 → parent set applies\ninherit=0 (break) → parent ignored above this node", shape=diamond, fillcolor="#fff7ed"];
+  g5 [label="5 · combine\nany explicit DENY for capability → DENY\nelse any ALLOW → ALLOW\nelse DENY (default-deny)", shape=diamond, fillcolor="#fff7ed"];
+  g6 [label="6 · ancestor deny still wins\n(even after break-inheritance on a child)", shape=diamond, fillcolor="#fff7ed"];
+  g7 [label="7 · lock state\nlock held by other → write caps refused", shape=diamond, fillcolor="#fff7ed"];
+  g8 [label="8 · cache result\nkey=user+node+perm-version\nTTL ≤ 60s (revocation invalidates version)"];
+  ok [label="ALLOW\n(capabilities set)", fillcolor="#dcfce7"];
+  no [label="DENY\n(403 / hidden in listing)", fillcolor="#fee2e2"];
+
+  start -> g0;
+  g0 -> no [label="no"];
+  g0 -> g1 [label="yes"];
+  g1 -> no [label="no — never bypass CRM\nmodule permissions", color="#dc2626", penwidth=1.2];
+  g1 -> g2 [label="yes"];
+  g2 -> no [label="no grant"];
+  g2 -> g3 [label="pass"];
+  g3 -> g4 -> g5;
+  g5 -> g6 [label="allow path"];
+  g6 -> no [label="ancestor deny", color="#dc2626"];
+  g6 -> g7 [label="clean"];
+  g7 -> g8;
+  g8 -> ok [label="allow"];
+  g7 -> no [label="locked for write"];
+}

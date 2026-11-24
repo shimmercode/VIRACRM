@@ -1,0 +1,31 @@
+digraph Backup {
+  graph [fontname="Helvetica", rankdir=TB, nodesep=0.32, ranksep=0.45, bgcolor="white", pad=0.3,
+         label="Backup / Restore Flow — metadata and binaries restored consistently\nA restore that loses the metadata↔blob link is a failed restore", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  subgraph cluster_bk {
+    label="Nightly backup (cron)"; style="rounded"; color="#450073"; fontsize=10;
+    b1 [label="mysqldump --single-transaction\nCRM schema + data", fillcolor="#ede9fe"];
+    b2 [label="enumerate file_blobs\n+ file_nodes manifest\n(sha256, size, storage_key)", fillcolor="#ede9fe"];
+    b3 [label="verify each blob exists\n(full or incremental)", fillcolor="#ede9fe"];
+    b4 [label="encrypt (age / openssl)\n+ checksum", fillcolor="#ede9fe"];
+    b5 [label="upload off-site\nretention 30/15/7/3", fillcolor="#ede9fe"];
+    b1->b4; b2->b3->b4->b5;
+  }
+  subgraph cluster_rs {
+    label="Restore drill (quarterly, mandatory before go-live)"; style="rounded"; color="#B45309"; fontsize=10;
+    r1 [label="restore dump to empty schema", fillcolor="#ffedd5"];
+    r2 [label="restore blobs by sha256", fillcolor="#ffedd5"];
+    r3 [label="integrity join:\nevery current_version has a blob\nhash matches recomputed hash", fillcolor="#ffedd5"];
+    r4 [label="permission consistency:\nre-resolve sample of grants", fillcolor="#ffedd5"];
+    r5 [label="WebDAV reconnect smoke test", fillcolor="#ffedd5"];
+    r1->r2->r3->r4->r5;
+  }
+  b5 -> r1 [label="restore point", style=dashed];
+  r3 -> fail [label="mismatch", color="#dc2626"];
+  r4 -> fail;
+  r5 -> pass [label="ok", color="#059669"];
+  fail [label="FAIL — documented,\nnot marked PASS", fillcolor="#fee2e2"];
+  pass [label="PASS — evidence file saved", fillcolor="#dcfce7"];
+}

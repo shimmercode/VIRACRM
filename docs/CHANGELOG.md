@@ -6,6 +6,59 @@
 
 ## [Unreleased]
 
+### F0 — امکان‌سنجی و معماری Vira Drive (ماژول فایل سازمانی)
+
+**دامنه:** فقط مستندات. **هیچ کد Production، Migration یا تغییر Storage/DB انجام نشد.**
+
+#### افزوده
+- **۱۸ سند تحویلی** طبق دستور `MASTER ADDENDUM` §22:
+  `FILE_COLLABORATION_RESEARCH`، `FILE_STORAGE_ARCHITECTURE`، `FILE_WORKSPACE_REQUIREMENTS`،
+  `FILE_PERMISSION_MATRIX`، `FILE_WORKSPACE_ERD`، `FILE_VERSIONING_AND_LOCKING`،
+  `WINDOWS_WEBDAV_COMPATIBILITY`، `WEBDAV_VPS_ARCHITECTURE`، `WEBDAV_CRM_AUTHORIZATION_BRIDGE`،
+  `ONLINE_OFFICE_INTEGRATION`، `FILE_SECURITY_THREAT_MODEL`، `FILE_STORAGE_CAPACITY_PLAN`،
+  `FILE_WORKSPACE_TEST_PLAN`، `FILE_WORKSPACE_DEPLOYMENT`، `FILE_BACKUP_AND_RECOVERY`،
+  `FILE_WORKSPACE_OPEN_DECISIONS`، `FILE_WORKSPACE_ACCEPTANCE_CRITERIA`، `FILE_WORKSPACE_TRACEABILITY`.
+- `docs/adr/ADR-FILE-001-file-workspace-architecture.md` — تصمیم Hybrid با گزینه‌های ردشده.
+- `docs/phase-4/00-F0-FILE-WORKSPACE-REPORT.md` — گزارش نهایی A–T با برچسب هر نتیجه.
+- **۱۰ نمودار** (`.dot` + `.svg` + `.png`) در `docs/diagrams/file-module/`:
+  System Context، Component، Deployment، WebDAV Auth Sequence، WebDAV File Operation،
+  Permission Resolution، Upload Lifecycle، Version Lifecycle، Locking Lifecycle، Backup/Restore.
+- `docs/tools/render-file-diagrams.mjs` — رندر با همان زنجیرهٔ `@viz-js/viz` + `sharp` پروژه.
+- `docs/tools/generate-file-traceability.mjs` — تولید و `--check` برای ۹۹ نیازمندی.
+
+#### تغییر
+- `tools/checks/docs-integrity.mjs` — از **۱۹ به ۳۹ اَسِرشِن**: ۲۰ سند جدید الزامی شدند
+  و هم‌گامی `FILE_WORKSPACE_TRACEABILITY.md` با منبعش بررسی می‌شود.
+- `docs/requirements/requirements.catalog.yaml` — گروه `REQ-16` و **۱۲ نیازمندی** (REQ-16.01…12).
+- `tools/traceability-status.json` — ۱۲ وضعیت جدید؛ کاتالوگ از ۸۴ به **۹۶** نیازمندی رسید.
+- `docs/REQUIREMENTS_TRACEABILITY.md` — بازتولید شد (VERIFIED=26 · PARTIAL=20 · NOT_VERIFIED=2 ·
+  NOT_IMPLEMENTED=41 · BLOCKED=7).
+- `docs/OPEN_DECISIONS.md` — **۳۶ تصمیم جدید OD-101…OD-136** (بدون برخورد با OD-01…47)؛
+  حالا **۸۱ تصمیم** ثبت‌شده.
+
+#### اثبات‌شده در همین مخزن (اجرا، نه ادعا)
+- `Storage::disk('local')->temporaryUrl()` با `serve => true` کار می‌کند و امضاشده است.
+- امضای دست‌کاری‌شده رد می‌شود (۳۰۲ به login، بدون داده).
+- **`storage.local` از Range Request پشتیبانی نمی‌کند** → مسیر دانلود اختصاصی الزامی است.
+- **Content-Type از محتوا تعیین می‌شود، نه پسوند** (`photo.png` با بدنهٔ HTML → `text/html`).
+- `League\Flysystem\PathTraversalDetected` سه الگوی حمله را رد می‌کند و مسیر مطلق بیرون root نمی‌رود.
+- SHA-256 جریانی: **۱۰۷ MB/s** با حافظهٔ اوج **۲۰ MB** (مستقل از حجم).
+
+#### تصحیح یک فرض قبلی
+- ادعای «`temporaryUrl` روی دیسک local پشتیبانی نمی‌شود» **نادرست بود**؛ در Laravel 12 با
+  `serve => true` پشتیبانی می‌شود. محدودیت واقعی چیز دیگری است (Range و عدم ابطال‌پذیری).
+
+#### رفع رخوت مستندسازی (پیدا‌شده در بازبینی F0)
+- `TEST_STRATEGY.md` جدول سوییت `ui-shots` را **۲۰۶** می‌نوشت، ولی از commit `96b29ed`
+  (افزودن صفحات پروژه) واقعاً **۲۹۰** اَسِرشِن اجرا می‌شد؛ فقط برچسب `run-all` به‌روز شده بود.
+  عدد اصلاح شد و اختلاف شمارش (۷۹۵ → ۸۹۹) در همان سند توضیح داده شد: +۲۰ از `docs-integrity`
+  و +۸۴ از این رخوت قدیمی که اکنون آشکار و اصلاح شده است.
+
+#### آنچه انجام نشد (عمداً)
+- هیچ Migration، هیچ کد، هیچ تغییر DB/Storage — طبق دستور §25/§26.
+- هیچ ادعای سازگاری Windows (۳۰ تست `NOT TESTED`) و هیچ ادعای Production-Ready.
+
+
 ### امنیت — لایهٔ Policy
 
 #### افزوده

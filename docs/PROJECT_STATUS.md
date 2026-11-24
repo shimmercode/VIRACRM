@@ -17,11 +17,33 @@
 
 ---
 
+## ۰. وضعیت فاز جاری — F0 ماژول فایل (Vira Drive)
+
+| مورد | وضعیت | شاهد |
+|------|-------|------|
+| اسناد F0 (۱۸ سند) | `PASS` | `docs/FILE_*.md`, `docs/WEBDAV_*.md`, `docs/WINDOWS_*.md`, `docs/ONLINE_*.md` |
+| نمودارها (۱۰×۳) | `PASS` | `docs/diagrams/file-module/` — `.dot`+`.svg`+`.png` |
+| یکپارچگی مستندات | `PASS` | `docs-integrity` — **۳۹/۳۹** (قبلاً ۱۹) |
+| ردیابی نیازمندی‌های فایل | `PASS` | ۹۹/۹۹ · `generate-file-traceability.mjs --check` |
+| کاتالوگ نیازمندی‌ها | `PASS` | **۹۶** نیازمندی (۸۴ + ۱۲ مورد `REQ-16`) |
+| تصمیم‌های باز فایل | **`NEEDS APPROVAL`** | ۳۶ مورد OD-101…OD-136 · ۱۳ مسدودکننده |
+| کد ماژول فایل | `NOT IMPLEMENTED` | صفر خط — طبق دستور F0 |
+| Migration ماژول فایل | `NOT IMPLEMENTED` | صفر فایل — طبق دستور §25 |
+| تست‌های ماژول فایل | `NOT TESTED` | ۰ از ۲۴۰ |
+| سازگاری Windows | `NOT TESTED` | ۰ از ۳۰ — محیط ویندوز در دسترس نیست |
+| WebDAV روی VPS | `BLOCKED` | VPS آزمایشی تهیه نشده |
+| بکاپ/بازیابی فایل | `BLOCKED` | صفر کد بکاپ در پروژه |
+
+> **دامنهٔ F0 فقط مستندات بود.** هیچ کد Production، Migration، تغییر DB یا Storage انجام نشد.
+> هیچ ادعای «Production Ready» یا «سازگار با Windows» در هیچ سندی مطرح نشده است.
+
+---
+
 ## ۱. زیرساخت تست
 
 | مورد | وضعیت | شاهد |
 |------|-------|------|
-| Regression Suite | `PASS` | ۲۵ سوییت · **۷۹۵ اَسِرشِن** · ۰ شکست · exit 0 |
+| Regression Suite | `PASS` | ۲۵ سوییت · **۸۹۹ اَسِرشِن** · ۰ شکست · exit 0 |
 | **Execution Lock** | **`PASS`** | `lock-concurrency.mjs` — ۱۵ اَسِرشِن، شامل SIGKILL |
 | Exit Code Contract | `PASS` | ۰/۱/۲/۳ — `runner-contract.mjs` ۱۱ اَسِرشِن |
 | Repeatability | `PASS` | ۵ بُعد مقایسه + artifact در `.arena/` |

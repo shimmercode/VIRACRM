@@ -1,0 +1,39 @@
+digraph Deploy {
+  graph [fontname="Helvetica", rankdir=TB, nodesep=0.4, ranksep=0.55, bgcolor="white", pad=0.3,
+         label="Vira Drive — Deployment Diagram (F1 target)\nTwo trust zones, one authorization source", labelloc="t", fontsize=15];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge  [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.65];
+
+  subgraph cluster_zoneA {
+    label="Zone A — cPanel shared hosting (CRM control plane)\nHTTPS 443 · no Node runtime · no exposed DB port"; style="rounded"; color="#450073"; fontsize=10;
+    web [label="Apache + PHP-FPM\npublic/ document root\n.env outside webroot", fillcolor="#ede9fe"];
+    app [label="Laravel 12 app\nstorage/app/private", fillcolor="#ede9fe"];
+    mysql [label="MySQL/MariaDB\nlocalhost socket only", fillcolor="#e0e7ff"];
+    cron  [label="cPanel cron\nqueue:work --stop-when-empty", fillcolor="#f1f5f9"];
+    web -> app -> mysql;
+    cron -> mysql;
+  }
+
+  subgraph cluster_zoneB {
+    label="Zone B — small VPS (data plane)\nUFW: 443 in, everything else closed"; style="rounded"; color="#B45309"; fontsize=10;
+    nginx [label="nginx\nTLS 1.2/1.3 · HSTS\nclient_max_body_size", fillcolor="#ffedd5"];
+    php   [label="PHP-FPM\nsabre/dav server", fillcolor="#ffedd5"];
+    s3    [label="Object store\nS3-compatible · local disk", fillcolor="#ffedd5"];
+    logs  [label="Journald + rotating\nauth/access logs", fillcolor="#fef3c7"];
+    nginx -> php -> s3;
+    php -> logs;
+  }
+
+  client [label="Staff workstation / Windows Explorer", fillcolor="#dbeafe"];
+  bk     [label="Off-site backup\nencrypted · versioned", fillcolor="#f1f5f9"];
+  mon    [label="Health check\n/healthz every 60s", fillcolor="#f1f5f9"];
+
+  client -> web  [label="HTTPS browser"];
+  client -> nginx [label="HTTPS WebDAV", color="#B45309"];
+  php    -> web   [label="authorize + metadata\nHMAC + mTLS", color="#450073", penwidth=1.3];
+  web    -> nginx [label="mint dav ticket", style=dashed, color="#450073"];
+  mysql  -> bk   [label="nightly dump", style=dotted];
+  s3     -> bk   [label="object replication", style=dotted];
+  mon    -> nginx [style=dotted];
+  mon    -> web  [style=dotted];
+}

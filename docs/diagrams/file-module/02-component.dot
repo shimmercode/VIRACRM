@@ -1,0 +1,66 @@
+digraph Component {
+  graph [fontname="Helvetica", rankdir=TB, nodesep=0.3, ranksep=0.5, bgcolor="white", pad=0.3,
+         label="Vira Drive — Component Diagram (F1 / Hybrid architecture)", labelloc="t", fontsize=15];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge  [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  subgraph cluster_ui {
+    label="Presentation — resources/views/files (Blade SSR, RTL, no Node runtime)"; style="rounded"; color="#450073"; fontsize=10;
+    explorer [label="File Explorer\n(tree · grid/list · breadcrumb)", fillcolor="#ede9fe"];
+    detail   [label="Details panel\nmetadata · versions · activity", fillcolor="#ede9fe"];
+    share    [label="Share & permission\ndialogs", fillcolor="#ede9fe"];
+    upload   [label="Upload queue\nprogress · retry · resume", fillcolor="#ede9fe"];
+  }
+
+  subgraph cluster_http {
+    label="HTTP layer — app/Http/Controllers/Files"; style="rounded"; color="#450073"; fontsize=10;
+    rBrowse [label="FileBrowseController", fillcolor="#f5f3ff"];
+    rUpload [label="UploadController\n(chunk session)", fillcolor="#f5f3ff"];
+    rDl     [label="DownloadController\n(stream + Range)", fillcolor="#f5f3ff"];
+    rVer    [label="VersionController", fillcolor="#f5f3ff"];
+    rShare  [label="ShareController", fillcolor="#f5f3ff"];
+    rDavPxy [label="DavTicketController\n(mints short token)", fillcolor="#f5f3ff"];
+  }
+
+  subgraph cluster_domain {
+    label="Domain — app/Modules/Files (no CRM business logic leaks in)"; style="rounded"; color="#450073"; fontsize=10;
+    authz  [label="FileAuthorization\nresolver + cache", fillcolor="#ddd6fe"];
+    tree   [label="FolderTree\n(materialized path)", fillcolor="#ddd6fe"];
+    vers   [label="VersionService", fillcolor="#ddd6fe"];
+    lock   [label="LockService\n(DB transaction, atomic)", fillcolor="#ddd6fe"];
+    share2 [label="ShareService", fillcolor="#ddd6fe"];
+    quota  [label="QuotaService", fillcolor="#ddd6fe"];
+    scan   [label="ValidationService\nMIME + signature + sanitize", fillcolor="#ddd6fe"];
+    audit  [label="AuditWriter\n(redacting)", fillcolor="#ddd6fe"];
+    blob   [label="BlobStore\n(content-addressed)", fillcolor="#ddd6fe"];
+  }
+
+  subgraph cluster_infra {
+    label="Infrastructure — swappable storage backend"; style="rounded"; color="#450073"; fontsize=10;
+    disk  [label="Storage contract\n(local ǀ S3-compat ǀ NAS)", fillcolor="#e0e7ff"];
+    db    [label="MySQL\nfile_* tables + audit_logs", fillcolor="#e0e7ff"];
+    queue [label="Queue driver\ndatabase (host cron)", fillcolor="#e0e7ff", style="rounded,filled,dashed"];
+  }
+
+  subgraph cluster_ext {
+    label="External service — VPS"; style="rounded"; color="#B45309"; fontsize=10;
+    davsvc [label="WebDAV service (sabre/dav)\nsame domain package, separate deployment", fillcolor="#ffedd5"];
+    bridge [label="Authorization bridge\nHMAC request signing", fillcolor="#ffedd5"];
+  }
+
+  explorer -> rBrowse; detail -> rBrowse; share -> rShare; upload -> rUpload;
+  rBrowse -> authz; rBrowse -> tree;
+  rUpload -> authz; rUpload -> scan; rUpload -> quota;
+  rDl     -> authz; rDl -> blob;
+  rVer    -> vers;  rVer -> authz;
+  rShare  -> share2; rShare -> authz;
+  rDavPxy -> authz;
+
+  authz -> db; tree -> db; vers -> db; lock -> db; share2 -> db; quota -> db; audit -> db;
+  vers -> blob; blob -> disk; lock -> audit; vers -> audit; share2 -> audit; quota -> audit;
+  upload -> queue [style=dashed];
+
+  davsvc -> bridge; bridge -> authz [label="HTTPS authorize()\nfail-closed", color="#B45309", penwidth=1.3];
+  davsvc -> disk [label="object API\n(never public URL)", style=dashed, color="#B45309"];
+  bridge -> audit [label="dav event", style=dotted];
+}

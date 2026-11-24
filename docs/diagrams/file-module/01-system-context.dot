@@ -1,0 +1,37 @@
+digraph Context {
+  graph [fontname="Helvetica", rankdir=LR, nodesep=0.5, ranksep=1.35, bgcolor="white", pad=0.35,
+         label="Vira Drive — System Context (F1)\nWho talks to what, and over which protocol", labelloc="t", fontsize=15];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, penwidth=0.9];
+  edge  [fontname="Helvetica", fontsize=8, color="#475569", arrowsize=0.7];
+
+  staff    [label="Staff\n(Browser / Chrome, Edge, Firefox)", fillcolor="#dbeafe"];
+  explorer [label="Windows File Explorer\n(WebClient / WebDAV redirector)\nDEPRECATED by Microsoft, Nov 2023", fillcolor="#fef3c7", style="rounded,filled,dashed"];
+  admin    [label="Administrator\n(quotas, policies, retention)", fillcolor="#dbeafe"];
+
+  subgraph cluster_crm {
+    label="cPanel Shared Hosting — CRM (control plane)"; style="rounded"; color="#450073"; fontsize=11;
+    crm [label="VIRA CRM\nLaravel 12 · PHP 8.2+\nMySQL/MariaDB\n\nAuthN · RBAC · File metadata\nPermissions · Versions · Locks\nAudit · Search · UI", fillcolor="#ede9fe"];
+    priv [label="Private storage\n(storage/app/private)\nNOT web-reachable", fillcolor="#e2e8f0"];
+    crm -> priv [style=dashed, label="pilot only"];
+  }
+
+  subgraph cluster_vps {
+    label="Independent VPS — data plane (F1 mandatory)"; style="rounded"; color="#B45309"; fontsize=11;
+    dav  [label="WebDAV service\nsabre/dav 4.7.x\nPROPFIND · GET · PUT · LOCK", fillcolor="#ffedd5"];
+    obj  [label="Object storage\nS3-compatible\n(SeaweedFS or provider S3)", fillcolor="#ffedd5"];
+    dav -> obj [label="S3 API\n(scoped credentials)"];
+  }
+
+  backup [label="Backup target\nseparate location, encrypted", fillcolor="#f1f5f9"];
+  ms     [label="Microsoft 365 / Office\n(F3 only — not deployed in F1)", fillcolor="#f8fafc", style="rounded,filled,dashed"];
+
+  staff    -> crm [label="HTTPS 443\nsession cookie + CSRF"];
+  admin    -> crm [label="HTTPS 443"];
+  explorer -> dav [label="HTTPS 443\nBasic over TLS (or token)\nPROPFIND/PUT/LOCK", color="#B45309"];
+  crm      -> dav [label="authorize() + metadata\nHMAC · mTLS · fail-closed", color="#450073", penwidth=1.4];
+  dav      -> crm [label="", color="#450073", penwidth=1.4, style=dashed];
+  crm      -> obj [label="presigned GET/PUT", style=dashed];
+  crm      -> backup [label="nightly dump", style=dotted];
+  dav      -> backup [label="object replication", style=dotted];
+  ms       -> crm [label="F3: WOPI / JWT callbacks", style=dotted, color="#94a3b8"];
+}

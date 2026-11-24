@@ -1,0 +1,35 @@
+digraph Upload {
+  graph [fontname="Helvetica", rankdir=TB, nodesep=0.3, ranksep=0.4, bgcolor="white", pad=0.3,
+         label="Upload Lifecycle — chunked, resumable, hash-verified\nA partial upload is never registered as a valid version", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  s0 [label="client picks file(s)\npre-check: extension, size ≤ limit, quota", shape=oval, fillcolor="#dbeafe"];
+  s1 [label="POST /files/upload/init\n{node_id, name, size, sha256(optional), mime}\n→ upload_id + chunk_size"];
+  s2 [label="store file_upload_sessions row\nstatus=open, expires_at = now + 24h (config)"];
+  s3 [label="PUT /files/upload/{id}/chunk/{n}\nPATCH semantics · idempotent"];
+  s4 [label="validate chunk offset + length\nappend to temp object, track received bytes", shape=diamond, fillcolor="#fff7ed"];
+  s5 [label="POST /files/upload/{id}/complete\nclient sends final sha256"];
+  s6 [label="server hashes assembled stream\ncompute sha256 (streamed, constant memory)", shape=diamond, fillcolor="#fff7ed"];
+  s7 [label="hash matches?", shape=diamond, fillcolor="#fff7ed"];
+  s8 [label="authorize(upload|edit)\n+ lock check + quota check", shape=diamond, fillcolor="#fff7ed"];
+  s9 [label="transaction:\nversion row + blob row (dedup by sha)\npromote temp object"];
+  s10 [label="audit: upload / version_created\nnotify watchers (F2 hook)"];
+  s11 [label="done → new version no.", shape=oval, fillcolor="#dcfce7"];
+  f1 [label="400 hash_mismatch\nsession kept for one retry", fillcolor="#fee2e2"];
+  f2 [label="cleanup: temp object deleted\nsession status=aborted", fillcolor="#fee2e2"];
+  clean [label="cron: sessions older than TTL\n→ abort + delete temp + audit", fillcolor="#f1f5f9"];
+
+  s0->s1->s2->s3->s4;
+  s4->s3 [label="next chunk"];
+  s4->f2 [label="offset/length invalid"];
+  s4->s5 [label="all bytes received"];
+  s5->s6->s7;
+  s7->f1 [label="no"];
+  f1->s1 [label="re-init"];
+  s7->s8 [label="yes"];
+  s8->f2 [label="forbidden / quota"];
+  s8->s9->s10->s11;
+  s2->clean [style=dotted];
+  clean->f2 [style=dotted];
+}

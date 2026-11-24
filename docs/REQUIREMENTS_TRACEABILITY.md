@@ -4,7 +4,7 @@
 > `tools/traceability-status.json` را به‌روز کنید و `node tools/generate-traceability.mjs` را اجرا کنید.
 > `node tools/generate-traceability.mjs --check` بررسی می‌کند که سند با کاتالوگ هم‌گام است.
 
-**منبع نیازمندی‌ها:** `docs/requirements/requirements.catalog.yaml` (۸۴ نیازمندی)
+**منبع نیازمندی‌ها:** `docs/requirements/requirements.catalog.yaml` (۹۶ نیازمندی)
 
 **مبنا:** بازرسی مستقیم مخزن + اجرای واقعی. هیچ وضعیتی از گزارش قبلی کپی نشده.
 
@@ -14,23 +14,23 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 26 | 31.0% |
-| `PARTIAL` | 20 | 23.8% |
-| `NOT_VERIFIED` | 2 | 2.4% |
-| `NOT_IMPLEMENTED` | 30 | 35.7% |
-| `BLOCKED` | 6 | 7.1% |
-| **جمع** | **84** | **100%** |
+| `VERIFIED` | 26 | 27.1% |
+| `PARTIAL` | 20 | 20.8% |
+| `NOT_VERIFIED` | 2 | 2.1% |
+| `NOT_IMPLEMENTED` | 41 | 42.7% |
+| `BLOCKED` | 7 | 7.3% |
+| **جمع** | **96** | **100%** |
 
-### اولویت P0 (۲۹ نیازمندی)
+### اولویت P0 (۳۹ نیازمندی)
 
 | وضعیت | تعداد |
 |-------|------:|
 | `VERIFIED` | 8 |
 | `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 11 |
-| `BLOCKED` | 3 |
+| `NOT_IMPLEMENTED` | 20 |
+| `BLOCKED` | 4 |
 
-**نتیجه:** از ۲۹ نیازمندی حیاتی، **۸ مورد اثبات‌شده** و **۱۱ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۸ مورد اثبات‌شده** و **۲۰ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -229,6 +229,18 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `FILE-001` | `REQ-10.06` | امنیت فایل‌های آپلودی و IDOR | P0 | brief | **`NOT_IMPLEMENTED`** | no uploads | — | M1–M8 |
+| `FILE-002` | `REQ-16.01` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002) | F0: معماری؛ بدون کد | M1–M8 |
+| `FILE-003` | `REQ-16.02` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16) | بدون UI فایل | M1–M8 |
+| `FILE-004` | `REQ-16.03` | مجوزهای Granular با وراثت و Deny/Allow صریح | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_PERMISSION_MATRIX.md §4 | بدون resolver؛ CRM گروه/دپارتمان ندارد | M1–M8 |
+| `FILE-005` | `REQ-16.04` | نسخه‌بندی غیرمخرب با هش و Restore به‌صورت نسخهٔ جدید | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §2 | بدون جدول نسخه | M1–M8 |
+| `FILE-006` | `REQ-16.05` | قفل‌گذاری واقعی و سرور-محور بدون Lost Update | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §4 | بدون جدول قفل | M1–M8 |
+| `FILE-007` | `REQ-16.06` | WebDAV روی VPS مستقل با CRM به‌عنوان تنها مرجع مجوز | P0 | brief | **`BLOCKED`** | docs/WEBDAV_VPS_ARCHITECTURE.md | VPS آزمایشی موجود نیست | خارجی |
+| `FILE-008` | `REQ-16.07` | Storage جدا از CRM با Backend قابل تعویض | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_STORAGE_ARCHITECTURE.md §10 | storage قابل تعویض طراحی شد | M1–M8 |
+| `FILE-009` | `REQ-16.08` | آپلود تکه‌ای/قابل ادامه با تأیید هش و بدون فایل یتیم | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.15 | بدون کد آپلود | M1–M8 |
+| `FILE-010` | `REQ-16.09` | اتصال فایل به موجودیت‌های CRM بدون دور زدن مجوز | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.12 | file_relations طراحی شد | M1–M8 |
+| `FILE-011` | `REQ-16.10` | مدل تهدید و کنترل‌های امنیتی فایل | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_SECURITY_THREAT_MODEL.md | ۲۹ تهدید ثبت شد، ۰ کنترل پیاده | M1–M8 |
+| `FILE-012` | `REQ-16.11` | طبقه‌بندی و Retention با Recycle Bin | P1 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.14 | بدون retention | M1–M8 |
+| `FILE-013` | `REQ-16.12` | Online Office و ویرایش هم‌زمان (F3) | P2 | brief | **`NOT_IMPLEMENTED`** | docs/ONLINE_OFFICE_INTEGRATION.md | F3؛ طبق تصمیم کارفرما | M1–M8 |
 
 ### UI
 
@@ -345,6 +357,17 @@
 | `RPT-002` | گزارش تعداد پروژه‌های فعال هر کارشناس | Reports | P1 |
 | `BAK-001` | Backup و Restore تست‌شده | Backup | P0 |
 | `INST-001` | Installer امن | Installer | P1 |
+| `FILE-002` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | Files | P0 |
+| `FILE-003` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | Files | P0 |
+| `FILE-004` | مجوزهای Granular با وراثت و Deny/Allow صریح | Files | P0 |
+| `FILE-005` | نسخه‌بندی غیرمخرب با هش و Restore به‌صورت نسخهٔ جدید | Files | P0 |
+| `FILE-006` | قفل‌گذاری واقعی و سرور-محور بدون Lost Update | Files | P0 |
+| `FILE-008` | Storage جدا از CRM با Backend قابل تعویض | Files | P0 |
+| `FILE-009` | آپلود تکه‌ای/قابل ادامه با تأیید هش و بدون فایل یتیم | Files | P0 |
+| `FILE-010` | اتصال فایل به موجودیت‌های CRM بدون دور زدن مجوز | Files | P0 |
+| `FILE-011` | مدل تهدید و کنترل‌های امنیتی فایل | Files | P0 |
+| `FILE-012` | طبقه‌بندی و Retention با Recycle Bin | Files | P1 |
+| `FILE-013` | Online Office و ویرایش هم‌زمان (F3) | Files | P2 |
 
 ---
 
@@ -358,6 +381,7 @@
 | `SCH-001` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | H-15 host cron unavailable |
 | `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |
 | `DEP-003` | بازبینی و تأیید هاست مقصد | 14/21 host checks unknown |
+| `FILE-007` | WebDAV روی VPS مستقل با CRM به‌عنوان تنها مرجع مجوز | docs/WEBDAV_VPS_ARCHITECTURE.md |
 
 ---
 
@@ -365,7 +389,7 @@
 
 | قاعده | رعایت |
 |-------|-------|
-| هر ۸۴ نیازمندی نگاشت شده | ✅ (اسکریپت با نبود نگاشت شکست می‌خورد) |
+| هر ۹۶ نیازمندی نگاشت شده | ✅ (اسکریپت با نبود نگاشت شکست می‌خورد) |
 | `PASS` فقط با شاهد اجرایی | ✅ |
 | تست mock/skip هرگز `PASS` نیست | ✅ |
 | هیچ نیازمندی به‌خاطر دشواری حذف نشد | ✅ |

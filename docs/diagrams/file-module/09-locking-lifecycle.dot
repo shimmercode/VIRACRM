@@ -1,0 +1,30 @@
+digraph Lock {
+  graph [fontname="Helvetica", rankdir=LR, nodesep=0.32, ranksep=0.5, bgcolor="white", pad=0.3,
+         label="Locking Lifecycle — DB-atomic, backend-enforced\nTwo lock kinds: WEBDAV (RFC 4918) and APP (UI 'check out')", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  free [label="UNLOCKED", shape=oval, fillcolor="#dcfce7"];
+  acq  [label="acquire (transaction)\nINSERT ... unique(active) on node_id\nor UPDATE ... WHERE expired\n→ race-safe: one winner", fillcolor="#dbeafe"];
+  held [label="LOCKED\nowner · token · timeout\nshared (WebDAV) | exclusive", fillcolor="#fef3c7"];
+  refr [label="refresh\n(extends timeout ≤ max)"];
+  exp  [label="expiry sweep (cron)\nstale lock released\n+ audit lock_expired"];
+  unl  [label="unlock by owner\n(UNLOCK / UI)"];
+  force[label="admin force-unlock\ncapability: Lock/Unlock\n+ reason required + audit", fillcolor="#fee2e2"];
+  conf [label="second writer arrives", shape=diamond, fillcolor="#fff7ed"];
+  deny [label="423 Locked\n(WebDAV) / 409 + banner (UI)", fillcolor="#fee2e2"];
+  over [label="force with 'unlock over'?\nclient chooses — never silent", shape=diamond, fillcolor="#fff7ed"];
+  newv [label="write proceeds → new version\n(expected_version guard)", fillcolor="#dcfce7"];
+
+  free->acq->held;
+  held->refr [label="≤ max_timeout"];
+  refr->held;
+  held->unl->free;
+  held->exp->free;
+  held->force->free [label="audited"];
+  held->conf;
+  conf->deny [label="other principal"];
+  conf->over;
+  over->newv [label="explicit override\n(UI) / lost-update\nprevented by If-header\n(WebDAV)"];
+  over->deny [label="no"];
+}

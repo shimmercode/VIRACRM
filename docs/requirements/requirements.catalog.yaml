@@ -45,6 +45,7 @@ groups:
   - {code: REQ-13, title: "اولویت‌بندی و برنامه اجرا", doc_section: 13}
   - {code: REQ-14, title: "معیارهای پذیرش", doc_section: 14}
   - {code: REQ-15, title: "تنظیمات مدیریتی و قابلیت استقرار", doc_section: 15}
+  - {code: REQ-16, title: "Enterprise File Management و فضای کاری سازمانی (Vira Drive)", doc_section: "MASTER ADDENDUM"}
 
 requirements:
 
@@ -483,3 +484,70 @@ requirements:
    title: "بسته مستندات فنی و کاربری",
    text: "Architecture، ERD، Schema، Installation، Deployment، Env، Backup/Restore، Security، User/Admin Guide، Test Report، RTM، Changelog، Known Issues، Migration.",
    modules: [Docs], tests: [], status: in-analysis, phase: "فاز یک", source_section: "۱۵", source_lines: "287-304"}
+
+# ─────────────────────── REQ-16 (MASTER ADDENDUM) ───────────────────────
+# الزامات ماژول فایل از «دستور نهایی Arena — F0» استخراج شده‌اند.
+# تفصیل کامل، شناسه‌های FR-FILE/FR-PERM/FR-WEBDAV و ۹۹ ردیف ردیابی در
+# docs/FILE_WORKSPACE_REQUIREMENTS.md و docs/FILE_WORKSPACE_TRACEABILITY.md است.
+# وضعیت این‌ها هرگز از implemented بالاتر نمی‌رود بدون اجرای واقعی تست.
+
+- {id: REQ-16.01, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول",
+   text: "File Management یک فضای کاری سازمانی است (نه File Upload ساده): مدیریت، اشتراک، دسترسی، نسخه‌بندی و همکاری. مالکیت فایل متعلق به سازمان است، نه حساب شخصی کارمند.",
+   modules: [Files], tests: [T-FILE-001, T-FILE-002], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §1,§5.1", source_lines: "5.1"}
+
+- {id: REQ-16.02, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "File Explorer با تمام قابلیت‌های ناوبری و عملیات",
+   text: "Folder Tree، Breadcrumb، Grid/List، Search، Sort، Filter، Multi-select، Drag&Drop با پیشرفت و Retry، Rename، Move، Copy، Download، Preview، Details Panel، Context Menu، Bulk Actions، Create Folder، Delete، Restore، Version History، Permission Management، Activity History.",
+   modules: [Files, UI], tests: [T-UI-001, T-UI-020], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §5.2", source_lines: "5.2"}
+
+- {id: REQ-16.03, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "مجوزهای Granular با وراثت و Deny/Allow صریح",
+   text: "هجده قابلیت (View…Manage Retention) با دامنهٔ User/Group/Role/Team/Department/Project/Customer/Organization، وراثت از پوشهٔ والد، Break-inheritance صریح، تقدم Deny بر Allow و ممنوعیت تشدید امتیاز.",
+   modules: [Files, Permissions], tests: [T-PERM-001, T-PERM-030], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §6", source_lines: "6.1-6.4"}
+
+- {id: REQ-16.04, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "نسخه‌بندی غیرمخرب با هش و Restore به‌صورت نسخهٔ جدید",
+   text: "هر فایل تاریخچهٔ تغییرناپذیر دارد: Version ID/Number، سازنده، تاریخ، حجم، SHA-256، یادداشت، Storage Reference. Restore نسخهٔ جدید می‌سازد؛ نسخهٔ قبلی بی‌ردپا حذف نمی‌شود. سیاست نگهداری قابل تنظیم با dry-run پیش‌فرض.",
+   modules: [Files], tests: [T-VER-001, T-VER-012], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §9", source_lines: "9"}
+
+- {id: REQ-16.05, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "قفل‌گذاری واقعی و سرور-محور بدون Lost Update",
+   text: "قفل دستی و خودکار، اعمال‌شده در جریان Backend و Storage (نه UI)، مقاوم در برابر Race با تراکنش/قید یکتا، Unlock توسط صاحب و Force-unlock ادمین با Audit، TTL و بازیابی قفل کهنه.",
+   modules: [Files], tests: [T-LOCK-001, T-LOCK-014], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §7.5", source_lines: "7.5"}
+
+- {id: REQ-16.06, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "WebDAV روی VPS مستقل با CRM به‌عنوان تنها مرجع مجوز",
+   text: "WebDAV روی VPS مستقل، TLS معتبر، احراز هویت سرویس-به-سرویس، نگاشت هر Method به مجوز CRM، Fail-Closed هنگام قطع CRM، ثبت Audit، بدون پورت DB/SMB عمومی. هرگز داخل Laravel روی cPanel اجرا نمی‌شود.",
+   modules: [Files, Deployment], tests: [T-DAV-001, T-DAV-034], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §2.2,§7", source_lines: "7.1-7.7"}
+
+- {id: REQ-16.07, group: REQ-16, type: brief, priority: P0, weight: 4,
+   title: "Storage جدا از CRM با Backend قابل تعویض",
+   text: "متادیتا/روابط/مجوز/نسخه/Audit در DB، بایت‌ها بیرون از public root در Backend قابل تعویض (Local private / S3-compatible / NAS / File Server) با سهمیه، گزارش مصرف، بکاپ، Retention و DR.",
+   modules: [Files, Deployment], tests: [T-SEC-F01], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §10", source_lines: "10"}
+
+- {id: REQ-16.08, group: REQ-16, type: brief, priority: P0, weight: 4,
+   title: "آپلود تکه‌ای/قابل ادامه با تأیید هش و بدون فایل یتیم",
+   text: "Chunked & resumable upload، پیشرفت، Retry، تأیید SHA-256، مدیریت تکراری، پاک‌سازی آپلود ناقص و فایل یتیم، سقف حجم و سهمیه، اعتبارسنجی MIME/امضا، پاکسازی نام و Rate Limit؛ Streaming برای فایل بزرگ.",
+   modules: [Files], tests: [T-UP-001, T-UP-016], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §8", source_lines: "8"}
+
+- {id: REQ-16.09, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "اتصال فایل به موجودیت‌های CRM بدون دور زدن مجوز",
+   text: "اتصال به Customer/Contract/Project/Employee/Accounting Records با یک منبع حقیقت و بدون کپی واگرا. دسترسی به فایل هرگز مجوز ماژول CRM را دور نمی‌زند؛ جستجو و نمایش فایل هم.",
+   modules: [Files, Security], tests: [T-FILE-007, T-FILE-010], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §5.3", source_lines: "5.3"}
+
+- {id: REQ-16.10, group: REQ-16, type: brief, priority: P0, weight: 5,
+   title: "مدل تهدید و کنترل‌های امنیتی فایل",
+   text: "IDOR، Broken Access Control، Path/Directory Traversal، MIME Spoofing، SVG/HTML مخرب، XSS، CSRF، SSRF، Zip Bomb، Malware، Unauthorized Download، Token Replay، Credential Leak، Stale Permission، Lost Update، Race، Lock Abuse، Storage Exhaustion، DoS، Public URL Leak، Backup Exposure، Log Leakage و نشت بین دپارتمان‌ها — هر یک با کنترل و تست.",
+   modules: [Files, Security], tests: [T-SEC-F01, T-SEC-F28], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §11", source_lines: "11"}
+
+- {id: REQ-16.11, group: REQ-16, type: brief, priority: P1, weight: 3,
+   title: "طبقه‌بندی و Retention با Recycle Bin",
+   text: "چهار سطح Public Internal/Internal/Confidential/Restricted با سیاست دسترسی و اشتراک؛ Retention شامل مدت، آرشیو، حذف، Legal Hold، Restore و Audit. حذف در F1 با Recycle Bin و Restore؛ Hard Delete محدود، مجوزدار و قابل Audit.",
+   modules: [Files], tests: [T-FILE-027, T-FILE-030], status: in-analysis, phase: "F1", source_section: "MASTER ADDENDUM §15", source_lines: "15"}
+
+- {id: REQ-16.12, group: REQ-16, type: brief, priority: P2, weight: 2,
+   title: "Online Office و ویرایش هم‌زمان (F3)",
+   text: "F1 شامل Download → Edit Locally → Upload as New Version است؛ هیچ Document Server در F1 مستقر نمی‌شود. F3 می‌تواند ONLYOFFICE یا Collabora روی زیرساخت مستقل با WOPI/JWT/Callback باشد؛ معماری F1 نباید بازنویسی Storage/Permission/Versioning را لازم کند.",
+   modules: [Files], tests: [], status: in-analysis, phase: "F3", source_section: "MASTER ADDENDUM §2.3,§16", source_lines: "16"}
+

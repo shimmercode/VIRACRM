@@ -1,0 +1,27 @@
+digraph Version {
+  graph [fontname="Helvetica", rankdir=LR, nodesep=0.3, ranksep=0.5, bgcolor="white", pad=0.3,
+         label="Version Lifecycle — immutable version history\nRestore creates a new version; nothing is silently destroyed", labelloc="t", fontsize=15];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=9, penwidth=0.8];
+  edge [fontname="Helvetica", fontsize=7.5, color="#475569", arrowsize=0.6];
+
+  v1 [label="v1 · created\n(upload)", fillcolor="#dbeafe"];
+  v2 [label="v2 · new version\n(browser or WebDAV PUT)", fillcolor="#dbeafe"];
+  v3 [label="v3 · restore of v2\n(new version, note = «بازگردانی v2»)", fillcolor="#dcfce7"];
+  h  [label="history table\nversion_id · number · creator · at · size · sha256 · note", fillcolor="#e0e7ff"];
+  cur[label="file_nodes.current_version_id\n(pointer only — never mutates old rows)", fillcolor="#f5f3ff"];
+  dl [label="download v1 / v2\n(read-only, audited)", fillcolor="#f1f5f9"];
+  ret[label="retention policy\nmax_versions · max_age · keep_forever\nlegal_hold = true blocks purge", fillcolor="#fef3c7"];
+  purge [label="purge job\n(dry-run report first)\nblob deleted only when refcount=0", fillcolor="#fee2e2"];
+  trash [label="node deleted → trash\nretention 30d → restore or hard delete\n(hard delete = Manage Retention + audit)", fillcolor="#fff7ed"];
+
+  v1->v2->v3;
+  v1->h; v2->h; v3->h;
+  cur -> v1 [style=dotted]; cur -> v2 [style=dotted]; cur -> v3 [label="now", penwidth=1.2];
+  h -> dl;
+  h -> ret;
+  ret -> purge [label="eligible"];
+  ret -> h [label="legal_hold / keep_forever\n→ never purge", color="#dc2626", style=dashed];
+  cur -> trash [label="node delete"];
+  trash -> v2 [label="restore node", style=dashed];
+  purge -> h [style=dotted, label="audit: version_purged"];
+}
