@@ -127,6 +127,7 @@ const SUITES = (() => {
     { id: 'review-integrity', label: 'Review catalogue integrity', kind: 'node', script: 'tools/checks/review-integrity.mjs', required: true },
     { id: 'decision-audit', label: '36 decisions reconciled', kind: 'node', script: 'tools/checks/decision-audit.mjs', required: true },
     { id: 'decision-pack', label: 'Client pack 9 x 11 fields is current', kind: 'node', script: 'tools/checks/review-decision-pack-current.mjs', required: true },
+    { id: 'review-report', label: 'Final report matches evidence', kind: 'node', script: 'tools/checks/review-report-current.mjs', required: true },
   ];
 })();
 
