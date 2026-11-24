@@ -1,24 +1,25 @@
 # ماتریس ردیابی نیازمندی‌ها — Requirements Traceability
 
-**تاریخ:** ۲ آذر ۱۴۰۵ · **منبع:** `docs/requirements/requirements.catalog.yaml` (۸۴ نیازمندی)
+> **این سند به‌صورت خودکار تولید می‌شود.** دستی ویرایش نکنید؛
+> `tools/traceability-status.json` را به‌روز کنید و `node tools/generate-traceability.mjs` را اجرا کنید.
+> `node tools/generate-traceability.mjs --check` بررسی می‌کند که سند با کاتالوگ هم‌گام است.
+
+**منبع نیازمندی‌ها:** `docs/requirements/requirements.catalog.yaml` (۸۴ نیازمندی)
 
 **مبنا:** بازرسی مستقیم مخزن + اجرای واقعی. هیچ وضعیتی از گزارش قبلی کپی نشده.
 
-
 ---
-
 
 ## ۱. خلاصهٔ اجرایی
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 23 | 27.4% |
+| `VERIFIED` | 26 | 31.0% |
 | `PARTIAL` | 20 | 23.8% |
 | `NOT_VERIFIED` | 2 | 2.4% |
-| `NOT_IMPLEMENTED` | 33 | 39.3% |
+| `NOT_IMPLEMENTED` | 30 | 35.7% |
 | `BLOCKED` | 6 | 7.1% |
 | **جمع** | **84** | **100%** |
-
 
 ### اولویت P0 (۲۹ نیازمندی)
 
@@ -29,27 +30,20 @@
 | `NOT_IMPLEMENTED` | 11 |
 | `BLOCKED` | 3 |
 
-**نتیجه:** از ۲۹ نیازمندی حیاتی، **8 مورد اثبات‌شده** و **11 مورد پیاده‌سازی‌نشده** است.
-
+**نتیجه:** از ۲۹ نیازمندی حیاتی، **۸ مورد اثبات‌شده** و **۱۱ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
 دستور کارفرما شناسه‌هایی مانند `AUTH-001` می‌خواست. کاتالوگ موجود از `REQ-xx.yy`
-
-استفاده می‌کند. برای پرهیز از دوباره‌شماری، **ستون «شناسه» نگاشت اضافه شد** و
-
-`REQ-xx.yy` مرجع باقی می‌ماند.
-
+استفاده می‌کند. برای پرهیز از دوباره‌شماری و شکستن ارجاع‌های قبلی، **ستون «شناسه»
+نگاشت اضافه شد** و `REQ-xx.yy` مرجع باقی می‌ماند.
 
 ---
 
-## ۲. ماتریس تفصیلی (۱۰ فیلد)
-
+## ۲. ماتریس تفصیلی
 
 > فیلدها: **شناسه** · **REQ** · **عنوان** · **ماژول** · **اولویت** · **نوع** ·
-
 > **وضعیت** · **شاهد** · **شکاف** · **فاز بعدی**
-
 
 ### Foundation
 
@@ -101,7 +95,7 @@
 | `CNT-006` | `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | versions table empty | no history UI | M1–M8 |
 | `CNT-007` | `REQ-04.09` | جستجو و فیلتر قرارداد | P1 | doc | **`VERIFIED`** | search + sort whitelist + filters | — | — |
 | `CNT-008` | `REQ-04.10` | ثبت تمدید قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | no renewal route | — | M1–M8 |
-| `CNT-009` | `REQ-09.02` | فیلترهای قرارداد و پروژه | P1 | doc | **`PARTIAL`** | contracts filter bar | projects filter absent | M1/M3 |
+| `CNT-009` | `REQ-09.02` | فیلترهای قرارداد و پروژه | P1 | doc | **`VERIFIED`** | contract & project filter bars + sort whitelist | — | — |
 
 ### ContractTemplates
 
@@ -114,7 +108,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`PARTIAL`** | projects table (3 rows) | no type-driven form | M1/M3 |
+| `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`VERIFIED`** | projects module + type-driven form + 28-assert flow | — | — |
 | `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | project_assignments empty | — | M1–M8 |
 | `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`NOT_IMPLEMENTED`** | no public/secret split | — | M1–M8 |
 
@@ -122,14 +116,14 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`NOT_IMPLEMENTED`** | seo_project_details empty, no model | — | M1–M8 |
-| `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`NOT_IMPLEMENTED`** | project_keywords empty, no model | — | M1–M8 |
+| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`PARTIAL`** | seo_project_details model + form + detail page | no keyword CRUD UI yet | M1/M3 |
+| `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`PARTIAL`** | project_keywords model + normalize + read-only list | no add/remove UI | M1/M3 |
 
 ### DesignProjects
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `DSG-001` | `REQ-05.04` | فیلدهای پروژه طراحی سایت | P1 | doc | **`NOT_IMPLEMENTED`** | design_project_details empty | — | M1–M8 |
+| `DSG-001` | `REQ-05.04` | فیلدهای پروژه طراحی سایت | P1 | doc | **`VERIFIED`** | design_project_details model + form + detail page | — | — |
 
 ### Credentials
 
@@ -315,11 +309,9 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `DOC-001` | `REQ-15.06` | بسته مستندات فنی و کاربری | P2 | brief | **`PARTIAL`** | docs/ extensive | user manual missing | M1/M3 |
 
-
 ---
 
-## ۳. ۳۳ نیازمندی پیاده‌سازی‌نشده — همان‌ها که کد ندارند
-
+## ۳. نیازمندی‌های پیاده‌سازی‌نشده
 
 | شناسه | عنوان | ماژول | اولویت |
 |-------|-------|-------|:------:|
@@ -330,9 +322,6 @@
 | `CNT-005` | تثبیت نسخه نهایی قرارداد | Contracts | P0 |
 | `CNT-006` | تاریخچه و نسخه‌های قرارداد | Contracts | P1 |
 | `CNT-008` | ثبت تمدید قرارداد | Contracts | P1 |
-| `SEO-001` | فیلدهای پروژه سئو | SeoProjects | P1 |
-| `SEO-002` | مدیریت ساختارمند کلمات کلیدی | SeoProjects | P1 |
-| `DSG-001` | فیلدهای پروژه طراحی سایت | DesignProjects | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
 | `CRED-001` | مدیریت دسترسی‌های پروژه | Credentials | P1 |
 | `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
@@ -357,11 +346,9 @@
 | `BAK-001` | Backup و Restore تست‌شده | Backup | P0 |
 | `INST-001` | Installer امن | Installer | P1 |
 
-
 ---
 
-## ۴. ۶ نیازمندی مسدود (BLOCKED)
-
+## ۴. نیازمندی‌های مسدود (BLOCKED)
 
 | شناسه | عنوان | دلیل انسداد |
 |-------|-------|-------------|
@@ -372,30 +359,13 @@
 | `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |
 | `DEP-003` | بازبینی و تأیید هاست مقصد | 14/21 host checks unknown |
 
-
 ---
 
-## ۵. سه ماژول با بیشترین شکاف
-
-
-| ماژول | نیازمندی پیاده‌نشده |
-|-------|------------------:|
-| Credentials | 5 |
-| Invoices | 5 |
-| Contracts | 4 |
-| ContractTemplates | 2 |
-| SeoProjects | 2 |
-| Projects | 2 |
-
-
----
-
-## ۶. قواعد این ماتریس
-
+## ۵. قواعد این ماتریس
 
 | قاعده | رعایت |
 |-------|-------|
-| هر ۸۴ نیازمندی نگاشت شده | ✅ بدون جاافتادگی |
+| هر ۸۴ نیازمندی نگاشت شده | ✅ (اسکریپت با نبود نگاشت شکست می‌خورد) |
 | `PASS` فقط با شاهد اجرایی | ✅ |
 | تست mock/skip هرگز `PASS` نیست | ✅ |
 | هیچ نیازمندی به‌خاطر دشواری حذف نشد | ✅ |

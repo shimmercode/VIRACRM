@@ -97,6 +97,7 @@ const SUITES = (() => {
   { id: 'unit', label: 'Unit + feature tests', kind: 'php', script: 'tests/run.php', required: true },
   { id: 'views', label: 'Blade compilation', kind: 'php', script: 'tools/checks/views.php', required: true },
   { id: 'authorization', label: 'Authorization (PHP)', kind: 'php', script: 'tools/checks/authz.php', required: true },
+  { id: 'docs-integrity', label: 'Docs present + traceability current', kind: 'node', script: 'tools/checks/docs-integrity.mjs', required: true },
   { id: 'flow-login', label: 'Flow: login', kind: 'node', script: 'tools/checks/login-flow.mjs', required: true },
   { id: 'flow-authed', label: 'Flow: authenticated', kind: 'node', script: 'tools/checks/authed-flow.mjs', required: true },
   { id: 'flow-authz', label: 'Flow: authorization', kind: 'node', script: 'tools/checks/authz-flow.mjs', required: true },

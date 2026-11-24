@@ -232,5 +232,8 @@ const stillThere = await flow.query(
 check('T-PRJ-28', String(stillThere).trim() === '1',
   'soft delete, not a hard delete — history is preserved');
 
-const summary = c.summary();
-process.exit(summary.failed === 0 ? 0 : 1);
+// `Checks.summary()` returns a boolean and prints the summary line. Reading
+// `.failed` off it yielded `undefined`, so `undefined === 0` was false and the
+// suite exited 1 while reporting 28/28 — the runner correctly showed it as a
+// failure, which is the only reason it did not ship as a false pass.
+process.exit(c.summary() ? 0 : 1);
