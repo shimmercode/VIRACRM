@@ -85,6 +85,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-dashboard-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-dashboard-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-dashboard-tablet-576",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-dashboard-phone-430",
     "ok": true,
     "detail": "HTTP 200 for /"
@@ -201,6 +221,26 @@
   },
   {
     "id": "T-MOBILE-customers-list-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-customers-list-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customers-list-tablet-576",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -325,6 +365,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-customer-detail-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-customer-detail-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-detail-tablet-576",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-customer-detail-phone-430",
     "ok": true,
     "detail": "HTTP 200 for /customers/4"
@@ -441,6 +501,26 @@
   },
   {
     "id": "T-MOBILE-customer-form-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-customer-form-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-form-tablet-576",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -565,6 +645,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-contracts-list-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-contracts-list-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contracts-list-tablet-576",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-contracts-list-phone-430",
     "ok": true,
     "detail": "HTTP 200 for /contracts"
@@ -685,6 +785,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-contract-detail-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-contract-detail-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-detail-tablet-576",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-contract-detail-phone-430",
     "ok": true,
     "detail": "HTTP 200 for /contracts/5"
@@ -801,6 +921,26 @@
   },
   {
     "id": "T-MOBILE-contract-form-tablet-768",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-form-tablet-576",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-tablet-576",
+    "ok": true,
+    "detail": "overflowX=0px doc=576/576 "
+  },
+  {
+    "id": "T-RTL-contract-form-tablet-576",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-form-tablet-576",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },

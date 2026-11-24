@@ -1,0 +1,403 @@
+# ماتریس ردیابی نیازمندی‌ها — Requirements Traceability
+
+**تاریخ:** ۲ آذر ۱۴۰۵ · **منبع:** `docs/requirements/requirements.catalog.yaml` (۸۴ نیازمندی)
+
+**مبنا:** بازرسی مستقیم مخزن + اجرای واقعی. هیچ وضعیتی از گزارش قبلی کپی نشده.
+
+
+---
+
+
+## ۱. خلاصهٔ اجرایی
+
+| وضعیت | تعداد | درصد |
+|-------|------:|-----:|
+| `VERIFIED` | 23 | 27.4% |
+| `PARTIAL` | 20 | 23.8% |
+| `NOT_VERIFIED` | 2 | 2.4% |
+| `NOT_IMPLEMENTED` | 33 | 39.3% |
+| `BLOCKED` | 6 | 7.1% |
+| **جمع** | **84** | **100%** |
+
+
+### اولویت P0 (۲۹ نیازمندی)
+
+| وضعیت | تعداد |
+|-------|------:|
+| `VERIFIED` | 8 |
+| `PARTIAL` | 7 |
+| `NOT_IMPLEMENTED` | 11 |
+| `BLOCKED` | 3 |
+
+**نتیجه:** از ۲۹ نیازمندی حیاتی، **8 مورد اثبات‌شده** و **11 مورد پیاده‌سازی‌نشده** است.
+
+
+### نگاشت شناسه‌ها
+
+دستور کارفرما شناسه‌هایی مانند `AUTH-001` می‌خواست. کاتالوگ موجود از `REQ-xx.yy`
+
+استفاده می‌کند. برای پرهیز از دوباره‌شماری، **ستون «شناسه» نگاشت اضافه شد** و
+
+`REQ-xx.yy` مرجع باقی می‌ماند.
+
+
+---
+
+## ۲. ماتریس تفصیلی (۱۰ فیلد)
+
+
+> فیلدها: **شناسه** · **REQ** · **عنوان** · **ماژول** · **اولویت** · **نوع** ·
+
+> **وضعیت** · **شاهد** · **شکاف** · **فاز بعدی**
+
+
+### Foundation
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `FND-001` | `REQ-01.01` | استقلال کامل نرم‌افزار از وردپرس | P0 | brief | **`VERIFIED`** | Laravel standalone; no WP tables/deps | — | — |
+| `FND-002` | `REQ-01.04` | تاب‌آوری CRM در قطعی سایت اصلی | P1 | brief | **`NOT_VERIFIED`** | no dependency on main site found | not exercised | M0 |
+
+### Deployment
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `DEP-001` | `REQ-01.02` | دیتابیس مستقل و ساب‌دامین مستقل | P0 | brief | **`VERIFIED`** | own DB + subdomain; routes/web.php | — | — |
+| `DEP-002` | `REQ-01.03` | فایل‌های حساس خارج از Document Root | P0 | brief | **`PARTIAL`** | storage/ outside root | public/ uploads not yet used | M1/M3 |
+| `DEP-003` | `REQ-13.02` | بازبینی و تأیید هاست مقصد | P1 | brief | **`BLOCKED`** | 14/21 host checks unknown | — | خارجی |
+
+### Dashboard
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `DSH-001` | `REQ-02.01` | شاخص‌های داشبورد | P1 | doc | **`PARTIAL`** | DashboardController + dashboard.blade | 4 of 6 KPI groups | M1/M3 |
+| `DSH-002` | `REQ-02.02` | کارتابل تفکیک‌شده | P1 | doc | **`PARTIAL`** | work_items (9 rows) | inbox UI missing | M1/M3 |
+| `DSH-003` | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | P1 | doc | **`NOT_IMPLEMENTED`** | — | no notification->record link | M1–M8 |
+| `DSH-004` | `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | P1 | doc | **`VERIFIED`** | settings-driven expiringWithin() | — | — |
+| `DSH-005` | `REQ-02.05` | داشبورد خلوت و کاربردی | P1 | doc | **`PARTIAL`** | dashboard exists | no "done" group | M1/M3 |
+
+### Customers
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `CUST-001` | `REQ-03.01` | پرونده مشتری حقیقی | P1 | doc | **`VERIFIED`** | customers table + type kolah | — | — |
+| `CUST-002` | `REQ-03.02` | پرونده مشتری حقوقی | P1 | doc | **`VERIFIED`** | legal-person fields | — | — |
+| `CUST-003` | `REQ-03.03` | فرم پویا بر اساس نوع شخص | P1 | doc | **`VERIFIED`** | customers/_form dynamic by type | — | — |
+| `CUST-004` | `REQ-03.04` | چرخه عمر مشتری | P1 | doc | **`VERIFIED`** | status lifecycle column | — | — |
+| `CUST-005` | `REQ-03.05` | جلوگیری از ثبت مشتری تکراری | P0 | doc | **`PARTIAL`** | duplicate detection partial | no domain-level uniqueness proof | M1/M3 |
+| `CUST-006` | `REQ-03.06` | جستجوی مشتری بر اساس نام/تماس/شناسه/دامنه | P1 | doc | **`VERIFIED`** | Customer::scopeSearch + indexes | — | — |
+| `CUST-007` | `REQ-03.07` | پرونده مرکزی مشتری 360° | P1 | doc | **`PARTIAL`** | customers/show.blade | no contracts/projects tabs | M1/M3 |
+| `CUST-008` | `REQ-03.08` | یک‌بار ثبت اطلاعات مشتری | P0 | doc | **`PARTIAL`** | single customer record | credentials not joined | M1/M3 |
+
+### Contracts
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `CNT-001` | `REQ-04.01` | مدل داده قرارداد | P1 | doc | **`VERIFIED`** | Contract model + migration | — | — |
+| `CNT-002` | `REQ-04.02` | وضعیت‌های قرارداد | P1 | doc | **`VERIFIED`** | ContractStatus enum + derived Expiring | — | — |
+| `CNT-003` | `REQ-04.03` | چند قرارداد برای یک مشتری + اتصال به پرونده | P1 | doc | **`VERIFIED`** | hasMany contracts on customer | — | — |
+| `CNT-004` | `REQ-04.06` | ویرایش متن قرارداد پیش از نهایی‌سازی | P1 | doc | **`NOT_IMPLEMENTED`** | no content editor | — | M1–M8 |
+| `CNT-005` | `REQ-04.07` | تثبیت نسخه نهایی قرارداد | P0 | doc | **`NOT_IMPLEMENTED`** | ContractVersion model only | finalise flow absent | M1–M8 |
+| `CNT-006` | `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | versions table empty | no history UI | M1–M8 |
+| `CNT-007` | `REQ-04.09` | جستجو و فیلتر قرارداد | P1 | doc | **`VERIFIED`** | search + sort whitelist + filters | — | — |
+| `CNT-008` | `REQ-04.10` | ثبت تمدید قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | no renewal route | — | M1–M8 |
+| `CNT-009` | `REQ-09.02` | فیلترهای قرارداد و پروژه | P1 | doc | **`PARTIAL`** | contracts filter bar | projects filter absent | M1/M3 |
+
+### ContractTemplates
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `TPL-001` | `REQ-04.04` | بانک قالب قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | ContractTemplate model only | no CRUD/UI | M1–M8 |
+| `TPL-002` | `REQ-04.05` | موتور Template قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | no template engine | — | M1–M8 |
+
+### Projects
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`PARTIAL`** | projects table (3 rows) | no type-driven form | M1/M3 |
+| `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | project_assignments empty | — | M1–M8 |
+| `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`NOT_IMPLEMENTED`** | no public/secret split | — | M1–M8 |
+
+### SeoProjects
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`NOT_IMPLEMENTED`** | seo_project_details empty, no model | — | M1–M8 |
+| `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`NOT_IMPLEMENTED`** | project_keywords empty, no model | — | M1–M8 |
+
+### DesignProjects
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `DSG-001` | `REQ-05.04` | فیلدهای پروژه طراحی سایت | P1 | doc | **`NOT_IMPLEMENTED`** | design_project_details empty | — | M1–M8 |
+
+### Credentials
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `CRED-001` | `REQ-06.01` | مدیریت دسترسی‌های پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | — | — | M1–M8 |
+| `CRED-002` | `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | P0 | doc | **`NOT_IMPLEMENTED`** | credential_requirements empty | — | M1–M8 |
+| `CRED-003` | `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | P0 | brief | **`PARTIAL`** | EnvelopeEncrypter AES-256-GCM, 26 asserts | NOT WIRED — no caller | M1/M3 |
+| `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`NOT_IMPLEMENTED`** | audit writes exist | no credential audit view | M1–M8 |
+| `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`NOT_IMPLEMENTED`** | no PDF engine | — | M1–M8 |
+| `CRED-006` | `REQ-06.07` | هشدار محرمانگی روی فایل حاوی رمز | P1 | doc | **`NOT_IMPLEMENTED`** | no files | — | M1–M8 |
+
+### Employees
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `EMP-001` | `REQ-07.01` | پرونده پرسنل | P1 | doc | **`NOT_IMPLEMENTED`** | employees table empty | — | M1–M8 |
+
+### Payroll
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `PAY-001` | `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | P0 | doc | **`BLOCKED`** | OD-16 payroll formula | needs employer decision | خارجی |
+| `PAY-002` | `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | P1 | doc | **`BLOCKED`** | no PDF engine | — | خارجی |
+| `PAY-003` | `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | P0 | doc | **`NOT_IMPLEMENTED`** | payslips empty | — | M1–M8 |
+| `PAY-004` | `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | P0 | doc | **`NOT_IMPLEMENTED`** | no payroll permissions | — | M1–M8 |
+
+### Notes
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `NOTE-001` | `REQ-08.01` | مدل یادداشت | P1 | doc | **`VERIFIED`** | Note model + migration | — | — |
+| `NOTE-002` | `REQ-08.02` | چرخه عمر یادداشت | P1 | doc | **`PARTIAL`** | model exists | no UI | M1/M3 |
+
+### Search
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SRCH-001` | `REQ-09.01` | جستجوی سراسری | P1 | doc | **`NOT_IMPLEMENTED`** | per-entity search only | no global search | M1–M8 |
+
+### Invoices
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `INV-001` | `REQ-09.03` | گزارش فاکتور و گزارش | P1 | doc | **`NOT_IMPLEMENTED`** | invoices do not exist | — | M1–M8 |
+| `INV-002` | `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | P0 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
+| `INV-003` | `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | P0 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
+| `INV-004` | `REQ-12.03` | ثبت انجام فاکتور | P1 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
+| `INV-005` | `REQ-12.09` | ثبت مشخصات و فایل فاکتور پس از ارسال | P1 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
+
+### Reports
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`NOT_IMPLEMENTED`** | no reports module | — | M1–M8 |
+| `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`NOT_IMPLEMENTED`** | no reports | — | M1–M8 |
+
+### Pdf
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `PDF-001` | `REQ-09.05` | خروجی PDF الزامی | P1 | doc | **`BLOCKED`** | no PDF engine + host | — | خارجی |
+
+### Excel
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `XLS-001` | `REQ-09.06` | خروجی Excel تکمیلی | P2 | proposed | **`NOT_IMPLEMENTED`** | no Excel export | — | M1–M8 |
+
+### Users
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `USR-001` | `REQ-10.01` | نسخه اول: فقط مدیر اصلی | P1 | doc | **`VERIFIED`** | users(2) + login | — | — |
+
+### Roles
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `ROLE-001` | `REQ-10.02` | نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما) | P2 | proposed | **`PARTIAL`** | roles(4) seeded | no role UI | M1/M3 |
+
+### Permissions
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `PERM-001` | `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | P0 | doc | **`VERIFIED`** | 39 permissions + permission: on 22/22 routes | — | — |
+
+### Audit
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `AUD-001` | `REQ-10.04` | Audit Log رویدادهای مهم | P0 | doc | **`VERIFIED`** | audit_logs 232 rows, incl. denied | — | — |
+
+### Security
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SEC-001` | `REQ-10.05` | الزامات امنیتی پایه | P0 | brief | **`PARTIAL`** | bcrypt, CSRF, throttle | no security headers test | M1/M3 |
+| `SEC-002` | `REQ-10.07` | سیاست رمز و مدیریت نشست | P1 | brief | **`VERIFIED`** | session regenerate + password change | — | — |
+
+### Files
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `FILE-001` | `REQ-10.06` | امنیت فایل‌های آپلودی و IDOR | P0 | brief | **`NOT_IMPLEMENTED`** | no uploads | — | M1–M8 |
+
+### UI
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `UI-001` | `REQ-11.01` | UI فارسی RTL اختصاصی | P1 | doc | **`VERIFIED`** | dir=rtl, fa, 7 widths | — | — |
+| `UI-002` | `REQ-11.02` | Design System مشترک | P0 | doc | **`VERIFIED`** | 23 components + 21 DS asserts | — | — |
+| `UI-003` | `REQ-11.03` | فونت فارسی پایدار و قانونی | P1 | brief | **`NOT_VERIFIED`** | font loaded | licence not confirmed | M0 |
+| `UI-004` | `REQ-11.05` | حالت‌های Loading/Empty/Success/Error و اعتبارسنجی | P1 | doc | **`PARTIAL`** | empty/error states exist | loading/success states partial | M1/M3 |
+
+### Jalali
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `JAL-001` | `REQ-11.04` | تاریخ شمسی ورود/نمایش + ذخیره استاندارد | P0 | doc | **`VERIFIED`** | JalaliDate + fa-date component | — | — |
+
+### SeoReports
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SEOR-001` | `REQ-12.04` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | P0 | doc | **`NOT_IMPLEMENTED`** | no seo reports | — | M1–M8 |
+
+### Reminders
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `REM-001` | `REQ-12.05` | استقلال یادآوری فاکتور و گزارش + چند دوره | P0 | doc | **`PARTIAL`** | ReminderSchedule unique_key design | not wired | M1/M3 |
+| `REM-002` | `REQ-12.06` | تغییر تاریخ: بازمحاسبه بدون تکرار، حفظ سوابق | P0 | doc | **`PARTIAL`** | reschedule logic designed | not wired | M1/M3 |
+
+### Scheduler
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SCH-001` | `REQ-12.07` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | P0 | doc | **`BLOCKED`** | H-15 host cron unavailable | no scheduler wired | خارجی |
+| `SCH-002` | `REQ-12.08` | تعریف روز تقویمی و Timezone | P0 | doc | **`BLOCKED`** | OD-07 timezone decision pending | — | خارجی |
+
+### PM
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `PM-001` | `REQ-13.01` | مرحله‌بندی و گیت تأیید | P1 | brief | **`VERIFIED`** | Gate A accepted | — | — |
+| `PM-002` | `REQ-14.02` | Requirements Traceability Matrix | P0 | derived | **`VERIFIED`** | this document | — | — |
+
+### QA
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `QA-001` | `REQ-14.01` | تست واقعی، بدون Pass صوری | P0 | brief | **`VERIFIED`** | 22 suites, lock, repeat, no mock | — | — |
+
+### Settings
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `SET-001` | `REQ-15.01` | تنظیمات مدیریتی سامانه | P1 | doc | **`PARTIAL`** | settings table (4) read by app | no settings UI | M1/M3 |
+
+### Backup
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `BAK-001` | `REQ-15.02` | Backup و Restore تست‌شده | P0 | brief | **`NOT_IMPLEMENTED`** | zero backup code | — | M1–M8 |
+
+### Installer
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `INST-001` | `REQ-15.03` | Installer امن | P1 | brief | **`NOT_IMPLEMENTED`** | no installer | — | M1–M8 |
+
+### DevOps
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `OPS-001` | `REQ-15.04` | مهاجرت و نسخه‌بندی | P1 | brief | **`PARTIAL`** | 9 migrations, reversible | no versioning policy doc | M1/M3 |
+| `OPS-002` | `REQ-15.05` | تنظیمات محیطی (بدون Hardcode) | P2 | brief | **`PARTIAL`** | .env driven | no hardcode audit | M1/M3 |
+
+### Docs
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `DOC-001` | `REQ-15.06` | بسته مستندات فنی و کاربری | P2 | brief | **`PARTIAL`** | docs/ extensive | user manual missing | M1/M3 |
+
+
+---
+
+## ۳. ۳۳ نیازمندی پیاده‌سازی‌نشده — همان‌ها که کد ندارند
+
+
+| شناسه | عنوان | ماژول | اولویت |
+|-------|-------|-------|:------:|
+| `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
+| `TPL-001` | بانک قالب قرارداد | ContractTemplates | P1 |
+| `TPL-002` | موتور Template قرارداد | ContractTemplates | P1 |
+| `CNT-004` | ویرایش متن قرارداد پیش از نهایی‌سازی | Contracts | P1 |
+| `CNT-005` | تثبیت نسخه نهایی قرارداد | Contracts | P0 |
+| `CNT-006` | تاریخچه و نسخه‌های قرارداد | Contracts | P1 |
+| `CNT-008` | ثبت تمدید قرارداد | Contracts | P1 |
+| `SEO-001` | فیلدهای پروژه سئو | SeoProjects | P1 |
+| `SEO-002` | مدیریت ساختارمند کلمات کلیدی | SeoProjects | P1 |
+| `DSG-001` | فیلدهای پروژه طراحی سایت | DesignProjects | P1 |
+| `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
+| `CRED-001` | مدیریت دسترسی‌های پروژه | Credentials | P1 |
+| `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
+| `CRED-004` | Audit مشاهده و دریافت خروجی محرمانه | Credentials | P0 |
+| `CRED-005` | PDF محرمانه دسترسی‌ها | Credentials | P0 |
+| `PRJ-003` | جداسازی اطلاعات عمومی و محرمانه پروژه | Projects | P1 |
+| `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
+| `EMP-001` | پرونده پرسنل | Employees | P1 |
+| `PAY-003` | تاریخچه و تثبیت فیش‌ها | Payroll | P0 |
+| `PAY-004` | دسترسی مستقل اطلاعات حقوقی | Payroll | P0 |
+| `SRCH-001` | جستجوی سراسری | Search | P1 |
+| `INV-001` | گزارش فاکتور و گزارش | Invoices | P1 |
+| `RPT-001` | گزارش قراردادها و پرسنل | Reports | P1 |
+| `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
+| `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
+| `INV-002` | یادآوری فاکتور دو روز تقویمی قبل | Invoices | P0 |
+| `INV-003` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | Invoices | P0 |
+| `INV-004` | ثبت انجام فاکتور | Invoices | P1 |
+| `SEOR-001` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | SeoReports | P0 |
+| `INV-005` | ثبت مشخصات و فایل فاکتور پس از ارسال | Invoices | P1 |
+| `RPT-002` | گزارش تعداد پروژه‌های فعال هر کارشناس | Reports | P1 |
+| `BAK-001` | Backup و Restore تست‌شده | Backup | P0 |
+| `INST-001` | Installer امن | Installer | P1 |
+
+
+---
+
+## ۴. ۶ نیازمندی مسدود (BLOCKED)
+
+
+| شناسه | عنوان | دلیل انسداد |
+|-------|-------|-------------|
+| `PAY-001` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | OD-16 payroll formula |
+| `PAY-002` | فیش حقوقی ماهانه (PDF فارسی RTL) | no PDF engine |
+| `PDF-001` | خروجی PDF الزامی | no PDF engine + host |
+| `SCH-001` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | H-15 host cron unavailable |
+| `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |
+| `DEP-003` | بازبینی و تأیید هاست مقصد | 14/21 host checks unknown |
+
+
+---
+
+## ۵. سه ماژول با بیشترین شکاف
+
+
+| ماژول | نیازمندی پیاده‌نشده |
+|-------|------------------:|
+| Credentials | 5 |
+| Invoices | 5 |
+| Contracts | 4 |
+| ContractTemplates | 2 |
+| SeoProjects | 2 |
+| Projects | 2 |
+
+
+---
+
+## ۶. قواعد این ماتریس
+
+
+| قاعده | رعایت |
+|-------|-------|
+| هر ۸۴ نیازمندی نگاشت شده | ✅ بدون جاافتادگی |
+| `PASS` فقط با شاهد اجرایی | ✅ |
+| تست mock/skip هرگز `PASS` نیست | ✅ |
+| هیچ نیازمندی به‌خاطر دشواری حذف نشد | ✅ |
+| شاهد ناموجود، ادعا نمی‌شود | ✅ |
+| تفکیک نیاز کارفرما / پیشنهاد توسعه‌دهنده | ✅ ستون «نوع» |
