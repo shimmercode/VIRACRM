@@ -115,6 +115,7 @@
     --vira-radius-sm: 6px;
     --vira-radius: 10px;
     --vira-radius-lg: 14px;
+    --vira-radius-md: 12px;
     --vira-radius-full: 999px;
 
     /* ── Elevation ──────────────────────────────────────────────────────
@@ -128,6 +129,8 @@
        Sizes chosen for Persian legibility: Persian needs more line-height
        and slightly larger minimum size than Latin. */
     --vira-font: 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    /* Monospace is used only for identifiers (codes, usernames), never for prose. */
+    --vira-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     --vira-text-xs: 0.75rem;    /* 12 — badges, meta */
     --vira-text-sm: 0.8125rem;  /* 13 — table cells, labels */

@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('build/css/review.css') }}?v={{ @filemtime(public_path('build/css/review.css')) }}">
-@endpush
-
 @section('content')
 
 <div class="v-review-banner">
@@ -16,7 +12,7 @@
 
 <div class="v-stats-grid" style="margin-bottom:22px;">
     @foreach ($counts as $table => $n)
-        <div class="v-stat {{ $n === null ? 'v-stat--danger' : '' }}">
+        <div @class(['v-stat', 'v-stat--danger' => $n === null])>
             <span class="v-stat__label">{{ $table }}</span>
             <span class="v-stat__value">{{ $n === null ? '—' : number_format($n) }}</span>
             <span class="v-stat__hint">{{ $n === null ? 'جدول در دسترس نیست' : 'ردیف' }}</span>

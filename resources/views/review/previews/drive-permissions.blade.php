@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('build/css/review.css') }}?v={{ @filemtime(public_path('build/css/review.css')) }}">
-@endpush
-
 @section('content')
 
 @include('review.partials.preview-banner', [

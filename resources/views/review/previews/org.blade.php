@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('build/css/review.css') }}?v={{ @filemtime(public_path('build/css/review.css')) }}">
-@endpush
-
 @section('content')
 
 @include('review.partials.preview-banner', [
@@ -120,7 +116,7 @@
             <tbody>
                 @foreach ($rows as $row)
                     <tr>
-                        <td class="v-small v-mono">{{ $row['code'] }}</td>
+                        <td class="v-small v-code">{{ $row['code'] }}</td>
                         <td>
                             <div>{{ $row['name'] }}</div>
                             <div class="v-small v-muted">
@@ -138,7 +134,7 @@
                             @if ($row['username'] === null)
                                 <span class="v-small v-muted">بدون کاربر سامانه</span>
                             @else
-                                <div class="v-mono v-small">{{ $row['username'] }}</div>
+                                <div class="v-code v-small">{{ $row['username'] }}</div>
                                 @if ($row['user_active'])
                                     <span class="v-badge v-badge--success">فعال</span>
                                 @else

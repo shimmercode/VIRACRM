@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('build/css/review.css') }}?v={{ @filemtime(public_path('build/css/review.css')) }}">
-@endpush
-
 @section('content')
 
 @include('review.partials.preview-banner', [
@@ -37,7 +33,7 @@
                 <div class="v-timeline__item">
                     <span class="v-timeline__dot {{ $state === 'current' ? 'v-timeline__dot--active' : '' }}"></span>
                     <div class="v-timeline__body">
-                        <div class="v-timeline__head">
+                        <div class="v-timeline__title">
                             <strong>{{ $ver }}</strong>
                             @if ($state === 'current')
                                 <span class="v-badge v-badge--success">فعلی</span>

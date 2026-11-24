@@ -13,9 +13,26 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
 // ── classes defined in CSS ───────────────────────────────────────────────
-const css = ['tokens', 'app', 'components', 'layout', 'pages']
-  .map((f) => fs.readFileSync(path.join(ROOT, `resources/css/${f}.css`), 'utf8'))
-  .join('\n');
+/*
+ * Follow app.css's real @import graph instead of a hardcoded file list.
+ *
+ * The list used to be ['tokens','app','components','layout','pages'], so a new
+ * stylesheet was invisible to this check even when the build included it — the
+ * review surface's rules were reported as unstyled while rendering correctly.
+ * A check that disagrees with the build is worse than no check: it trains you to
+ * ignore it.
+ */
+function loadCss(file, seen = new Set()) {
+  const abs = path.join(ROOT, 'resources/css', file);
+  if (seen.has(abs) || !fs.existsSync(abs)) return '';
+  seen.add(abs);
+
+  const source = fs.readFileSync(abs, 'utf8');
+
+  return source.replace(/@import\s+['"]([^'"]+)['"]\s*;/g, (_, target) => loadCss(target, seen));
+}
+
+const css = loadCss('app.css');
 
 const defined = new Set();
 for (const m of css.matchAll(/\.([a-zA-Z][\w-]*)/g)) defined.add(m[1]);

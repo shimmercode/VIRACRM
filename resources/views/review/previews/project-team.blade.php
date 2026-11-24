@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('build/css/review.css') }}?v={{ @filemtime(public_path('build/css/review.css')) }}">
-@endpush
-
 @section('content')
 
 @include('review.partials.preview-banner', [
@@ -53,7 +49,7 @@
         <div class="v-card__head" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
             <div>
                 <h2 style="margin:0;">{{ $team['title'] }}</h2>
-                <div class="v-small v-muted v-mono">{{ $code }}</div>
+                <div class="v-small v-muted v-code">{{ $code }}</div>
             </div>
             @if ($team['status'] === 'active')
                 <span class="v-badge v-badge--success">فعال</span>
@@ -81,10 +77,10 @@
                         <tr>
                             <td>
                                 <div>{{ $member['name'] }}</div>
-                                <div class="v-small v-muted v-mono">{{ $member['code'] }}</div>
+                                <div class="v-small v-muted v-code">{{ $member['code'] }}</div>
                             </td>
                             <td>{{ $member['role'] }}</td>
-                            <td class="v-mono">{{ number_format($member['coefficient'], 1) }}</td>
+                            <td class="v-code">{{ number_format($member['coefficient'], 1) }}</td>
                             <td class="v-small v-muted">{{ $member['period'] }}</td>
                             <td>
                                 @if ($member['active'])
@@ -104,7 +100,7 @@
         <div class="v-empty" style="padding:34px 20px;">
             <x-icon name="info" :size="26" />
             <p class="v-empty__title">هیچ تخصیص پروژه‌ای ثبت نشده است</p>
-            <p class="v-empty__text">
+            <p class="v-empty__desc">
                 جدول <code>project_assignments</code> خالی است. برای دیدن این صفحه با داده،
                 <code>node tools/review-env.mjs seed</code> را اجرا کنید.
             </p>
