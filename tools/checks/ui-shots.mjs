@@ -44,7 +44,7 @@ await uiLogin(page, BASE, 'admin', PASSWORD);
 const afterLogin = new URL(page.url()).pathname;
 record('T-UI-LOGIN', !afterLogin.includes('/login'), `login reached ${afterLogin}`);
 
-// ── the eight required pages ─────────────────────────────────────────────
+// ── the required pages (now eleven, with the project module) ─────────────
 // Detail pages must point at records that actually exist. Hard-coding #1
 // silently screenshotted a 404 once the demo data was re-seeded, and the
 // shell checks then failed with "sidebar=null" rather than saying 404.
@@ -62,7 +62,10 @@ const discoverId = async (page, listPath, linkRe) => {
 await page.goto(`${BASE}/customers`, { waitUntil: 'domcontentloaded' });
 const CUSTOMER_ID = await discoverId(page, '/customers', /\/customers\/\d+$/);
 const CONTRACT_ID = await discoverId(page, '/contracts', /\/contracts\/\d+$/);
-console.log(`detail pages -> ${CUSTOMER_ID} ${CONTRACT_ID}`);
+// M3: the project module is now a real page set, so it belongs in the
+// responsive evidence rather than being assumed to behave like contracts.
+const PROJECT_ID = await discoverId(page, '/projects', /\/projects\/\d+$/);
+console.log(`detail pages -> ${CUSTOMER_ID} ${CONTRACT_ID} ${PROJECT_ID}`);
 
 const PAGES = [
   ['login', '/login', false],
@@ -73,6 +76,9 @@ const PAGES = [
   ['contracts-list', '/contracts', true],
   ['contract-detail', CONTRACT_ID, true],
   ['contract-form', '/contracts/create', true],
+  ['projects-list', '/projects', true],
+  ['project-detail', PROJECT_ID, true],
+  ['project-form', '/projects/create', true],
 ];
 
 // All seven widths the phase-3 directive requires (§15). 576 is the compact
