@@ -74,6 +74,23 @@ const routes = fs.readFileSync(path.join(ROOT, 'routes/review.php'), 'utf8');
 check('T-REV-read-only', !/Route::(post|put|patch|delete)/.test(routes),
   'the review route file registers GET routes only');
 
+// ── 7. every catalogue row must carry the four §20 dimensions ──────────────
+{
+  // Each entry starts at its `'key' =>`; slice from there to the next key.
+  const parts = config.split("'key' => '").slice(1);
+  const missing = [];
+  for (const part of parts) {
+    const key = part.slice(0, part.indexOf("'"));
+    for (const dim of ['design', 'responsive', 'interactive', 'issue']) {
+      if (!new RegExp(`'${dim}'\\s*=>`).test(part)) missing.push(`${key}.${dim}`);
+    }
+  }
+  check('T-REV-four-dimensions', missing.length === 0,
+    missing.length === 0
+      ? `${parts.length} pages carry design/responsive/interactive/issue`
+      : `${missing.length} missing: ${missing.slice(0, 6).join(', ')}`);
+}
+
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n--- summary ---\n${passed}/${results.length} passed`);
 process.exit(passed === results.length ? 0 : 1);

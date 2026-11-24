@@ -86,6 +86,28 @@
                     @if (! empty($page['note']))
                         <div class="v-review-note">{{ $page['note'] }}</div>
                     @endif
+
+                    {{-- §20: the four dimensions the client asked to see per page.
+                         They are stated, not implied by the status label, because a
+                         Functional page can still have an unmeasured mobile layout. --}}
+                    @php
+                        $dims = array_filter([
+                            'طراحی' => $page['design'] ?? null,
+                            'واکنش‌گرا' => $page['responsive'] ?? null,
+                            'تعامل واقعی' => $page['interactive'] ?? null,
+                            'مشکل شناخته‌شده' => $page['issue'] ?? null,
+                        ], fn ($v) => $v !== null && $v !== '');
+                    @endphp
+                    @if ($dims)
+                        <div class="v-review-dims">
+                            @foreach ($dims as $label => $value)
+                                <span class="v-review-dim">
+                                    <span class="v-review-dim__label">{{ $label }}</span>
+                                    <span class="v-review-dim__value">{{ $value }}</span>
+                                </span>
+                            @endforeach
+                        </div>
+                    @endif
                 @endforeach
             </div>
         </section>
