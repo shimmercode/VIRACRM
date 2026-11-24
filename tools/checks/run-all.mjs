@@ -119,6 +119,14 @@ const SUITES = (() => {
     { id: 'regression-matrix', label: '7 widths x 4 pages', kind: 'browser', script: 'tools/checks/regression-matrix.mjs', required: true },
     { id: 'runner-contract', label: 'Runner exit codes 0/1/2', kind: 'node', script: 'tools/checks/runner-contract.mjs', required: true },
     { id: 'lock-concurrency', label: 'Regression lock + concurrency', kind: 'node', script: 'tools/checks/lock-concurrency.mjs', required: true },
+
+    // ── review environment ────────────────────────────────────────────────
+    // These run against the catalogue and the documentation, not the running
+    // review server, so they are safe to include in the main regression: they
+    // need no port, touch no database, and cannot leave state behind.
+    { id: 'review-integrity', label: 'Review catalogue integrity', kind: 'node', script: 'tools/checks/review-integrity.mjs', required: true },
+    { id: 'decision-audit', label: '36 decisions reconciled', kind: 'node', script: 'tools/checks/decision-audit.mjs', required: true },
+    { id: 'decision-pack', label: 'Client pack 9 x 11 fields is current', kind: 'node', script: 'tools/checks/review-decision-pack-current.mjs', required: true },
   ];
 })();
 
