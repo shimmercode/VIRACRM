@@ -41,6 +41,48 @@ const record = (id, ok, detail) => {
 const LOCK = path.join(ROOT, '.arena', 'run.lock');
 const clean = () => fs.rmSync(LOCK, { force: true });
 
+// ── helpers ───────────────────────────────────────────────────────────────
+// A one-suite stub roster: enough to exercise start/finish, far too little to
+// recurse. run-all reads VIRA_RUNNER_SUITES_FILE and skips the real list.
+const STUB = path.join(ROOT, '.arena', `lock-stub-suite-${process.pid}.mjs`);
+const STUB_ROSTER = path.join(ROOT, '.arena', `lock-stub-roster-${process.pid}.json`);
+
+function stubSuites() {
+  fs.writeFileSync(STUB, 'console.log("PASS  T-STUB-1  stub"); console.log("1/1 passed"); process.exit(0);', 'utf8');
+  fs.writeFileSync(STUB_ROSTER, JSON.stringify([
+    { id: 'stub', label: 'stub', kind: 'node', script: path.relative(ROOT, STUB), required: true },
+  ]), 'utf8');
+  return STUB_ROSTER;
+}
+
+// Guard against a self-recursive suite. If a child `run-all` were ever spawned
+// without a stub roster, it would run the whole regression — including this
+// file — and recurse. That happened during development and cost 20 minutes of
+// wall time per pass, so it is now an assertion rather than a comment.
+if (process.env.VIRA_ALLOW_SELF_RECURSION !== '1') {
+  const roster = process.env.VIRA_RUNNER_SUITES_FILE;
+  if (roster && fs.existsSync(roster)) {
+    const parsed = JSON.parse(fs.readFileSync(roster, 'utf8'));
+    if (parsed.some((x) => String(x.script || '').includes('lock-concurrency'))) {
+      console.error('REFUSING: stub roster contains lock-concurrency itself — infinite recursion.');
+      process.exit(1);
+    }
+  }
+}
+
+function spawnRunner(args, roster) {
+  if (!roster) throw new Error('spawnRunner requires an explicit stub roster (recursion guard)');
+  const out = spawnSync(process.execPath, ['tools/checks/run-all.mjs', ...args], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: 120_000,
+    env: { ...process.env, VIRA_RUNNER_SUITES_FILE: roster },
+  });
+  fs.rmSync(STUB, { force: true });
+  fs.rmSync(STUB_ROSTER, { force: true });
+  return out;
+}
+
 // ── L1–L5: two real processes contend for the same lock ───────────────────
 // Child A acquires and holds for 1.5s; child B starts 300ms later and must be
 // refused while A is still alive.
@@ -153,10 +195,12 @@ const spawnChild = (code, name) => {
   fs.mkdirSync(path.dirname(LOCK), { recursive: true });
   fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, host: os_host(), startedAt: new Date().toISOString() }));
 
-  const out = spawnSync(process.execPath, ['tools/checks/run-all.mjs', '--fast'], {
-    cwd: ROOT, encoding: 'utf8', timeout: 60_000,
-  });
-
+  // IMPORTANT — the child is given a STUB suite list. Without it, the child
+  // `run-all` would run the full regression, which includes this very file:
+  // infinite recursion inside the parent run, and 20 minutes per pass. The
+  // lock is acquired before the suite list is even read, so a stub is enough
+  // to prove the refusal path.
+  const out = spawnRunner(['--fast'], stubSuites());
   record('T-LOCK-runner-exit3', out.status === EXIT_LOCKED, `run-all under a held lock exited ${out.status}`);
   record('T-LOCK-runner-explains', /another run is in progress/i.test(out.stderr || ''), 'refusal message explains why');
   clean();
@@ -165,10 +209,9 @@ const spawnChild = (code, name) => {
 // ── L12: a normal runner completion leaves no lock behind ─────────────────
 {
   clean();
-  const out = spawnSync(process.execPath, ['tools/checks/run-all.mjs', '--fast'], {
-    cwd: ROOT, encoding: 'utf8', timeout: 300_000,
-  });
-  record('T-LOCK-cleared-on-finish', !fs.existsSync(LOCK), `runner exit=${out.status}, lock removed afterwards`);
+  const out = spawnRunner(['--fast'], stubSuites());
+  record('T-LOCK-cleared-on-finish', !fs.existsSync(LOCK) && out.status !== EXIT_LOCKED,
+    `runner exit=${out.status}, lock removed afterwards`);
 }
 
 // ── L13: a SIGKILLed holder leaves a stale lock that the next run recovers ──

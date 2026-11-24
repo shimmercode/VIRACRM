@@ -75,14 +75,15 @@ const PAGES = [
   ['contract-form', '/contracts/create', true],
 ];
 
-// The five widths the audit brief requires, plus 1280 for a common laptop.
-// 430 is a large phone (16 Pro Max); 768 is the tablet breakpoint where the
-// sidebar rail disappears, so it is the most likely place for a layout to break.
+// All seven widths the phase-3 directive requires (§15). 576 is the compact
+// tablet band — card layout has switched on but the sidebar has not yet
+// collapsed — and it was missing here as well as in regression-matrix.
 const WIDTHS = [
   ['desktop-1440', 1440, 900],
   ['laptop-1280', 1280, 800],
   ['tablet-1024', 1024, 768],
   ['tablet-768', 768, 1024],
+  ['tablet-576', 576, 960],
   ['phone-430', 430, 932],
   ['phone-390', 390, 844],
 ];

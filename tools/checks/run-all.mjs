@@ -108,7 +108,7 @@ const SUITES = (() => {
   { id: 'calendar', label: 'Jalali calendar', kind: 'browser', script: 'tools/checks/calendar.mjs', required: true },
   { id: 'a11y', label: 'Accessibility', kind: 'browser', script: 'tools/checks/a11y.mjs', required: true },
   { id: 'login-shots', label: 'Login page', kind: 'browser', script: 'tools/checks/ui-login-shots.mjs', required: true },
-  { id: 'ui-shots', label: 'Layout (7 pages x 6 widths)', kind: 'browser', script: 'tools/checks/ui-shots.mjs', required: true },
+  { id: 'ui-shots', label: 'Layout (7 pages x 7 widths)', kind: 'browser', script: 'tools/checks/ui-shots.mjs', required: true },
   { id: 'table-cards', label: 'Responsive tables (cards on phones)', kind: 'browser', script: 'tools/checks/table-cards.mjs', required: true },
   { id: 'overflow-1024', label: 'No overflow at 768/1024/1440', kind: 'browser', script: 'tools/checks/overflow.mjs', required: true },
     { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
