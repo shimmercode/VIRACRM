@@ -76,6 +76,9 @@ const FILE_DOCS = [
   ['FILE_CLIENT_PACK', 'docs/FILE_WORKSPACE_CLIENT_DECISION_PACK.md'],
   ['FILE_ORG_MODEL', 'docs/FILE_ORGANIZATIONAL_MODEL.md'],
   ['FILE_ADR_EVIDENCE', 'docs/FILE_WORKSPACE_ADR_EVIDENCE.md'],
+  ['FILE_DECISION_MATRIX', 'docs/FILE_WORKSPACE_DECISION_MATRIX.md'],
+  ['FILE_POC_STATUS', 'docs/FILE_WORKSPACE_POC_STATUS.md'],
+  ['FILE_ORG_GUARD', 'docs/FILE_ORGANIZATIONAL_MODEL_GUARD.md'],
 ];
 REQUIRED.push(...FILE_DOCS);
 
@@ -125,6 +128,16 @@ check('T-DOC-referenced-paths', dangling.length === 0,
   dangling.length === 0
     ? 'every concrete path named in the FILE docs exists'
     : `${dangling.length} dangling: ${dangling.slice(0, 3).join(' · ')}`);
+
+// The decision matrix is generated from one classification table. A hand edit
+// would let the 13-vs-16 class of drift return, so staleness is a hard failure.
+const matrix = spawnSync(process.execPath, ['docs/tools/generate-decision-matrix.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 60_000,
+});
+check('T-DOC-decision-matrix-current', matrix.status === 0,
+  matrix.status === 0
+    ? 'decision matrix matches its classification source'
+    : (matrix.stderr || matrix.stdout || '').trim().split('\n')[0]);
 
 check('T-DOC-file-traceability-current', fileTrace.status === 0,
   fileTrace.status === 0

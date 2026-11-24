@@ -20,7 +20,7 @@
 | **User Model** | ✅ **بله** | `app/Models/User.php` + جدول `users` | ۲ کاربر (`admin` superadmin، `viewer1`) |
 | **Existing RBAC** | ✅ **بله** | `roles`, `permissions`, `role_permissions`, `user_roles` | ۴ نقش، ۳۹ مجوز، ۵۴ انتساب نقش‑مجوز |
 | **Role Assignment** | ✅ **بله** | `user_roles` (many-to-many) | ۲ انتساب: user1→manager، user2→viewer |
-| **Group Model** | ❌ **خیر** | `grep -rniE "group_\|team" app/ database/migrations/` → **هیچ نتیجه** | هیچ جدول/مدل/فیلدی نیست |
+| **Group Model** | ❌ **خیر** | `grep` روی `group_` و `team` در `app/` و `database/migrations/` → **هیچ نتیجه** | هیچ جدول/مدل/فیلدی نیست |
 | **Department Model** | ❌ **خیر** | همان grep → **هیچ نتیجه** | `employees.position` رشتهٔ آزاد است، نه FK |
 | **Team Model** | ❌ **خیر** | همان grep → **هیچ نتیجه** | — |
 | **User Membership** (گروه/دپارتمان) | ❌ **خیر** | هیچ جدول عضویت غیر از `user_roles` | — |
@@ -204,7 +204,7 @@ organizations ── departments ── (self, سلسله‌مراتبی)
 |---|-------|--------------------------|
 | 1 | `departments` از روز اول ستون **`parent_id`** و **`path`** داشته باشد | درخت بدون Migration دردناک بعدی |
 | 2 | `departments` ستون **`organization_id` nullable** داشته باشد | اگر holding شد، پر می‌شود؛ امروز NULL |
-| 3 | `file_groups` یک `scope` داشته باشد: `global` \| `department` | گروه دپارتمانی بدون جدول جدید |
+| 3 | `file_groups` یک `scope` داشته باشد: `global` یا `department` | گروه دپارتمانی بدون جدول جدید |
 
 **با این سه ستون، ارتقا به مدل B یک Migration افزایشی است، نه بازنویسی.**
 

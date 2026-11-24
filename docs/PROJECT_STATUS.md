@@ -48,13 +48,13 @@
 | بازمحاسبهٔ مسدودکننده‌ها | `PASS` | **۱۶** بر قاعدهٔ ثبت‌شده (§۰.۱ همان سند) — عدد قبلی «۱۳» بی‌مبنا بود |
 | ممیزی سازمانی (OD-104/105) | `PASS` | `FILE_ORGANIZATIONAL_MODEL.md` — ممیزی از کد و DB، نه حافظه |
 | دو مدل سازمانی + مقایسه | `PASS` | مدل A = ۸.۴ · مدل B = ۵.۹ → پیشنهاد A |
-| سطح‌بندی شواهد ADR | `PASS` | `FILE_WORKSPACE_ADR_EVIDENCE.md` — ۴ `PROVEN` · ۵ `DESIGN-ONLY` · ۲ `NEEDS PoC` |
+| سطح‌بندی شواهد ADR | `PASS` | `FILE_WORKSPACE_ADR_EVIDENCE.md` — ۴ `PROVEN` · **۶** `DESIGN-ONLY` · **۱** `NEEDS PoC` |
 | تفکیک ادعاهای پژوهشی | `PASS` | `FILE_COLLABORATION_RESEARCH.md` §۲.۷ — MinIO/Seafile/Windows جدا |
-| بستهٔ تصمیم کارفرما | `PASS` | `FILE_WORKSPACE_CLIENT_DECISION_PACK.md` — ۸ تصمیم + ۵ زیرساخت |
-| بازآرایی شش‌دسته‌ای | `PASS` | `OPEN_DECISIONS.md` — ۸ کارفرما · ۲۳ Arena · ۵ زیرساخت · ۰ بلوکه · ۰ Approved · ۰ Closed |
+| بستهٔ تصمیم کارفرما | `PASS` | `FILE_WORKSPACE_CLIENT_DECISION_PACK.md` — **۹** تصمیم + **۶** زیرساخت |
+| بازآرایی شش‌دسته‌ای | `PASS` | `OPEN_DECISIONS.md` — **۹ کارفرما · ۲۱ Arena · ۶ زیرساخت** · ۰ بلوکه · ۰ Approved · ۰ Closed |
 | تصمیم تصویب‌شده | **صفر** | هیچ ID به `Approved` یا `Closed` نرفت — نه با نوشتن پیشنهاد |
 | نیازمندی‌های فایل | `Proposed` | ۹۹/۹۹ — هیچ‌کدام `Implemented` نیست |
-| آمادگی شروع F1 | **`BLOCKED`** | منتظر ۸ تصمیم کارفرما + VPS + ۹ تصمیم فنی Arena |
+| آمادگی شروع F1 | **`BLOCKED`** | منتظر **۹** تصمیم کارفرما + VPS + **۷** تصمیم فنی Arena |
 
 **تصحیح مهم ثبت‌شده در این فاز:** دو عدد نادرست در F0 یافت و اصلاح شد —
 (۱) «۱۳ مسدودکننده» → **۱۶**؛ (۲) ارجاع ERD به یک فایل `.dot` که هرگز ساخته نشد.
@@ -67,7 +67,7 @@
 
 | مورد | وضعیت | شاهد |
 |------|-------|------|
-| Regression Suite | `PASS` | ۲۵ سوییت · **۹۰۴ اَسِرشِن** · ۰ شکست · exit 0 |
+| Regression Suite | `PASS` | ۲۵ سوییت · **۹۰۸ اَسِرشِن** · ۰ شکست · exit 0 |
 | **Execution Lock** | **`PASS`** | `lock-concurrency.mjs` — ۱۵ اَسِرشِن، شامل SIGKILL |
 | Exit Code Contract | `PASS` | ۰/۱/۲/۳ — `runner-contract.mjs` ۱۱ اَسِرشِن |
 | Repeatability | `PASS` | ۵ بُعد مقایسه + artifact در `.arena/` |
