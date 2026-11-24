@@ -6,7 +6,20 @@
 
 ## [Unreleased]
 
-### M0 — زیرساخت کیفیت (جاری)
+### M3 — ماژول پروژه‌ها
+
+#### افزوده
+- `ProjectController` + ۷ مسیر + ۴ صفحه (فهرست، جزئیات، ایجاد، ویرایش).
+- مدل‌های `SeoProjectDetail`, `DesignProjectDetail`, `SeoPackage`,
+  `ProjectKeyword`, `ProjectType` — جدول‌ها بودند، مدل نبودند.
+- `project-flow.mjs` — ۲۸ اَسِرشِن، دیتابیس جدا، HTTP واقعی.
+- `ProjectDictionarySeeder` — ۲ نوع و ۳ پکیج سئو.
+
+#### امنیت
+- گارد «قرارداد باید متعلق به همان مشتری باشد» — جلوگیری از انتساب مالی غلط.
+- تغییر نوع پروژه، مشخصات نوع قبلی را حذف می‌کند (تست‌شده در سطح دیتابیس).
+
+### M0 — زیرساخت کیفیت
 
 #### نتیجهٔ اجرا
 ```
@@ -16,6 +29,8 @@ repeatable: yes · exit 0
 ```
 
 #### افزوده
+- `tools/generate-traceability.mjs` — ماتریس ردیابی از کاتالوگ تولید می‌شود.
+- `docs-integrity.mjs` — ۱۹ اَسِرشِن روی وجود و تازگی اسناد.
 - **قفل اجرای رگرسیون** (`tools/checks/lib/run-lock.mjs`) — `O_CREAT|O_EXCL`،
   exit code ۳، بازیابی از pid مرده/فایل خراب/TTL/SIGKILL.
 - **`lock-concurrency.mjs`** — ۱۵ اَسِرشِن با فرآیندهای واقعی، شامل

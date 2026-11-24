@@ -707,7 +707,7 @@
   {
     "id": "T-STATUS-contract-detail-desktop-1440",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-desktop-1440",
@@ -727,7 +727,7 @@
   {
     "id": "T-STATUS-contract-detail-laptop-1280",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-laptop-1280",
@@ -747,7 +747,7 @@
   {
     "id": "T-STATUS-contract-detail-tablet-1024",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-tablet-1024",
@@ -767,7 +767,7 @@
   {
     "id": "T-STATUS-contract-detail-tablet-768",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-tablet-768",
@@ -787,7 +787,7 @@
   {
     "id": "T-STATUS-contract-detail-tablet-576",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-tablet-576",
@@ -807,7 +807,7 @@
   {
     "id": "T-STATUS-contract-detail-phone-430",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-phone-430",
@@ -827,7 +827,7 @@
   {
     "id": "T-STATUS-contract-detail-phone-390",
     "ok": true,
-    "detail": "HTTP 200 for /contracts/5"
+    "detail": "HTTP 200 for /contracts/11"
   },
   {
     "id": "T-RESP-contract-detail-phone-390",
