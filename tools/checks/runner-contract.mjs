@@ -43,9 +43,17 @@ function runRunner(args, suites) {
   fs.mkdirSync(path.dirname(suiteFile), { recursive: true });
   fs.writeFileSync(suiteFile, JSON.stringify(suites), 'utf8');
 
+  // `--force-lock` is deliberate. This suite exists to drive the runner as a
+  // child process and inspect its exit code, so it would otherwise deadlock:
+  // the parent `run-all` already holds `.arena/run.lock`, and every child here
+  // would be refused with exit 3. The children are stubs that never touch the
+  // database, and they run strictly one at a time (spawnSync), so there is no
+  // real concurrency to guard against. The lock's own behaviour is tested
+  // separately and for real by tools/checks/lock-concurrency.mjs, which spawns
+  // genuinely concurrent processes.
   const out = spawnSync(
     process.execPath,
-    ['tools/checks/run-all.mjs', ...args],
+    ['tools/checks/run-all.mjs', '--force-lock', ...args],
     {
       cwd: ROOT,
       encoding: 'utf8',

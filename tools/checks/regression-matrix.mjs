@@ -2,7 +2,7 @@
 /**
  * VIRA CRM — the six-width regression matrix.
  *
- * Four pages × six widths, asserting the invariants the review asked for:
+ * Four pages × seven widths, asserting the invariants the review asked for:
  *
  *   - no unintended horizontal overflow (page or table wrapper)
  *   - no lost information: the primary data column and the row actions are
@@ -25,7 +25,11 @@ const record = (id, ok, detail) => {
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${id.padEnd(36)} ${detail}`);
 };
 
-const WIDTHS = [390, 430, 768, 1024, 1280, 1440];
+// The seven widths the phase-3 directive requires (§15). 576px was missing from
+// this matrix and from every other suite; it is the "compact tablet / large
+// phone" band where the card layout has already kicked in but the sidebar has
+// not yet collapsed, so it is the width most likely to break unnoticed.
+const WIDTHS = [390, 430, 576, 768, 1024, 1280, 1440];
 const PAGES = [
   { path: '/customers', name: 'customers', list: true },
   { path: '/contracts', name: 'contracts', list: true },

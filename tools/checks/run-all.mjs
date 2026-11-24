@@ -11,6 +11,7 @@
  *   0  PASSED      — every required suite ran, every assertion passed
  *   1  FAILED      — a suite ran and failed, or isolation/repeatability broke
  *   2  INCOMPLETE  — a required suite did not run (e.g. `--fast`)
+ *   3  LOCKED      — another run holds the execution lock (see lib/run-lock.mjs)
  *
  * The distinction matters. An incomplete run is not a passing run: `--fast` used
  * to print PASSED with exit 0 while silently skipping five suites, which is the
@@ -45,6 +46,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 
 import { ROOT, php } from './lib/flow-harness.mjs';
+import { acquireRunLock, EXIT_LOCKED } from './lib/run-lock.mjs';
 
 const EXIT = { PASSED: 0, FAILED: 1, INCOMPLETE: 2 };
 
@@ -56,8 +58,10 @@ if (argv.includes('--help') || argv.includes('-h')) {
   node tools/checks/run-all.mjs              full run — authoritative
   node tools/checks/run-all.mjs --repeat 2   full run twice, totals must match
   node tools/checks/run-all.mjs --fast       skip browser suites (exit 2, INCOMPLETE)
+  node tools/checks/run-all.mjs --force-lock override a lock you know is stale
 
-Exit codes: 0 passed, 1 failed, 2 incomplete (a required suite did not run).`);
+Exit codes: 0 passed, 1 failed, 2 incomplete (a required suite did not run),
+              3 locked (another run holds the lock).`);
   process.exit(0);
 }
 
@@ -109,8 +113,9 @@ const SUITES = (() => {
   { id: 'overflow-1024', label: 'No overflow at 768/1024/1440', kind: 'browser', script: 'tools/checks/overflow.mjs', required: true },
     { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
     { id: 'filter-chips', label: 'Active filter chips', kind: 'browser', script: 'tools/checks/filter-chips.mjs', required: true },
-    { id: 'regression-matrix', label: '6 widths x 4 pages', kind: 'browser', script: 'tools/checks/regression-matrix.mjs', required: true },
+    { id: 'regression-matrix', label: '7 widths x 4 pages', kind: 'browser', script: 'tools/checks/regression-matrix.mjs', required: true },
     { id: 'runner-contract', label: 'Runner exit codes 0/1/2', kind: 'node', script: 'tools/checks/runner-contract.mjs', required: true },
+    { id: 'lock-concurrency', label: 'Regression lock + concurrency', kind: 'node', script: 'tools/checks/lock-concurrency.mjs', required: true },
   ];
 })();
 
@@ -175,13 +180,37 @@ async function sharedCounts() {
   return counts;
 }
 
+// ── Execution lock ────────────────────────────────────────────────────────
+// Suites cannot write the shared database, but they do share `.arena/flows/`
+// and each suite re-creates its own directory there. Two concurrent runs both
+// `rmSync` the same path, which is what produced the phase 2-E
+// "Database file ... does not exist" failure in flow-crud. The lock is taken
+// BEFORE any database read so the isolation baseline is measured by exactly
+// one process.
+const lock = acquireRunLock(ROOT, { force: argv.includes('--force-lock') });
+
+if (!lock.acquired) {
+  console.error(`\n⛔ CANNOT START — ${lock.reason}`);
+  console.error('   The regression suite must not run concurrently: suites share');
+  console.error('   .arena/flows/<name>/ and would delete each other\'s database.');
+  console.error('   Wait for the other run, or remove .arena/run.lock if you are');
+  console.error('   certain no run is active (or pass --force-lock).');
+  process.exit(lock.exitCode);
+}
+
 const before = await sharedCounts();
 
 const runs = [];
 
+// Per-pass row counts. The old code sampled the shared database once for the
+// whole command, so a leak during an early pass that a later pass masked would
+// have gone unnoticed. Measuring around every pass closes that gap.
+const passIsolation = [];
+
 for (let pass = 1; pass <= repeats; pass++) {
   if (repeats > 1) console.log(`\n══════════ pass ${pass} of ${repeats} ══════════`);
 
+  const passBefore = repeats > 1 ? await sharedCounts() : null;
   const passResults = [];
 
   for (const suite of SUITES) {
@@ -216,10 +245,32 @@ for (let pass = 1; pass <= repeats; pass++) {
     passResults.push({ ...suite, ...result, skipped: false });
   }
 
+  if (repeats > 1) {
+    passIsolation.push({ pass, before: passBefore, after: await sharedCounts() });
+  }
+
   runs.push(passResults);
 }
 
 const after = await sharedCounts();
+
+// ── Per-pass isolation (§14.5: "تغییرات ناخواسته Database بررسی شود") ─────
+// Measured around EVERY pass, not just around the whole command. A leak that
+// pass 2 masks by coincidence would otherwise be invisible.
+let passIsolationOk = true;
+
+if (passIsolation.length > 0) {
+  console.log('\n── isolation per pass ──');
+
+  for (const { pass, before: b, after: a } of passIsolation) {
+    const drifted = Object.keys(b).filter((t) => b[t] !== a[t]);
+    if (drifted.length > 0) passIsolationOk = false;
+    const detail = drifted.length === 0
+      ? 'unchanged'
+      : drifted.map((t) => `${t} ${b[t]}->${a[t]}`).join(', ');
+    console.log(`${drifted.length === 0 ? '  ok ' : '  BAD'} pass ${pass}: ${detail}`);
+  }
+}
 
 // ── The isolation assertion: the shared database must be untouched ─────────
 console.log('\n── shared database untouched ──');
@@ -237,19 +288,44 @@ let repeatOk = true;
 if (repeats > 1) {
   console.log('\n── repeatability ──');
 
-  const signature = (passResults) => passResults
-    .map((r) => (r.skipped ? `${r.id}:skipped` : `${r.id}:${r.passed}/${r.total}`))
-    .join('|');
+  // The directive (§14.5) asks for more than "it ran twice": compare the SET of
+  // suites, the assertion counts, and the pass/fail/skip status of each. A suite
+  // that silently disappears between passes is as bad as one that changes count.
+  const dims = [
+    ['suite roster', (p) => p.filter((r) => !r.skipped).map((r) => r.id).sort().join(',')],
+    ['assertion counts', (p) => p.map((r) => `${r.id}:${r.total}`).join('|')],
+    ['assertion passes', (p) => p.map((r) => `${r.id}:${r.passed}`).join('|')],
+    ['failed suites', (p) => p.filter((r) => !r.ok && !r.skipped).map((r) => r.id).sort().join(',')],
+    ['skipped suites', (p) => p.filter((r) => r.skipped).map((r) => r.id).sort().join(',')],
+  ];
 
-  const first = signature(runs[0]);
-
-  for (let i = 1; i < runs.length; i++) {
-    const same = signature(runs[i]) === first;
-    if (!same) repeatOk = false;
-    console.log(`${same ? '  ok ' : '  BAD'} pass ${i + 1} matches pass 1`);
+  for (const [label, fn] of dims) {
+    const first = fn(runs[0]);
+    for (let i = 1; i < runs.length; i++) {
+      const same = fn(runs[i]) === first;
+      if (!same) repeatOk = false;
+      console.log(`${same ? '  ok ' : '  BAD'} ${label.padEnd(17)} pass ${i + 1} vs pass 1`);
+    }
   }
 
-  console.log(`  ${repeatOk ? 'ok ' : 'BAD'} suite totals are identical across ${repeats} runs`);
+  // Persisted so a diff can be inspected after the fact, not just read on screen.
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const artifact = path.join(ROOT, '.arena', `repeat-${stamp}.json`);
+  try {
+    fs.writeFileSync(artifact, JSON.stringify({
+      repeats,
+      repeatOk,
+      passIsolationOk,
+      runs: runs.map((p, i) => ({
+        pass: i + 1,
+        suites: p.map((r) => ({ id: r.id, ok: r.ok, passed: r.passed, total: r.total, skipped: !!r.skipped })),
+      })),
+      isolation: passIsolation,
+    }, null, 2));
+    console.log(`  saved      ${path.relative(ROOT, artifact)}`);
+  } catch { /* an unwritable .arena must not fail the verdict */ }
+
+  console.log(`  ${repeatOk ? 'ok ' : 'BAD'} every compared dimension is identical across ${repeats} runs`);
 }
 
 // ── Counts: executed / passed / failed / skipped, always all four ─────────
@@ -282,7 +358,12 @@ if (skippedRequired.length) {
   console.log(`skipped    ${skippedRequired.map((r) => r.id).join(', ')} — REQUIRED, so this run proves nothing about them`);
 }
 
-console.log(`isolation  ${isolationOk ? 'shared database untouched' : 'SHARED DATABASE WAS MODIFIED'}`);
+const isolationVerdict = isolationOk && passIsolationOk
+  ? 'shared database untouched (every pass)'
+  : isolationOk
+    ? 'SHARED DATABASE DRIFTED MID-RUN'
+    : 'SHARED DATABASE WAS MODIFIED';
+console.log(`isolation  ${isolationVerdict}`);
 if (repeats > 1) console.log(`repeatable ${repeatOk ? 'yes' : 'NO'}`);
 
 let verdict;
@@ -291,7 +372,7 @@ let exitCode;
 if (!complete) {
   verdict = 'REGRESSION SUITE INCOMPLETE — required suites were skipped';
   exitCode = EXIT.INCOMPLETE;
-} else if (!allOk || !isolationOk || !repeatOk) {
+} else if (!allOk || !isolationOk || !passIsolationOk || !repeatOk) {
   verdict = 'REGRESSION SUITE FAILED';
   exitCode = EXIT.FAILED;
 } else {
@@ -301,5 +382,8 @@ if (!complete) {
 
 console.log(`\n${verdict}`);
 console.log(`exit ${exitCode}`);
+
+// Release before exiting so the next run is never blocked by a normal finish.
+lock.release();
 
 process.exit(exitCode);
