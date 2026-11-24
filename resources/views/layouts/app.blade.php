@@ -10,6 +10,7 @@
 
     <link rel="preload" href="{{ asset('build/fonts/Vazirmatn-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="{{ asset('build/css/app.css') }}?v={{ @filemtime(public_path('build/css/app.css')) }}">
+    @stack('styles')
 </head>
 <body class="v-app {{ $bodyClass ?? '' }}">
 

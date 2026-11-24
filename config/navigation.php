@@ -63,6 +63,18 @@ return [
             'enabled' => false,
             'note' => 'به‌زودی',
         ],
+
+        // ── Review Environment entry ─────────────────────────────────────
+        // Present only when the review surface is mounted, so a production
+        // deploy never shows a link to a route that does not exist.
+        [
+            'label' => 'محیط بازبینی',
+            'icon' => 'eye',
+            'route' => 'review.index',
+            'permission' => null,
+            'enabled' => true,
+            'review_only' => true,
+        ],
     ],
 
     'secondary' => [
@@ -90,6 +102,33 @@ return [
             'icon' => 'chart',
             'route' => null,
             'permission' => 'reports.view',
+            'enabled' => false,
+            'note' => 'به‌زودی',
+        ],
+
+        [
+            'label' => 'یادداشت و یادآوری',
+            'icon' => 'bell',
+            'route' => null,
+            'permission' => 'notes.view',
+            'enabled' => false,
+            'note' => 'به‌زودی',
+        ],
+
+        [
+            'label' => 'حسابداری',
+            'icon' => 'banknote',
+            'route' => null,
+            'permission' => 'payroll.view',
+            'enabled' => false,
+            'note' => 'به‌زودی',
+        ],
+
+        [
+            'label' => 'کاربران و نقش‌ها',
+            'icon' => 'user',
+            'route' => null,
+            'permission' => 'users.view',
             'enabled' => false,
             'note' => 'به‌زودی',
         ],

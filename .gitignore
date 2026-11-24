@@ -29,6 +29,14 @@
 .DS_Store
 Thumbs.db
 
+# review environment runtime data — a private copy of the database for the
+# client review instance. Never production data, never committed.
+/database/review/*.sqlite
+/database/review/*.sqlite-journal
+/database/review/*.sqlite-wal
+/database/review/*.sqlite-shm
+/database/review/.credentials
+
 # scratch space for one-off diagnostic scripts (never part of the deliverable)
 /.arena/
 

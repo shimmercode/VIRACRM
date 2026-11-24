@@ -9,6 +9,15 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        // The CRM Review Environment is its own route file and is only mounted
+        // when VIRA_REVIEW_ENABLED is on. A production deploy therefore has no
+        // /review surface to forget to protect.
+        then: function () {
+            if (config('review.enabled')) {
+                \Illuminate\Support\Facades\Route::middleware('web')
+                    ->group(__DIR__.'/../routes/review.php');
+            }
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Appended to the web group so it runs after the session starts:

@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-24T17:43:04.477Z",
+  "runs": [
+    {
+      "users": 6,
+      "customers": 19,
+      "contracts": 13,
+      "projects": 11,
+      "employees": 10,
+      "project_assignments": 15,
+      "work_items": 68,
+      "notes": 8
+    },
+    {
+      "users": 6,
+      "customers": 19,
+      "contracts": 13,
+      "projects": 11,
+      "employees": 10,
+      "project_assignments": 15,
+      "work_items": 68,
+      "notes": 8
+    },
+    {
+      "users": 6,
+      "customers": 19,
+      "contracts": 13,
+      "projects": 11,
+      "employees": 10,
+      "project_assignments": 15,
+      "work_items": 68,
+      "notes": 8
+    }
+  ],
+  "identical": true
+}

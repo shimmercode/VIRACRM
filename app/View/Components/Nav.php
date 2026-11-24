@@ -37,6 +37,11 @@ class Nav extends Component
         $visible = [];
 
         foreach ($items as $item) {
+            // A review-only row must not appear when /review does not exist.
+            if (! empty($item['review_only']) && ! config('review.enabled')) {
+                continue;
+            }
+
             $permission = $item['permission'] ?? null;
 
             // A null permission means "any signed-in user".

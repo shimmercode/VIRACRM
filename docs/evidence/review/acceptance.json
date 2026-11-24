@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-11-24T17:53:27.881Z",
+  "base": "http://127.0.0.1:4173",
+  "database": "database/review/crm-review.sqlite",
+  "counts": {
+    "PASS": 13
+  },
+  "results": [
+    {
+      "id": "T1",
+      "name": "Boot — review surface is registered",
+      "status": "PASS",
+      "detail": "VIRA_REVIEW_ENABLED=true in .env"
+    },
+    {
+      "id": "T2",
+      "name": "Auth — anonymous request refused",
+      "status": "PASS",
+      "detail": "5 routes checked, 0 answered 200 without a session"
+    },
+    {
+      "id": "T3",
+      "name": "DB isolation — review has its own file",
+      "status": "PASS",
+      "detail": "database/review/crm-review.sqlite"
+    },
+    {
+      "id": "T3b",
+      "name": "DB isolation — baseline bytes untouched",
+      "status": "PASS",
+      "detail": "review file differs from database/database.sqlite"
+    },
+    {
+      "id": "T4",
+      "name": "No production data — every row is fake",
+      "status": "PASS",
+      "detail": "  customers=19 employees=10 audit_accounts=6"
+    },
+    {
+      "id": "T5",
+      "name": "Noindex — header, meta tag, robots.txt",
+      "status": "PASS",
+      "detail": "header=true meta=true robots.txt=true"
+    },
+    {
+      "id": "T6",
+      "name": "Navigation — review row present for the demo admin",
+      "status": "PASS",
+      "detail": "sidebar row «محیط بازبینی» renders"
+    },
+    {
+      "id": "T7",
+      "name": "Route coverage — every catalogue target opens",
+      "status": "PASS",
+      "detail": "7 paths + 5 previews all 200"
+    },
+    {
+      "id": "T8",
+      "name": "Responsive — 7 widths, real Chromium",
+      "status": "PASS",
+      "detail": "390/430/576/768/1024/1280/1440 · 98 measurements · 0 failures"
+    },
+    {
+      "id": "T9",
+      "name": "Seed repeatability — 3 runs identical",
+      "status": "PASS",
+      "detail": "counts stable across 3 runs"
+    },
+    {
+      "id": "T10",
+      "name": "Reset — returns exactly to baseline",
+      "status": "PASS",
+      "detail": "baseline {\"users\":2,\"customers\":7,\"contracts\":5,\"projects\":3,\"employees\":0,\"project_assignments\":0,\"work_items\":9,\"notes\":0} restored"
+    },
+    {
+      "id": "T11",
+      "name": "Role visibility (FIXTURE) — 4 roles",
+      "status": "PASS",
+      "detail": "15 assertions, 0 failures"
+    },
+    {
+      "id": "T12",
+      "name": "Smoke — 4 demo accounts sign in",
+      "status": "PASS",
+      "detail": "4/4 accounts reached the dashboard"
+    }
+  ]
+}

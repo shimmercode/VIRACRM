@@ -28,6 +28,13 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'same-origin');
         $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
 
+        // The review environment must never be indexed or archived. The layout
+        // already carries a robots meta tag; this is the header-level twin, so
+        // the rule survives even for pages rendered without that layout.
+        if (config('review.enabled')) {
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+        }
+
         // Only the device APIs actually needed; none are.
         $response->headers->set('Permissions-Policy', 'geolocation=(), camera=(), microphone=(), payment=()');
 

@@ -1,2 +1,9 @@
+# VIRA CRM
+#
+# This application holds customer and contract metadata. Crawling is refused
+# for every user agent. The CRM Review Environment adds X-Robots-Tag:
+# noindex, nofollow, noarchive and a robots meta tag on every page as
+# defence in depth, because a robots.txt alone is advisory and only governs
+# well-behaved crawlers.
 User-agent: *
-Disallow:
+Disallow: /

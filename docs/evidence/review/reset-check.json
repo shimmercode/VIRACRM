@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-11-24T17:43:04.477Z",
+  "baseline": {
+    "users": 2,
+    "customers": 7,
+    "contracts": 5,
+    "projects": 3,
+    "employees": 0,
+    "project_assignments": 0,
+    "work_items": 9,
+    "notes": 0
+  },
+  "beforeReset": {
+    "users": 6,
+    "customers": 19,
+    "contracts": 13,
+    "projects": 11,
+    "employees": 10,
+    "project_assignments": 15,
+    "work_items": 68,
+    "notes": 8
+  },
+  "afterReset": {
+    "users": 2,
+    "customers": 7,
+    "contracts": 5,
+    "projects": 3,
+    "employees": 0,
+    "project_assignments": 0,
+    "work_items": 9,
+    "notes": 0
+  },
+  "restored": true,
+  "baselineUntouched": true,
+  "baselineHashBefore": "2adc980682dbe4202a78286caba22ddb2d4e7762bd32d5385327335facaff053",
+  "baselineHashAfter": "2adc980682dbe4202a78286caba22ddb2d4e7762bd32d5385327335facaff053",
+  "finalCounts": {
+    "users": 6,
+    "customers": 19,
+    "contracts": 13,
+    "projects": 11,
+    "employees": 10,
+    "project_assignments": 15,
+    "work_items": 68,
+    "notes": 8
+  }
+}
