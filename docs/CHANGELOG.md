@@ -6,6 +6,18 @@
 
 ## [Unreleased]
 
+### امنیت — لایهٔ Policy
+
+#### افزوده
+- `ContractPolicy` — تفکیک `viewFinancials` از `view`، ثبت صریح در `AppServiceProvider`.
+- `ProjectPolicy` — مالک پروژه بدون مجوز سراسری می‌تواند باز کند، اما مبلغ را نه.
+- `policies.php` — ۱۴ اَسِرشِن روی `Gate::allows()` واقعی.
+- `errors/500.blade.php` — بدون افشای جزئیات، با شناسهٔ همبستگی مستقل.
+
+#### رفع
+- تست policy در ابتدا روی دیتابیس مشترک می‌نوشت؛ چک جداسازی آن را گرفت
+  (`SHARED DATABASE WAS MODIFIED`, users 2→6). اکنون دیتابیس خصوصی دارد.
+
 ### M3 — ماژول پروژه‌ها
 
 #### افزوده
@@ -23,7 +35,7 @@
 
 #### نتیجهٔ اجرا
 ```
-22 suites · 728 assertions · 0 failed · 0 skipped
+25 suites · 795 assertions · 0 failed · 0 skipped
 isolation: shared database untouched (every pass)
 repeatable: yes · exit 0
 ```

@@ -21,7 +21,7 @@
 
 | مورد | وضعیت | شاهد |
 |------|-------|------|
-| Regression Suite | `PASS` | ۲۴ سوییت · ۲ پاس · اجرای واقعی |
+| Regression Suite | `PASS` | ۲۵ سوییت · **۷۹۵ اَسِرشِن** · ۰ شکست · exit 0 |
 | **Execution Lock** | **`PASS`** | `lock-concurrency.mjs` — ۱۵ اَسِرشِن، شامل SIGKILL |
 | Exit Code Contract | `PASS` | ۰/۱/۲/۳ — `runner-contract.mjs` ۱۱ اَسِرشِن |
 | Repeatability | `PASS` | ۵ بُعد مقایسه + artifact در `.arena/` |
@@ -60,7 +60,7 @@
 |------|-------|---------|
 | Authentication | `PASS` | bcrypt، throttle، session regenerate |
 | RBAC (middleware) | `PASS` | ۳۹ مجوز، روی همهٔ مسیرها |
-| RBAC (Policy) | `FAIL` | **هیچ `app/Policies/` وجود ندارد** |
+| RBAC (Policy) | `PASS` | `ContractPolicy` + `ProjectPolicy` · ۱۴ اَسِرشِن |
 | Audit (نوشتن) | `PASS` | ۲۳۲ ردیف، شامل ۲۷ `denied` |
 | Audit (مشاهده) | `NOT IMPLEMENTED` | — |
 | `EnvelopeEncrypter` (واحد) | `PASS` | ۲۶ اَسِرشِن |

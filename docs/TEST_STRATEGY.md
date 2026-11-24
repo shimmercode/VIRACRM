@@ -1,6 +1,6 @@
 # استراتژی تست — VIRA CRM
 
-**وضعیت:** ۲۴ سوییت · اجرای واقعی · بدون mock در مسیر محصول
+**وضعیت:** ۲۵ سوییت · اجرای واقعی · بدون mock در مسیر محصول
 
 ---
 
@@ -29,7 +29,7 @@ CRM، جریان کار مهم‌تر از تابع است.
 
 ---
 
-## ۳. ۲۴ سوییت
+## ۳. ۲۵ سوییت
 
 | # | شناسه | نوع | اَسِرشِن | چه چیزی |
 |---|-------|-----|---------|---------|
@@ -57,21 +57,22 @@ CRM، جریان کار مهم‌تر از تابع است.
 | ۲۲ | `lock-concurrency` | Node | ۱۵ | قفل + همزمانی |
 | ۲۳ | `flow-projects` | مرورگر | ۲۸ | جریان کامل پروژه |
 | ۲۴ | `docs-integrity` | Node | ۱۹ | اسناد + هم‌گامی ماتریس |
+| ۲۵ | `policies` | PHP | ۱۴ | Policy سطح رکورد |
 
 ---
 
 ## ۳.۱ نتیجهٔ واقعی آخرین اجرای کامل
 
 ```
-suites     22 total · 22 executed · 22 passed · 0 failed · 0 skipped
-assertions 728 executed · 728 passed · 0 failed · 0 skipped
+suites     25 total · 25 executed · 25 passed · 0 failed · 0 skipped
+assertions 795 executed · 795 passed · 0 failed · 0 skipped
 isolation  shared database untouched (every pass)
 repeatable yes
 exit 0
 ```
 
-هر پنج بُعد تکرارپذیری یکسان، همهٔ ۲۲ سوییت سبز، دیتابیس مشترک دست‌نخورده
-در **هر دو پاس**. artifact: `.arena/repeat-2026-11-24T11-07-56-007Z.json`
+هر پنج بُعد تکرارپذیری یکسان، همهٔ ۲۵ سوییت سبز، دیتابیس مشترک دست‌نخورده
+در **هر دو پاس**. artifact: `.arena/repeat-2026-11-24T13-07-54-940Z.json`
 
 ---
 
