@@ -1011,3 +1011,71 @@ a.v-stat:focus-visible {
         max-width: none;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   REQ-04.04 — CONTRACT TEMPLATES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The placeholder palette. These are LTR code tokens inside an RTL page, so each
+   is bidi-isolated — without that, "{{contract.amount}}" renders as
+   "contract.amount{{}}" and the user copies the wrong thing. */
+.v-tokenlist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-2);
+}
+
+.v-tokenlist__item {
+    padding: 3px 8px;
+    background: var(--vira-surface-sunken);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-sm);
+    font-size: var(--vira-text-xs);
+    /* Never break a placeholder across two lines. A token is copied by
+       selecting it; a wrapped `{{contract.number` / `}}` makes the user copy the
+       wrong string. The aside is narrow, so this is the common case, not the
+       edge case. */
+    white-space: nowrap;
+}
+
+.v-tokenlist__item code {
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-family: var(--vira-font-mono, monospace);
+    color: var(--vira-primary);
+}
+
+/* `.v-code` inside running Persian prose. It is already nowrap and isolated,
+   but a code example that lands at a line break must not be split: the bidi
+   algorithm otherwise leaves the trailing dot or brace alone on the next line,
+   which looks like a typo and is not the string the user is meant to copy. */
+
+/* A row of checkboxes at the end of a fieldset. */
+.v-dash-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-5);
+    padding-block: var(--vira-space-2);
+}
+
+/* ── The finalised contract body ─────────────────────────────────────────
+   Rendered contract text is prose typed by an administrator, so it keeps its
+   own line breaks and must never inherit a UI font size. */
+.v-document {
+    padding: var(--vira-space-6);
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius);
+    font-size: var(--vira-text-sm);
+    line-height: 2;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575px) {
+    .v-document {
+        padding: var(--vira-space-4);
+        line-height: 1.9;
+    }
+}
+

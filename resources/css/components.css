@@ -1702,6 +1702,19 @@
 }
 
 /* ── Small helpers used across pages ──────────────────────────────────── */
+/* ── .v-code ──────────────────────────────────────────────────────────────
+   A monospace, bidi-isolated code label. Promote from review.css: the product
+   now shows real codes of its own (VIRA-C-1405-0001), and inside an RTL sentence
+   a Latin code must be isolated or it jumps to the wrong end of the line. */
+.v-code {
+    font-family: var(--vira-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: .92em;
+    direction: ltr;
+    unicode-bidi: isolate;
+    color: var(--vira-text-secondary);
+    white-space: nowrap;
+}
+
 .v-muted { color: var(--vira-text-muted); }
 .v-small { font-size: var(--vira-text-xs); }
 .v-link { color: var(--vira-primary); text-decoration: none; }

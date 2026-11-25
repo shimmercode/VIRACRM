@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
+use App\Http\Controllers\Contracts\ContractTemplateController;
 use App\Http\Controllers\Credentials\CredentialController;
 use App\Http\Controllers\Customers\CustomerController;
 use App\Http\Controllers\Accounting\AccountingController;
@@ -77,6 +78,30 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:contracts.create')->name('create');
             Route::post('/', [ContractController::class, 'store'])
                 ->middleware('permission:contracts.create')->name('store');
+            /*
+             * TEMPLATES MUST BE REGISTERED BEFORE THE `{contract}` WILDCARD.
+             *
+             * Laravel matches routes in registration order. With `/{contract}`
+             * first, `GET /contracts/templates` binds "templates" as a contract
+             * id and returns 404 — the page exists, the link is in the sidebar,
+             * and it never loads. This is the classic ordering trap and it is
+             * noted here because the correct order looks arbitrary otherwise.
+             */
+            // REQ-04.04 — templates. Senior to the contract itself: a template is
+            // the wording every future contract inherits.
+            Route::get('/templates', [ContractTemplateController::class, 'index'])
+                ->middleware('permission:contracts.finalize')->name('templates.index');
+            Route::get('/templates/create', [ContractTemplateController::class, 'create'])
+                ->middleware('permission:contracts.finalize')->name('templates.create');
+            Route::post('/templates', [ContractTemplateController::class, 'store'])
+                ->middleware('permission:contracts.finalize')->name('templates.store');
+            Route::get('/templates/{template}/edit', [ContractTemplateController::class, 'edit'])
+                ->middleware('permission:contracts.finalize')->name('templates.edit');
+            Route::put('/templates/{template}', [ContractTemplateController::class, 'update'])
+                ->middleware('permission:contracts.finalize')->name('templates.update');
+            Route::delete('/templates/{template}', [ContractTemplateController::class, 'destroy'])
+                ->middleware('permission:contracts.finalize')->name('templates.destroy');
+
             Route::get('/{contract}', [ContractController::class, 'show'])
                 ->middleware('permission:contracts.view')->name('show');
             Route::get('/{contract}/edit', [ContractController::class, 'edit'])
@@ -85,6 +110,17 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:contracts.update')->name('update');
             Route::delete('/{contract}', [ContractController::class, 'destroy'])
                 ->middleware('permission:contracts.delete')->name('destroy');
+
+            // REQ-04.05 — finalising renders the template, assigns the permanent
+            // number and snapshots the contract. Its own permission: an account
+            // manager may prepare a contract, but committing it to the client is
+            // a different act.
+            Route::post('/{contract}/finalize', [ContractController::class, 'finalize'])
+                ->middleware('permission:contracts.finalize')->name('finalize');
+            Route::post('/{contract}/renew', [ContractController::class, 'renew'])
+                ->middleware('permission:contracts.finalize')->name('renew');
+
+
         });
 
         // ── Projects (§5) ──────────────────────────────────────────────

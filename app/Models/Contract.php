@@ -58,6 +58,17 @@ class Contract extends Model
         return $this->belongsTo(User::class, 'owner_user_id');
     }
 
+    /** REQ-04.07 — who committed the contract to the client. */
+    public function finalizedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'finalized_by');
+    }
+
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(ContractTemplate::class, 'template_id');
+    }
+
     public function versions(): HasMany
     {
         return $this->hasMany(ContractVersion::class)->orderByDesc('version');

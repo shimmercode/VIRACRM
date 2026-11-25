@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 41 | 42.7% |
+| `VERIFIED` | 47 | 49.0% |
 | `PARTIAL` | 18 | 18.8% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 30 | 31.3% |
+| `NOT_IMPLEMENTED` | 24 | 25.0% |
 | `BLOCKED` | 5 | 5.2% |
 | **جمع** | **96** | **100%** |
 
@@ -25,12 +25,12 @@
 
 | وضعیت | تعداد |
 |-------|------:|
-| `VERIFIED` | 14 |
+| `VERIFIED` | 15 |
 | `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 15 |
+| `NOT_IMPLEMENTED` | 14 |
 | `BLOCKED` | 3 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۴ مورد اثبات‌شده** و **۱۵ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۵ مورد اثبات‌شده** و **۱۴ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -90,19 +90,19 @@
 | `CNT-001` | `REQ-04.01` | مدل داده قرارداد | P1 | doc | **`VERIFIED`** | Contract model + migration | — | — |
 | `CNT-002` | `REQ-04.02` | وضعیت‌های قرارداد | P1 | doc | **`VERIFIED`** | ContractStatus enum + derived Expiring | — | — |
 | `CNT-003` | `REQ-04.03` | چند قرارداد برای یک مشتری + اتصال به پرونده | P1 | doc | **`VERIFIED`** | hasMany contracts on customer | — | — |
-| `CNT-004` | `REQ-04.06` | ویرایش متن قرارداد پیش از نهایی‌سازی | P1 | doc | **`NOT_IMPLEMENTED`** | no content editor | — | M1–M8 |
-| `CNT-005` | `REQ-04.07` | تثبیت نسخه نهایی قرارداد | P0 | doc | **`NOT_IMPLEMENTED`** | ContractVersion model only | finalise flow absent | M1–M8 |
-| `CNT-006` | `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | versions table empty | no history UI | M1–M8 |
+| `CNT-004` | `REQ-04.06` | ویرایش متن قرارداد پیش از نهایی‌سازی | P1 | doc | **`VERIFIED`** | template editor with placeholder palette; T-CTR-16..18 | — | — |
+| `CNT-005` | `REQ-04.07` | تثبیت نسخه نهایی قرارداد | P0 | doc | **`VERIFIED`** | rendered_body frozen at finalisation; template edits cannot change it; T-CTR-12/18 | — | — |
+| `CNT-006` | `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | P1 | doc | **`VERIFIED`** | contract_versions snapshot on finalize/renew/amend; T-CTR-14/22 | — | — |
 | `CNT-007` | `REQ-04.09` | جستجو و فیلتر قرارداد | P1 | doc | **`VERIFIED`** | search + sort whitelist + filters | — | — |
-| `CNT-008` | `REQ-04.10` | ثبت تمدید قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | no renewal route | — | M1–M8 |
+| `CNT-008` | `REQ-04.10` | ثبت تمدید قرارداد | P1 | doc | **`VERIFIED`** | contracts.renew + finalizer copies terms, original untouched; T-CTR-19..22 | — | — |
 | `CNT-009` | `REQ-09.02` | فیلترهای قرارداد و پروژه | P1 | doc | **`VERIFIED`** | contract & project filter bars + sort whitelist | — | — |
 
 ### ContractTemplates
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `TPL-001` | `REQ-04.04` | بانک قالب قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | ContractTemplate model only | no CRUD/UI | M1–M8 |
-| `TPL-002` | `REQ-04.05` | موتور Template قرارداد | P1 | doc | **`NOT_IMPLEMENTED`** | no template engine | — | M1–M8 |
+| `TPL-001` | `REQ-04.04` | بانک قالب قرارداد | P1 | doc | **`VERIFIED`** | ContractTemplate model + controller + templates index/form; T-CTR-01..05 | — | — |
+| `TPL-002` | `REQ-04.05` | موتور Template قرارداد | P1 | doc | **`VERIFIED`** | ContractRenderer whitelist (no eval); unknown token refused at save; ContractRendererTest | — | — |
 
 ### Projects
 
@@ -328,12 +328,6 @@
 | شناسه | عنوان | ماژول | اولویت |
 |-------|-------|-------|:------:|
 | `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
-| `TPL-001` | بانک قالب قرارداد | ContractTemplates | P1 |
-| `TPL-002` | موتور Template قرارداد | ContractTemplates | P1 |
-| `CNT-004` | ویرایش متن قرارداد پیش از نهایی‌سازی | Contracts | P1 |
-| `CNT-005` | تثبیت نسخه نهایی قرارداد | Contracts | P0 |
-| `CNT-006` | تاریخچه و نسخه‌های قرارداد | Contracts | P1 |
-| `CNT-008` | ثبت تمدید قرارداد | Contracts | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
 | `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
 | `CRED-005` | PDF محرمانه دسترسی‌ها | Credentials | P0 |

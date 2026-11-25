@@ -168,6 +168,115 @@
                 </div>
             </section>
 
+            {{-- REQ-04.07 — the frozen document. This is what the client was
+                 shown; editing the template afterwards cannot change it. --}}
+            @if ($contract->rendered_body)
+                <section class="v-card">
+                    <header class="v-card__head">
+                        <h2 class="v-card__title">متن نهایی‌شدهٔ قرارداد</h2>
+                        <span class="v-card__meta">
+                            نهایی‌شده در <x-fa-date :value="$contract->finalized_at" with-time />
+                        </span>
+                    </header>
+                    <div class="v-card__body">
+                        <div class="v-document">{{ $contract->rendered_body }}</div>
+                        @if ($contract->finalizedBy)
+                            <p class="v-hint" style="margin-top: var(--vira-space-3)">
+                                نهایی‌شده توسط {{ $contract->finalizedBy->name }}
+                            </p>
+                        @endif
+                    </div>
+                </section>
+            @endif
+
+            {{-- REQ-04.05 — finalise / renew. Shown only to a user who holds
+                 `contracts.finalize`; the route re-checks it regardless. --}}
+            @if ($canFinalize)
+                <section class="v-card">
+                    <header class="v-card__head">
+                        <h2 class="v-card__title">
+                            {{ $contract->finalized_at ? 'تمدید قرارداد' : 'نهایی‌سازی قرارداد' }}
+                        </h2>
+                    </header>
+                    <div class="v-card__body">
+                        @if (! $contract->finalized_at)
+                            <p class="v-muted" style="margin-top:0">
+                                با نهایی‌سازی: متن از قالب ساخته و ذخیره می‌شود، شمارهٔ دائمی صادر
+                                می‌گردد و نسخه‌ای تغییرناپذیر از قرارداد نگه داشته می‌شود.
+                            </p>
+                            <form method="POST" action="{{ route('contracts.finalize', $contract) }}" class="v-inlineform"
+                                  data-confirm="قرارداد نهایی شود؟ پس از این، متن آن تغییرناپذیر است.">
+                                @csrf
+                                <div class="v-field">
+                                    <label class="v-label" for="template_id">قالب</label>
+                                    <select id="template_id" name="template_id" class="v-select" style="min-width: 200px">
+                                        <option value="">— بدون قالب (از توضیحات) —</option>
+                                        @foreach ($templates as $template)
+                                            <option value="{{ $template->id }}">
+                                                {{ $template->title }} (نسخهٔ {{ $template->version }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit" class="v-btn v-btn--primary v-btn--sm">
+                                    <x-icon name="lock" :size="16" /> نهایی‌سازی
+                                </button>
+                            </form>
+                            @if ($templates->isEmpty())
+                                <p class="v-hint">
+                                    قالبی ثبت نشده است. بدون قالب، متن «توضیحات» به‌عنوان سند نهایی
+                                    ذخیره می‌شود. <a href="{{ route('contracts.templates.create') }}">ساخت قالب</a>
+                                </p>
+                            @endif
+                        @else
+                            <p class="v-muted" style="margin-top:0">
+                                تمدید، قرارداد جدیدی با شمارهٔ تازه می‌سازد و این قرارداد را دست‌نخورده
+                                نگه می‌دارد؛ چون این سند، تعهدی است که طرفین در طول مدت آن عمل کرده‌اند.
+                            </p>
+                            <form method="POST" action="{{ route('contracts.renew', $contract) }}" novalidate
+                                  class="v-form">
+                                @csrf
+                                <div class="v-grid v-grid--2">
+                                    <div class="v-field">
+                                        <label class="v-label" for="r-title">عنوان قرارداد تمدیدشده</label>
+                                        <input id="r-title" name="title" type="text" class="v-input"
+                                               value="{{ old('title', $contract->title) }}" required>
+                                    </div>
+                                    <div class="v-field">
+                                        <label class="v-label" for="r-amount">مبلغ (ریال)</label>
+                                        <input id="r-amount" name="amount" type="text" class="v-input"
+                                               value="{{ old('amount', $canSeeAmounts ? number_format((int) $contract->amount) : '') }}"
+                                               inputmode="numeric" data-money>
+                                    </div>
+                                    <div class="v-field">
+                                        <label class="v-label" for="r-start">تاریخ شروع</label>
+                                        <input id="r-start" name="start_date" type="text" class="v-input"
+                                               value="{{ old('start_date') }}" placeholder="۱۴۰۵/۰۱/۰۱"
+                                               data-jalali required>
+                                    </div>
+                                    <div class="v-field">
+                                        <label class="v-label" for="r-end">تاریخ پایان</label>
+                                        <input id="r-end" name="end_date" type="text" class="v-input"
+                                               value="{{ old('end_date') }}" placeholder="۱۴۰۵/۱۲/۲۹"
+                                               data-jalali>
+                                    </div>
+                                </div>
+                                <div class="v-field">
+                                    <label class="v-label" for="r-reason">دلیل تمدید</label>
+                                    <input id="r-reason" name="reason" type="text" class="v-input"
+                                           value="{{ old('reason') }}" required maxlength="500">
+                                </div>
+                                <div class="v-form__actions">
+                                    <button type="submit" class="v-btn v-btn--primary v-btn--sm">
+                                        <x-icon name="plus" :size="16" /> ایجاد قرارداد تمدیدی
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+                    </div>
+                </section>
+            @endif
+
             {{-- Files: honest empty state until uploads are wired (2-D) --}}
             <section class="v-card">
                 <header class="v-card__head">
@@ -195,7 +304,8 @@
                 </div>
             </section>
 
-            {{-- Version history: real rows, empty until finalisation lands --}}
+            {{-- REQ-04.08 — version history. Each row is a full snapshot of the
+                 contract as it stood; the reason says why it changed. --}}
             <section class="v-card">
                 <header class="v-card__head">
                     <h2 class="v-card__title">نسخه‌ها</h2>
@@ -212,8 +322,12 @@
                             @foreach ($contract->versions as $version)
                                 <li class="v-list__item">
                                     <span class="v-list__main">
-                                        <span class="v-list__title">نسخهٔ {{ $pd($version->version) }}</span>
-                                        <span class="v-list__meta"><x-fa-date :value="$version->created_at" with-time /></span>
+                                        <span class="v-list__title">
+                                            نسخهٔ {{ $pd($version->version) }} — {{ $version->reason }}
+                                        </span>
+                                        <span class="v-list__meta">
+                                            <x-fa-date :value="$version->created_at" with-time />
+                                        </span>
                                     </span>
                                 </li>
                             @endforeach

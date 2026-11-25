@@ -100,29 +100,29 @@
     "—"
   ],
   "REQ-04.04": [
-    "NOT_IMPLEMENTED",
-    "ContractTemplate model only",
-    "no CRUD/UI"
+    "VERIFIED",
+    "ContractTemplate model + controller + templates index/form; T-CTR-01..05",
+    "—"
   ],
   "REQ-04.05": [
-    "NOT_IMPLEMENTED",
-    "no template engine",
+    "VERIFIED",
+    "ContractRenderer whitelist (no eval); unknown token refused at save; ContractRendererTest",
     "—"
   ],
   "REQ-04.06": [
-    "NOT_IMPLEMENTED",
-    "no content editor",
+    "VERIFIED",
+    "template editor with placeholder palette; T-CTR-16..18",
     "—"
   ],
   "REQ-04.07": [
-    "NOT_IMPLEMENTED",
-    "ContractVersion model only",
-    "finalise flow absent"
+    "VERIFIED",
+    "rendered_body frozen at finalisation; template edits cannot change it; T-CTR-12/18",
+    "—"
   ],
   "REQ-04.08": [
-    "NOT_IMPLEMENTED",
-    "versions table empty",
-    "no history UI"
+    "VERIFIED",
+    "contract_versions snapshot on finalize/renew/amend; T-CTR-14/22",
+    "—"
   ],
   "REQ-04.09": [
     "VERIFIED",
@@ -130,8 +130,8 @@
     "—"
   ],
   "REQ-04.10": [
-    "NOT_IMPLEMENTED",
-    "no renewal route",
+    "VERIFIED",
+    "contracts.renew + finalizer copies terms, original untouched; T-CTR-19..22",
     "—"
   ],
   "REQ-05.01": [

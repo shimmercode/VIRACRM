@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T19:17:34.927Z",
+  "generatedAt": "2026-11-25T19:49:12.066Z",
   "widths": [
     390,
     430,
@@ -99,6 +99,28 @@
       "tappable": 6
     },
     {
+      "key": "contract-templates",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "contract-template-form",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "organization",
       "width": 390,
       "status": 200,
@@ -209,6 +231,28 @@
       "tappable": 6
     },
     {
+      "key": "contract-templates",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "contract-template-form",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "organization",
       "width": 430,
       "status": 200,
@@ -319,6 +363,28 @@
       "tappable": 6
     },
     {
+      "key": "contract-templates",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "contract-template-form",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "organization",
       "width": 576,
       "status": 200,
@@ -429,6 +495,28 @@
       "tappable": 6
     },
     {
+      "key": "contract-templates",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "contract-template-form",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "organization",
       "width": 768,
       "status": 200,
@@ -539,6 +627,28 @@
       "tappable": 7
     },
     {
+      "key": "contract-templates",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "contract-template-form",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
       "key": "organization",
       "width": 1024,
       "status": 200,
@@ -649,6 +759,28 @@
       "tappable": 7
     },
     {
+      "key": "contract-templates",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "contract-template-form",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
       "key": "organization",
       "width": 1280,
       "status": 200,
@@ -757,6 +889,28 @@
         "a.v-skip"
       ],
       "tappable": 7
+    },
+    {
+      "key": "contract-templates",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "contract-template-form",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
     },
     {
       "key": "organization",

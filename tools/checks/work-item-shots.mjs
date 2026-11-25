@@ -104,6 +104,21 @@ const PAGES = [
   },
   // §17 — the organisational tree. The two-level rows with an inline edit
   // <details> are the hardest thing on the site to keep inside 390px.
+  // REQ-04.04 — the template editor is the longest text surface in the product
+  // (a 16-row textarea plus a wrapped placeholder palette), so it is the real
+  // test of horizontal containment on a narrow screen.
+  {
+    key: 'contract-templates',
+    url: '/contracts/templates',
+    text: ['قالب‌های قرارداد'],
+    classes: ['v-card'],
+  },
+  {
+    key: 'contract-template-form',
+    url: '/contracts/templates/create',
+    text: ['ثبت قالب قرارداد', 'متن قالب'],
+    classes: ['v-form', 'v-tokenlist'],
+  },
   {
     key: 'organization',
     url: '/organization',
