@@ -638,3 +638,165 @@ a.v-stat:focus-visible {
         top: 19px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Accounting (OD-41).
+
+   Everything here uses design tokens only — the CSS audit rejects stray hex
+   values, and a new module is exactly where those creep in.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section tabs ─────────────────────────────────────────────────────── */
+.v-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vira-space-1);
+    margin-block-end: var(--vira-space-5);
+    padding: var(--vira-space-1);
+    background: var(--vira-surface-sunken);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-md);
+}
+
+.v-tabs__link {
+    padding: var(--vira-space-2) var(--vira-space-4);
+    border-radius: var(--vira-radius-sm);
+    font-size: var(--vira-text-sm);
+    font-weight: var(--vira-weight-medium);
+    color: var(--vira-text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--vira-duration-fast) var(--vira-ease),
+                color var(--vira-duration-fast) var(--vira-ease);
+}
+
+.v-tabs__link:hover {
+    background: var(--vira-surface-hover);
+    color: var(--vira-text);
+}
+
+.v-tabs__link.is-active {
+    background: var(--vira-surface);
+    color: var(--vira-primary);
+    box-shadow: var(--vira-shadow-xs);
+    font-weight: var(--vira-weight-bold);
+}
+
+/* ── Account codes ────────────────────────────────────────────────────── */
+/* Monospace + LTR: an account code is an identifier, and rendering «1-1-01»
+   in an RTL run reverses the visual order to «01-1-1», which is a different
+   account to a human reading it. */
+.v-account-code {
+    font-family: var(--vira-font-mono);
+    font-size: var(--vira-text-sm);
+    color: var(--vira-text-secondary);
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+    padding: 2px var(--vira-space-2);
+    background: var(--vira-surface-sunken);
+    border-radius: var(--vira-radius-sm);
+}
+
+.v-account-code--leaf {
+    color: var(--vira-text-muted);
+}
+
+.v-account-group {
+    background: var(--vira-surface-sunken);
+}
+
+.v-account-group td {
+    font-weight: var(--vira-weight-medium);
+}
+
+.v-account-child {
+    padding-inline-start: var(--vira-space-5);
+    display: inline-block;
+}
+
+/* ── Money columns ────────────────────────────────────────────────────── */
+/* Tabular figures so a column of amounts aligns on the digit, not the glyph. */
+.v-money {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+}
+
+.v-money--negative {
+    color: var(--vira-danger);
+}
+
+.v-money--total {
+    font-weight: var(--vira-weight-bold);
+}
+
+/* ── Report summary strip ─────────────────────────────────────────────── */
+.v-report-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--vira-space-4);
+    margin-block-end: var(--vira-space-5);
+}
+
+.v-report-strip__cell {
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-md);
+    padding: var(--vira-space-4);
+}
+
+.v-report-strip__label {
+    display: block;
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+    margin-block-end: var(--vira-space-2);
+}
+
+.v-report-strip__value {
+    display: block;
+    font-size: var(--vira-text-xl);
+    font-weight: var(--vira-weight-bold);
+    font-variant-numeric: tabular-nums;
+}
+
+.v-report-strip__cell--danger {
+    border-color: var(--vira-danger-border);
+    background: var(--vira-danger-soft);
+}
+
+.v-report-strip__cell--success {
+    border-color: var(--vira-success-border);
+    background: var(--vira-success-soft);
+}
+
+/* ── Notices ──────────────────────────────────────────────────────────── */
+/* Used for "no data recorded" and for the trial-balance imbalance warning.
+   The second must never be mistaken for decoration, hence the danger tone. */
+.v-notice {
+    padding: var(--vira-space-4);
+    border-radius: var(--vira-radius-md);
+    border: 1px solid var(--vira-border);
+    background: var(--vira-surface-sunken);
+    font-size: var(--vira-text-sm);
+    margin-block-end: var(--vira-space-4);
+}
+
+.v-notice--danger {
+    border-color: var(--vira-danger-border);
+    background: var(--vira-danger-soft);
+    color: var(--vira-danger);
+    font-weight: var(--vira-weight-medium);
+}
+
+.v-notice--warn {
+    border-color: var(--vira-warning-border);
+    background: var(--vira-warning-soft);
+}
+
+.v-notice__title {
+    font-weight: var(--vira-weight-bold);
+    margin-block-end: var(--vira-space-2);
+}

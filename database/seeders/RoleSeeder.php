@@ -38,6 +38,8 @@ class RoleSeeder extends Seeder
                 'personnel.view',
                 // EXP-WORKITEM-001: the manager closes obligations and audits them.
                 'work_items.view', 'work_items.complete', 'work_items.create', 'work_items.cancel',
+                // OD-41: a manager reads financial reports but does not post entries.
+                'accounting.view', 'invoices.view',
             ],
         ],
 
@@ -53,6 +55,10 @@ class RoleSeeder extends Seeder
                 'notes.view', 'notes.create',
                 // EXP-WORKITEM-001: invoices are the accountant's own obligation.
                 'work_items.view', 'work_items.complete', 'work_items.create',
+                // OD-41: the accountant owns the books end to end.
+                'accounting.view', 'accounting.post', 'accounting.close', 'accounting.reopen',
+                'invoices.view', 'invoices.create', 'invoices.issue', 'invoices.void',
+                'invoices.record_payment',
             ],
         ],
 

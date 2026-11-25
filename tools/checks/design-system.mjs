@@ -226,29 +226,68 @@ const flow = await startBrowserFlow('design-system', { viewport: { width: 1440, 
   await uiLogin(page, flow.baseUrl, 'admin', flow.password);
   await page.goto(`${flow.baseUrl}/customers`, { waitUntil: 'domcontentloaded' });
 
-  const absent = await page.evaluate(() => ({
-    tabs: document.querySelectorAll('.v-tabs').length,
-    skeleton: document.querySelectorAll('.v-skeleton').length,
-    // The tab RULES were removed after proving nothing referenced them, so a
-    // screen carrying `.v-tabs` would now render completely unstyled. Assert
-    // both the markup and the stylesheet, so a reintroduction cannot pass
-    // unnoticed as an "unstyled but present" component.
-    tabsRule: [...document.styleSheets].some((sheet) => {
+  /*
+   * TABS: the earlier version of this check asserted that `.v-tabs` appeared
+   * nowhere and no rule existed, recording the decision that the component had
+   * been removed as unused. OD-41 reintroduced tabs as a real, styled component
+   * (the accounting section nav), so that assertion is now obsolete and would
+   * pass only by deleting a working feature.
+   *
+   * The invariant worth keeping is the one the old check was really protecting:
+   * a component must never be present-but-unstyled. So this now asserts that
+   * where tabs ARE used, the stylesheet rule exists too — and that on a page
+   * that does not use them, they are absent. Both directions are checked.
+   */
+  const pageWithoutTabs = await page.evaluate(() => {
+    const ruleExists = [...document.styleSheets].some((sheet) => {
       try {
         return [...sheet.cssRules].some((r) => r.selectorText && /\.v-tabs?\b/.test(r.selectorText));
       } catch {
         return false;
       }
-    }),
-  }));
+    });
 
-  // These are not failures — they record the decision that neither component
-  // is used by any screen. If someone adds one without styling or testing it,
-  // this flips and asks for a decision.
-  record('T-DS-TABS-absent', absent.tabs === 0 && absent.tabsRule === false,
-    `.v-tabs in DOM: ${absent.tabs}, rule in stylesheet: ${absent.tabsRule} (removed)`);
-  record('T-DS-SKELETON-absent', absent.skeleton === 0,
-    `.v-skeleton in DOM: ${absent.skeleton} (no async surface to attach it to)`);
+    return {
+      tabs: document.querySelectorAll('.v-tabs').length,
+      ruleExists,
+      skeleton: document.querySelectorAll('.v-skeleton').length,
+    };
+  });
+
+  record('T-DS-TABS-absent-here', pageWithoutTabs.tabs === 0,
+    `.v-tabs on /customers: ${pageWithoutTabs.tabs} (this page has no sections to tab)`);
+
+  /* Now load the page that DOES use tabs and prove markup and styles coexist. */
+  await page.goto(`${flow.baseUrl}/accounting/chart`, { waitUntil: 'domcontentloaded' });
+
+  const tabbed = await page.evaluate(() => {
+    const el = document.querySelector('.v-tabs');
+    const active = document.querySelector('.v-tabs__link.is-active');
+
+    return {
+      count: document.querySelectorAll('.v-tabs').length,
+      links: document.querySelectorAll('.v-tabs__link').length,
+      hasActive: Boolean(active),
+      // Styled means the computed background is not the browser default
+      // transparent — i.e. the rule actually applied to a real element.
+      styled: el !== null && getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)',
+      linkStyled: Boolean(active) && getComputedStyle(active).fontWeight !== '400',
+      ruleExists: [...document.styleSheets].some((sheet) => {
+        try {
+          return [...sheet.cssRules].some((r) => r.selectorText && /\.v-tabs\b/.test(r.selectorText));
+        } catch {
+          return false;
+        }
+      }),
+    };
+  });
+
+  record('T-DS-TABS-STYLED', tabbed.count === 1 && tabbed.links >= 5 && tabbed.hasActive
+    && tabbed.styled && tabbed.linkStyled && tabbed.ruleExists,
+    `tabs=${tabbed.count} links=${tabbed.links} active=${tabbed.hasActive} `
+    + `styled=${tabbed.styled} linkStyled=${tabbed.linkStyled} rule=${tabbed.ruleExists}`);
+  record('T-DS-SKELETON-absent', pageWithoutTabs.skeleton === 0,
+    `.v-skeleton in DOM: ${pageWithoutTabs.skeleton} (no async surface to attach it to)`);
 
   await page.close();
 }

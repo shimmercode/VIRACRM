@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T18:00:04.831Z",
+  "generatedAt": "2026-11-25T18:27:44.924Z",
   "widths": [
     390,
     430,
@@ -55,6 +55,39 @@
       "tappable": 5
     },
     {
+      "key": "accounting-chart",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 3
+    },
+    {
+      "key": "accounting-trial",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "invoices",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "cartable",
       "width": 430,
       "status": 200,
@@ -99,6 +132,39 @@
       "tappable": 5
     },
     {
+      "key": "accounting-chart",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 3
+    },
+    {
+      "key": "accounting-trial",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "invoices",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "cartable",
       "width": 576,
       "status": 200,
@@ -143,6 +209,39 @@
       "tappable": 5
     },
     {
+      "key": "accounting-chart",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 3
+    },
+    {
+      "key": "accounting-trial",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "invoices",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "cartable",
       "width": 768,
       "status": 200,
@@ -177,6 +276,39 @@
     },
     {
       "key": "notes-create",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "accounting-chart",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 3
+    },
+    {
+      "key": "accounting-trial",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "invoices",
       "width": 768,
       "status": 200,
       "ok": true,
@@ -231,6 +363,39 @@
       "tappable": 6
     },
     {
+      "key": "accounting-chart",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "accounting-trial",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "invoices",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
       "key": "cartable",
       "width": 1280,
       "status": 200,
@@ -275,6 +440,39 @@
       "tappable": 6
     },
     {
+      "key": "accounting-chart",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "accounting-trial",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "invoices",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
       "key": "cartable",
       "width": 1440,
       "status": 200,
@@ -309,6 +507,39 @@
     },
     {
       "key": "notes-create",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "accounting-chart",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
+      "key": "accounting-trial",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
+      "key": "invoices",
       "width": 1440,
       "status": 200,
       "ok": true,

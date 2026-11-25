@@ -383,6 +383,103 @@
         });
     }
 
+
+    // ── Invoice line items (OD-41 §19.6) ──────────────────────────────────
+    /*
+     * Add / remove invoice rows and keep a running per-row total.
+     *
+     * WHY THIS IS NOT SERVER-RENDERED ONLY
+     * ------------------------------------
+     * An invoice with one fixed row is a form that forces the user to merge
+     * unrelated services into one line. Adding rows client-side is a usability
+     * need, but the SERVER remains the authority: it re-validates every row,
+     * re-computes every total, and re-derives the invoice sum from the stored
+     * items. Nothing here can alter a saved amount.
+     *
+     * Index renumbering: when a middle row is deleted, `items[2]` becomes
+     * `items[1]`. Without renumbering, PHP receives a sparse array and Laravel's
+     * `items.*.description` rules silently skip the gap — a validation hole.
+     */
+    function initInvoiceItems() {
+        var table = document.getElementById('items-table');
+        if (!table) return;
+
+        var body = document.getElementById('items-body');
+        var addBtn = document.querySelector('[data-add-row]');
+        if (!body) return;
+
+        function renumber() {
+            body.querySelectorAll('.item-row').forEach(function (row, index) {
+                row.querySelectorAll('input').forEach(function (input) {
+                    input.name = input.name.replace(/items\[\d+\]/, 'items[' + index + ']');
+                });
+            });
+        }
+
+        function digitsToNumber(text) {
+            var fa = '۰۱۲۳۴۵۶۷۸۹';
+            var ar = '٠١٢٣٤٥٦٧٨٩';
+            var out = '';
+            for (var i = 0; i < text.length; i++) {
+                var ch = text.charAt(i);
+                var faIndex = fa.indexOf(ch);
+                var arIndex = ar.indexOf(ch);
+                if (faIndex !== -1) out += String(faIndex);
+                else if (arIndex !== -1) out += String(arIndex);
+                else if (ch !== ',' && ch !== '٬' && ch !== ' ' && ch !== '٫') out += ch;
+                else if (ch === '٫') out += '.';
+            }
+            return parseFloat(out) || 0;
+        }
+
+        function recalcRow(row) {
+            var qty = digitsToNumber(row.querySelector('input[name$="[quantity]"]').value || '1');
+            var price = digitsToNumber(row.querySelector('input[name$="[unit_price]"]').value || '0');
+            var cell = row.querySelector('.line-total');
+            if (!cell) return;
+            var total = Math.round(qty * price);
+            cell.textContent = total > 0
+                ? total.toLocaleString('fa-IR') + ' ریال'
+                : '—';
+        }
+
+        function bind(row) {
+            row.querySelectorAll('input').forEach(function (input) {
+                input.addEventListener('input', function () { recalcRow(row); });
+            });
+            var remove = row.querySelector('[data-remove-row]');
+            if (remove) {
+                remove.addEventListener('click', function () {
+                    // Never remove the last row: an invoice with zero rows cannot
+                    // be submitted, so leaving the user with an empty table and a
+                    // dead "add" button is worse than refusing.
+                    if (body.querySelectorAll('.item-row').length <= 1) return;
+                    row.remove();
+                    renumber();
+                });
+            }
+            recalcRow(row);
+        }
+
+        body.querySelectorAll('.item-row').forEach(bind);
+
+        if (addBtn) {
+            addBtn.addEventListener('click', function () {
+                var template = body.querySelector('.item-row');
+                if (!template) return;
+                var clone = template.cloneNode(true);
+                clone.querySelectorAll('input').forEach(function (input) { input.value = ''; });
+                clone.querySelector('input[name$="[quantity]"]').value = '1';
+                clone.querySelector('.line-total').textContent = '—';
+                body.appendChild(clone);
+                renumber();
+                bind(clone);
+                var first = clone.querySelector('input');
+                if (first) first.focus();
+            });
+        }
+    }
+
     function boot() {
         initPasswordToggles();
         initDrawer();
@@ -395,6 +492,7 @@
         initProjectTypeSwitch();
         initErrorSummary();
         initCredentialReveal();
+        initInvoiceItems();
     }
 
     if (document.readyState === 'loading') {

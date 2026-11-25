@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 31 | 32.3% |
+| `VERIFIED` | 37 | 38.5% |
 | `PARTIAL` | 17 | 17.7% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 39 | 40.6% |
+| `NOT_IMPLEMENTED` | 33 | 34.4% |
 | `BLOCKED` | 7 | 7.3% |
 | **جمع** | **96** | **100%** |
 
@@ -25,12 +25,12 @@
 
 | وضعیت | تعداد |
 |-------|------:|
-| `VERIFIED` | 9 |
+| `VERIFIED` | 11 |
 | `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 19 |
+| `NOT_IMPLEMENTED` | 17 |
 | `BLOCKED` | 4 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۹ مورد اثبات‌شده** و **۱۹ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۱ مورد اثبات‌شده** و **۱۷ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -168,18 +168,18 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `INV-001` | `REQ-09.03` | گزارش فاکتور و گزارش | P1 | doc | **`NOT_IMPLEMENTED`** | invoices do not exist | — | M1–M8 |
-| `INV-002` | `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | P0 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
-| `INV-003` | `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | P0 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
-| `INV-004` | `REQ-12.03` | ثبت انجام فاکتور | P1 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
-| `INV-005` | `REQ-12.09` | ثبت مشخصات و فایل فاکتور پس از ارسال | P1 | doc | **`NOT_IMPLEMENTED`** | no invoices | — | M1–M8 |
+| `INV-001` | `REQ-09.03` | گزارش فاکتور و گزارش | P1 | doc | **`VERIFIED`** | Invoice model + InvoiceController + accounting-flow 19/19 | — | — |
+| `INV-002` | `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | P0 | doc | **`VERIFIED`** | invoices table + controller + issue flow | — | — |
+| `INV-003` | `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | P0 | doc | **`VERIFIED`** | controlled INV-1405-NNNN numbering at issue | — | — |
+| `INV-004` | `REQ-12.03` | ثبت انجام فاکتور | P1 | doc | **`VERIFIED`** | payment_state separate from invoice status (§19.4) | — | — |
+| `INV-005` | `REQ-12.09` | ثبت مشخصات و فایل فاکتور پس از ارسال | P1 | doc | **`NOT_IMPLEMENTED`** | invoice PDF pending mPDF slice | — | M1–M8 |
 
 ### Reports
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`NOT_IMPLEMENTED`** | no reports module | — | M1–M8 |
-| `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`NOT_IMPLEMENTED`** | no reports | — | M1–M8 |
+| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`VERIFIED`** | Trial balance + P&L + balance sheet, all from journal_lines | — | — |
+| `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`VERIFIED`** | P&L by service and by customer dimensions | — | — |
 
 ### Pdf
 
@@ -343,16 +343,10 @@
 | `PAY-003` | تاریخچه و تثبیت فیش‌ها | Payroll | P0 |
 | `PAY-004` | دسترسی مستقل اطلاعات حقوقی | Payroll | P0 |
 | `SRCH-001` | جستجوی سراسری | Search | P1 |
-| `INV-001` | گزارش فاکتور و گزارش | Invoices | P1 |
-| `RPT-001` | گزارش قراردادها و پرسنل | Reports | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
-| `INV-002` | یادآوری فاکتور دو روز تقویمی قبل | Invoices | P0 |
-| `INV-003` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | Invoices | P0 |
-| `INV-004` | ثبت انجام فاکتور | Invoices | P1 |
 | `SEOR-001` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | SeoReports | P0 |
 | `INV-005` | ثبت مشخصات و فایل فاکتور پس از ارسال | Invoices | P1 |
-| `RPT-002` | گزارش تعداد پروژه‌های فعال هر کارشناس | Reports | P1 |
 | `BAK-001` | Backup و Restore تست‌شده | Backup | P0 |
 | `INST-001` | Installer امن | Installer | P1 |
 | `FILE-002` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | Files | P0 |

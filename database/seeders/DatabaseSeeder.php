@@ -28,6 +28,11 @@ class DatabaseSeeder extends Seeder
             CredentialTypeSeeder::class,
             SettingsSeeder::class,
             UserSeeder::class,
+            // OD-41 — the approved chart of accounts and the fiscal periods it
+            // needs. Configuration-grade, not sample data: an install with no
+            // open period can record no financial event at all.
+            ChartOfAccountsSeeder::class,
+            FiscalPeriodSeeder::class,
         ]);
     }
 }

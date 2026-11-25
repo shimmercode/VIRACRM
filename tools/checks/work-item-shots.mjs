@@ -71,6 +71,27 @@ const PAGES = [
     text: ['یادداشت جدید', 'عنوان', 'اولویت'],
     classes: ['v-form'],
   },
+  // OD-41 — the accounting surfaces. The trial balance is the widest table in
+  // the product (five money columns), so it is the real test of the mobile
+  // card-collapse rule rather than a page that happens to be narrow.
+  {
+    key: 'accounting-chart',
+    url: '/accounting/chart',
+    text: ['نمودار حساب‌ها', 'قابل ثبت'],
+    classes: ['v-table', 'v-tabs'],
+  },
+  {
+    key: 'accounting-trial',
+    url: '/accounting/trial-balance',
+    text: ['تراز آزمایشی'],
+    classes: ['v-tabs'],
+  },
+  {
+    key: 'invoices',
+    url: '/invoices',
+    text: ['فاکتورها'],
+    classes: ['v-filterbar'],
+  },
 ];
 
 const flow = await startBrowserFlow('work-item-shots');

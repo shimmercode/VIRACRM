@@ -111,6 +111,32 @@ final class PermissionCatalog
             'cancel' => ['لغو مورد کارتابل', false],
         ],
 
+        /*
+         * OD-41 — accounting.
+         *
+         * `view` reads the chart and reports. `post` writes entries. `close` and
+         * `reopen` are SEPARATE because §19.2 treats locking and unlocking the
+         * books as different acts: reopening changes figures already reported.
+         * `view_financials` is deliberately not reused — a manager who may see a
+         * contract's amount has no business editing the general ledger.
+         */
+        'accounting' => [
+            'view' => ['مشاهده حسابداری و گزارش‌های مالی', true],
+            'post' => ['ثبت سند حسابداری', true],
+            'close' => ['بستن دوره مالی', true],
+            'reopen' => ['بازکردن دوره مالی', true],
+        ],
+
+        /* OD-41 §19.6/§19.7 — invoices and payments carry money, so every action
+           here is sensitive by definition. */
+        'invoices' => [
+            'view' => ['مشاهده فاکتورها', true],
+            'create' => ['ایجاد فاکتور', true],
+            'issue' => ['صدور فاکتور', true],
+            'void' => ['ابطال فاکتور', true],
+            'record_payment' => ['ثبت دریافتی', true],
+        ],
+
         /* EXP-NOTE-001 — notes and tasks. Own permissions, not folded into
            `customers`, because a note can belong to a customer, a contract or a
            project and its access must be independent of all three. */

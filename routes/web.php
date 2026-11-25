@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
 use App\Http\Controllers\Credentials\CredentialController;
 use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\Accounting\AccountingController;
+use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\Notes\NoteController;
 use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Projects\ProjectController;
@@ -98,6 +100,52 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:projects.update')->name('update');
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')->name('destroy');
+        });
+
+        // ── فاکتورها (OD-41 §19.6) ────────────────────────────────────
+        Route::prefix('invoices')->name('invoices.')->group(function () {
+            Route::get('/', [InvoiceController::class, 'index'])
+                ->middleware('permission:invoices.view')->name('index');
+            Route::get('/create', [InvoiceController::class, 'create'])
+                ->middleware('permission:invoices.create')->name('create');
+            Route::post('/', [InvoiceController::class, 'store'])
+                ->middleware('permission:invoices.create')->name('store');
+            Route::get('/{invoice}', [InvoiceController::class, 'show'])
+                ->middleware('permission:invoices.view')->name('show');
+            Route::post('/{invoice}/issue', [InvoiceController::class, 'issue'])
+                ->middleware('permission:invoices.issue')->name('issue');
+            Route::post('/{invoice}/payments', [InvoiceController::class, 'recordPayment'])
+                ->middleware('permission:invoices.record_payment')->name('payments.store');
+        });
+
+        // ── حسابداری (OD-41) ──────────────────────────────────────────
+        // Every financial route is sensitive. `accounting.view` gates reading,
+        // `post` writing, and close/reopen separately (§19.2).
+        Route::prefix('accounting')->name('accounting.')->group(function () {
+            Route::get('/chart', [AccountingController::class, 'chart'])
+                ->middleware('permission:accounting.view')->name('chart');
+            Route::get('/trial-balance', [AccountingController::class, 'trialBalance'])
+                ->middleware('permission:accounting.view')->name('trial-balance');
+            Route::get('/profit-loss', [AccountingController::class, 'profitLoss'])
+                ->middleware('permission:accounting.view')->name('profit-loss');
+            Route::get('/balance-sheet', [AccountingController::class, 'balanceSheet'])
+                ->middleware('permission:accounting.view')->name('balance-sheet');
+            Route::get('/journal', [AccountingController::class, 'journal'])
+                ->middleware('permission:accounting.view')->name('journal');
+            Route::get('/journal/{entry}', [AccountingController::class, 'journalShow'])
+                ->middleware('permission:accounting.view')->name('journal.show');
+            Route::get('/payments', [AccountingController::class, 'payments'])
+                ->middleware('permission:accounting.view')->name('payments');
+
+            Route::get('/periods', [AccountingController::class, 'periods'])
+                ->middleware('permission:accounting.view')->name('periods');
+            Route::post('/periods/{period}/close', [AccountingController::class, 'closePeriod'])
+                ->middleware('permission:accounting.close')->name('periods.close');
+            Route::post('/periods/{period}/reopen', [AccountingController::class, 'reopenPeriod'])
+                ->middleware('permission:accounting.reopen')->name('periods.reopen');
+
+            Route::post('/invoices/{invoice}/void', [AccountingController::class, 'voidInvoice'])
+                ->middleware('permission:invoices.void')->name('invoices.void');
         });
 
         // ── کارتابل (EXP-WORKITEM-001) ───────────────────────────────

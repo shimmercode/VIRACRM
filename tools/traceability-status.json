@@ -240,13 +240,13 @@
     "—"
   ],
   "REQ-09.03": [
-    "NOT_IMPLEMENTED",
-    "invoices do not exist",
+    "VERIFIED",
+    "Invoice model + InvoiceController + accounting-flow 19/19",
     "—"
   ],
   "REQ-09.04": [
-    "NOT_IMPLEMENTED",
-    "no reports module",
+    "VERIFIED",
+    "Trial balance + P&L + balance sheet, all from journal_lines",
     "—"
   ],
   "REQ-09.05": [
@@ -260,8 +260,8 @@
     "—"
   ],
   "REQ-09.07": [
-    "NOT_IMPLEMENTED",
-    "no reports",
+    "VERIFIED",
+    "P&L by service and by customer dimensions",
     "—"
   ],
   "REQ-10.01": [
@@ -325,18 +325,18 @@
     "loading/success states partial"
   ],
   "REQ-12.01": [
-    "NOT_IMPLEMENTED",
-    "no invoices",
+    "VERIFIED",
+    "invoices table + controller + issue flow",
     "—"
   ],
   "REQ-12.02": [
-    "NOT_IMPLEMENTED",
-    "no invoices",
+    "VERIFIED",
+    "controlled INV-1405-NNNN numbering at issue",
     "—"
   ],
   "REQ-12.03": [
-    "NOT_IMPLEMENTED",
-    "no invoices",
+    "VERIFIED",
+    "payment_state separate from invoice status (§19.4)",
     "—"
   ],
   "REQ-12.04": [
@@ -366,7 +366,7 @@
   ],
   "REQ-12.09": [
     "NOT_IMPLEMENTED",
-    "no invoices",
+    "invoice PDF pending mPDF slice",
     "—"
   ],
   "REQ-13.01": [

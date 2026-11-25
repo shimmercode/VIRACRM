@@ -9,14 +9,29 @@
  * files themselves contain no SQLite-specific SQL and are portable.
  *
  * Usage:
- *   php tools/migrate.php --fresh     # drop and rebuild database/database.sqlite
- *   php tools/migrate.php             # run pending migrations
+ *   php tools/migrate.php --fresh           # drop and rebuild database/database.sqlite
+ *   php tools/migrate.php                   # run pending migrations
+ *   php tools/migrate.php --db=path/to.sqlite  # target another SQLite file
  */
 
 $root = dirname(__DIR__);
 require $root . '/vendor/autoload.php';
 
 $dbPath = $root . '/database/database.sqlite';
+
+// `--db=path` targets another SQLite file (the review database, a flow copy).
+// Without it the tool would only ever migrate the default database, and every
+// other environment would silently keep running on an old schema.
+foreach (array_slice($argv, 1) as $arg) {
+    if (str_starts_with($arg, '--db=')) {
+        $dbPath = substr($arg, 5);
+
+        if (! str_starts_with($dbPath, '/')) {
+            $dbPath = $root . '/' . $dbPath;
+        }
+    }
+}
+
 $fresh = in_array('--fresh', $argv, true);
 
 if ($fresh && file_exists($dbPath)) {

@@ -124,13 +124,22 @@ return [
             'enabled' => true,
         ],
 
+        // OD-41 — the ledger and its reports.
         [
             'label' => 'حسابداری',
-            'icon' => 'banknote',
-            'route' => null,
-            'permission' => 'payroll.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'icon' => 'chart',
+            'route' => 'accounting.chart',
+            'permission' => 'accounting.view',
+            'enabled' => true,
+        ],
+
+        // OD-41 §19.6 — invoices.
+        [
+            'label' => 'فاکتورها',
+            'icon' => 'document',
+            'route' => 'invoices.index',
+            'permission' => 'invoices.view',
+            'enabled' => true,
         ],
 
         [
