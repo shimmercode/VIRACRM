@@ -800,3 +800,81 @@ a.v-stat:focus-visible {
     font-weight: var(--vira-weight-bold);
     margin-block-end: var(--vira-space-2);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   OD-16 — PAYROLL SURFACES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The headline figure of a payslip. It is the number an employee checks first,
+   so it gets the primary brand surface rather than another grey row in the
+   definition list. Not a chart, not a gauge — one honest number. */
+.v-netbox {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-1);
+    margin-block: var(--vira-space-4);
+    padding: var(--vira-space-4);
+    color: #fff;
+    background: var(--vira-primary);
+    border-radius: var(--vira-radius);
+}
+
+.v-netbox__label {
+    font-size: var(--vira-text-xs);
+    opacity: 0.82;
+}
+
+.v-netbox__value {
+    font-size: var(--vira-text-lg);
+    font-weight: var(--vira-weight-bold);
+    font-variant-numeric: tabular-nums;
+    /* Money is LTR digits inside an RTL page; without this the currency word
+       and the number swap places at line breaks. */
+    direction: ltr;
+    text-align: right;
+    unicode-bidi: isolate;
+}
+
+/* A row of small forms side by side — paying a month has three actions that are
+   siblings (build, compute, publish), and stacking them full-width pushed the
+   table off the first screen. */
+.v-actionsrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--vira-space-3);
+}
+
+/* One-line entry form (add a payroll line, create a period). Wraps instead of
+   overflowing at 390px, which is where a flex row with min-widths breaks. */
+.v-inlineform {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--vira-space-3);
+}
+
+.v-inlineform .v-field {
+    margin: 0;
+}
+
+@media (max-width: 575px) {
+    .v-inlineform,
+    .v-actionsrow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .v-inlineform .v-field,
+    .v-inlineform .v-input,
+    .v-inlineform .v-select {
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    .v-inlineform .v-btn,
+    .v-actionsrow .v-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

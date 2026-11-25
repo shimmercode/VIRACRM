@@ -32,6 +32,18 @@
                 <x-alert type="warning" :dismissible="true">{{ session('warning') }}</x-alert>
             @endif
 
+            {{-- A REFUSED ACTION IS NOT THE SAME AS A VALIDATION ERROR.
+                 `back()->with('error', ...)` is how a service says "I will not do
+                 that" — a published payroll cannot be recomputed, a period is
+                 already closed, a void was refused. Without this block every one
+                 of those messages was written to the session and then thrown
+                 away, so the page simply reloaded unchanged and looked broken.
+                 It is separate from the $errors summary below because it is not
+                 a field error and must appear even when validation passed. --}}
+            @if (session('error'))
+                <x-alert type="danger" :dismissible="true" role="alert">{{ session('error') }}</x-alert>
+            @endif
+
             {{-- A failed login or a refused action must be visible but must not
                  reveal internals, so only the message is shown. --}}
             @if (session('status'))

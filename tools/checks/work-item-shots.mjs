@@ -92,6 +92,24 @@ const PAGES = [
     text: ['فاکتورها'],
     classes: ['v-filterbar'],
   },
+  // OD-16 — the HR surfaces. The payroll period page is the densest new screen
+  // (four money columns plus action forms), and the payslip editor carries a
+  // definition list beside a full form, which is where the two-column detail
+  // grid has to collapse cleanly at 390px.
+  {
+    key: 'employees',
+    url: '/employees',
+    text: ['پرسنل'],
+    classes: ['v-filterbar'],
+  },
+  {
+    key: 'payroll',
+    url: '/payroll',
+    text: ['حقوق و دستمزد'],
+    // `v-inlineform` is the side-by-side year/month/button row, which is the one
+    // construct on this page that can overflow a 390px viewport.
+    classes: ['v-inlineform'],
+  },
 ];
 
 const flow = await startBrowserFlow('work-item-shots');

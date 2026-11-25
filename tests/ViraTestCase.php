@@ -145,7 +145,8 @@ abstract class ViraTestCase
         }
     }
 
-    public function assertCount(int $expected, array $actual, string $message = ''): void
+    /** Accepts arrays and any Countable (Eloquent collections included). */
+    public function assertCount(int $expected, array|\Countable $actual, string $message = ''): void
     {
         $this->assertSame($expected, count($actual), $message !== '' ? $message : 'Unexpected item count');
     }

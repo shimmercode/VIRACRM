@@ -100,6 +100,8 @@ class ChartOfAccountsSeeder extends Seeder
     public const VAT_PURCHASE = '1-1-04';
     public const VAT_SALES = '2-1-02';
     public const PAYROLL_PAYABLE = '2-1-03';
+    /** Advances and deductions withheld from a payslip. */
+    public const OTHER_CURRENT_LIABILITY = '2-1-05';
     public const CUSTOMER_ADVANCE = '2-1-04';
     public const PAYABLE_VENDOR = '2-1-01';
     public const REVENUE_SEO = '4-1-01';

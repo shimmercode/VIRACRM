@@ -7,6 +7,8 @@ use App\Http\Controllers\Credentials\CredentialController;
 use App\Http\Controllers\Customers\CustomerController;
 use App\Http\Controllers\Accounting\AccountingController;
 use App\Http\Controllers\Invoices\InvoiceController;
+use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\PayrollController;
 use App\Http\Controllers\Notes\NoteController;
 use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Projects\ProjectController;
@@ -146,6 +148,56 @@ Route::middleware(['auth'])->group(function () {
 
             Route::post('/invoices/{invoice}/void', [AccountingController::class, 'voidInvoice'])
                 ->middleware('permission:invoices.void')->name('invoices.void');
+        });
+
+        // ── پرسنل (§15 / REQ-07) ─────────────────────────────────────
+        // Personal data, so the whole module sits behind `personnel.view`.
+        // Deleting an employee is a separate grant: it archives a personnel
+        // file, which HR owns but a project manager does not.
+        Route::prefix('employees')->name('employees.')->group(function () {
+            Route::get('/', [EmployeeController::class, 'index'])
+                ->middleware('permission:personnel.view')->name('index');
+            Route::get('/create', [EmployeeController::class, 'create'])
+                ->middleware('permission:personnel.create')->name('create');
+            Route::post('/', [EmployeeController::class, 'store'])
+                ->middleware('permission:personnel.create')->name('store');
+            Route::get('/{employee}', [EmployeeController::class, 'show'])
+                ->middleware('permission:personnel.view')->name('show');
+            Route::get('/{employee}/edit', [EmployeeController::class, 'edit'])
+                ->middleware('permission:personnel.update')->name('edit');
+            Route::put('/{employee}', [EmployeeController::class, 'update'])
+                ->middleware('permission:personnel.update')->name('update');
+            Route::delete('/{employee}', [EmployeeController::class, 'destroy'])
+                ->middleware('permission:personnel.delete')->name('destroy');
+        });
+
+        // ── حقوق و دستمزد (OD-16) ─────────────────────────────────────
+        // Every payroll route carries a SENSITIVE permission (the catalogue
+        // marks payroll.* sensitive) because a payslip is personal financial
+        // data. Publishing is gated separately from editing: the accountant
+        // prepares, the approver commits it to the ledger.
+        Route::prefix('payroll')->name('payroll.')->group(function () {
+            Route::get('/', [PayrollController::class, 'index'])
+                ->middleware('permission:payroll.view')->name('index');
+            Route::post('/periods', [PayrollController::class, 'storePeriod'])
+                ->middleware('permission:payroll.manage')->name('periods.store');
+            Route::get('/periods/{period}', [PayrollController::class, 'show'])
+                ->middleware('permission:payroll.view')->name('show');
+            Route::post('/periods/{period}/build', [PayrollController::class, 'build'])
+                ->middleware('permission:payroll.manage')->name('build');
+            Route::post('/periods/{period}/compute', [PayrollController::class, 'compute'])
+                ->middleware('permission:payroll.manage')->name('compute');
+            Route::post('/periods/{period}/publish', [PayrollController::class, 'publish'])
+                ->middleware('permission:payroll.approve')->name('publish');
+
+            Route::get('/payslips/{payslip}', [PayrollController::class, 'payslip'])
+                ->middleware('permission:payroll.view')->name('payslip');
+            Route::put('/payslips/{payslip}', [PayrollController::class, 'updatePayslip'])
+                ->middleware('permission:payroll.manage')->name('payslip.update');
+            Route::post('/payslips/{payslip}/items', [PayrollController::class, 'storeItem'])
+                ->middleware('permission:payroll.manage')->name('items.store');
+            Route::delete('/items/{item}', [PayrollController::class, 'destroyItem'])
+                ->middleware('permission:payroll.manage')->name('items.destroy');
         });
 
         // ── کارتابل (EXP-WORKITEM-001) ───────────────────────────────

@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
             // open period can record no financial event at all.
             ChartOfAccountsSeeder::class,
             FiscalPeriodSeeder::class,
+            // OD-16 — the approved payroll method. Configuration-grade: a month
+            // must be computed under a named, approved rule so the audit trail
+            // can say which method was in force.
+            PayrollRuleSeeder::class,
         ]);
     }
 }

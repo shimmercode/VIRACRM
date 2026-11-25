@@ -190,11 +190,18 @@
     box-shadow: var(--vira-focus-ring);
 }
 .v-input--invalid,
-.v-textarea--invalid {
+.v-textarea--invalid,
+.v-select--invalid,
+/* Bootstrap's class name is an alias kept for the forms that use it. Without
+   this alias those forms render an invalid field that looks perfectly valid,
+   and the only cue is the small message underneath. */
+.is-invalid {
     border-color: var(--vira-danger);
 }
 .v-input--invalid:focus,
-.v-textarea--invalid:focus {
+.v-textarea--invalid:focus,
+.v-select--invalid:focus,
+.is-invalid:focus {
     box-shadow: var(--vira-focus-ring-danger);
 }
 .v-input[disabled],

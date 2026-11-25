@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T18:27:44.924Z",
+  "generatedAt": "2026-11-25T19:00:18.343Z",
   "widths": [
     390,
     430,
@@ -88,6 +88,28 @@
       "tappable": 5
     },
     {
+      "key": "employees",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "payroll",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "cartable",
       "width": 430,
       "status": 200,
@@ -165,6 +187,28 @@
       "tappable": 5
     },
     {
+      "key": "employees",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "payroll",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "cartable",
       "width": 576,
       "status": 200,
@@ -242,6 +286,28 @@
       "tappable": 5
     },
     {
+      "key": "employees",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "payroll",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "cartable",
       "width": 768,
       "status": 200,
@@ -317,6 +383,28 @@
         "a.v-skip"
       ],
       "tappable": 5
+    },
+    {
+      "key": "employees",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 6
+    },
+    {
+      "key": "payroll",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
     },
     {
       "key": "cartable",
@@ -396,6 +484,28 @@
       "tappable": 6
     },
     {
+      "key": "employees",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 7
+    },
+    {
+      "key": "payroll",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "cartable",
       "width": 1280,
       "status": 200,
@@ -473,6 +583,28 @@
       "tappable": 6
     },
     {
+      "key": "employees",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 7
+    },
+    {
+      "key": "payroll",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "cartable",
       "width": 1440,
       "status": 200,
@@ -548,6 +680,28 @@
         "a.v-skip"
       ],
       "tappable": 6
+    },
+    {
+      "key": "employees",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 7
+    },
+    {
+      "key": "payroll",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
     }
   ]
 }

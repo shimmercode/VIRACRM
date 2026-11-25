@@ -195,28 +195,28 @@
     "—"
   ],
   "REQ-07.01": [
-    "NOT_IMPLEMENTED",
-    "employees table empty",
+    "VERIFIED",
+    "EmployeeController CRUD + policy + 7-width shots + payroll-flow T-PAY-02..06",
     "—"
   ],
   "REQ-07.02": [
-    "BLOCKED",
-    "OD-16 payroll formula",
-    "needs employer decision"
-  ],
-  "REQ-07.03": [
-    "BLOCKED",
-    "no PDF engine",
+    "VERIFIED",
+    "OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula",
     "—"
   ],
+  "REQ-07.03": [
+    "PARTIAL",
+    "payslip views + payroll-flow; PDF (mPDF) still pending",
+    "no PDF engine wired (mPDF slice)"
+  ],
   "REQ-07.04": [
-    "NOT_IMPLEMENTED",
-    "payslips empty",
+    "VERIFIED",
+    "draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27",
     "—"
   ],
   "REQ-07.05": [
-    "NOT_IMPLEMENTED",
-    "no payroll permissions",
+    "VERIFIED",
+    "payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24)",
     "—"
   ],
   "REQ-08.01": [

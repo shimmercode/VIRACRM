@@ -88,22 +88,22 @@ return [
 
     'secondary' => [
 
+        // §15 — personnel file (REQ-07).
         [
             'label' => 'پرسنل',
             'icon' => 'briefcase',
-            'route' => null,
+            'route' => 'employees.index',
             'permission' => 'personnel.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
 
+        // OD-16 — payroll.
         [
             'label' => 'حقوق و دستمزد',
             'icon' => 'banknote',
-            'route' => null,
+            'route' => 'payroll.index',
             'permission' => 'payroll.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
 
         [

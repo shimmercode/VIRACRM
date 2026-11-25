@@ -14,23 +14,23 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 37 | 38.5% |
-| `PARTIAL` | 17 | 17.7% |
+| `VERIFIED` | 41 | 42.7% |
+| `PARTIAL` | 18 | 18.8% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 33 | 34.4% |
-| `BLOCKED` | 7 | 7.3% |
+| `NOT_IMPLEMENTED` | 30 | 31.3% |
+| `BLOCKED` | 5 | 5.2% |
 | **جمع** | **96** | **100%** |
 
 ### اولویت P0 (۳۹ نیازمندی)
 
 | وضعیت | تعداد |
 |-------|------:|
-| `VERIFIED` | 11 |
+| `VERIFIED` | 14 |
 | `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 17 |
-| `BLOCKED` | 4 |
+| `NOT_IMPLEMENTED` | 15 |
+| `BLOCKED` | 3 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۱ مورد اثبات‌شده** و **۱۷ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۴ مورد اثبات‌شده** و **۱۵ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -140,16 +140,16 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `EMP-001` | `REQ-07.01` | پرونده پرسنل | P1 | doc | **`NOT_IMPLEMENTED`** | employees table empty | — | M1–M8 |
+| `EMP-001` | `REQ-07.01` | پرونده پرسنل | P1 | doc | **`VERIFIED`** | EmployeeController CRUD + policy + 7-width shots + payroll-flow T-PAY-02..06 | — | — |
 
 ### Payroll
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `PAY-001` | `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | P0 | doc | **`BLOCKED`** | OD-16 payroll formula | needs employer decision | خارجی |
-| `PAY-002` | `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | P1 | doc | **`BLOCKED`** | no PDF engine | — | خارجی |
-| `PAY-003` | `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | P0 | doc | **`NOT_IMPLEMENTED`** | payslips empty | — | M1–M8 |
-| `PAY-004` | `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | P0 | doc | **`NOT_IMPLEMENTED`** | no payroll permissions | — | M1–M8 |
+| `PAY-001` | `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | P0 | doc | **`VERIFIED`** | OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula | — | — |
+| `PAY-002` | `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | P1 | doc | **`PARTIAL`** | payslip views + payroll-flow; PDF (mPDF) still pending | no PDF engine wired (mPDF slice) | M1/M3 |
+| `PAY-003` | `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | P0 | doc | **`VERIFIED`** | draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27 | — | — |
+| `PAY-004` | `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | P0 | doc | **`VERIFIED`** | payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24) | — | — |
 
 ### Notes
 
@@ -339,9 +339,6 @@
 | `CRED-005` | PDF محرمانه دسترسی‌ها | Credentials | P0 |
 | `PRJ-003` | جداسازی اطلاعات عمومی و محرمانه پروژه | Projects | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
-| `EMP-001` | پرونده پرسنل | Employees | P1 |
-| `PAY-003` | تاریخچه و تثبیت فیش‌ها | Payroll | P0 |
-| `PAY-004` | دسترسی مستقل اطلاعات حقوقی | Payroll | P0 |
 | `SRCH-001` | جستجوی سراسری | Search | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
@@ -367,8 +364,6 @@
 
 | شناسه | عنوان | دلیل انسداد |
 |-------|-------|-------------|
-| `PAY-001` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | OD-16 payroll formula |
-| `PAY-002` | فیش حقوقی ماهانه (PDF فارسی RTL) | no PDF engine |
 | `PDF-001` | خروجی PDF الزامی | no PDF engine + host |
 | `SCH-001` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | H-15 host cron unavailable |
 | `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |

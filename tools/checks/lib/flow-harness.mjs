@@ -191,9 +191,9 @@ export class Flow {
    * Runs against the flow's private database, so no other flow sees it and no
    * file outside `.arena/flows/<name>/` records it.
    */
-  async resetPassword({ username = 'admin', password, mustChange = false } = {}) {
+  async resetPassword({ username = 'admin', password, mustChange = false, role = 'viewer' } = {}) {
     const result = await php(path.join(ROOT, 'tools/checks/flow-user.php'), [
-      this.db, username, password, mustChange ? '1' : '0',
+      this.db, username, password, mustChange ? '1' : '0', role,
     ]);
 
     if (!/^OK /m.test(result.out)) {

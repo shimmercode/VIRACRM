@@ -18,6 +18,11 @@ $dbPath = $argv[1] ?? null;
 $username = $argv[2] ?? null;
 $password = $argv[3] ?? null;
 $mustChange = ($argv[4] ?? '0') === '1';
+// Optional 5th argument: the role code to assign. Without it a non-admin user
+// falls back to `viewer`. A flow that needs to prove "this role can read X but
+// not Y" must be able to choose the role, or it can only ever test one matrix
+// row and will confidently report the wrong thing about the others.
+$roleCode = $argv[5] ?? 'viewer';
 
 if ($dbPath === null || $username === null || $password === null) {
     fwrite(STDERR, "usage: flow-user.php <db-path> <username> <password> <must_change>\n");
@@ -73,16 +78,19 @@ if ($username === 'admin') {
 
 $user->save();
 
-// A superadmin does not need a role; anyone else gets the `viewer` role so the
-// permission checks have something real to reject.
+// A superadmin does not need a role; anyone else gets the requested role (or
+// `viewer`) so the permission checks have something real to reject.
 if ($username !== 'admin') {
-    $viewer = Role::query()->where('code', 'viewer')->first();
+    $role = Role::query()->where('code', $roleCode)->first();
 
-    if ($viewer) {
-        // sync() replaces the pivot rows, so a reused username cannot keep a
-        // role it picked up in an earlier scenario.
-        $user->roles()->sync([$viewer->id]);
+    if ($role === null) {
+        fwrite(STDERR, "no role '{$roleCode}' in {$dbPath}\n");
+        exit(2);
     }
+
+    // sync() replaces the pivot rows, so a reused username cannot keep a role it
+    // picked up in an earlier scenario.
+    $user->roles()->sync([$role->id]);
 }
 
 echo "OK {$username}\n";
