@@ -47,7 +47,7 @@
                                 نوع دسترسی <span class="v-req" aria-hidden="true">*</span>
                             </label>
                             <select id="credential_type_id" name="credential_type_id"
-                                    class="v-select{{ $errors->has('credential_type_id') ? ' is-invalid' : '' }}" required>
+                                    class="v-select" @error('credential_type_id') aria-invalid="true" @enderror required>
                                 <option value="">— انتخاب نوع —</option>
                                 @foreach ($types as $type)
                                     <option value="{{ $type->id }}"
@@ -65,7 +65,7 @@
                             <label class="v-label" for="label">
                                 عنوان <span class="v-req" aria-hidden="true">*</span>
                             </label>
-                            <input id="label" name="label" type="text" class="v-input{{ $errors->has('label') ? ' is-invalid' : '' }}"
+                            <input id="label" name="label" type="text" class="v-input" @error('label') aria-invalid="true" @enderror
                                    value="{{ old('label') }}" required maxlength="120"
                                    placeholder="مثلاً: ورود مدیر وردپرس">
                             @error('label')
@@ -75,7 +75,7 @@
 
                         <div class="v-field">
                             <label class="v-label" for="username">نام کاربری</label>
-                            <input id="username" name="username" type="text" class="v-input{{ $errors->has('username') ? ' is-invalid' : '' }}"
+                            <input id="username" name="username" type="text" class="v-input" @error('username') aria-invalid="true" @enderror
                                    value="{{ old('username') }}" dir="ltr" maxlength="255" autocomplete="off">
                             @error('username')
                                 <p class="v-error">{{ $message }}</p>
@@ -84,7 +84,7 @@
 
                         <div class="v-field">
                             <label class="v-label" for="public_url">نشانی ورود</label>
-                            <input id="public_url" name="public_url" type="url" class="v-input{{ $errors->has('public_url') ? ' is-invalid' : '' }}"
+                            <input id="public_url" name="public_url" type="url" class="v-input" @error('public_url') aria-invalid="true" @enderror
                                    value="{{ old('public_url') }}" dir="ltr" maxlength="255"
                                    placeholder="https://example.com/wp-admin" autocomplete="off">
                             @error('public_url')
@@ -94,7 +94,7 @@
 
                         <div class="v-field v-field--span2">
                             <label class="v-label" for="secret">رمز عبور</label>
-                            <input id="secret" name="secret" type="password" class="v-input{{ $errors->has('secret') ? ' is-invalid' : '' }}"
+                            <input id="secret" name="secret" type="password" class="v-input" @error('secret') aria-invalid="true" @enderror
                                    dir="ltr" maxlength="1000" autocomplete="new-password" data-secret>
                             <p class="v-hint">
                                 می‌توانید خالی بگذارید و بعداً تکمیل کنید، اما تا زمانی که رمز ذخیره نشود وضعیت این دسترسی «ناقص» است.
