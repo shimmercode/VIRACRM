@@ -62,7 +62,10 @@ async function waitForServer(port, timeoutMs = 60_000) {
  *
  * Returns { baseUrl, password, chromium, browser, close }.
  */
-export async function startBrowserFlow(name, { viewport = { width: 1440, height: 900 } } = {}) {
+export async function startBrowserFlow(
+  name,
+  { viewport = { width: 1440, height: 900 }, prepare = null, args = [] } = {},
+) {
   const dir = path.join(FLOW_ROOT, name);
   const db = path.join(dir, 'database.sqlite');
 
@@ -80,6 +83,17 @@ export async function startBrowserFlow(name, { viewport = { width: 1440, height:
 
   if (!/^OK /m.test(prepared.out)) {
     throw new Error(`could not prepare admin for ${name}: ${prepared.out}${prepared.err}`);
+  }
+
+  /*
+   * A suite may need more than one admin account. `prepare` receives this
+   * suite's database path and runs before the server starts, so the fixture it
+   * creates is visible from the first request. Without it, a suite testing the
+   * review roles would have to duplicate the server-start logic — which is how
+   * a leftover test server ended up on a port the preview proxy could reach.
+   */
+  if (typeof prepare === 'function') {
+    await prepare({ db, password });
   }
 
   const port = await freePort();
@@ -122,7 +136,12 @@ export async function startBrowserFlow(name, { viewport = { width: 1440, height:
 
   const browser = await chromium.launch({
     executablePath: process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin',
-    args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--font-render-hinting=none'],
+    args: [
+      '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--font-render-hinting=none',
+      // Suites that need a named origin (a same-origin iframe wrapper) map it
+      // to loopback here rather than editing this file.
+      ...args,
+    ],
     env: {
       ...process.env,
       LD_LIBRARY_PATH: process.env.VIRA_CHROMIUM_LIBS

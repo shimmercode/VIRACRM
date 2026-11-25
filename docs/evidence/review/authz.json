@@ -1,8 +1,6 @@
 {
-  "generatedAt": "2026-11-25T09:53:16.525Z",
-  "base": "http://127.0.0.1:4174",
-  "database": "database/review/crm-review.sqlite",
-  "note": "A6–A8 mutate the REVIEW database only; the baseline database is never opened.",
+  "generatedAt": "2026-11-25T10:45:45.312Z",
+  "note": "Each run uses a private server and a private database copy, discarded afterwards.",
   "results": [
     {
       "id": "A1",
@@ -10,7 +8,6 @@
       "expected": 403,
       "actual": 403,
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "the exact bypass reported earlier"
     },
     {
@@ -19,7 +16,6 @@
       "expected": 403,
       "actual": 403,
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "account_manager lacks users.view"
     },
     {
@@ -28,7 +24,6 @@
       "expected": 403,
       "actual": 403,
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "enforced by route middleware, not by the menu"
     },
     {
@@ -37,7 +32,6 @@
       "expected": "deny",
       "actual": "deny",
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "status 200, landed on /login"
     },
     {
@@ -46,7 +40,6 @@
       "expected": "deny",
       "actual": "deny",
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "HTTP 401"
     },
     {
@@ -55,8 +48,7 @@
       "expected": 403,
       "actual": 403,
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
-      "note": "employee promoted from viewer in the DB; create now refused"
+      "note": "employee demoted to viewer in the DB; create now refused"
     },
     {
       "id": "A7",
@@ -64,7 +56,6 @@
       "expected": "yes",
       "actual": "yes",
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "before 403, after 200 with the same cookie"
     },
     {
@@ -73,7 +64,6 @@
       "expected": "deny",
       "actual": "deny",
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "before 200, after deactivation 403 → /customers"
     },
     {
@@ -82,7 +72,6 @@
       "expected": 403,
       "actual": 403,
       "ok": true,
-      "verdict": "ALLOWED/DENIED as expected",
       "note": "org preview requires users.view; manager lacks it"
     }
   ]

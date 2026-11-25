@@ -14,95 +14,109 @@
  * product uses. These nine tests exist to prove it — and to keep proving it,
  * because a regression here produces no error, only a quiet leak.
  *
- * Each test reports two things: the HTTP status and the authorization verdict.
+ * SERVER ISOLATION
+ * ----------------
+ * This suite used to talk to a shared server on a fixed port. When the review
+ * environment began forcing https for the preview proxy, this suite's plain-http
+ * browser broke; worse, a leftover test server on :4174 was reachable from the
+ * preview proxy and the client opened it by accident. Both problems disappear
+ * when the suite owns its server and stops it afterwards — so it uses the same
+ * startBrowserFlow() helper as every other browser suite.
  *
- * Usage: node tools/checks/review-authz.mjs [--base URL] [--db PATH]
+ * Usage: node tools/checks/review-authz.mjs
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { reviewPassword } from './lib/review-credentials.mjs';
+import { spawnSync } from 'node:child_process';
+import { startBrowserFlow } from './lib/browser-flow.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const arg = (n, d) => {
-  const i = process.argv.indexOf(n);
-  return i !== -1 ? process.argv[i + 1] : d;
-};
+const OUT = path.join(ROOT, 'docs/evidence/review/authz.json');
 
 /*
- * This suite talks to plain http://127.0.0.1 and must keep doing so, so it needs
- * a server that does NOT have VIRA_FORCE_HTTPS set.
+ * The review accounts are seeded into the review database by a guarded
+ * seeder that deliberately refuses any other file. This suite runs against a
+ * private copy of the baseline, which has only `admin` and `viewer1` — so it
+ * creates the four identities it needs itself, in its own throwaway database.
  *
- * The shared review server on :4173 sets it, because the preview proxy serves
- * an https page. Reusing that server here made every browser request emit
- * `https://` asset URLs on a plain-http origin: the stylesheet never loaded and
- * the login form's click never navigated, which surfaced as a Playwright
- * timeout rather than as an obvious scheme mismatch.
- *
- * A private server on a private port, started by run-all, keeps this suite
- * testing authorization rather than environment configuration.
+ * Roles and permissions already exist in the baseline (4 roles, 39
+ * permissions); only the accounts and their role links are added. The password
+ * is the suite's own random one, hashed here, and never printed.
  */
-const BASE = arg('--base', process.env.VIRA_AUTHZ_BASE || 'http://127.0.0.1:4173');
-const DB = path.resolve(ROOT, arg('--db', 'database/review/crm-review.sqlite'));
-const HOST = arg('--host', process.env.VIRA_REVIEW_HOST || '');
-const OUT = path.join(ROOT, 'docs/evidence/review/authz.json');
-const PASSWORD = reviewPassword();
+const REVIEW_ACCOUNTS = [
+  ['review.admin', 'manager', 1],
+  ['review.manager', 'manager', 0],
+  ['review.employee', 'account_manager', 0],
+  ['review.viewer', 'viewer', 0],
+];
 
-/* The demo database must exist; the seeder refuses to touch any other file. */
-const seeded = spawnSync(process.execPath,
-  [path.join(ROOT, 'docs/tools/php-cli.mjs'), path.join(ROOT, 'tools/review-seed.php'), 'seed', DB],
-  { cwd: ROOT, encoding: 'utf8', timeout: 600_000, env: { ...process.env, VIRA_REVIEW_DEMO_PASSWORD: PASSWORD } });
+const prepareReviewAccounts = async ({ db, password }) => {
+  const hash = spawnSync(process.execPath, [
+    path.join(ROOT, 'docs/tools/php-cli.mjs'),
+    path.join(ROOT, 'tools/checks/make-password.php'),
+    password,
+  ], { cwd: ROOT, encoding: 'utf8', timeout: 120_000 });
 
-if (!/SEEDED/.test((seeded.stdout || '') + (seeded.stderr || ''))) {
-  console.error('could not prepare the review database:\n', seeded.stdout, seeded.stderr);
-  process.exit(2);
-}
+  const hashed = (hash.stdout || '').trim().split('\n').pop();
+  if (!hashed || !hashed.startsWith('$2y$')) {
+    throw new Error(`could not hash the password: ${hash.stdout}${hash.stderr}`);
+  }
 
-const requireFrom = createRequire(path.resolve(process.env.VIRA_PLAYWRIGHT || '/tmp/pwuse', 'noop.js'));
-const { chromium } = requireFrom('playwright-core');
+  const { DatabaseSync } = await import('node:sqlite');
+  const conn = new DatabaseSync(db);
+  const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
 
-const browser = await chromium.launch({
-  executablePath: process.env.VIRA_CHROMIUM || '/tmp/chromium/package/chromium-bin',
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-  env: {
-    ...process.env,
-    LD_LIBRARY_PATH: process.env.VIRA_CHROMIUM_LIBS
-      || '/tmp/chromium/libs/lib:/tmp/chromium/libs/lib64',
-  },
+  for (const [username, role, superadmin] of REVIEW_ACCOUNTS) {
+    const email = `${username}@review.invalid`;
+
+    conn.prepare(
+      'INSERT INTO users (name, username, email, password, is_superadmin, is_active, '
+      + 'must_change_password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, 0, ?, ?)',
+    ).run(username, username, email, hashed, superadmin, now, now);
+
+    const uid = conn.prepare('SELECT id FROM users WHERE username = ?').get(username).id;
+    const rid = conn.prepare('SELECT id FROM roles WHERE code = ?').get(role).id;
+    conn.prepare(
+      'INSERT INTO user_roles (user_id, role_id, created_at, updated_at) VALUES (?, ?, ?, ?)',
+    ).run(uid, rid, now, now);
+  }
+
+  conn.close();
+  process.env.VIRA_REVIEW_DEMO_PASSWORD = password;
+};
+
+const flow = await startBrowserFlow('review-authz', {
+  viewport: { width: 1280, height: 900 },
+  prepare: prepareReviewAccounts,
 });
+const BASE = flow.baseUrl;
+const { browser, db } = flow;
 
 const results = [];
 let failures = 0;
-
-const signIn = async (page, username, password = PASSWORD) => {
-  await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
-  await page.fill('input[name=username]', username);
-  await page.fill('input[name=password]', password);
-  await Promise.all([
-    page.waitForLoadState('domcontentloaded'),
-    page.click('button[type=submit]'),
-  ]);
-};
 
 /** Record one assertion with its HTTP status and authorization verdict. */
 const record = (id, name, expected, actual, note = '') => {
   const ok = actual === expected;
   if (!ok) failures += 1;
 
-  const verdict = ok ? 'ALLOWED/DENIED as expected' : 'MISMATCH';
-  results.push({ id, name, expected, actual, ok, verdict, note });
-
-  console.log(`${ok ? 'PASS' : 'FAIL'}  ${id.padEnd(14)} ${name.padEnd(46)} `
+  results.push({ id, name, expected, actual, ok, note });
+  console.log(`${ok ? 'PASS' : 'FAIL'}  ${id.padEnd(4)} ${name.padEnd(46)} `
     + `expected ${expected}, got ${actual}${note ? '  — ' + note : ''}`);
 };
 
-/** A fresh signed-in context for one identity. */
+/** Sign in as one of the seeded review accounts. */
 const asUser = async (username) => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
-  await signIn(page, username);
+  await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
+  await page.fill('input[name=username]', username);
+  await page.fill('input[name=password]', process.env.VIRA_REVIEW_DEMO_PASSWORD);
+  await Promise.all([
+    page.waitForLoadState('domcontentloaded'),
+    page.click('button[type=submit]'),
+  ]);
   return { ctx, page };
 };
 
@@ -140,7 +154,7 @@ const asUser = async (username) => {
   const res = await page.goto(`${BASE}/review/preview/org`, { waitUntil: 'domcontentloaded' });
   // A guest is redirected to the login page (302 → login), never served the page.
   const ok = res.status() === 302 || page.url().includes('/login');
-  record('A4', 'Unauthorized direct URL (no session)', ok ? 'deny' : 200, ok ? 'deny' : 200,
+  record('A4', 'Unauthorized direct URL (no session)', ok ? 'deny' : '200', ok ? 'deny' : '200',
     `status ${res.status()}, landed on ${new URL(page.url()).pathname}`);
   await ctx.close();
 }
@@ -163,25 +177,24 @@ const asUser = async (username) => {
 /*
  * These three use the database directly because the product has no UI for
  * changing a role. That is honest: they test the authorization layer, not a
- * screen that does not exist. The user is mutated in the REVIEW database only.
+ * screen that does not exist. The database here is this suite's own private
+ * copy, discarded when the run ends.
  */
-// ESM module: import, not require(). require() alongside top-level await
-// is ambiguous and throws ERR_AMBIGUOUS_MODULE_SYNTAX.
 const { DatabaseSync } = await import('node:sqlite');
 
 const setRole = (username, roleCode) => {
-  const db = new DatabaseSync(DB);
-  const uid = db.prepare('SELECT id FROM users WHERE username = ?').get(username).id;
-  db.prepare('DELETE FROM user_roles WHERE user_id = ?').run(uid);
-  const rid = db.prepare('SELECT id FROM roles WHERE code = ?').get(roleCode).id;
-  db.prepare('INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)').run(uid, rid);
-  db.close();
+  const conn = new DatabaseSync(db);
+  const uid = conn.prepare('SELECT id FROM users WHERE username = ?').get(username).id;
+  conn.prepare('DELETE FROM user_roles WHERE user_id = ?').run(uid);
+  const rid = conn.prepare('SELECT id FROM roles WHERE code = ?').get(roleCode).id;
+  conn.prepare('INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)').run(uid, rid);
+  conn.close();
 };
 
 const setActive = (username, active) => {
-  const db = new DatabaseSync(DB);
-  db.prepare('UPDATE users SET is_active = ? WHERE username = ?').run(active ? 1 : 0, username);
-  db.close();
+  const conn = new DatabaseSync(db);
+  conn.prepare('UPDATE users SET is_active = ? WHERE username = ?').run(active ? 1 : 0, username);
+  conn.close();
 };
 
 // ── A6: role revocation mid-session ─────────────────────────────────────
@@ -190,14 +203,14 @@ const setActive = (username, active) => {
   const { ctx, page } = await asUser('review.employee');
   const res = await page.goto(`${BASE}/customers/create`, { waitUntil: 'domcontentloaded' });
   record('A6', 'Role revocation — demoted user loses create', 403, res.status(),
-    'employee promoted from viewer in the DB; create now refused');
+    'employee demoted to viewer in the DB; create now refused');
   await ctx.close();
   setRole('review.employee', 'account_manager');  // restore
 }
 
 // ── A7: session issued BEFORE the role changed ──────────────────────────
 {
-  // Sign in while the user still has the privilege...
+  // Sign in while the user still has no create right...
   const { ctx, page } = await asUser('review.viewer');
   const before = await page.goto(`${BASE}/customers/create`, { waitUntil: 'domcontentloaded' });
   // ...then change the role underneath the LIVE session.
@@ -228,7 +241,7 @@ const setActive = (username, active) => {
 
 // ── A9: missing permission declared in the catalogue ────────────────────
 {
-  // review.manager has manager role but no users.view in RoleSeeder? It does not.
+  // review.manager holds the manager role, which does not carry users.view.
   const { ctx, page } = await asUser('review.manager');
   const res = await page.goto(`${BASE}/review/preview/org`, { waitUntil: 'domcontentloaded' });
   record('A9', 'Missing permission — catalogue gate holds', 403, res.status(),
@@ -236,24 +249,20 @@ const setActive = (username, active) => {
   await ctx.close();
 }
 
-await browser.close();
+await flow.close();
 
-// ── the catalogue index itself must stay reachable for every role ───────
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, JSON.stringify({
   generatedAt: new Date().toISOString(),
-  base: BASE,
-  database: path.relative(ROOT, DB),
-  note: 'A6–A8 mutate the REVIEW database only; the baseline database is never opened.',
+  note: 'Each run uses a private server and a private database copy, discarded afterwards.',
   results,
 }, null, 2));
 
 /*
- * The runner parses "N/M passed" and nothing else. An earlier version of this
- * summary printed "passed 9" / "tests 9", which the runner could not read — so
- * the suite ran, exited 0, and contributed zero assertions to the total. The
- * number stayed at 979 while a nine-test suite reported success, which is the
- * precise shape of a silent pass. Print the format the runner understands.
+ * The runner parses "N/M passed" and nothing else. An earlier version printed
+ * "passed 9" / "tests 9", which the runner could not read — so the suite ran,
+ * exited 0, and contributed zero assertions to the total. That is the exact
+ * shape of a silent pass.
  */
 console.log('\n--- summary ---');
 console.log(`${results.length - failures}/${results.length} passed`);
