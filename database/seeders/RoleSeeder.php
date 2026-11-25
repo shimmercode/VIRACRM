@@ -29,7 +29,9 @@ class RoleSeeder extends Seeder
                 'contracts.view_financials', 'contracts.finalize',
                 'projects.view', 'projects.create', 'projects.update', 'projects.delete',
                 'projects.view_financials',
-                'credentials.view', 'credentials.manage',
+                // reveal is the sensitive one: reading a stored password back.
+                // It is granted to the manager only, deliberately (see docs).
+                'credentials.view', 'credentials.manage', 'credentials.reveal',
                 'notes.view', 'notes.create', 'notes.update', 'notes.delete',
                 'reports.view', 'reports.export',
                 'files.download', 'files.download_confidential',

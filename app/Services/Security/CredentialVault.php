@@ -34,11 +34,47 @@ use RuntimeException;
  */
 class CredentialVault
 {
-    private EnvelopeEncrypter $cipher;
+    /**
+     * Null when no key is configured.
+     *
+     * WHY NULL AND NOT AN EXCEPTION IN THE CONSTRUCTOR: the vault is resolved
+     * from the container. Throwing here would turn "this host has no key" from
+     * a condition the UI can explain into a 500 on every credential page —
+     * including the read-only list, which needs no key at all to show labels
+     * and usernames. A page that says "storage is disabled, here is why" is
+     * strictly more useful than a stack trace, and it is the same refusal:
+     * store() and reveal() still throw before touching any data.
+     */
+    private ?EnvelopeEncrypter $cipher;
 
     public function __construct(?EnvelopeEncrypter $cipher = null)
     {
-        $this->cipher = $cipher ?? self::fromConfig();
+        $this->cipher = $cipher ?? self::tryFromConfig();
+    }
+
+    /** Whether this instance can encrypt and decrypt. */
+    public function isReady(): bool
+    {
+        return $this->cipher !== null;
+    }
+
+    /** The encrypter, or a refusal. Used by every path that touches a secret. */
+    private function cipher(): EnvelopeEncrypter
+    {
+        if ($this->cipher === null) {
+            throw new RuntimeException(
+                'VIRA_CREDENTIAL_KEY is not set. Credential storage is disabled because '
+                . 'storing secrets without a key would write plaintext.'
+            );
+        }
+
+        return $this->cipher;
+    }
+
+    /** Build from configuration, or null when the key is absent. */
+    public static function tryFromConfig(): ?EnvelopeEncrypter
+    {
+        return self::isConfigured() ? self::fromConfig() : null;
     }
 
     /**
@@ -77,10 +113,15 @@ class CredentialVault
      */
     public function store(ProjectCredential $credential, string $field, string $plaintext): CredentialValue
     {
+        $cipher = $this->cipher();
+
         // Encrypt BEFORE touching the database, so a crypto failure cannot
         // leave a half-written record behind.
-        $ciphertext = $this->cipher->encrypt($plaintext);
-        $fingerprint = $this->cipher->fingerprint($plaintext);
+
+        // Encrypt BEFORE touching the database, so a crypto failure cannot
+        // leave a half-written record behind.
+        $ciphertext = $cipher->encrypt($plaintext);
+        $fingerprint = $cipher->fingerprint($plaintext);
 
         return DB::transaction(function () use ($credential, $field, $ciphertext, $fingerprint) {
             CredentialValue::query()
@@ -119,7 +160,7 @@ class CredentialVault
             return null;
         }
 
-        return $this->cipher->decrypt($row->ciphertext);
+        return $this->cipher()->decrypt($row->ciphertext);
     }
 
     /** Every decrypted field, for a caller that has already been authorised. */
@@ -128,7 +169,7 @@ class CredentialVault
         $out = [];
 
         foreach ($credential->values()->get() as $row) {
-            $out[$row->field] = $this->cipher->decrypt($row->ciphertext);
+            $out[$row->field] = $this->cipher()->decrypt($row->ciphertext);
         }
 
         return $out;
@@ -162,7 +203,7 @@ class CredentialVault
             return false;
         }
 
-        return hash_equals($row->fingerprint, $this->cipher->fingerprint($candidate));
+        return hash_equals($row->fingerprint, $this->cipher()->fingerprint($candidate));
     }
 
     public function forget(ProjectCredential $credential, string $field): void

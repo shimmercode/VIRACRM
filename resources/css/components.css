@@ -2733,3 +2733,46 @@ a.v-list__main:hover .v-list__title {
         transition: none;
     }
 }
+
+/* ── Credential secret output ─────────────────────────────────────────── */
+/*
+ * The revealed password. Empty by default: the element exists so the button
+ * has an aria-controls target, but it holds no text until the user asks for
+ * it. `:empty` collapses it so an unrevealed row keeps its height.
+ *
+ * Monospace with `unicode-bidi: plaintext` so a mixed Latin/digit password is
+ * not reordered by the RTL context around it — a password that *displays*
+ * reversed is a support ticket every single time.
+ */
+.v-secret {
+    display: inline-block;
+    margin-inline-start: var(--vira-space-2);
+    font-family: var(--vira-font-mono);
+    font-size: var(--vira-text-sm);
+    unicode-bidi: plaintext;
+    color: var(--vira-ink);
+    word-break: break-all;
+}
+
+.v-secret:empty {
+    display: none;
+}
+
+/*
+ * A revealed secret is a shoulder-surfing risk, so it is marked visually.
+ * Colour is never the only signal — the parent cell also shows the
+ * "پنهان کردن" button label — but it draws the eye to the thing that should
+ * be closed.
+ */
+.v-secret.is-visible {
+    padding: 2px var(--vira-space-2);
+    background: var(--vira-warning-soft);
+    border: 1px dashed var(--vira-warning-border);
+    border-radius: var(--vira-radius-sm);
+}
+
+/* Cards that follow another block on the same page need a gap; the project
+   detail pages rely on the grid for this, standalone pages do not. */
+.v-card--spaced {
+    margin-top: var(--vira-space-4);
+}

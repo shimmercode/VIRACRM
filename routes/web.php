@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
+use App\Http\Controllers\Credentials\CredentialController;
 use App\Http\Controllers\Customers\CustomerController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
@@ -95,6 +96,30 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:projects.update')->name('update');
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')->name('destroy');
+        });
+
+        // ── Project credentials (§6, REQ-06.01/03/04) ──────────────────
+        // Three distinct permissions rather than one. Seeing the list is
+        // `view`, writing a secret is `manage`, and reading one back is
+        // `reveal` — a separate, audited, sensitive action.
+        Route::prefix('projects/{project}/credentials')->name('credentials.')->group(function () {
+            Route::get('/', [CredentialController::class, 'index'])
+                ->middleware('permission:credentials.view')->name('index');
+            Route::get('/create', [CredentialController::class, 'create'])
+                ->middleware('permission:credentials.manage')->name('create');
+            Route::post('/', [CredentialController::class, 'store'])
+                ->middleware('permission:credentials.manage')->name('store');
+            Route::get('/{credential}/edit', [CredentialController::class, 'edit'])
+                ->middleware('permission:credentials.manage')->name('edit');
+            Route::put('/{credential}', [CredentialController::class, 'update'])
+                ->middleware('permission:credentials.manage')->name('update');
+            Route::delete('/{credential}', [CredentialController::class, 'destroy'])
+                ->middleware('permission:credentials.manage')->name('destroy');
+
+            // POST, never GET: a secret must not appear in a URL, a browser
+            // history entry or a proxy log (REQ-06.04).
+            Route::post('/{credential}/reveal', [CredentialController::class, 'reveal'])
+                ->middleware('permission:credentials.reveal')->name('reveal');
         });
     });
 });

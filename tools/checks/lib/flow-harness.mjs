@@ -122,9 +122,15 @@ export class Flow {
       cookie: [...this.jar].map(([k, v]) => `${k}=${v}`).join('; '),
       post_body: spec.body || '',
       content_type: spec.body ? 'application/x-www-form-urlencoded' : '',
-      accept: 'text/html',
+      accept: spec.accept || 'text/html',
       // The isolation: this flow's database, applied before bootstrap.
-      env: { DB_DATABASE: this.db },
+      //
+      // A caller's own `env` is merged on top rather than replaced — otherwise
+      // passing `VIRA_CREDENTIAL_KEY` would silently drop DB_DATABASE and the
+      // request would run against the SHARED database instead of the flow's
+      // copy. That is precisely the isolation failure this harness exists to
+      // prevent, so the merge direction is not incidental.
+      env: { DB_DATABASE: this.db, ...(spec.env || {}) },
     }));
 
     return new Promise((resolve) => {

@@ -296,6 +296,93 @@
         summary.focus({ preventScroll: false });
     }
 
+    // ── Credential reveal ─────────────────────────────────────────────────
+    /*
+     * REQ-06.04. The secret is NOT in the page when it loads; the button asks
+     * the server for it.
+     *
+     * WHY A POST AND WHY NO URL PARAMETER: a `GET /credentials/7?show=1` would
+     * put the password in the address bar, in browser history, in the
+     * `Referer` header of every later request from that page, and in any
+     * reverse-proxy access log. This sends a POST to a fixed URL and reads the
+     * value out of a JSON body that the server marks `no-store`.
+     *
+     * The value is written with textContent, never innerHTML: a password
+     * containing `<script>` is a legitimate password, and rendering it as
+     * markup would be a stored XSS with the attacker choosing the payload.
+     *
+     * It is hidden again after 30 seconds and on tab blur. Shoulder-surfing is
+     * the realistic threat against a shared office PC, and a password that
+     * stays on screen all afternoon is the failure mode.
+     */
+    var REVEAL_TIMEOUT_MS = 30000;
+
+    function initCredentialReveal() {
+        var buttons = document.querySelectorAll('[data-reveal]');
+        if (!buttons.length) return;
+
+        var csrf = document.querySelector('meta[name="csrf-token"]');
+        var token = csrf ? csrf.getAttribute('content') : '';
+
+        buttons.forEach(function (btn) {
+            var output = document.getElementById(btn.getAttribute('data-reveal-target'));
+            var timer = null;
+
+            function hide() {
+                if (timer) { clearTimeout(timer); timer = null; }
+                if (output) {
+                    output.textContent = '';
+                    output.classList.remove('is-visible');
+                }
+                btn.textContent = 'مشاهدهٔ رمز';
+                btn.setAttribute('aria-expanded', 'false');
+            }
+
+            btn.addEventListener('click', function () {
+                if (output && output.textContent) { hide(); return; }
+
+                btn.disabled = true;
+                btn.setAttribute('aria-busy', 'true');
+
+                fetch(btn.getAttribute('data-reveal'), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (!data.ok) {
+                            if (output) { output.textContent = data.message || 'خطا در دریافت رمز'; }
+                            return;
+                        }
+                        if (output) {
+                            output.textContent = data.value;
+                            output.classList.add('is-visible');
+                        }
+                        btn.textContent = 'پنهان کردن';
+                        btn.setAttribute('aria-expanded', 'true');
+                        timer = setTimeout(hide, REVEAL_TIMEOUT_MS);
+                    })
+                    .catch(function () {
+                        if (output) { output.textContent = 'ارتباط با سرور برقرار نشد.'; }
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        btn.removeAttribute('aria-busy');
+                    });
+            });
+
+            // Leaving the tab is a strong signal the user is done looking.
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) hide();
+            });
+        });
+    }
+
     function boot() {
         initPasswordToggles();
         initDrawer();
@@ -307,6 +394,7 @@
         initDateMasks();
         initProjectTypeSwitch();
         initErrorSummary();
+        initCredentialReveal();
     }
 
     if (document.readyState === 'loading') {

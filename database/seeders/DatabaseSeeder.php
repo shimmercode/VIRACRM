@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             ContractTypeSeeder::class,
             ProjectDictionarySeeder::class,
+            CredentialTypeSeeder::class,
             SettingsSeeder::class,
             UserSeeder::class,
         ]);

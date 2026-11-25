@@ -23,13 +23,20 @@
             </p>
         </div>
 
-        @if (auth()->user()->hasPermission('projects.update'))
-            <div class="v-pagehead__actions">
+        <div class="v-pagehead__actions">
+            {{-- REQ-06.01: credentials live on the project page because that is
+                 where the person needing them is already standing. --}}
+            @if (auth()->user()->hasPermission('credentials.view'))
+                <a href="{{ route('credentials.index', $project) }}" class="v-btn v-btn--ghost">
+                    <x-icon name="key" :size="16" /> دسترسی‌ها
+                </a>
+            @endif
+            @if (auth()->user()->hasPermission('projects.update'))
                 <a href="{{ route('projects.edit', $project) }}" class="v-btn v-btn--primary">
                     <x-icon name="edit" :size="16" /> ویرایش
                 </a>
-            </div>
-        @endif
+            @endif
+        </div>
     </header>
 
     <div class="v-detail-grid">
