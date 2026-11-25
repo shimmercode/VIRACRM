@@ -96,6 +96,30 @@ final class PermissionCatalog
             'download' => ['دریافت فایل‌های پیوست', false],
             'download_confidential' => ['دریافت فایل محرمانه', true],
         ],
+
+        /*
+         * EXP-WORKITEM-001 — the کارتابل.
+         *
+         * `view` is separate from `complete` on purpose: reading that an
+         * invoice is due is ordinary operational awareness; declaring it
+         * issued is the act that creates revenue, so it is a distinct grant.
+         */
+        'work_items' => [
+            'view' => ['مشاهده کارتابل', false],
+            'complete' => ['بستن مورد کارتابل', false],
+            'create' => ['ایجاد مورد کارتابل', false],
+            'cancel' => ['لغو مورد کارتابل', false],
+        ],
+
+        /* EXP-NOTE-001 — notes and tasks. Own permissions, not folded into
+           `customers`, because a note can belong to a customer, a contract or a
+           project and its access must be independent of all three. */
+        'notes' => [
+            'view' => ['مشاهده یادداشت‌ها', false],
+            'create' => ['ایجاد یادداشت', false],
+            'update' => ['ویرایش یادداشت', false],
+            'delete' => ['حذف یادداشت', false],
+        ],
     ];
 
     /**

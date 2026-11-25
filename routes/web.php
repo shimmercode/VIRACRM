@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
 use App\Http\Controllers\Credentials\CredentialController;
 use App\Http\Controllers\Customers\CustomerController;
+use App\Http\Controllers\Notes\NoteController;
+use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -96,6 +98,44 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:projects.update')->name('update');
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')->name('destroy');
+        });
+
+        // ── کارتابل (EXP-WORKITEM-001) ───────────────────────────────
+        // Reading the cartable is ordinary operational awareness; closing an
+        // item is a separate grant because it is what records revenue.
+        Route::prefix('work-items')->name('work-items.')->group(function () {
+            Route::get('/', [WorkItemController::class, 'index'])
+                ->middleware('permission:work_items.view')->name('index');
+            Route::post('/', [WorkItemController::class, 'store'])
+                ->middleware('permission:work_items.create')->name('store');
+            Route::get('/{workItem}', [WorkItemController::class, 'show'])
+                ->middleware('permission:work_items.view')->name('show');
+            Route::post('/{workItem}/complete', [WorkItemController::class, 'complete'])
+                ->middleware('permission:work_items.complete')->name('complete');
+            Route::post('/{workItem}/reopen', [WorkItemController::class, 'reopen'])
+                ->middleware('permission:work_items.complete')->name('reopen');
+            Route::post('/{workItem}/cancel', [WorkItemController::class, 'cancel'])
+                ->middleware('permission:work_items.cancel')->name('cancel');
+        });
+
+        // ── یادداشت و وظیفه (EXP-NOTE-001) ───────────────────────────
+        Route::prefix('notes')->name('notes.')->group(function () {
+            Route::get('/', [NoteController::class, 'index'])
+                ->middleware('permission:notes.view')->name('index');
+            Route::get('/create', [NoteController::class, 'create'])
+                ->middleware('permission:notes.create')->name('create');
+            Route::post('/', [NoteController::class, 'store'])
+                ->middleware('permission:notes.create')->name('store');
+            Route::get('/{note}/edit', [NoteController::class, 'edit'])
+                ->middleware('permission:notes.update')->name('edit');
+            Route::put('/{note}', [NoteController::class, 'update'])
+                ->middleware('permission:notes.update')->name('update');
+            Route::post('/{note}/complete', [NoteController::class, 'complete'])
+                ->middleware('permission:notes.update')->name('complete');
+            Route::post('/{note}/reopen', [NoteController::class, 'reopen'])
+                ->middleware('permission:notes.update')->name('reopen');
+            Route::delete('/{note}', [NoteController::class, 'destroy'])
+                ->middleware('permission:notes.delete')->name('destroy');
         });
 
         // ── Project credentials (§6, REQ-06.01/03/04) ──────────────────

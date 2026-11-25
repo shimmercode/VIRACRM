@@ -14,8 +14,8 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 28 | 29.2% |
-| `PARTIAL` | 20 | 20.8% |
+| `VERIFIED` | 31 | 32.3% |
+| `PARTIAL` | 17 | 17.7% |
 | `NOT_VERIFIED` | 2 | 2.1% |
 | `NOT_IMPLEMENTED` | 39 | 40.6% |
 | `BLOCKED` | 7 | 7.3% |
@@ -65,10 +65,10 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `DSH-001` | `REQ-02.01` | شاخص‌های داشبورد | P1 | doc | **`PARTIAL`** | DashboardController + dashboard.blade | 4 of 6 KPI groups | M1/M3 |
-| `DSH-002` | `REQ-02.02` | کارتابل تفکیک‌شده | P1 | doc | **`PARTIAL`** | work_items (9 rows) | inbox UI missing | M1/M3 |
+| `DSH-002` | `REQ-02.02` | کارتابل تفکیک‌شده | P1 | doc | **`VERIFIED`** | کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28 | — | — |
 | `DSH-003` | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | P1 | doc | **`NOT_IMPLEMENTED`** | — | no notification->record link | M1–M8 |
 | `DSH-004` | `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | P1 | doc | **`VERIFIED`** | settings-driven expiringWithin() | — | — |
-| `DSH-005` | `REQ-02.05` | داشبورد خلوت و کاربردی | P1 | doc | **`PARTIAL`** | dashboard exists | no "done" group | M1/M3 |
+| `DSH-005` | `REQ-02.05` | داشبورد خلوت و کاربردی | P1 | doc | **`VERIFIED`** | state=done/cancelled filter; done group reachable via /work-items?state=done | — | — |
 
 ### Customers
 
@@ -155,8 +155,8 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `NOTE-001` | `REQ-08.01` | مدل یادداشت | P1 | doc | **`VERIFIED`** | Note model + migration | — | — |
-| `NOTE-002` | `REQ-08.02` | چرخه عمر یادداشت | P1 | doc | **`PARTIAL`** | model exists | no UI | M1/M3 |
+| `NOTE-001` | `REQ-08.01` | مدل یادداشت | P1 | doc | **`VERIFIED`** | Note model + migration + full CRUD controller | — | — |
+| `NOTE-002` | `REQ-08.02` | چرخه عمر یادداشت | P1 | doc | **`VERIFIED`** | notes index/create/edit + complete/reopen; T-WI-08..13 | — | — |
 
 ### Search
 

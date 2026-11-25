@@ -1,1 +1,482 @@
-{"REQ-01.01": ["VERIFIED", "Laravel standalone; no WP tables/deps", "—"], "REQ-01.02": ["VERIFIED", "own DB + subdomain; routes/web.php", "—"], "REQ-01.03": ["PARTIAL", "storage/ outside root", "public/ uploads not yet used"], "REQ-01.04": ["NOT_VERIFIED", "no dependency on main site found", "not exercised"], "REQ-02.01": ["PARTIAL", "DashboardController + dashboard.blade", "4 of 6 KPI groups"], "REQ-02.02": ["PARTIAL", "work_items (9 rows)", "inbox UI missing"], "REQ-02.03": ["NOT_IMPLEMENTED", "—", "no notification->record link"], "REQ-02.04": ["VERIFIED", "settings-driven expiringWithin()", "—"], "REQ-02.05": ["PARTIAL", "dashboard exists", "no \"done\" group"], "REQ-03.01": ["VERIFIED", "customers table + type kolah", "—"], "REQ-03.02": ["VERIFIED", "legal-person fields", "—"], "REQ-03.03": ["VERIFIED", "customers/_form dynamic by type", "—"], "REQ-03.04": ["VERIFIED", "status lifecycle column", "—"], "REQ-03.05": ["PARTIAL", "duplicate detection partial", "no domain-level uniqueness proof"], "REQ-03.06": ["VERIFIED", "Customer::scopeSearch + indexes", "—"], "REQ-03.07": ["PARTIAL", "customers/show.blade", "no contracts/projects tabs"], "REQ-03.08": ["PARTIAL", "single customer record", "credentials not joined"], "REQ-04.01": ["VERIFIED", "Contract model + migration", "—"], "REQ-04.02": ["VERIFIED", "ContractStatus enum + derived Expiring", "—"], "REQ-04.03": ["VERIFIED", "hasMany contracts on customer", "—"], "REQ-04.04": ["NOT_IMPLEMENTED", "ContractTemplate model only", "no CRUD/UI"], "REQ-04.05": ["NOT_IMPLEMENTED", "no template engine", "—"], "REQ-04.06": ["NOT_IMPLEMENTED", "no content editor", "—"], "REQ-04.07": ["NOT_IMPLEMENTED", "ContractVersion model only", "finalise flow absent"], "REQ-04.08": ["NOT_IMPLEMENTED", "versions table empty", "no history UI"], "REQ-04.09": ["VERIFIED", "search + sort whitelist + filters", "—"], "REQ-04.10": ["NOT_IMPLEMENTED", "no renewal route", "—"], "REQ-05.01": ["VERIFIED", "projects module + type-driven form + 28-assert flow", "—"], "REQ-05.02": ["PARTIAL", "seo_project_details model + form + detail page", "no keyword CRUD UI yet"], "REQ-05.03": ["PARTIAL", "project_keywords model + normalize + read-only list", "no add/remove UI"], "REQ-05.04": ["VERIFIED", "design_project_details model + form + detail page", "—"], "REQ-05.05": ["NOT_IMPLEMENTED", "project_assignments empty", "—"], "REQ-06.01": ["VERIFIED", "ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21", "—"], "REQ-06.02": ["NOT_IMPLEMENTED", "credential_requirements empty", "—"], "REQ-06.03": ["VERIFIED", "AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML", "—"], "REQ-06.04": ["PARTIAL", "reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet", "audit recorded, not browsable"], "REQ-06.05": ["NOT_IMPLEMENTED", "no PDF engine", "—"], "REQ-06.06": ["NOT_IMPLEMENTED", "no public/secret split", "—"], "REQ-06.07": ["NOT_IMPLEMENTED", "no files", "—"], "REQ-07.01": ["NOT_IMPLEMENTED", "employees table empty", "—"], "REQ-07.02": ["BLOCKED", "OD-16 payroll formula", "needs employer decision"], "REQ-07.03": ["BLOCKED", "no PDF engine", "—"], "REQ-07.04": ["NOT_IMPLEMENTED", "payslips empty", "—"], "REQ-07.05": ["NOT_IMPLEMENTED", "no payroll permissions", "—"], "REQ-08.01": ["VERIFIED", "Note model + migration", "—"], "REQ-08.02": ["PARTIAL", "model exists", "no UI"], "REQ-09.01": ["NOT_IMPLEMENTED", "per-entity search only", "no global search"], "REQ-09.02": ["VERIFIED", "contract & project filter bars + sort whitelist", "—"], "REQ-09.03": ["NOT_IMPLEMENTED", "invoices do not exist", "—"], "REQ-09.04": ["NOT_IMPLEMENTED", "no reports module", "—"], "REQ-09.05": ["BLOCKED", "no PDF engine + host", "—"], "REQ-09.06": ["NOT_IMPLEMENTED", "no Excel export", "—"], "REQ-09.07": ["NOT_IMPLEMENTED", "no reports", "—"], "REQ-10.01": ["VERIFIED", "users(2) + login", "—"], "REQ-10.02": ["PARTIAL", "roles(4) seeded", "no role UI"], "REQ-10.03": ["VERIFIED", "39 permissions + permission: on 22/22 routes", "—"], "REQ-10.04": ["VERIFIED", "audit_logs 232 rows, incl. denied", "—"], "REQ-10.05": ["PARTIAL", "bcrypt, CSRF, throttle", "no security headers test"], "REQ-10.06": ["NOT_IMPLEMENTED", "no uploads", "—"], "REQ-10.07": ["VERIFIED", "session regenerate + password change", "—"], "REQ-11.01": ["VERIFIED", "dir=rtl, fa, 7 widths", "—"], "REQ-11.02": ["VERIFIED", "23 components + 21 DS asserts", "—"], "REQ-11.03": ["NOT_VERIFIED", "font loaded", "licence not confirmed"], "REQ-11.04": ["VERIFIED", "JalaliDate + fa-date component", "—"], "REQ-11.05": ["PARTIAL", "empty/error states exist", "loading/success states partial"], "REQ-12.01": ["NOT_IMPLEMENTED", "no invoices", "—"], "REQ-12.02": ["NOT_IMPLEMENTED", "no invoices", "—"], "REQ-12.03": ["NOT_IMPLEMENTED", "no invoices", "—"], "REQ-12.04": ["NOT_IMPLEMENTED", "no seo reports", "—"], "REQ-12.05": ["PARTIAL", "ReminderSchedule unique_key design", "not wired"], "REQ-12.06": ["PARTIAL", "reschedule logic designed", "not wired"], "REQ-12.07": ["BLOCKED", "H-15 host cron unavailable", "no scheduler wired"], "REQ-12.08": ["BLOCKED", "OD-07 timezone decision pending", "—"], "REQ-12.09": ["NOT_IMPLEMENTED", "no invoices", "—"], "REQ-13.01": ["VERIFIED", "Gate A accepted", "—"], "REQ-13.02": ["BLOCKED", "14/21 host checks unknown", "—"], "REQ-14.01": ["VERIFIED", "22 suites, lock, repeat, no mock", "—"], "REQ-14.02": ["VERIFIED", "this document", "—"], "REQ-15.01": ["PARTIAL", "settings table (4) read by app", "no settings UI"], "REQ-15.02": ["NOT_IMPLEMENTED", "zero backup code", "—"], "REQ-15.03": ["NOT_IMPLEMENTED", "no installer", "—"], "REQ-15.04": ["PARTIAL", "9 migrations, reversible", "no versioning policy doc"], "REQ-15.05": ["PARTIAL", ".env driven", "no hardcode audit"], "REQ-15.06": ["PARTIAL", "docs/ extensive", "user manual missing"], "REQ-16.01": ["NOT_IMPLEMENTED", "docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002)", "F0: معماری؛ بدون کد"], "REQ-16.02": ["NOT_IMPLEMENTED", "docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16)", "بدون UI فایل"], "REQ-16.03": ["NOT_IMPLEMENTED", "docs/FILE_PERMISSION_MATRIX.md §4", "بدون resolver؛ CRM گروه/دپارتمان ندارد"], "REQ-16.04": ["NOT_IMPLEMENTED", "docs/FILE_VERSIONING_AND_LOCKING.md §2", "بدون جدول نسخه"], "REQ-16.05": ["NOT_IMPLEMENTED", "docs/FILE_VERSIONING_AND_LOCKING.md §4", "بدون جدول قفل"], "REQ-16.06": ["BLOCKED", "docs/WEBDAV_VPS_ARCHITECTURE.md", "VPS آزمایشی موجود نیست"], "REQ-16.07": ["NOT_IMPLEMENTED", "docs/FILE_STORAGE_ARCHITECTURE.md §10", "storage قابل تعویض طراحی شد"], "REQ-16.08": ["NOT_IMPLEMENTED", "docs/FILE_WORKSPACE_ERD.md §2.15", "بدون کد آپلود"], "REQ-16.09": ["NOT_IMPLEMENTED", "docs/FILE_WORKSPACE_ERD.md §2.12", "file_relations طراحی شد"], "REQ-16.10": ["NOT_IMPLEMENTED", "docs/FILE_SECURITY_THREAT_MODEL.md", "۲۹ تهدید ثبت شد، ۰ کنترل پیاده"], "REQ-16.11": ["NOT_IMPLEMENTED", "docs/FILE_WORKSPACE_ERD.md §2.14", "بدون retention"], "REQ-16.12": ["NOT_IMPLEMENTED", "docs/ONLINE_OFFICE_INTEGRATION.md", "F3؛ طبق تصمیم کارفرما"]}
+{
+  "REQ-01.01": [
+    "VERIFIED",
+    "Laravel standalone; no WP tables/deps",
+    "—"
+  ],
+  "REQ-01.02": [
+    "VERIFIED",
+    "own DB + subdomain; routes/web.php",
+    "—"
+  ],
+  "REQ-01.03": [
+    "PARTIAL",
+    "storage/ outside root",
+    "public/ uploads not yet used"
+  ],
+  "REQ-01.04": [
+    "NOT_VERIFIED",
+    "no dependency on main site found",
+    "not exercised"
+  ],
+  "REQ-02.01": [
+    "PARTIAL",
+    "DashboardController + dashboard.blade",
+    "4 of 6 KPI groups"
+  ],
+  "REQ-02.02": [
+    "VERIFIED",
+    "کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28",
+    "—"
+  ],
+  "REQ-02.03": [
+    "NOT_IMPLEMENTED",
+    "—",
+    "no notification->record link"
+  ],
+  "REQ-02.04": [
+    "VERIFIED",
+    "settings-driven expiringWithin()",
+    "—"
+  ],
+  "REQ-02.05": [
+    "VERIFIED",
+    "state=done/cancelled filter; done group reachable via /work-items?state=done",
+    "—"
+  ],
+  "REQ-03.01": [
+    "VERIFIED",
+    "customers table + type kolah",
+    "—"
+  ],
+  "REQ-03.02": [
+    "VERIFIED",
+    "legal-person fields",
+    "—"
+  ],
+  "REQ-03.03": [
+    "VERIFIED",
+    "customers/_form dynamic by type",
+    "—"
+  ],
+  "REQ-03.04": [
+    "VERIFIED",
+    "status lifecycle column",
+    "—"
+  ],
+  "REQ-03.05": [
+    "PARTIAL",
+    "duplicate detection partial",
+    "no domain-level uniqueness proof"
+  ],
+  "REQ-03.06": [
+    "VERIFIED",
+    "Customer::scopeSearch + indexes",
+    "—"
+  ],
+  "REQ-03.07": [
+    "PARTIAL",
+    "customers/show.blade",
+    "no contracts/projects tabs"
+  ],
+  "REQ-03.08": [
+    "PARTIAL",
+    "single customer record",
+    "credentials not joined"
+  ],
+  "REQ-04.01": [
+    "VERIFIED",
+    "Contract model + migration",
+    "—"
+  ],
+  "REQ-04.02": [
+    "VERIFIED",
+    "ContractStatus enum + derived Expiring",
+    "—"
+  ],
+  "REQ-04.03": [
+    "VERIFIED",
+    "hasMany contracts on customer",
+    "—"
+  ],
+  "REQ-04.04": [
+    "NOT_IMPLEMENTED",
+    "ContractTemplate model only",
+    "no CRUD/UI"
+  ],
+  "REQ-04.05": [
+    "NOT_IMPLEMENTED",
+    "no template engine",
+    "—"
+  ],
+  "REQ-04.06": [
+    "NOT_IMPLEMENTED",
+    "no content editor",
+    "—"
+  ],
+  "REQ-04.07": [
+    "NOT_IMPLEMENTED",
+    "ContractVersion model only",
+    "finalise flow absent"
+  ],
+  "REQ-04.08": [
+    "NOT_IMPLEMENTED",
+    "versions table empty",
+    "no history UI"
+  ],
+  "REQ-04.09": [
+    "VERIFIED",
+    "search + sort whitelist + filters",
+    "—"
+  ],
+  "REQ-04.10": [
+    "NOT_IMPLEMENTED",
+    "no renewal route",
+    "—"
+  ],
+  "REQ-05.01": [
+    "VERIFIED",
+    "projects module + type-driven form + 28-assert flow",
+    "—"
+  ],
+  "REQ-05.02": [
+    "PARTIAL",
+    "seo_project_details model + form + detail page",
+    "no keyword CRUD UI yet"
+  ],
+  "REQ-05.03": [
+    "PARTIAL",
+    "project_keywords model + normalize + read-only list",
+    "no add/remove UI"
+  ],
+  "REQ-05.04": [
+    "VERIFIED",
+    "design_project_details model + form + detail page",
+    "—"
+  ],
+  "REQ-05.05": [
+    "NOT_IMPLEMENTED",
+    "project_assignments empty",
+    "—"
+  ],
+  "REQ-06.01": [
+    "VERIFIED",
+    "ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21",
+    "—"
+  ],
+  "REQ-06.02": [
+    "NOT_IMPLEMENTED",
+    "credential_requirements empty",
+    "—"
+  ],
+  "REQ-06.03": [
+    "VERIFIED",
+    "AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML",
+    "—"
+  ],
+  "REQ-06.04": [
+    "PARTIAL",
+    "reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet",
+    "audit recorded, not browsable"
+  ],
+  "REQ-06.05": [
+    "NOT_IMPLEMENTED",
+    "no PDF engine",
+    "—"
+  ],
+  "REQ-06.06": [
+    "NOT_IMPLEMENTED",
+    "no public/secret split",
+    "—"
+  ],
+  "REQ-06.07": [
+    "NOT_IMPLEMENTED",
+    "no files",
+    "—"
+  ],
+  "REQ-07.01": [
+    "NOT_IMPLEMENTED",
+    "employees table empty",
+    "—"
+  ],
+  "REQ-07.02": [
+    "BLOCKED",
+    "OD-16 payroll formula",
+    "needs employer decision"
+  ],
+  "REQ-07.03": [
+    "BLOCKED",
+    "no PDF engine",
+    "—"
+  ],
+  "REQ-07.04": [
+    "NOT_IMPLEMENTED",
+    "payslips empty",
+    "—"
+  ],
+  "REQ-07.05": [
+    "NOT_IMPLEMENTED",
+    "no payroll permissions",
+    "—"
+  ],
+  "REQ-08.01": [
+    "VERIFIED",
+    "Note model + migration + full CRUD controller",
+    "—"
+  ],
+  "REQ-08.02": [
+    "VERIFIED",
+    "notes index/create/edit + complete/reopen; T-WI-08..13",
+    "—"
+  ],
+  "REQ-09.01": [
+    "NOT_IMPLEMENTED",
+    "per-entity search only",
+    "no global search"
+  ],
+  "REQ-09.02": [
+    "VERIFIED",
+    "contract & project filter bars + sort whitelist",
+    "—"
+  ],
+  "REQ-09.03": [
+    "NOT_IMPLEMENTED",
+    "invoices do not exist",
+    "—"
+  ],
+  "REQ-09.04": [
+    "NOT_IMPLEMENTED",
+    "no reports module",
+    "—"
+  ],
+  "REQ-09.05": [
+    "BLOCKED",
+    "no PDF engine + host",
+    "—"
+  ],
+  "REQ-09.06": [
+    "NOT_IMPLEMENTED",
+    "no Excel export",
+    "—"
+  ],
+  "REQ-09.07": [
+    "NOT_IMPLEMENTED",
+    "no reports",
+    "—"
+  ],
+  "REQ-10.01": [
+    "VERIFIED",
+    "users(2) + login",
+    "—"
+  ],
+  "REQ-10.02": [
+    "PARTIAL",
+    "roles(4) seeded",
+    "no role UI"
+  ],
+  "REQ-10.03": [
+    "VERIFIED",
+    "39 permissions + permission: on 22/22 routes",
+    "—"
+  ],
+  "REQ-10.04": [
+    "VERIFIED",
+    "audit_logs 232 rows, incl. denied",
+    "—"
+  ],
+  "REQ-10.05": [
+    "PARTIAL",
+    "bcrypt, CSRF, throttle",
+    "no security headers test"
+  ],
+  "REQ-10.06": [
+    "NOT_IMPLEMENTED",
+    "no uploads",
+    "—"
+  ],
+  "REQ-10.07": [
+    "VERIFIED",
+    "session regenerate + password change",
+    "—"
+  ],
+  "REQ-11.01": [
+    "VERIFIED",
+    "dir=rtl, fa, 7 widths",
+    "—"
+  ],
+  "REQ-11.02": [
+    "VERIFIED",
+    "23 components + 21 DS asserts",
+    "—"
+  ],
+  "REQ-11.03": [
+    "NOT_VERIFIED",
+    "font loaded",
+    "licence not confirmed"
+  ],
+  "REQ-11.04": [
+    "VERIFIED",
+    "JalaliDate + fa-date component",
+    "—"
+  ],
+  "REQ-11.05": [
+    "PARTIAL",
+    "empty/error states exist",
+    "loading/success states partial"
+  ],
+  "REQ-12.01": [
+    "NOT_IMPLEMENTED",
+    "no invoices",
+    "—"
+  ],
+  "REQ-12.02": [
+    "NOT_IMPLEMENTED",
+    "no invoices",
+    "—"
+  ],
+  "REQ-12.03": [
+    "NOT_IMPLEMENTED",
+    "no invoices",
+    "—"
+  ],
+  "REQ-12.04": [
+    "NOT_IMPLEMENTED",
+    "no seo reports",
+    "—"
+  ],
+  "REQ-12.05": [
+    "PARTIAL",
+    "ReminderSchedule unique_key design",
+    "not wired"
+  ],
+  "REQ-12.06": [
+    "PARTIAL",
+    "reschedule logic designed",
+    "not wired"
+  ],
+  "REQ-12.07": [
+    "BLOCKED",
+    "H-15 host cron unavailable",
+    "no scheduler wired"
+  ],
+  "REQ-12.08": [
+    "BLOCKED",
+    "OD-07 timezone decision pending",
+    "—"
+  ],
+  "REQ-12.09": [
+    "NOT_IMPLEMENTED",
+    "no invoices",
+    "—"
+  ],
+  "REQ-13.01": [
+    "VERIFIED",
+    "Gate A accepted",
+    "—"
+  ],
+  "REQ-13.02": [
+    "BLOCKED",
+    "14/21 host checks unknown",
+    "—"
+  ],
+  "REQ-14.01": [
+    "VERIFIED",
+    "22 suites, lock, repeat, no mock",
+    "—"
+  ],
+  "REQ-14.02": [
+    "VERIFIED",
+    "this document",
+    "—"
+  ],
+  "REQ-15.01": [
+    "PARTIAL",
+    "settings table (4) read by app",
+    "no settings UI"
+  ],
+  "REQ-15.02": [
+    "NOT_IMPLEMENTED",
+    "zero backup code",
+    "—"
+  ],
+  "REQ-15.03": [
+    "NOT_IMPLEMENTED",
+    "no installer",
+    "—"
+  ],
+  "REQ-15.04": [
+    "PARTIAL",
+    "9 migrations, reversible",
+    "no versioning policy doc"
+  ],
+  "REQ-15.05": [
+    "PARTIAL",
+    ".env driven",
+    "no hardcode audit"
+  ],
+  "REQ-15.06": [
+    "PARTIAL",
+    "docs/ extensive",
+    "user manual missing"
+  ],
+  "REQ-16.01": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002)",
+    "F0: معماری؛ بدون کد"
+  ],
+  "REQ-16.02": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16)",
+    "بدون UI فایل"
+  ],
+  "REQ-16.03": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_PERMISSION_MATRIX.md §4",
+    "بدون resolver؛ CRM گروه/دپارتمان ندارد"
+  ],
+  "REQ-16.04": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_VERSIONING_AND_LOCKING.md §2",
+    "بدون جدول نسخه"
+  ],
+  "REQ-16.05": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_VERSIONING_AND_LOCKING.md §4",
+    "بدون جدول قفل"
+  ],
+  "REQ-16.06": [
+    "BLOCKED",
+    "docs/WEBDAV_VPS_ARCHITECTURE.md",
+    "VPS آزمایشی موجود نیست"
+  ],
+  "REQ-16.07": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_STORAGE_ARCHITECTURE.md §10",
+    "storage قابل تعویض طراحی شد"
+  ],
+  "REQ-16.08": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_WORKSPACE_ERD.md §2.15",
+    "بدون کد آپلود"
+  ],
+  "REQ-16.09": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_WORKSPACE_ERD.md §2.12",
+    "file_relations طراحی شد"
+  ],
+  "REQ-16.10": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_SECURITY_THREAT_MODEL.md",
+    "۲۹ تهدید ثبت شد، ۰ کنترل پیاده"
+  ],
+  "REQ-16.11": [
+    "NOT_IMPLEMENTED",
+    "docs/FILE_WORKSPACE_ERD.md §2.14",
+    "بدون retention"
+  ],
+  "REQ-16.12": [
+    "NOT_IMPLEMENTED",
+    "docs/ONLINE_OFFICE_INTEGRATION.md",
+    "F3؛ طبق تصمیم کارفرما"
+  ]
+}

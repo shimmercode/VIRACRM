@@ -41,6 +41,60 @@ class WorkItem extends Model
         'report' => 'گزارش ماهانه',
     ];
 
+    /**
+     * The lifecycle of one obligation.
+     *
+     * `pending` is the only state that appears in the کارتابل as work to do.
+     * `done` records an outcome (and, for invoices, the number and amount).
+     * `cancelled` is for an obligation that should not happen — the client
+     * stopped the retainer, the month was billed elsewhere — and it is kept
+     * separate from `done` so "how many invoices did we actually issue" is
+     * never inflated by cancellations.
+     */
+    public const STATES = [
+        'pending' => 'در انتظار',
+        'done' => 'انجام‌شده',
+        'cancelled' => 'لغو شده',
+    ];
+
+    /**
+     * Close an obligation, recording who did it and when.
+     *
+     * WHY THIS IS A METHOD AND NOT `$item->update([...])` AT THE CALL SITE:
+     * the dashboard, the project page and the کارتابل page all offer this
+     * action, and three copies of "set done_at, set done_by, set state, save"
+     * is three chances to forget one of them. The state column and done_at
+     * must never disagree — an item with done_at set but state still `pending`
+     * would keep appearing in the open list forever.
+     */
+    public function complete(int $userId, ?string $notes = null, array $invoice = []): void
+    {
+        $this->forceFill([
+            'state' => 'done',
+            'done_at' => now(),
+            'done_by' => $userId,
+            'completion_notes' => $notes,
+            'invoice_number' => $invoice['number'] ?? $this->invoice_number,
+            'invoice_amount' => $invoice['amount'] ?? $this->invoice_amount,
+            'invoice_issue_date' => $invoice['issue_date'] ?? $this->invoice_issue_date,
+        ])->save();
+    }
+
+    /** Reopen a closed obligation — a mistake must be correctable. */
+    public function reopen(): void
+    {
+        $this->forceFill([
+            'state' => 'pending',
+            'done_at' => null,
+            'done_by' => null,
+        ])->save();
+    }
+
+    public function isOpen(): bool
+    {
+        return $this->done_at === null && $this->state !== 'cancelled';
+    }
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);

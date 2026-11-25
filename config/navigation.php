@@ -55,6 +55,15 @@ return [
             'enabled' => true,
         ],
 
+        // EXP-WORKITEM-001 — the recurring obligations of every project.
+        [
+            'label' => 'کارتابل',
+            'icon' => 'check',
+            'route' => 'work-items.index',
+            'permission' => 'work_items.view',
+            'enabled' => true,
+        ],
+
         [
             'label' => 'دسترسی‌های پروژه',
             'icon' => 'key',
@@ -106,13 +115,13 @@ return [
             'note' => 'به‌زودی',
         ],
 
+        // EXP-NOTE-001 — no longer a placeholder.
         [
-            'label' => 'یادداشت و یادآوری',
+            'label' => 'یادداشت و وظیفه',
             'icon' => 'bell',
-            'route' => null,
+            'route' => 'notes.index',
             'permission' => 'notes.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
 
         [

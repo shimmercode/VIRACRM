@@ -36,6 +36,8 @@ class RoleSeeder extends Seeder
                 'reports.view', 'reports.export',
                 'files.download', 'files.download_confidential',
                 'personnel.view',
+                // EXP-WORKITEM-001: the manager closes obligations and audits them.
+                'work_items.view', 'work_items.complete', 'work_items.create', 'work_items.cancel',
             ],
         ],
 
@@ -49,6 +51,8 @@ class RoleSeeder extends Seeder
                 'payroll.view', 'payroll.manage',
                 'reports.view',
                 'notes.view', 'notes.create',
+                // EXP-WORKITEM-001: invoices are the accountant's own obligation.
+                'work_items.view', 'work_items.complete', 'work_items.create',
             ],
         ],
 
@@ -62,6 +66,7 @@ class RoleSeeder extends Seeder
                 'credentials.view', 'credentials.manage',
                 'notes.view', 'notes.create', 'notes.update',
                 'files.download',
+                'work_items.view', 'work_items.complete', 'work_items.create',
             ],
         ],
 
@@ -73,6 +78,7 @@ class RoleSeeder extends Seeder
                 'contracts.view',
                 'projects.view',
                 'notes.view',
+                'work_items.view',
             ],
         ],
     ];
