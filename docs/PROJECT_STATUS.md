@@ -110,8 +110,8 @@
 | Audit (نوشتن) | `PASS` | ۲۳۲ ردیف، شامل ۲۷ `denied` |
 | Audit (مشاهده) | `NOT IMPLEMENTED` | — |
 | `EnvelopeEncrypter` (واحد) | `PASS` | ۲۶ اَسِرشِن |
-| **Encryption در مسیر واقعی** | **`FAIL`** | **هیچ‌جا فراخوانی نمی‌شود** |
-| Key Management | `NOT IMPLEMENTED` | `VIRA_CREDENTIAL_KEY` وجود ندارد |
+| **Encryption در مسیر واقعی** | **`PASS`** | `CredentialVault` تنها مسیر؛ `credential-flow` ۲۱/۲۱ |
+| Key Management | `PARTIAL` | `VIRA_CREDENTIAL_KEY` جدا از `APP_KEY`؛ چرخش کلید نیست |
 | Backup/Restore | `NOT IMPLEMENTED` | — |
 
 ---
@@ -120,7 +120,7 @@
 
 | سرویس | تست | در برنامه؟ |
 |-------|-----|-----------|
-| `EnvelopeEncrypter` | ۲۶ | ❌ |
+| `EnvelopeEncrypter` | ۲۶ | ✅ متصل شد (`CredentialVault`) |
 | `ReminderSchedule` | ۴۳ | ❌ |
 | Scheduler (`routes/console.php`) | — | ❌ فقط `inspire` |
 | PDF engine | — | ❌ نصب نیست |
