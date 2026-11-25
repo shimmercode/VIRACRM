@@ -13,6 +13,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 /**
  * REVIEW ENVIRONMENT ONLY — the data set the client reviews.
@@ -47,8 +48,40 @@ class ReviewDemoSeeder extends Seeder
     /** Prefix that marks every row this seeder owns. */
     public const TAG = 'RVW';
 
-    /** Demo password for every review account. Printed by tools/review-seed.php. */
-    public const DEMO_PASSWORD = 'ReviewDemo!2026';
+    /**
+     * Demo password for every review account.
+     *
+     * NOT a constant any more. The previous version hardcoded 'ReviewDemo!2026'
+     * in the class, which meant the credential lived in Git for anyone to read
+     * and could never be rotated without a commit. It now comes from
+     * VIRA_REVIEW_DEMO_PASSWORD (an environment secret), and the seeder refuses
+     * to run without one — a review environment with a known-in-repo password is
+     * exactly what the directive forbids.
+     *
+     * Rotation: change the variable, run `seed` again. Every account is
+     * re-hashed in place; nothing else changes.
+     */
+    public static function demoPassword(): string
+    {
+        $password = (string) env('VIRA_REVIEW_DEMO_PASSWORD', '');
+
+        if ($password === '') {
+            throw new RuntimeException(
+                'VIRA_REVIEW_DEMO_PASSWORD is not set. The review seeder will not '
+                . 'create accounts with a hardcoded or empty password. '
+                . 'Set it in .env (and never commit it).'
+            );
+        }
+
+        if (strlen($password) < 16) {
+            throw new RuntimeException(
+                'VIRA_REVIEW_DEMO_PASSWORD must be at least 16 characters; '
+                . 'it protects the account that can see every screen.'
+            );
+        }
+
+        return $password;
+    }
 
     public function run(): void
     {
@@ -99,7 +132,7 @@ class ReviewDemoSeeder extends Seeder
                 [
                     'name' => $name,
                     'email' => $username . '@review.invalid',
-                    'password' => Hash::make(self::DEMO_PASSWORD),
+                    'password' => Hash::make(self::demoPassword()),
                     'is_superadmin' => $superadmin,
                     'is_active' => true,
                     'must_change_password' => false,

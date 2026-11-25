@@ -341,3 +341,220 @@
 .v-review-dim:last-child .v-review-dim__value {
     color: var(--vira-warning);
 }
+
+/* ── layout helpers used by the fifteen new previews ────────────────────── */
+.v-review-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--vira-space-4);
+}
+@media (max-width: 900px) {
+    .v-review-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ── kanban board (notes) ──────────────────────────────────────────────── */
+.v-review-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--vira-space-4);
+}
+.v-review-board__col {
+    background: var(--vira-surface-sunken);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-md);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.v-review-board__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--vira-text-muted);
+    padding: 2px 4px 6px;
+}
+.v-review-board__card {
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-sm);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: var(--vira-shadow-xs);
+}
+.v-review-board__title { font-size: 13px; font-weight: 600; line-height: 1.6; }
+.v-review-board__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+}
+@media (max-width: 900px) {
+    .v-review-board { grid-template-columns: 1fr; }
+}
+
+/* ── bar charts drawn with CSS (CSP forbids chart libraries) ───────────── */
+.v-review-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 220px;
+    padding-top: 8px;
+}
+.v-review-bars__col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+    min-width: 0;
+}
+.v-review-bars__pair {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+.v-review-bars__track {
+    width: 100%;
+    max-width: 26px;
+    height: 100%;
+    background: var(--vira-surface-sunken);
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+.v-review-bars__fill {
+    width: 100%;
+    background: var(--vira-primary);
+    border-radius: 4px 4px 0 0;
+    min-height: 3px;
+}
+.v-review-bars__fill--expense {
+    background: var(--vira-warning);
+}
+.v-review-bars__value { font-size: 10.5px; color: var(--vira-text-muted); }
+.v-review-bars__label {
+    font-size: 11px;
+    color: var(--vira-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* ── horizontal bar rows (receivables aging, status split) ─────────────── */
+.v-review-bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 86px;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+}
+.v-review-bar-row__label { font-size: 12.5px; color: var(--vira-text-muted); }
+.v-review-bar-row__track {
+    height: 10px;
+    background: var(--vira-surface-sunken);
+    border-radius: var(--vira-radius-full);
+    overflow: hidden;
+}
+.v-review-bar-row__fill {
+    height: 100%;
+    border-radius: var(--vira-radius-full);
+    background: var(--vira-primary);
+    min-width: 4px;
+}
+.v-review-bar-row__fill--success { background: var(--vira-success); }
+.v-review-bar-row__fill--info    { background: var(--vira-info); }
+.v-review-bar-row__fill--warning { background: var(--vira-warning); }
+.v-review-bar-row__fill--danger  { background: var(--vira-danger); }
+.v-review-bar-row__fill--neutral { background: var(--vira-border-strong); }
+.v-review-bar-row__value {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    color: var(--vira-text);
+}
+@media (max-width: 576px) {
+    .v-review-bar-row { grid-template-columns: 84px 1fr 64px; }
+    .v-review-bar-row__label { font-size: 11px; }
+}
+
+/* ── permission matrix (roles) ────────────────────────────────────────── */
+.v-review-matrix td { vertical-align: middle; }
+.v-review-matrix__group td {
+    background: var(--vira-surface-sunken);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--vira-text-muted);
+    letter-spacing: .02em;
+}
+.v-review-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 11px;
+    color: var(--vira-text-muted);
+}
+.v-review-check--on {
+    background: var(--vira-success-soft);
+    color: var(--vira-success);
+    border: 1px solid var(--vira-success-border);
+}
+
+/* ── settings accordion ───────────────────────────────────────────────── */
+.v-review-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vira-space-4);
+}
+
+/* ── table alignment helpers used above ───────────────────────────────── */
+.v-table__num { text-align: left; font-variant-numeric: tabular-nums; }
+.v-table__nowrap { white-space: nowrap; }
+
+/* Two modifiers referenced by markup above but not yet declared. */
+.v-review-accordion__section { overflow: hidden; }
+.v-review-bars--pairs .v-review-bars__col { flex: 1 1 0; }
+
+/* ── the way back from a preview to the catalogue and the dashboard ──────
+   Sits above the preview banner. Deliberately quiet: it is navigation, not
+   a warning, and the warning below it must win the eye. */
+.v-review-crumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: var(--vira-text-muted);
+}
+.v-review-crumb a {
+    color: var(--vira-text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color .12s ease, color .12s ease;
+}
+.v-review-crumb a:hover,
+.v-review-crumb a:focus-visible {
+    color: var(--vira-primary);
+    border-bottom-color: var(--vira-primary);
+}
+.v-review-crumb__sep { opacity: .45; }
+.v-review-crumb__current {
+    color: var(--vira-text);
+    font-weight: 500;
+}

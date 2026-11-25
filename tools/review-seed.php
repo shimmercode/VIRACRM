@@ -74,7 +74,9 @@ switch ($command) {
             echo '  ' . str_pad($u['username'], 18) . $u['role']
                 . ($u['superadmin'] ? ' + superadmin' : '') . "\n";
         }
-        echo '  password ............ ' . Database\Seeders\ReviewDemoSeeder::DEMO_PASSWORD . "\n";
+        // Never print the password: the operator supplied it, and printing it
+        // would put it in shell history and CI logs. Print where it lives.
+        echo "  password ............ از VIRA_REVIEW_DEMO_PASSWORD خوانده شد (چاپ نمی‌شود)\n";
         break;
 
     case 'reset':

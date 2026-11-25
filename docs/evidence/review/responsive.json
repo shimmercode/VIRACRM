@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T19:24:28.348Z",
+  "generatedAt": "2026-11-25T07:09:28.391Z",
   "base": "http://127.0.0.1:4173",
   "widths": [
     390,
@@ -139,6 +139,216 @@
     },
     {
       "width": 390,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 390,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -335,6 +545,216 @@
     },
     {
       "width": 430,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 430,
+      "clientWidth": 430,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 430,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -531,6 +951,216 @@
     },
     {
       "width": 576,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 576,
+      "clientWidth": 576,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 576,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -727,6 +1357,216 @@
     },
     {
       "width": 768,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 768,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -923,6 +1763,216 @@
     },
     {
       "width": 1024,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1024,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -1119,6 +2169,216 @@
     },
     {
       "width": 1280,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1280,
       "key": "preview-drive",
       "url": "/review/preview/drive",
       "status": 200,
@@ -1303,6 +2563,216 @@
       "width": 1440,
       "key": "projects-create",
       "url": "/projects/create",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-employees",
+      "url": "/review/preview/employees",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-payroll",
+      "url": "/review/preview/payroll",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-notes",
+      "url": "/review/preview/notes",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-search",
+      "url": "/review/preview/search",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-reports",
+      "url": "/review/preview/reports",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-users",
+      "url": "/review/preview/users",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-roles",
+      "url": "/review/preview/roles",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-accounting",
+      "url": "/review/preview/accounting",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-accounting-income",
+      "url": "/review/preview/accounting-income",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-accounting-cash",
+      "url": "/review/preview/accounting-cash",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-accounting-receivables",
+      "url": "/review/preview/accounting-receivables",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-accounting-reports",
+      "url": "/review/preview/accounting-reports",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-settings",
+      "url": "/review/preview/settings",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-project-credentials",
+      "url": "/review/preview/project-credentials",
+      "status": 200,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasShell": true,
+      "hasSidebar": true,
+      "overflowers": [
+        "v-skip"
+      ],
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "key": "preview-admin",
+      "url": "/review/preview/admin",
       "status": 200,
       "scrollWidth": 1440,
       "clientWidth": 1440,

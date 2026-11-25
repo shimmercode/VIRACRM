@@ -33,7 +33,8 @@ const arg = (n, d) => {
 const BASE = arg('--base', 'http://127.0.0.1:4173');
 const DB = path.resolve(ROOT, arg('--db', 'database/review/crm-review.sqlite'));
 const EVIDENCE = path.join(ROOT, 'docs/evidence/review');
-const PASSWORD = 'ReviewDemo!2026';
+// Read from the environment; never hardcode a credential in Git.
+const PASSWORD = (await import('./lib/review-credentials.mjs')).reviewPassword();
 
 fs.mkdirSync(EVIDENCE, { recursive: true });
 

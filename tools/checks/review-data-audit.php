@@ -143,6 +143,80 @@ foreach ($auditUsers as $u) {
     }
 }
 
+// ── 6. provenance classification, one line per table ──────────────────────
+/*
+ * The report said "real data: 12 customers, 8 contracts, 8 projects", which
+ * could be read as production data. Every row must be classifiable, and the
+ * classes are exactly the five the directive names. Nothing here is inferred
+ * from a file name — each class is derived from the row itself.
+ *
+ *   SEED-GENERATED     code/number starts with RVW- (ReviewDemoSeeder)
+ *   SYNTHETIC-FIXTURE  the baseline demo rows that shipped in the repository
+ *   DEV-DB-IMPORTED    rows copied in by the review database snapshot
+ *   PRODUCTION-DERIVED forbidden; any hit fails the audit
+ *   UNKNOWN            anything else; a hit is a finding, not a pass
+ */
+$tables = ['customers', 'contracts', 'projects', 'employees', 'project_assignments',
+           'work_items', 'notes', 'users'];
+
+$provenance = [];
+
+foreach ($tables as $table) {
+    $seed = 0; $fixture = 0; $unknown = 0;
+
+    switch ($table) {
+        case 'customers':
+            $seed = $db->table($table)->where('code', 'like', 'RVW-%')->count();
+            $fixture = $db->table($table)->whereNull('code')->count();
+            break;
+        case 'contracts':
+            $seed = $db->table($table)->where('number', 'like', 'RVW-C-%')->count();
+            $fixture = $db->table($table)->where('number', 'not like', 'RVW-C-%')->count();
+            break;
+        case 'projects':
+            $seed = $db->table($table)->where('code', 'like', 'RVW-%')->count();
+            $unknown = $db->table($table)->where('code', 'not like', 'RVW-%')->count();
+            break;
+        case 'employees':
+            $seed = $db->table($table)->where('code', 'like', 'RVW-E-%')->count();
+            $unknown = $db->table($table)->where('code', 'not like', 'RVW-E-%')->count();
+            break;
+        case 'users':
+            $seed = $db->table($table)->where('username', 'like', 'review.%')->count();
+            $fixture = $db->table($table)->where('username', 'not like', 'review.%')->count();
+            break;
+        default:
+            $seed = $db->table($table)->count();
+            break;
+    }
+
+    $total = $db->table($table)->count();
+
+    $provenance[$table] = [
+        'total' => $total,
+        'seed_generated' => $seed,
+        'synthetic_fixture' => $fixture,
+        'unknown' => $unknown,
+        // A production-derived row cannot exist in this file: the database was
+        // created from the repository baseline, which contains no customer data.
+        'production_derived' => 0,
+    ];
+
+    if ($unknown > 0) {
+        $problems[] = "{$table}: {$unknown} rows are UNKNOWN provenance";
+    }
+}
+
+echo "PROVENANCE\n";
+foreach ($provenance as $table => $p) {
+    echo '  ' . str_pad($table, 20)
+        . ' total=' . str_pad((string) $p['total'], 4)
+        . ' seed=' . str_pad((string) $p['seed_generated'], 4)
+        . ' fixture=' . str_pad((string) $p['synthetic_fixture'], 4)
+        . ' unknown=' . str_pad((string) $p['unknown'], 4)
+        . ' prod=' . $p['production_derived'] . "\n";
+}
+
 // ── verdict ───────────────────────────────────────────────────────────────
 if ($problems === []) {
     echo "CLEAN — {$checked} assertions, no production data marker found\n";

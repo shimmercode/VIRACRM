@@ -67,7 +67,9 @@ const MATRIX = [
   { user: 'review.viewer', expect: 404, path: '/users' },
 ];
 
-const PASSWORD = 'ReviewDemo!2026';
+// Read from the environment; never hardcode a credential in Git.
+const { reviewPassword } = await import('./lib/review-credentials.mjs');
+const PASSWORD = reviewPassword();
 
 // ── ensure the demo users exist in the review database ───────────────────
 // Uses the same seeder the environment itself uses, so a role test can never

@@ -1,0 +1,89 @@
+{
+  "generatedAt": "2026-11-25T07:00:50.723Z",
+  "base": "http://127.0.0.1:4173",
+  "database": "database/review/crm-review.sqlite",
+  "note": "A6–A8 mutate the REVIEW database only; the baseline database is never opened.",
+  "results": [
+    {
+      "id": "A1",
+      "name": "Viewer → admin preview by direct URL",
+      "expected": 403,
+      "actual": 403,
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "the exact bypass reported earlier"
+    },
+    {
+      "id": "A2",
+      "name": "Employee → admin preview by direct URL",
+      "expected": 403,
+      "actual": 403,
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "account_manager lacks users.view"
+    },
+    {
+      "id": "A3",
+      "name": "Read-only → restricted route (/customers/create)",
+      "expected": 403,
+      "actual": 403,
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "enforced by route middleware, not by the menu"
+    },
+    {
+      "id": "A4",
+      "name": "Unauthorized direct URL (no session)",
+      "expected": "deny",
+      "actual": "deny",
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "status 200, landed on /login"
+    },
+    {
+      "id": "A5",
+      "name": "Unauthorized API request (Accept: json)",
+      "expected": "deny",
+      "actual": "deny",
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "HTTP 401"
+    },
+    {
+      "id": "A6",
+      "name": "Role revocation — demoted user loses create",
+      "expected": 403,
+      "actual": 403,
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "employee promoted from viewer in the DB; create now refused"
+    },
+    {
+      "id": "A7",
+      "name": "Session after role change — new rights apply",
+      "expected": "yes",
+      "actual": "yes",
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "before 403, after 200 with the same cookie"
+    },
+    {
+      "id": "A8",
+      "name": "Invalid user state — deactivated user rejected",
+      "expected": "deny",
+      "actual": "deny",
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "before 200, after deactivation 403 → /customers"
+    },
+    {
+      "id": "A9",
+      "name": "Missing permission — catalogue gate holds",
+      "expected": 403,
+      "actual": 403,
+      "ok": true,
+      "verdict": "ALLOWED/DENIED as expected",
+      "note": "org preview requires users.view; manager lacks it"
+    }
+  ]
+}

@@ -91,6 +91,35 @@ check('T-REV-read-only', !/Route::(post|put|patch|delete)/.test(routes),
       : `${missing.length} missing: ${missing.slice(0, 6).join(', ')}`);
 }
 
+// ── 8. no invisible bidi control characters in review markup ───────────────
+// A U+200E (LRM) before a minus sign produced "syntax error, unexpected
+// integer" in an array literal and a silent 500 on the page. The character is
+// invisible in every editor, so a human reviewer cannot catch it — the check
+// has to. ZWNJ (U+200C) is legitimate inside Persian words and is allowed.
+{
+  const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p2 = path.join(dir, e.name);
+    return e.isDirectory() ? walk(p2) : p2.endsWith('.blade.php') ? [p2] : [];
+  });
+
+  const FORBIDDEN = /[\u200e\u200f\u202a-\u202e\ufeff]/;
+  const offenders = [];
+
+  for (const file of walk(path.join(ROOT, 'resources/views/review'))) {
+    const lines = fs.readFileSync(file, 'utf8').split('\n');
+    lines.forEach((line, i) => {
+      if (FORBIDDEN.test(line)) {
+        offenders.push(`${path.relative(ROOT, file)}:${i + 1}`);
+      }
+    });
+  }
+
+  check('T-REV-no-bidi-controls', offenders.length === 0,
+    offenders.length === 0
+      ? 'no LRM/RLM/bidi overrides in review markup (ZWNJ allowed)'
+      : `${offenders.length} lines: ${offenders.slice(0, 4).join(', ')}`);
+}
+
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n--- summary ---\n${passed}/${results.length} passed`);
 process.exit(passed === results.length ? 0 : 1);
