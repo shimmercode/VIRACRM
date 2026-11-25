@@ -42,3 +42,6 @@ Thumbs.db
 
 # jupyter/pandas etc not needed
 /image-search/
+
+# Delivery artefacts (built ZIPs) — not source, reproduced on demand
+/delivery/
