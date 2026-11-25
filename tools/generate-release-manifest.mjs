@@ -67,12 +67,38 @@ for (const f of tracked) {
 }
 
 /* ── tracked artefacts, with checksums ──────────────────────────────────── */
+/*
+ * database/database.sqlite is deliberately NOT checksummed.
+ *
+ * It was, and the gate failed on the next run: the file's bytes change whenever
+ * the app touches it, even when every row count the isolation check compares is
+ * identical. A "release manifest" whose checksum moves on a login is not
+ * identifying a release, and a check that goes stale by itself trains people to
+ * ignore it. What actually defines the schema and the demo data is the
+ * migrations and the seeders, and those are stable — so those are hashed.
+ */
 const SHIPPED = [
-  ['database/database.sqlite', 'پایگاه نمونهٔ همراه مخزن'],
   ['composer.json', 'وابستگی‌های PHP'],
   ['.env.example', 'الگوی متغیرهای محیط'],
   ['tools/build-assets.mjs', 'سازندهٔ دارایی‌ها — در مقصد اجرا می‌شود'],
 ];
+
+/**
+ * A single combined hash over the migrations and seeders, in sorted path order
+ * so the result does not depend on filesystem ordering.
+ */
+const seedHash = (() => {
+  const files = tracked
+    .filter((f) => (f.startsWith('database/migrations/') || f.startsWith('database/seeders/'))
+      && f.endsWith('.php'))
+    .sort();
+  const h = crypto.createHash('sha256');
+  for (const f of files) {
+    h.update(f);
+    h.update(fs.readFileSync(path.join(ROOT, f)));
+  }
+  return { digest: h.digest('hex').slice(0, 16), count: files.length };
+})();
 
 /*
  * Build output is gitignored (/public/build, .gitignore:13), so it is NOT part
@@ -173,6 +199,25 @@ for (const [rel, what] of SHIPPED) {
 }
 
 md += `
+### تعریف پایگاه داده — خودِ فایل منتشر نمی‌شود
+
+\`database/database.sqlite\` در \`database/.gitignore\` است (\`*.sqlite*\`)، پس
+**با مخزن سفر نمی‌کند** و در شمارش بالا هم نیست. در مقصد باید با
+\`migrate\` و \`db:seed\` ساخته شود — طبق \`docs/DEPLOYMENT_GUIDE.md\`.
+
+هش هم عمداً **ندارد**، و دو دلیل دارد: اول اینکه اصلاً در انتشار نیست؛ دوم اینکه
+بایت‌هایش هر بار که برنامه لمسش کند عوض می‌شود، حتی وقتی تعداد ردیف‌ها یکسان
+بماند. هشی که با یک ورود به سیستم تغییر کند انتشار را شناسایی نمی‌کند و فقط
+gate را الکی قرمز می‌کند. آنچه طرح و دادهٔ نمونه را واقعاً تعریف می‌کند
+مهاجرت‌ها و seederها هستند:
+
+| مورد | مقدار |
+|---|---|
+| فایل مهاجرت + seeder | ${seedHash.count} |
+| SHA-256 ترکیبی (۱۶ رقم) | \`${seedHash.digest}\` |
+
+اگر این هش با آنچه در مقصد می‌بینید فرق داشت، طرح یا دادهٔ نمونه فرق کرده است.
+
 ## ساخته‌شده در مقصد — در git نیست
 
 \`/public/build\` در \`.gitignore\` است، پس این فایل‌ها **با مخزن سفر نمی‌کنند** و
