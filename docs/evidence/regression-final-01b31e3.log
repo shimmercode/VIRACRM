@@ -1,0 +1,53 @@
+RUN   unit            Unit + feature tests … ✓ 8/8  (6.6s)
+RUN   views           Blade compilation … ✓ 63/63  (2.5s)
+RUN   authorization   Authorization (PHP) … ✓ OK  (2.1s)
+RUN   policies        Record-level policies (PHP) … ✓ 14/14  (3.0s)
+RUN   docs-integrity  Docs present + traceability current … ✓ 49/49  (1.4s)
+RUN   flow-login      Flow: login … ✓ 8/8  (20.5s)
+RUN   flow-authed     Flow: authenticated … ✓ 20/20  (51.1s)
+RUN   flow-authz      Flow: authorization … ✓ 11/11  (30.6s)
+RUN   flow-crud       Flow: CRUD … ✓ 18/18  (64.7s)
+RUN   flow-projects   Flow: projects … ✓ 28/28  (71.9s)
+RUN   flow-credentials Flow: credentials (§6) … ✓ 21/21  (54.8s)
+RUN   css-audit       Token discipline … ✓ 42/42  (0.1s)
+RUN   contrast        Contrast … ✓ OK  (0.0s)
+RUN   unstyled        Unstyled classes … ✓ OK  (0.0s)
+RUN   tokens          Undefined tokens … ✓ OK  (0.0s)
+RUN   calendar        Jalali calendar … ✓ OK  (28.9s)
+RUN   a11y            Accessibility … ✓ 10/10  (74.1s)
+RUN   login-shots     Login page … ✓ 24/24  (13.8s)
+RUN   ui-shots        Layout (11 pages x 7 widths) … ✓ 290/290  (228.2s)
+RUN   table-cards     Responsive tables (cards on phones) … ✓ 21/21  (41.4s)
+RUN   credential-shots Credentials render + no secret in DOM … ✓ OK  (38.4s)
+RUN   overflow-1024   No overflow at 768/1024/1440 … ✓ 44/44  (91.2s)
+RUN   design-system   Design System components … ✓ 21/21  (33.5s)
+RUN   filter-chips    Active filter chips … ✓ 22/22  (77.9s)
+RUN   regression-matrix 7 widths x 4 pages … ✓ 218/218  (221.9s)
+RUN   runner-contract Runner exit codes 0/1/2 … ✓ 11/11  (50.8s)
+RUN   lock-concurrency Regression lock + concurrency … ✓ 15/15  (12.6s)
+RUN   review-integrity Review catalogue integrity … ✓ 9/9  (0.1s)
+RUN   review-authz    Review page authorization (9 tests) … ✓ 9/9  (75.9s)
+RUN   review-embed    Review environment is viewable (iframe + CSS) … ✓ 9/9  (14.4s)
+RUN   asset-origin    Assets load from the page origin … ✓ 7/7  (20.1s)
+RUN   asset-basepath  Asset base path matrix (root/prefix) … ✓ 3/3  (14.6s)
+RUN   decision-audit  36 decisions reconciled … ✓ 19/19  (0.0s)
+RUN   decision-pack   Client pack 9 x 11 fields is current … ✓ 2/2  (0.1s)
+RUN   review-report   Final report matches evidence … ✓ 17/17  (0.0s)
+
+── shared database untouched ──
+  ok  customers    7 -> 7
+  ok  contracts    5 -> 5
+  ok  projects     3 -> 3
+  ok  work_items   9 -> 9
+  ok  users        2 -> 2
+  ok  sessions     1 -> 1
+  ok  audit_logs   232 -> 232
+
+══════════════════════════════════════════
+suites     35 total · 35 executed · 35 passed · 0 failed · 0 skipped
+assertions 1033 executed · 1033 passed · 0 failed · 0 skipped
+isolation  shared database untouched (every pass)
+
+REGRESSION SUITE PASSED
+exit 0
+EXIT=0

@@ -64,7 +64,18 @@ zip -qr -9 viracrm-source.zip viracrm
 node tools/checks/run-all.mjs
 ```
 
-نتیجه در بخش گزارش نهایی ثبت شده است. ترکیب سوییت‌ها:
+**نتیجهٔ اجرای واقعی روی کامیت `01b31e3`:**
+
+```
+suites     35 total · 35 executed · 35 passed · 0 failed · 0 skipped
+assertions 1033 executed · 1033 passed · 0 failed · 0 skipped
+isolation  shared database untouched (every pass)
+REGRESSION SUITE PASSED  (exit 0)
+```
+
+لاگ کامل: `docs/evidence/regression-final-01b31e3.log`
+
+ترکیب سوییت‌ها:
 
 | نوع | تعداد |
 |-----|------:|
