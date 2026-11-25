@@ -81,7 +81,7 @@
                                     @elseif ($entry->status === 'reversed')
                                         <span class="v-badge v-badge--danger">برگشت‌خورده</span>
                                     @else
-                                        <span class="v-badge v-badge--warn">پیش‌نویس</span>
+                                        <span class="v-badge v-badge--warning">پیش‌نویس</span>
                                     @endif
                                 </td>
                             </tr>

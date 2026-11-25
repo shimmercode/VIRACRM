@@ -125,7 +125,7 @@
                     @endif
 
                     @if ($canManage)
-                        <div class="v-form__actions">
+                        <div class="v-formactions">
                             <button type="submit" class="v-btn v-btn--primary">
                                 {{ $isLocked ? 'ثبت اصلاح و نسخهٔ جدید' : 'ذخیره و محاسبه' }}
                             </button>

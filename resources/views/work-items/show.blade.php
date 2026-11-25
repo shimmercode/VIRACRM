@@ -133,7 +133,7 @@
                                  here because these are the only figures the
                                  accounting module will ever see for this period. --}}
                             <div class="v-field">
-                                <label for="invoice_number" class="v-field__label">شماره صورتحساب</label>
+                                <label for="invoice_number" class="v-label">شماره صورتحساب</label>
                                 <input id="invoice_number" type="text" name="invoice_number"
                                        class="v-input @error('invoice_number') is-invalid @enderror"
                                        value="{{ old('invoice_number') }}" required dir="ltr">
@@ -141,7 +141,7 @@
                             </div>
 
                             <div class="v-field">
-                                <label for="invoice_amount" class="v-field__label">مبلغ (ریال)</label>
+                                <label for="invoice_amount" class="v-label">مبلغ (ریال)</label>
                                 <input id="invoice_amount" type="text" name="invoice_amount"
                                        class="v-input @error('invoice_amount') is-invalid @enderror"
                                        value="{{ old('invoice_amount') }}" inputmode="numeric"
@@ -151,7 +151,7 @@
                             </div>
 
                             <div class="v-field">
-                                <label for="invoice_issue_date" class="v-field__label">تاریخ صدور (شمسی)</label>
+                                <label for="invoice_issue_date" class="v-label">تاریخ صدور (شمسی)</label>
                                 <input id="invoice_issue_date" type="text" name="invoice_issue_date"
                                        class="v-input @error('invoice_issue_date') is-invalid @enderror"
                                        value="{{ old('invoice_issue_date') }}" placeholder="۱۴۰۵/۰۸/۲۵">
@@ -160,7 +160,7 @@
                         @endif
 
                         <div class="v-field">
-                            <label for="completion_notes" class="v-field__label">
+                            <label for="completion_notes" class="v-label">
                                 یادداشت @if ($item->kind !== 'invoice') (اختیاری) @endif
                             </label>
                             <textarea id="completion_notes" name="completion_notes" class="v-input" rows="3"
@@ -185,7 +185,7 @@
                         <form method="POST" action="{{ route('work-items.cancel', $item) }}" class="v-form">
                             @csrf
                             <div class="v-field">
-                                <label for="cancel_notes" class="v-field__label">دلیل لغو</label>
+                                <label for="cancel_notes" class="v-label">دلیل لغو</label>
                                 <textarea id="cancel_notes" name="completion_notes" class="v-input" rows="2" required></textarea>
                                 @error('completion_notes')<p class="v-hint" style="color:var(--v-danger)">{{ $message }}</p>@enderror
                             </div>

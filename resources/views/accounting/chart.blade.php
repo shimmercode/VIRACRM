@@ -71,7 +71,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="v-muted-sm">
+                                        <span class="v-muted v-small">
                                             {{ $leaf->normal_balance === 'debit' ? 'بدهکار' : 'بستانکار' }}
                                         </span>
                                     </td>

@@ -50,7 +50,7 @@
                                 <td>{{ $pd($period->entries_count) }}</td>
                                 <td>
                                     @if ($period->isOpen())
-                                        <span class="v-badge v-badge--warn">باز</span>
+                                        <span class="v-badge v-badge--warning">باز</span>
                                     @else
                                         <span class="v-badge v-badge--neutral">بسته</span>
                                     @endif

@@ -53,9 +53,30 @@ for (const file of walk(path.join(ROOT, 'resources/views'))) {
 
   // class="a b c" and :class / @class arrays
   for (const m of source.matchAll(/class="([^"]+)"/g)) {
-    for (const token of m[1].split(/\s+/)) {
-      const clean = token.replace(/\{\{.*?\}\}/g, '').trim();
-      if (!clean || !/^[a-zA-Z]/.test(clean) || clean.includes('{{')) continue;
+    /*
+     * Strip Blade expressions from the whole attribute BEFORE tokenising.
+     *
+     * Doing it per token, as this used to, shredded any expression containing a
+     * space: `class="v-input{{ $errors->has('x') ? ' v-input--invalid' : '' }}"`
+     * split into the fragments `'`, `v-input--invalid'` and `''`, and the
+     * middle one was reported as an unstyled class with a trailing quote. That
+     * was a false positive on a class the stylesheet does define — which is the
+     * worst kind of finding, because it trains you to ignore this check.
+     */
+    const literal = m[1].replace(/\{\{.*?\}\}/g, ' ');
+    for (const token of literal.split(/\s+/)) {
+      const clean = token.trim();
+      if (!clean || !/^[a-zA-Z]/.test(clean)) continue;
+      // A leftover quote, brace or colon means the token came from an
+      // expression this scanner does not evaluate, not from markup.
+      if (/['"{}$@:]/.test(clean)) continue;
+      /*
+       * A token ending in `-` or `_` is a modifier whose name was inside the
+       * expression we just removed — `class="v-badge--{{ $tone }}"` leaves
+       * `v-badge--`. That is not a class name, it is the shape of one, so it
+       * must not be reported as unstyled.
+       */
+      if (/[-_]$/.test(clean)) continue;
       if (!used.has(clean)) used.set(clean, new Set());
       used.get(clean).add(rel);
     }
@@ -67,6 +88,10 @@ for (const file of walk(path.join(ROOT, 'resources/views'))) {
 const IGNORE = new Set([
   'is-active', 'is-invalid', 'is-disabled', 'is-loading', 'is-flipped', 'is-locked',
   'rtl-mirror', 'vira-no-scroll',
+  // Invoice line rows: selectors for resources/js/app.js, which clones rows,
+  // renumbers their inputs and writes the computed amount into the cell. They
+  // carry no styles because they are not styling hooks (app.js:412, 438).
+  'item-row', 'line-total',
 ]);
 
 const missing = [...used.entries()]

@@ -278,7 +278,7 @@
                                     <input id="r-reason" name="reason" type="text" class="v-input"
                                            value="{{ old('reason') }}" required maxlength="500">
                                 </div>
-                                <div class="v-form__actions">
+                                <div class="v-formactions">
                                     <button type="submit" class="v-btn v-btn--primary v-btn--sm">
                                         <x-icon name="plus" :size="16" /> ایجاد قرارداد تمدیدی
                                     </button>

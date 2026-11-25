@@ -131,7 +131,7 @@
                                     @if ($invoice->payment_state === 'paid')
                                         <span class="v-badge v-badge--success">تسویه</span>
                                     @elseif ($invoice->payment_state === 'partial')
-                                        <span class="v-badge v-badge--warn">جزئی</span>
+                                        <span class="v-badge v-badge--warning">جزئی</span>
                                     @else
                                         <span class="v-badge v-badge--neutral">پرداخت‌نشده</span>
                                     @endif

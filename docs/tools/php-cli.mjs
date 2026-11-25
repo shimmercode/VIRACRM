@@ -67,5 +67,20 @@ const response = await php.cli(['php', target, ...args], {
 const [stdout, stderr] = await Promise.all([response.stdoutText, response.stderrText]);
 process.stdout.write(stdout || '');
 if (stderr) process.stderr.write(stderr);
-console.error(`\n[php-cli] exit=${await response.exitCode} time=${Date.now() - started}ms runtime=php-wasm 8.3`);
-process.exit(0);
+const exitCode = await response.exitCode;
+console.error(`\n[php-cli] exit=${exitCode} time=${Date.now() - started}ms runtime=php-wasm 8.3`);
+
+/*
+ * Propagate the script's real exit code.
+ *
+ * This used to be `process.exit(0)` unconditionally, which quietly made every
+ * PHP check unfailable: tools/checks/run-all.mjs decides a suite passed with
+ * `ok: code === 0`, so a PHP suite that exited 1 was still reported as ✓. The
+ * log line above said `exit=1` while the process said 0 — the gate believed the
+ * process, not the log.
+ *
+ * 2 is preserved as the "precondition unavailable" signal that run-all.mjs
+ * already interprets, so a missing runtime stays distinguishable from a failed
+ * check rather than collapsing into the same bucket.
+ */
+process.exit(exitCode);

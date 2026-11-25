@@ -31,7 +31,13 @@ class RoleSeeder extends Seeder
                 'projects.view_financials',
                 // reveal is the sensitive one: reading a stored password back.
                 // It is granted to the manager only, deliberately (see docs).
+                //
+                // export is separate from both. Reveal exposes one password on
+                // screen, to one person, in one session; export concentrates
+                // every password on a project into one portable file that leaves
+                // the system the moment it is saved. Same reasoning, one rung up.
                 'credentials.view', 'credentials.manage', 'credentials.reveal',
+                'credentials.export',
                 'notes.view', 'notes.create', 'notes.update', 'notes.delete',
                 'reports.view', 'reports.export',
                 'files.download', 'files.download_confidential',

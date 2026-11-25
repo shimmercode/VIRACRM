@@ -112,6 +112,41 @@ check('T-DOC-page-inventory-current', inventory.status === 0,
     ? 'document matches the catalogue'
     : (inventory.stderr || inventory.stdout || '').trim().split('\n')[0]);
 
+/*
+ * The schema and RBAC documents are generated from the live database, for the
+ * same reason as the page inventory: a hand-maintained access-control matrix is
+ * wrong the first time someone adds a permission, and it still looks
+ * authoritative. Checking them here means drift fails the build.
+ */
+const schemaDoc = spawnSync(process.execPath, ['tools/generate-schema-doc.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 300_000,
+});
+check('T-DOC-database-schema-current', schemaDoc.status === 0,
+  schemaDoc.status === 0
+    ? 'DATABASE_SCHEMA.md matches the database'
+    : (schemaDoc.stderr || schemaDoc.stdout || '').trim().split('\n')[0]);
+
+const rbacDoc = spawnSync(process.execPath, ['tools/generate-rbac-doc.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 300_000,
+});
+check('T-DOC-rbac-matrix-current', rbacDoc.status === 0,
+  rbacDoc.status === 0
+    ? 'RBAC_PERMISSION_MATRIX.md matches the seeded roles'
+    : (rbacDoc.stderr || rbacDoc.stdout || '').trim().split('\n')[0]);
+
+/*
+ * The release manifest counts and checksums the tree. Like the others it is
+ * generated, because a manifest that lists "298 PHP files" and is checked by
+ * nobody is the document most likely to be believed.
+ */
+const manifest = spawnSync(process.execPath, ['tools/generate-release-manifest.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 120_000,
+});
+check('T-DOC-release-manifest-current', manifest.status === 0,
+  manifest.status === 0
+    ? 'RELEASE_MANIFEST.md matches the working tree'
+    : (manifest.stderr || manifest.stdout || '').trim().split('\n')[0]);
+
 // F0 file-workspace traceability is generated from the requirements document;
 // like the main matrix it must not be hand-edited or left stale.
 const fileTrace = spawnSync(process.execPath, ['docs/tools/generate-file-traceability.mjs', '--check'], {

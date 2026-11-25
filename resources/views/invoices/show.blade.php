@@ -130,19 +130,19 @@
                 @csrf
                 <div class="v-form-grid">
                     <div class="v-field">
-                        <label for="amount" class="v-field__label">مبلغ (ریال)</label>
+                        <label for="amount" class="v-label">مبلغ (ریال)</label>
                         <input id="amount" type="text" name="amount" class="v-input" inputmode="numeric"
                                value="{{ old('amount', number_format($invoice->remaining())) }}" required>
                         @error('amount')<p class="v-hint" style="color:var(--vira-danger)">{{ $message }}</p>@enderror
                     </div>
                     <div class="v-field">
-                        <label for="paid_on" class="v-field__label">تاریخ دریافت (شمسی)</label>
+                        <label for="paid_on" class="v-label">تاریخ دریافت (شمسی)</label>
                         <input id="paid_on" type="text" name="paid_on" class="v-input" inputmode="numeric"
                                value="{{ old('paid_on') }}" placeholder="۱۴۰۵/۰۹/۱۰" required>
                         @error('paid_on')<p class="v-hint" style="color:var(--vira-danger)">{{ $message }}</p>@enderror
                     </div>
                     <div class="v-field">
-                        <label for="method" class="v-field__label">روش</label>
+                        <label for="method" class="v-label">روش</label>
                         <select id="method" name="method" class="v-select" required>
                             @foreach (\App\Models\Payment::METHODS as $key => $label)
                                 <option value="{{ $key }}" @selected(old('method') === $key)>{{ $label }}</option>
@@ -150,11 +150,11 @@
                         </select>
                     </div>
                     <div class="v-field">
-                        <label for="reference" class="v-field__label">شماره پیگیری</label>
+                        <label for="reference" class="v-label">شماره پیگیری</label>
                         <input id="reference" type="text" name="reference" class="v-input" value="{{ old('reference') }}" dir="ltr">
                     </div>
                     <div class="v-field">
-                        <label for="bank_account" class="v-field__label">حساب بانکی</label>
+                        <label for="bank_account" class="v-label">حساب بانکی</label>
                         <input id="bank_account" type="text" name="bank_account" class="v-input" value="{{ old('bank_account') }}">
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                   onsubmit="return confirm('فاکتور ابطال شود؟');">
                 @csrf
                 <div class="v-field">
-                    <label for="void_reason" class="v-field__label">دلیل ابطال</label>
+                    <label for="void_reason" class="v-label">دلیل ابطال</label>
                     <input id="void_reason" type="text" name="void_reason" class="v-input" required maxlength="500">
                 </div>
                 <div class="v-formactions">

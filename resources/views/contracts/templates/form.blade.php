@@ -109,7 +109,7 @@
                 </div>
             </fieldset>
 
-            <div class="v-form__actions">
+            <div class="v-formactions">
                 <button type="submit" class="v-btn v-btn--primary">
                     {{ $template->exists ? 'ذخیرهٔ قالب' : 'ثبت قالب' }}
                 </button>

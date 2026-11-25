@@ -13,21 +13,21 @@
 
 <div class="v-form-grid">
     <div class="v-form-grid__full v-field">
-        <label for="title" class="v-field__label">عنوان</label>
+        <label for="title" class="v-label">عنوان</label>
         <input id="title" type="text" name="title" class="v-input @error('title') is-invalid @enderror"
                value="{{ old('title', $note->title ?? '') }}" required maxlength="190">
         @error('title')<p class="v-hint" style="color:var(--v-danger)">{{ $message }}</p>@enderror
     </div>
 
     <div class="v-form-grid__full v-field">
-        <label for="description" class="v-field__label">متن</label>
+        <label for="description" class="v-label">متن</label>
         <textarea id="description" name="description" class="v-input" rows="5"
                   placeholder="شرح یادداشت یا جزئیات وظیفه">{{ old('description', $note->description ?? '') }}</textarea>
         @error('description')<p class="v-hint" style="color:var(--v-danger)">{{ $message }}</p>@enderror
     </div>
 
     <div class="v-field">
-        <label for="due_date" class="v-field__label">سررسید (شمسی)</label>
+        <label for="due_date" class="v-label">سررسید (شمسی)</label>
         <input id="due_date" type="text" name="due_date" class="v-input"
                placeholder="۱۴۰۵/۰۹/۰۱" inputmode="numeric"
                value="{{ old('due_date', $note?->due_date?->format('Y-m-d') ? \App\Support\JalaliDate::fromCarbon($note->due_date)->formatAscii() : '') }}">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="v-field">
-        <label for="priority" class="v-field__label">اولویت</label>
+        <label for="priority" class="v-label">اولویت</label>
         <select id="priority" name="priority" class="v-select" required>
             @foreach ($priorities as $value => $label)
                 <option value="{{ $value }}" @selected($selected['priority'] === $value)>{{ $label }}</option>
@@ -45,7 +45,7 @@
     </div>
 
     <div class="v-field">
-        <label for="assigned_to" class="v-field__label">مسئول</label>
+        <label for="assigned_to" class="v-label">مسئول</label>
         <select id="assigned_to" name="assigned_to" class="v-select">
             <option value="">— بدون مسئول —</option>
             @foreach ($users as $user)
@@ -57,7 +57,7 @@
     </div>
 
     <div class="v-field">
-        <label for="project_id" class="v-field__label">پروژه</label>
+        <label for="project_id" class="v-label">پروژه</label>
         <select id="project_id" name="project_id" class="v-select">
             <option value="">— بدون پروژه —</option>
             @foreach ($projects as $project)
@@ -69,7 +69,7 @@
     </div>
 
     <div class="v-field">
-        <label for="customer_id" class="v-field__label">مشتری</label>
+        <label for="customer_id" class="v-label">مشتری</label>
         <select id="customer_id" name="customer_id" class="v-select">
             <option value="">— بدون مشتری —</option>
             @foreach ($customers as $customer)
@@ -81,7 +81,7 @@
     </div>
 
     <div class="v-field">
-        <label for="contract_id" class="v-field__label">قرارداد</label>
+        <label for="contract_id" class="v-label">قرارداد</label>
         <select id="contract_id" name="contract_id" class="v-select">
             <option value="">— بدون قرارداد —</option>
             @foreach ($contracts as $contract)

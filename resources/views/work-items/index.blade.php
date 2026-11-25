@@ -140,7 +140,7 @@
                                     @elseif ($item->isOverdue())
                                         <span class="v-badge v-badge--danger">عقب‌افتاده</span>
                                     @else
-                                        <span class="v-badge v-badge--warn">در انتظار</span>
+                                        <span class="v-badge v-badge--warning">در انتظار</span>
                                     @endif
                                 </td>
                                 <td class="v-table__actions">
@@ -167,7 +167,7 @@
 
                 <div class="v-form-grid">
                     <div class="v-field">
-                        <label for="new-project" class="v-field__label">پروژه</label>
+                        <label for="new-project" class="v-label">پروژه</label>
                         <select id="new-project" name="project_id" class="v-select" required>
                             <option value="">— انتخاب پروژه —</option>
                             @foreach ($projects as $project)
@@ -180,7 +180,7 @@
                     </div>
 
                     <div class="v-field">
-                        <label for="new-kind" class="v-field__label">نوع</label>
+                        <label for="new-kind" class="v-label">نوع</label>
                         <select id="new-kind" name="kind" class="v-select" required>
                             @foreach ($kinds as $value => $label)
                                 <option value="{{ $value }}" @selected(old('kind') === $value)>{{ $label }}</option>
@@ -189,7 +189,7 @@
                     </div>
 
                     <div class="v-field">
-                        <label for="new-due" class="v-field__label">سررسید (شمسی)</label>
+                        <label for="new-due" class="v-label">سررسید (شمسی)</label>
                         <input id="new-due" type="text" name="due_date" class="v-input"
                                placeholder="۱۴۰۵/۰۹/۰۱" inputmode="numeric" required
                                value="{{ old('due_date') }}">
@@ -198,7 +198,7 @@
                     </div>
 
                     <div class="v-field">
-                        <label for="new-period" class="v-field__label">دوره (اختیاری)</label>
+                        <label for="new-period" class="v-label">دوره (اختیاری)</label>
                         <input id="new-period" type="text" name="period" class="v-input"
                                placeholder="۱۴۰۵/۰۹" value="{{ old('period') }}">
                     </div>

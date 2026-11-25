@@ -28,7 +28,7 @@
 
             <div class="v-form-grid">
                 <div class="v-field">
-                    <label for="customer_id" class="v-field__label">مشتری</label>
+                    <label for="customer_id" class="v-label">مشتری</label>
                     <select id="customer_id" name="customer_id" class="v-select" required>
                         <option value="">— انتخاب مشتری —</option>
                         @foreach ($customers as $customer)
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="v-field">
-                    <label for="service_type" class="v-field__label">نوع خدمت</label>
+                    <label for="service_type" class="v-label">نوع خدمت</label>
                     <select id="service_type" name="service_type" class="v-select" required>
                         @foreach ($services as $key => $label)
                             <option value="{{ $key }}" @selected(old('service_type') === $key)>{{ $label }}</option>
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="v-field">
-                    <label for="contract_id" class="v-field__label">قرارداد (اختیاری)</label>
+                    <label for="contract_id" class="v-label">قرارداد (اختیاری)</label>
                     <select id="contract_id" name="contract_id" class="v-select">
                         <option value="">— بدون قرارداد —</option>
                         @foreach ($contracts as $contract)
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="v-field">
-                    <label for="project_id" class="v-field__label">پروژه (اختیاری)</label>
+                    <label for="project_id" class="v-label">پروژه (اختیاری)</label>
                     <select id="project_id" name="project_id" class="v-select">
                         <option value="">— بدون پروژه —</option>
                         @foreach ($projects as $project)
@@ -77,26 +77,26 @@
                 </div>
 
                 <div class="v-field">
-                    <label for="issue_date" class="v-field__label">تاریخ صدور (شمسی)</label>
+                    <label for="issue_date" class="v-label">تاریخ صدور (شمسی)</label>
                     <input id="issue_date" type="text" name="issue_date" class="v-input" inputmode="numeric"
                            value="{{ old('issue_date') }}" placeholder="۱۴۰۵/۰۹/۰۱" required>
                     @error('issue_date')<p class="v-hint" style="color:var(--vira-danger)">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="v-field">
-                    <label for="due_date" class="v-field__label">سررسید (شمسی)</label>
+                    <label for="due_date" class="v-label">سررسید (شمسی)</label>
                     <input id="due_date" type="text" name="due_date" class="v-input" inputmode="numeric"
                            value="{{ old('due_date') }}" placeholder="۱۴۰۵/۰۹/۳۰" required>
                     @error('due_date')<p class="v-hint" style="color:var(--vira-danger)">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="v-field">
-                    <label for="title" class="v-field__label">عنوان (اختیاری)</label>
+                    <label for="title" class="v-label">عنوان (اختیاری)</label>
                     <input id="title" type="text" name="title" class="v-input" value="{{ old('title') }}" maxlength="190">
                 </div>
 
                 <div class="v-field">
-                    <label for="tax_rate_bp" class="v-field__label">نرخ مالیات بر ارزش افزوده</label>
+                    <label for="tax_rate_bp" class="v-label">نرخ مالیات بر ارزش افزوده</label>
                     <select id="tax_rate_bp" name="tax_rate_bp" class="v-select">
                         @foreach ([0 => 'بدون مالیات', 600 => '۶٪', 900 => '۹٪', 1000 => '۱۰٪'] as $bp => $label)
                             <option value="{{ $bp }}" @selected((int) old('tax_rate_bp', $defaultTaxBp) === $bp)>{{ $label }}</option>
@@ -149,7 +149,7 @@
 
             <div class="v-form-grid" style="margin-block-start:var(--vira-space-5)">
                 <div class="v-field">
-                    <label for="discount" class="v-field__label">تخفیف (ریال)</label>
+                    <label for="discount" class="v-label">تخفیف (ریال)</label>
                     <input id="discount" type="text" name="discount" class="v-input" inputmode="numeric"
                            value="{{ old('discount', '0') }}">
                     <p class="v-hint">تخفیف از درآمد کسر می‌شود، نه اینکه هزینه ثبت شود.</p>

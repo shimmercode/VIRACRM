@@ -98,6 +98,10 @@ const SUITES = (() => {
   { id: 'views', label: 'Blade compilation', kind: 'php', script: 'tools/checks/views.php', required: true },
   { id: 'authorization', label: 'Authorization (PHP)', kind: 'php', script: 'tools/checks/authz.php', required: true },
   { id: 'policies', label: 'Record-level policies (PHP)', kind: 'php', script: 'tools/checks/policies.php', required: true },
+  // REQ-10.03: routes/web.php claims every authenticated route declares the
+  // permission it needs. That claim was previously unverified, so this suite
+  // exists to make it a control rather than a comment.
+  { id: 'route-permissions', label: 'Route permission audit (PHP)', kind: 'php', script: 'tools/checks/route-permissions.php', required: true },
   { id: 'docs-integrity', label: 'Docs present + traceability current', kind: 'node', script: 'tools/checks/docs-integrity.mjs', required: true },
   { id: 'flow-login', label: 'Flow: login', kind: 'node', script: 'tools/checks/login-flow.mjs', required: true },
   { id: 'flow-authed', label: 'Flow: authenticated', kind: 'node', script: 'tools/checks/authed-flow.mjs', required: true },

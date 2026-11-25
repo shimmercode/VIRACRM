@@ -1732,6 +1732,28 @@
     max-width: 560px;
 }
 
+/* ── .v-card--danger ────────────────────────────────────────────────────────
+   The "danger zone" card: the section holding an irreversible action, such as
+   archiving an employee record (employees/show.blade.php).
+
+   It is deliberately quiet. A loud red panel trains people to stop reading
+   warnings, and this card sits on a page the user visits routinely. So the
+   signal is the border and the heading, not a filled background: enough to
+   notice, not enough to normalise. The soft danger tint is reserved for the
+   header, which is where the action's name is read. */
+.v-card--danger {
+    border-color: var(--vira-danger-border);
+}
+
+.v-card--danger .v-card__head {
+    background: var(--vira-danger-soft);
+    border-bottom-color: var(--vira-danger-border);
+}
+
+.v-card--danger .v-card__title {
+    color: var(--vira-danger);
+}
+
 .v-drawer__scrim {
     position: fixed;
     inset: 0;
