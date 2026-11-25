@@ -50,7 +50,20 @@ if (process.env.NO_MOUNT !== '1') {
 
 const started = Date.now();
 const target = process.env.NO_MOUNT === '1' ? '/work/script.php' : script;
-const response = await php.cli(['php', target, ...args], { env: { PHP_ERROR_REPORTING: 'E_ALL' } });
+/*
+ * Pass through the caller's environment.
+ *
+ * This used to hand the runtime a fresh object containing only
+ * PHP_ERROR_REPORTING, which silently dropped everything the parent passed in.
+ * That made VIRA_PREVIEW_EMBED (and any other VIRA_* switch) invisible to PHP
+ * while `VIRA_PREVIEW_EMBED=... node docs/tools/php-cli.mjs ...` looked like it
+ * should work. A configuration variable that is quietly discarded is worse than
+ * one that is missing: the command appears to succeed and the setting has no
+ * effect.
+ */
+const response = await php.cli(['php', target, ...args], {
+  env: { ...process.env, PHP_ERROR_REPORTING: 'E_ALL' },
+});
 const [stdout, stderr] = await Promise.all([response.stdoutText, response.stderrText]);
 process.stdout.write(stdout || '');
 if (stderr) process.stderr.write(stderr);

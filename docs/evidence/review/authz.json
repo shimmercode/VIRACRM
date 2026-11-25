@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-25T08:26:04.114Z",
-  "base": "http://127.0.0.1:4173",
+  "generatedAt": "2026-11-25T09:53:16.525Z",
+  "base": "http://127.0.0.1:4174",
   "database": "database/review/crm-review.sqlite",
   "note": "A6–A8 mutate the REVIEW database only; the baseline database is never opened.",
   "results": [

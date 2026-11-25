@@ -126,6 +126,11 @@ const SUITES = (() => {
     // need no port, touch no database, and cannot leave state behind.
     { id: 'review-integrity', label: 'Review catalogue integrity', kind: 'node', script: 'tools/checks/review-integrity.mjs', required: true },
     { id: 'review-authz', label: 'Review page authorization (9 tests)', kind: 'browser', script: 'tools/checks/review-authz.mjs', required: true },
+    // Proves the environment is viewable: it loads inside an iframe, the
+    // stylesheet applies, and a preview page renders. A 200 from curl says
+    // none of that — the environment was unusable for a while while every
+    // request returned 200.
+    { id: 'review-embed', label: 'Review environment is viewable (iframe + CSS)', kind: 'browser', script: 'tools/checks/review-embed.mjs', required: true },
     { id: 'decision-audit', label: '36 decisions reconciled', kind: 'node', script: 'tools/checks/decision-audit.mjs', required: true },
     { id: 'decision-pack', label: 'Client pack 9 x 11 fields is current', kind: 'node', script: 'tools/checks/review-decision-pack-current.mjs', required: true },
     { id: 'review-report', label: 'Final report matches evidence', kind: 'node', script: 'tools/checks/review-report-current.mjs', required: true },
@@ -138,7 +143,15 @@ function run(suite) {
     const child = spawn(NODE, [suite.kind === 'php' ? 'docs/tools/php-cli.mjs' : suite.script,
       ...(suite.kind === 'php' ? [suite.script] : [])], {
       cwd: ROOT,
-      env: { ...process.env, PHP_WASM_PATH: process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules' },
+      env: {
+        ...process.env,
+        PHP_WASM_PATH: process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules',
+        // The review server on :4173 forces https for the preview proxy. This
+        // suite drives a plain-http browser, so point it at a server without
+        // that setting. Overridable for a one-off run against another port.
+        VIRA_AUTHZ_BASE: process.env.VIRA_AUTHZ_BASE
+          || `http://127.0.0.1:${process.env.VIRA_AUTHZ_PORT || 4174}`,
+      },
     });
 
     let out = '';

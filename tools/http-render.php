@@ -111,6 +111,29 @@ $_SERVER['CONTENT_TYPE'] = $contentType;
 $_SERVER['CONTENT_LENGTH'] = (string) strlen($postBody);
 $_SERVER['HTTPS'] = 'off';
 
+/*
+ * Proxy headers, when the caller supplies them.
+ *
+ * The preview harness terminates TLS and talks plain HTTP to the dev server. If
+ * this renderer ignores that, Laravel emits `http://` asset URLs that an HTTPS
+ * page blocks as mixed content. Setting the superglobals (not only the Request
+ * headers) is what makes the URL generator and the session cookie pick it up.
+ */
+$forwardedProto = (string) ($spec['forwarded_proto'] ?? '');
+$forwardedHost = (string) ($spec['forwarded_host'] ?? '');
+
+if ($forwardedProto !== '') {
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] = $forwardedProto;
+    if ($forwardedProto === 'https') {
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['SERVER_PORT'] = '443';
+    }
+}
+
+if ($forwardedHost !== '') {
+    $_SERVER['HTTP_X_FORWARDED_HOST'] = $forwardedHost;
+}
+
 parse_str($query, $_GET);
 
 if ($postBody !== '' && str_contains($contentType, 'application/x-www-form-urlencoded')) {
@@ -146,6 +169,24 @@ try {
     $request->headers->set('Host', $host);
     $request->headers->set('Accept', $accept);
     $request->headers->set('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+
+    /*
+     * Request::create() builds its own server bag from its arguments and
+     * ignores the superglobals this file set above. So the proxy headers have
+     * to be attached to the Request as well — otherwise they exist in
+     * $_SERVER, are never read, and TrustPreviewProxy sees a direct http
+     * connection. That was the second half of the "page opens unstyled" bug.
+     */
+    if ($forwardedProto !== '') {
+        $request->headers->set('X-Forwarded-Proto', $forwardedProto);
+    }
+    if ($forwardedHost !== '') {
+        $request->headers->set('X-Forwarded-Host', $forwardedHost);
+    }
+    if ($forwardedProto === 'https') {
+        $request->server->set('HTTPS', 'on');
+        $request->server->set('SERVER_PORT', '443');
+    }
 
     if ($contentType !== '') {
         $request->headers->set('Content-Type', $contentType);

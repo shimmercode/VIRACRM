@@ -31,7 +31,20 @@ const arg = (n, d) => {
   return i !== -1 ? process.argv[i + 1] : d;
 };
 
-const BASE = arg('--base', 'http://127.0.0.1:4173');
+/*
+ * This suite talks to plain http://127.0.0.1 and must keep doing so, so it needs
+ * a server that does NOT have VIRA_FORCE_HTTPS set.
+ *
+ * The shared review server on :4173 sets it, because the preview proxy serves
+ * an https page. Reusing that server here made every browser request emit
+ * `https://` asset URLs on a plain-http origin: the stylesheet never loaded and
+ * the login form's click never navigated, which surfaced as a Playwright
+ * timeout rather than as an obvious scheme mismatch.
+ *
+ * A private server on a private port, started by run-all, keeps this suite
+ * testing authorization rather than environment configuration.
+ */
+const BASE = arg('--base', process.env.VIRA_AUTHZ_BASE || 'http://127.0.0.1:4173');
 const DB = path.resolve(ROOT, arg('--db', 'database/review/crm-review.sqlite'));
 const HOST = arg('--host', process.env.VIRA_REVIEW_HOST || '');
 const OUT = path.join(ROOT, 'docs/evidence/review/authz.json');

@@ -85,7 +85,7 @@ function readBody(req) {
  * request for "/" no matter what the browser asked for. A file path in argv is
  * the one channel that works.
  */
-function renderRequest({ method, uri, cookie, body, contentType, host, accept, userAgent }) {
+function renderRequest({ method, uri, cookie, body, contentType, host, accept, userAgent, forwarded = {} }) {
   const specPath = path.join(
     fs.mkdtempSync(path.join(ROOT, '.arena', 'req-')),
     'request.json'
@@ -102,6 +102,12 @@ function renderRequest({ method, uri, cookie, body, contentType, host, accept, u
       content_type: contentType || '',
       accept: accept || 'text/html',
       user_agent: userAgent || 'vira-dev-server',
+      // Proxy headers, forwarded only when the proxy actually sent them. The
+      // preview harness terminates TLS and speaks plain HTTP to this server, so
+      // without these Laravel builds every asset URL as http:// and the browser
+      // blocks it as mixed content on an https page.
+      forwarded_proto: forwarded.proto || '',
+      forwarded_host: forwarded.host || '',
       // Forward the database this server was started against. The regression
       // runner starts a private server on a private copy so that capturing
       // screenshots cannot write sessions or audit rows into the shared
@@ -192,6 +198,22 @@ const server = http.createServer(async (req, res) => {
       host: req.headers.host,
       accept: req.headers.accept,
       userAgent: req.headers['user-agent'],
+      forwarded: {
+        /*
+         * The preview proxy does not always send X-Forwarded-Proto, and when
+         * it does not, the page is rendered with http:// asset URLs that an
+         * https page refuses to load. The result is raw, unstyled HTML — the
+         * "environment opens nothing" symptom.
+         *
+         * VIRA_FORCE_HTTPS makes the intent explicit at start time. When it is
+         * set, this server tells PHP the request is https regardless of what
+         * the proxy forwarded. It is set only by the review environment's own
+         * start command, so local `--port 4173` use is unaffected.
+         */
+        proto: req.headers['x-forwarded-proto']
+          || (process.env.VIRA_FORCE_HTTPS === 'true' ? 'https' : ''),
+        host: req.headers['x-forwarded-host'],
+      },
     });
 
     const outHeaders = { ...result.headers };

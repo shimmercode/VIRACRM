@@ -22,7 +22,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Appended to the web group so it runs after the session starts:
         // the permission middleware needs a resolved user.
+        // TrustPreviewProxy must run BEFORE SecurityHeaders: it rewrites the
+        // URL root, and SecurityHeaders builds the CSP that has to know whether
+        // this deployment may be framed.
         $middleware->web(append: [
+            \App\Http\Middleware\TrustPreviewProxy::class,
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
