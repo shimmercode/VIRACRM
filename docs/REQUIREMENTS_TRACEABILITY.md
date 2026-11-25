@@ -14,11 +14,11 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 47 | 49.0% |
+| `VERIFIED` | 50 | 52.1% |
 | `PARTIAL` | 18 | 18.8% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 24 | 25.0% |
-| `BLOCKED` | 5 | 5.2% |
+| `NOT_IMPLEMENTED` | 22 | 22.9% |
+| `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
 
 ### اولویت P0 (۳۹ نیازمندی)
@@ -26,11 +26,11 @@
 | وضعیت | تعداد |
 |-------|------:|
 | `VERIFIED` | 15 |
-| `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 14 |
+| `PARTIAL` | 8 |
+| `NOT_IMPLEMENTED` | 13 |
 | `BLOCKED` | 3 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۵ مورد اثبات‌شده** و **۱۴ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۵ مورد اثبات‌شده** و **۱۳ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -110,7 +110,7 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`VERIFIED`** | projects module + type-driven form + 28-assert flow | — | — |
 | `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | project_assignments empty | — | M1–M8 |
-| `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`NOT_IMPLEMENTED`** | no public/secret split | — | M1–M8 |
+| `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`VERIFIED`** | ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data | — | — |
 
 ### SeoProjects
 
@@ -133,7 +133,7 @@
 | `CRED-002` | `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | P0 | doc | **`NOT_IMPLEMENTED`** | credential_requirements empty | — | M1–M8 |
 | `CRED-003` | `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | P0 | brief | **`VERIFIED`** | AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML | — | — |
 | `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`PARTIAL`** | reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet | audit recorded, not browsable | M1/M3 |
-| `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`NOT_IMPLEMENTED`** | no PDF engine | — | M1–M8 |
+| `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`PARTIAL`** | credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09) | REQ-06.07 warning band on file, not on download | M1/M3 |
 | `CRED-006` | `REQ-06.07` | هشدار محرمانگی روی فایل حاوی رمز | P1 | doc | **`NOT_IMPLEMENTED`** | no files | — | M1–M8 |
 
 ### Employees
@@ -147,7 +147,7 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `PAY-001` | `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | P0 | doc | **`VERIFIED`** | OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula | — | — |
-| `PAY-002` | `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | P1 | doc | **`PARTIAL`** | payslip views + payroll-flow; PDF (mPDF) still pending | no PDF engine wired (mPDF slice) | M1/M3 |
+| `PAY-002` | `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | P1 | doc | **`VERIFIED`** | PayslipPdf all required fields + signature lines; T-PDF-10/10b (single page) | — | — |
 | `PAY-003` | `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | P0 | doc | **`VERIFIED`** | draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27 | — | — |
 | `PAY-004` | `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | P0 | doc | **`VERIFIED`** | payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24) | — | — |
 
@@ -185,7 +185,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `PDF-001` | `REQ-09.05` | خروجی PDF الزامی | P1 | doc | **`BLOCKED`** | no PDF engine + host | — | خارجی |
+| `PDF-001` | `REQ-09.05` | خروجی PDF الزامی | P1 | doc | **`VERIFIED`** | four PDF exports: contract, project, credentials, payslip; pdf-flow 22/22 | — | — |
 
 ### Excel
 
@@ -330,8 +330,6 @@
 | `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
 | `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
-| `CRED-005` | PDF محرمانه دسترسی‌ها | Credentials | P0 |
-| `PRJ-003` | جداسازی اطلاعات عمومی و محرمانه پروژه | Projects | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
 | `SRCH-001` | جستجوی سراسری | Search | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
@@ -358,7 +356,6 @@
 
 | شناسه | عنوان | دلیل انسداد |
 |-------|-------|-------------|
-| `PDF-001` | خروجی PDF الزامی | no PDF engine + host |
 | `SCH-001` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | H-15 host cron unavailable |
 | `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |
 | `DEP-003` | بازبینی و تأیید هاست مقصد | 14/21 host checks unknown |

@@ -53,6 +53,7 @@ KNOWN_REPOS = {
     "league/mime-type-detection": "thephpleague/mime-type-detection",
     "league/config": "thephpleague/config",
     "monolog/monolog": "Seldaek/monolog",
+    "myclabs/deep-copy": "myclabs/DeepCopy",
     "nesbot/carbon": "briannesbitt/Carbon",
     "psr/container": "php-fig/container",
     "psr/log": "php-fig/log",
@@ -71,7 +72,10 @@ KNOWN_REPOS = {
 
 # Extra packages the application needs that aren't transitive in Laravel core.
 EXTRA_REQUIREMENTS = [
-    # ("vendor/package", "constraint")
+    # REQ-07.03 / REQ-04.05 — PDF output. mPDF is the engine the client
+    # specification names, and it is the one that handles RTL Persian shaping
+    # with its own bidi/OTL pipeline rather than needing a separate shaper.
+    ("mpdf/mpdf", "^8.2"),
 ]
 
 

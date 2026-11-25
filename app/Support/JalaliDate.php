@@ -59,9 +59,18 @@ final class JalaliDate
         return new self($jy, $jm, $jd);
     }
 
-    public static function fromCarbon(CarbonImmutable $date): self
+    /**
+     * Accept either Carbon flavour.
+     *
+     * The narrow CarbonImmutable signature looked correct and was wrong in
+     * practice: every Eloquent `date` cast hands back a MUTABLE Carbon, so
+     * `JalaliDate::fromCarbon($model->start_date)` threw a TypeError from
+     * ordinary model data. Laravel's own `CarbonImmutable::instance()` is the
+     * documented bridge between the two.
+     */
+    public static function fromCarbon(CarbonImmutable|\Carbon\Carbon $date): self
     {
-        return self::fromGregorian($date);
+        return self::fromGregorian(CarbonImmutable::instance($date));
     }
 
     /**

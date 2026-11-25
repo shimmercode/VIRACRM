@@ -65,9 +65,17 @@ final class ContractFinalizer
                 );
             }
 
-            if ($contract->number === null || $contract->number === '') {
-                $contract->number = $this->nextNumber($contract);
-            }
+            /*
+             * A number is assigned unconditionally, and that is the point.
+             *
+             * The first version kept any existing number. Demo and imported
+             * contracts already carry one (`VIRA-D-001`), so finalising them
+             * produced a document numbered in a scheme the rest of the product
+             * does not use — and once printed, the number is the only handle the
+             * customer has on it. A draft's provisional number is replaced; the
+             * permanent one is issued here exactly once.
+             */
+            $contract->number = $this->nextNumber($contract);
 
             // `status` is cast to the ContractStatus enum. Assigning the enum
             // (not the raw string) keeps the in-memory model consistent with the

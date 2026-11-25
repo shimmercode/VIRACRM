@@ -45,3 +45,10 @@ Thumbs.db
 
 # Delivery artefacts (built ZIPs) — not source, reproduced on demand
 /delivery/
+
+# tools/resolve-vendor.py download cache — a development artefact, never shipped.
+/.vendor-cache/
+
+# PDF render scratch space (PdfEngine creates and removes it per call; a crashed
+# render can leave one behind).
+/storage/app/pdf-tmp/

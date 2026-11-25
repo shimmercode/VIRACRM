@@ -32,6 +32,11 @@
         </div>
 
         <div class="v-pagehead__actions">
+            {{-- REQ-07.03 / T-PDF-10 — the printable payslip. --}}
+            <a href="{{ route('payroll.payslip.pdf', $payslip) }}" class="v-btn v-btn--ghost"
+               data-export="pdf">
+                <x-icon name="download" :size="16" /> دانلود PDF
+            </a>
             @if ($isLocked)
                 <x-badge tone="success" :dot="true">دورهٔ منتشرشده</x-badge>
             @endif

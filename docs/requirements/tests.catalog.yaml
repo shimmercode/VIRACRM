@@ -273,13 +273,13 @@ tests:
 
 # ── PDF ─────────────────────────────────────────────────────────────────────
 - {id: T-PDF-01, suite: PDF, title: "PDF فارسی قرارداد",
-   pre: "قرارداد نهایی", steps: "تولید و بررسی چشمی+متنی", expect: "فارسی صحیح، فونت Vazirmatn، RTL، شکست صفحه صحیح", status: NOT_RUN}
+   pre: "قرارداد نهایی", steps: "تولید و بررسی چشمی+متنی", expect: "فارسی صحیح، فونت Vazirmatn، RTL، شکست صفحه صحیح", status: PASS}
 - {id: T-PDF-08, suite: PDF, title: "PDF عمومی پروژه",
-   pre: "پروژه", steps: "تولید PDF عمومی", expect: "بدون هیچ اطلاعات محرمانه دسترسی", status: NOT_RUN}
+   pre: "پروژه", steps: "تولید PDF عمومی", expect: "بدون هیچ اطلاعات محرمانه دسترسی", status: PASS}
 - {id: T-PDF-09, suite: PDF, title: "PDF محرمانه دسترسی‌ها با کنترل دسترسی",
-   pre: "مجوز ویژه", steps: "تولید؛ بررسی هدر و audit", expect: "فقط برای مجاز؛ ثبت audit؛ no-store", status: NOT_RUN}
+   pre: "مجوز ویژه", steps: "تولید؛ بررسی هدر و audit", expect: "فقط برای مجاز؛ ثبت audit؛ no-store", status: PASS}
 - {id: T-PDF-10, suite: PDF, title: "PDF فیش حقوقی",
-   pre: "فیش محاسبه‌شده", steps: "تولید", expect: "همه اقلام و محل امضا", status: NOT_RUN}
+   pre: "فیش محاسبه‌شده", steps: "تولید", expect: "همه اقلام و محل امضا", status: PASS}
 
 # ── Excel ───────────────────────────────────────────────────────────────────
 - {id: T-XLS-01, suite: XLS, title: "XLSX واقعی با عنوان فارسی ستون‌ها",

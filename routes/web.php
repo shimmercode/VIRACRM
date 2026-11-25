@@ -13,6 +13,7 @@ use App\Http\Controllers\Hr\PayrollController;
 use App\Http\Controllers\Notes\NoteController;
 use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\WorkItems\WorkItemController;
+use App\Http\Controllers\Documents\ExportController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -102,6 +103,18 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/templates/{template}', [ContractTemplateController::class, 'destroy'])
                 ->middleware('permission:contracts.finalize')->name('templates.destroy');
 
+            // REQ-09.05 / T-PDF-01 — the printable contract. Declared before
+            // `GET /{contract}` for the same reason /templates is: a static
+            // segment registered after a wildcard is swallowed by it, so
+            // /contracts/12/pdf would look up id "pdf".
+            //
+            // `contracts.view` is enough to read the document, but the amount is
+            // rendered inside it, so the financial permission is required too.
+            Route::get('/{contract}/pdf', [ExportController::class, 'contract'])
+                ->middleware('permission:contracts.view')
+                ->middleware('permission:contracts.view_financials')
+                ->name('pdf');
+
             Route::get('/{contract}', [ContractController::class, 'show'])
                 ->middleware('permission:contracts.view')->name('show');
             Route::get('/{contract}/edit', [ContractController::class, 'edit'])
@@ -131,6 +144,11 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:projects.create')->name('create');
             Route::post('/', [ProjectController::class, 'store'])
                 ->middleware('permission:projects.create')->name('store');
+            // REQ-06.06 / T-PDF-08 — the PUBLIC project document. Declared
+            // before `GET /{project}` so "pdf" is not read as a project id.
+            Route::get('/{project}/pdf', [ExportController::class, 'project'])
+                ->middleware('permission:projects.view')->name('pdf');
+
             Route::get('/{project}', [ProjectController::class, 'show'])
                 ->middleware('permission:projects.view')->name('show');
             Route::get('/{project}/edit', [ProjectController::class, 'edit'])
@@ -249,6 +267,9 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/payslips/{payslip}', [PayrollController::class, 'payslip'])
                 ->middleware('permission:payroll.view')->name('payslip');
+            // REQ-07.03 / T-PDF-10 — the printable payslip.
+            Route::get('/payslips/{payslip}/pdf', [ExportController::class, 'payslip'])
+                ->middleware('permission:payroll.view')->name('payslip.pdf');
             Route::put('/payslips/{payslip}', [PayrollController::class, 'updatePayslip'])
                 ->middleware('permission:payroll.manage')->name('payslip.update');
             Route::post('/payslips/{payslip}/items', [PayrollController::class, 'storeItem'])
@@ -317,6 +338,19 @@ Route::middleware(['auth'])->group(function () {
             // history entry or a proxy log (REQ-06.04).
             Route::post('/{credential}/reveal', [CredentialController::class, 'reveal'])
                 ->middleware('permission:credentials.reveal')->name('reveal');
+
+            /*
+             * REQ-06.05 / T-PDF-09 — the confidential document.
+             *
+             * POST for the same reason reveal is: it concentrates every secret
+             * on the project into one portable file. A GET would put that act in
+             * browser history, proxy logs and any Referer header, and would let
+             * a link in a chat app trigger it. `credentials.export` is separate
+             * from `view` and `reveal` because "may see there is a login" and
+             * "may carry all the logins away in a PDF" are different powers.
+             */
+            Route::post('/export', [ExportController::class, 'credentials'])
+                ->middleware('permission:credentials.export')->name('export');
         });
     });
 });

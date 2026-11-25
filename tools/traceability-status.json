@@ -180,13 +180,13 @@
     "audit recorded, not browsable"
   ],
   "REQ-06.05": [
-    "NOT_IMPLEMENTED",
-    "no PDF engine",
-    "—"
+    "PARTIAL",
+    "credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09)",
+    "REQ-06.07 warning band on file, not on download"
   ],
   "REQ-06.06": [
-    "NOT_IMPLEMENTED",
-    "no public/secret split",
+    "VERIFIED",
+    "ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data",
     "—"
   ],
   "REQ-06.07": [
@@ -205,9 +205,9 @@
     "—"
   ],
   "REQ-07.03": [
-    "PARTIAL",
-    "payslip views + payroll-flow; PDF (mPDF) still pending",
-    "no PDF engine wired (mPDF slice)"
+    "VERIFIED",
+    "PayslipPdf all required fields + signature lines; T-PDF-10/10b (single page)",
+    "—"
   ],
   "REQ-07.04": [
     "VERIFIED",
@@ -250,8 +250,8 @@
     "—"
   ],
   "REQ-09.05": [
-    "BLOCKED",
-    "no PDF engine + host",
+    "VERIFIED",
+    "four PDF exports: contract, project, credentials, payslip; pdf-flow 22/22",
     "—"
   ],
   "REQ-09.06": [

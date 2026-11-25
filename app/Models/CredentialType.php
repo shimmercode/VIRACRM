@@ -50,6 +50,26 @@ class CredentialType extends Model
         return $keys;
     }
 
+    /**
+     * The display label for one field key, from the same schema.
+     *
+     * The PDF prints "رمز عبور: …" rather than "password: …". If the schema has
+     * no label, the key is returned as-is instead of an empty string — a blank
+     * label beside a secret tells the reader nothing about what they are holding.
+     */
+    public function labelFor(string $key): ?string
+    {
+        foreach ($this->fields_schema ?? [] as $field) {
+            if (isset($field['key']) && (string) $field['key'] === $key) {
+                $label = trim((string) ($field['label'] ?? ''));
+
+                return $label !== '' ? $label : $key;
+            }
+        }
+
+        return null;
+    }
+
     /** @return list<string> keys of the fields that must be present */
     public function requiredFields(): array
     {

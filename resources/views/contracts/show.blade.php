@@ -48,6 +48,18 @@
         </div>
 
         <div class="v-pagehead__actions">
+            @if ($contract->finalized_at && auth()->user()->hasPermission('contracts.view_financials'))
+                {{--
+                    REQ-09.05 / T-PDF-01 — the printable contract.
+                    Only offered once finalised: a draft has no permanent number
+                    and no frozen body, and the export refuses it. Offering a
+                    button that always refuses is worse than not offering it.
+                --}}
+                <a href="{{ route('contracts.pdf', $contract) }}" class="v-btn v-btn--ghost"
+                   data-export="pdf">
+                    <x-icon name="download" :size="16" /> دانلود PDF
+                </a>
+            @endif
             @if ($canEdit)
                 <a href="{{ route('contracts.edit', $contract) }}" class="v-btn v-btn--ghost">
                     <x-icon name="edit" :size="16" /> ویرایش

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T19:49:12.066Z",
+  "generatedAt": "2026-11-25T20:16:49.534Z",
   "widths": [
     390,
     430,
@@ -96,7 +96,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 6
+      "tappable": 5
+    },
+    {
+      "key": "payslip",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
+    },
+    {
+      "key": "credentials",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
     },
     {
       "key": "contract-templates",
@@ -228,7 +250,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 6
+      "tappable": 5
+    },
+    {
+      "key": "payslip",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
+    },
+    {
+      "key": "credentials",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
     },
     {
       "key": "contract-templates",
@@ -360,7 +404,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 6
+      "tappable": 5
+    },
+    {
+      "key": "payslip",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
+    },
+    {
+      "key": "credentials",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
     },
     {
       "key": "contract-templates",
@@ -492,7 +558,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 6
+      "tappable": 5
+    },
+    {
+      "key": "payslip",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
+    },
+    {
+      "key": "credentials",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 9
     },
     {
       "key": "contract-templates",
@@ -624,7 +712,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 7
+      "tappable": 6
+    },
+    {
+      "key": "payslip",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
+    },
+    {
+      "key": "credentials",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
     },
     {
       "key": "contract-templates",
@@ -756,7 +866,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 7
+      "tappable": 6
+    },
+    {
+      "key": "payslip",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
+    },
+    {
+      "key": "credentials",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
     },
     {
       "key": "contract-templates",
@@ -888,7 +1020,29 @@
       "overflowers": [
         "a.v-skip"
       ],
-      "tappable": 7
+      "tappable": 6
+    },
+    {
+      "key": "payslip",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
+    },
+    {
+      "key": "credentials",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 10
     },
     {
       "key": "contract-templates",

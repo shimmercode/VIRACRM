@@ -107,6 +107,21 @@ const PAGES = [
   // REQ-04.04 — the template editor is the longest text surface in the product
   // (a 16-row textarea plus a wrapped placeholder palette), so it is the real
   // test of horizontal containment on a narrow screen.
+  // REQ-09.05 — the export buttons sit in the page head, the tightest horizontal
+  // space in the layout, and a page head with two buttons plus a title is where
+  // a narrow screen breaks first.
+  {
+    key: 'payslip',
+    url: '/payroll/payslips/1',
+    text: ['فیش حقوقی'],
+    classes: ['v-btn'],
+  },
+  {
+    key: 'credentials',
+    url: '/projects/1/credentials',
+    text: ['دسترسی‌های پروژه'],
+    classes: ['v-btn'],
+  },
   {
     key: 'contract-templates',
     url: '/contracts/templates',

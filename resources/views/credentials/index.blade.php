@@ -20,12 +20,31 @@
                 رمزها با AES-256-GCM رمزنگاری می‌شوند و هر بار مشاهدهٔ رمز در گزارش رویدادها ثبت می‌گردد.
             </p>
         </div>
-        @if ($canManage)
+        @if ($canManage || auth()->user()->hasPermission('credentials.export'))
             <div class="v-pagehead__actions">
-                <a href="{{ route('credentials.create', $project) }}" class="v-btn v-btn--primary">
-                    <x-icon name="plus" :size="16" />
-                    دسترسی جدید
-                </a>
+                @if (auth()->user()->hasPermission('credentials.export'))
+                    {{--
+                        REQ-06.05 / T-PDF-09 — the confidential export.
+                        A POST form, not a link: this gathers every password on
+                        the project into one portable file, and a GET would put
+                        that act in the URL bar, in history and in any Referer
+                        header. The confirmation exists because the file leaves
+                        the system's control the moment it is saved.
+                    --}}
+                    <form method="POST" action="{{ route('credentials.export', $project) }}"
+                          data-confirm="این سند همهٔ رمزهای این پروژه را در یک فایل PDF جمع می‌کند و خروجی گرفتن در گزارش رویدادها ثبت می‌شود. ادامه می‌دهید؟">
+                        @csrf
+                        <button type="submit" class="v-btn v-btn--ghost" data-export="confidential">
+                            <x-icon name="download" :size="16" /> PDF محرمانه
+                        </button>
+                    </form>
+                @endif
+                @if ($canManage)
+                    <a href="{{ route('credentials.create', $project) }}" class="v-btn v-btn--primary">
+                        <x-icon name="plus" :size="16" />
+                        دسترسی جدید
+                    </a>
+                @endif
             </div>
         @endif
     </header>

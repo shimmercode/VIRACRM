@@ -31,6 +31,12 @@
                     <x-icon name="key" :size="16" /> دسترسی‌ها
                 </a>
             @endif
+            {{-- REQ-06.06 / T-PDF-08 — the public project document. Contains no
+                 credential data by construction (ProjectPdf::PUBLIC_FIELDS). --}}
+            <a href="{{ route('projects.pdf', $project) }}" class="v-btn v-btn--ghost"
+               data-export="pdf">
+                <x-icon name="download" :size="16" /> PDF عمومی
+            </a>
             @if (auth()->user()->hasPermission('projects.update'))
                 <a href="{{ route('projects.edit', $project) }}" class="v-btn v-btn--primary">
                     <x-icon name="edit" :size="16" /> ویرایش

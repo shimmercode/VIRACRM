@@ -85,6 +85,7 @@ final class ContractRendererTest extends ViraTestCase
         $this->finalizeTwiceIsRefused();
         $this->renewCopiesTermsAndLeavesOriginalUntouched();
         $this->renewRequiresAFinalisedContract();
+        $this->finalizeReplacesALegacyNumber();
         $this->amountInWordsIsCorrect();
     }
 
@@ -261,6 +262,23 @@ final class ContractRendererTest extends ViraTestCase
         $this->assertThrows(\RuntimeException::class, function () use ($contract, $user) {
             (new ContractFinalizer(new ContractRenderer()))->renew($contract, $user, [], 'x');
         }, 'A draft cannot be renewed; it was never an obligation.');
+    }
+
+    /**
+     * Demo and imported contracts arrive carrying a number like `VIRA-D-001`.
+     * Keeping it produced a finalised document numbered in a scheme the product
+     * does not use — found while generating the first real contract PDF.
+     */
+    private function finalizeReplacesALegacyNumber(): void
+    {
+        $this->boot('ctr_legacy_number');
+        $user = $this->makeUser();
+        $contract = $this->makeContract(['number' => 'VIRA-D-001']);
+
+        $finalized = (new ContractFinalizer(new ContractRenderer()))->finalize($contract, $user);
+
+        $this->assertTrue(str_starts_with((string) $finalized->number, 'VIRA-C-1405-'),
+            'a legacy number is replaced by the year-scoped one, got ' . $finalized->number);
     }
 
     private function amountInWordsIsCorrect(): void

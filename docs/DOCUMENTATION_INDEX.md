@@ -41,7 +41,7 @@
 | ۹ | `ASSET_LOADING_AND_BASE_PATH.md` | `docs/ASSET_LOADING_REMEDIATION.md` | `COVERED` |
 | ۱۰ | `ACCOUNTING_ARCHITECTURE.md` | `docs/phase-3/ACCOUNTING_DESIGN.md` (۲۲ KB) | `PARTIAL` — **طراحی است، کد نیست**؛ OD-41 تأیید نشده |
 | ۱۱ | `FILE_WORKSPACE_ARCHITECTURE.md` | `docs/FILE_STORAGE_ARCHITECTURE.md` | `PARTIAL` — طراحی کامل، **صفر کد** |
-| ۱۲ | `PDF_TEST_REPORT.md` | — | `MISSING` — mPDF نصب نیست، هیچ خروجی PDF وجود ندارد |
+| ۱۲ | `pdf/PDF_ENGINE.md` | — | `PRESENT` — mPDF نصب و تأیید شده؛ چهار خروجی با تست (pdf-flow 22/22) |
 | ۱۳ | `RESPONSIVE_QA_REPORT.md` | `docs/CRM_REVIEW_RESPONSIVE.md` + نتیجهٔ `ui-shots` | `COVERED` |
 | ۱۴ | `REGRESSION_REPORT.md` | `docs/REGRESSION_LOCK.md` + خروجی زندهٔ `run-all.mjs` | `COVERED` |
 | ۱۵ | `BACKUP_AND_RESTORE.md` | `docs/BACKUP_RECOVERY.md` + `docs/phase-1/17-backup-restore-policy.md` | `COVERED` |
