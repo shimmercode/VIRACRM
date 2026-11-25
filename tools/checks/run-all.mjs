@@ -131,6 +131,11 @@ const SUITES = (() => {
     // none of that — the environment was unusable for a while while every
     // request returned 200.
     { id: 'review-embed', label: 'Review environment is viewable (iframe + CSS)', kind: 'browser', script: 'tools/checks/review-embed.mjs', required: true },
+    // Asset loading broke three times, each time invisibly to a status code.
+    // These measure the emitted URLs and the base-path matrix rather than
+    // trusting that they are right.
+    { id: 'asset-origin', label: 'Assets load from the page origin', kind: 'browser', script: 'tools/checks/asset-origin-audit.mjs', required: true },
+    { id: 'asset-basepath', label: 'Asset base path matrix (root/prefix)', kind: 'browser', script: 'tools/checks/asset-basepath-matrix.mjs', required: true },
     { id: 'decision-audit', label: '36 decisions reconciled', kind: 'node', script: 'tools/checks/decision-audit.mjs', required: true },
     { id: 'decision-pack', label: 'Client pack 9 x 11 fields is current', kind: 'node', script: 'tools/checks/review-decision-pack-current.mjs', required: true },
     { id: 'review-report', label: 'Final report matches evidence', kind: 'node', script: 'tools/checks/review-report-current.mjs', required: true },

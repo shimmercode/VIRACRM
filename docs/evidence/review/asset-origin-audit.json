@@ -1,0 +1,356 @@
+{
+  "generatedAt": "2026-11-25T11:57:21.553Z",
+  "environment": {
+    "appServer": "http://127.0.0.1:40513",
+    "browserOrigin": "http://audit.local:35663/",
+    "assetUrlSetting": "ASSET_URL=/",
+    "note": "Vite is not used by this project; assets are concatenated by tools/build-assets.mjs and referenced with asset()."
+  },
+  "emittedUrls": {
+    "stylesheets": [
+      "/build/css/app.css?v=1795590068"
+    ],
+    "preloads": [
+      "/build/fonts/Vazirmatn-Regular.woff2"
+    ],
+    "scripts": [
+      "/build/js/app.js?v=1795518775"
+    ],
+    "images": [],
+    "total": 3,
+    "relativeCount": 3,
+    "absoluteCount": 0,
+    "allRelative": true
+  },
+  "absoluteUrlScan": {
+    "pattern": "/(?:https?:)?\\/\\/(?:localhost|127\\.0\\.0\\.1|[a-z0-9-]+\\.[a-z]{2,})(?::\\d+)?\\/build\\//gi",
+    "scanned": [
+      {
+        "file": "public/build/css/app.css",
+        "bytes": 144300
+      },
+      {
+        "file": "public/build/js/app.js",
+        "bytes": 67159
+      },
+      {
+        "file": "resources/views/layouts/app.blade.php",
+        "bytes": 2600
+      },
+      {
+        "file": "resources/views/layouts/plain.blade.php",
+        "bytes": 767
+      },
+      {
+        "file": "resources/views/auth/login.blade.php",
+        "bytes": 5397
+      }
+    ],
+    "hits": [],
+    "clean": true
+  },
+  "network": [
+    {
+      "type": "document",
+      "status": 302,
+      "url": "http://audit.local:35663/",
+      "path": "/",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/",
+      "redirected": false,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "no-cache, private"
+    },
+    {
+      "type": "document",
+      "status": 200,
+      "url": "http://audit.local:35663/login",
+      "path": "/login",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/login",
+      "redirected": true,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "no-cache, private"
+    },
+    {
+      "type": "stylesheet",
+      "status": 200,
+      "url": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "path": "/build/css/app.css",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "redirected": false,
+      "contentType": "text/css; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "path": "/build/fonts/Vazirmatn-Regular.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "script",
+      "status": 200,
+      "url": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "path": "/build/js/app.js",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "redirected": false,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "path": "/build/fonts/Vazirmatn-Bold.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "path": "/build/fonts/Vazirmatn-Medium.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "document",
+      "status": 200,
+      "url": "http://audit.local:35663/login",
+      "path": "/login",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/login",
+      "redirected": false,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "no-cache, private"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "path": "/build/fonts/Vazirmatn-Regular.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "stylesheet",
+      "status": 200,
+      "url": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "path": "/build/css/app.css",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "redirected": false,
+      "contentType": "text/css; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "script",
+      "status": 200,
+      "url": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "path": "/build/js/app.js",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "redirected": false,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "path": "/build/fonts/Vazirmatn-Medium.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "path": "/build/fonts/Vazirmatn-Bold.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "marker",
+      "status": 0,
+      "url": "--- hard reload below ---",
+      "path": "",
+      "sameOrigin": true,
+      "finalUrl": "",
+      "redirected": false,
+      "contentType": "",
+      "contentLength": "",
+      "cacheControl": ""
+    },
+    {
+      "type": "document",
+      "status": 302,
+      "url": "http://audit.local:35663/?cachebust=1795607850187",
+      "path": "/",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/?cachebust=1795607850187",
+      "redirected": false,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "no-cache, private"
+    },
+    {
+      "type": "document",
+      "status": 200,
+      "url": "http://audit.local:35663/login",
+      "path": "/login",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/login",
+      "redirected": true,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "no-cache, private"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "path": "/build/fonts/Vazirmatn-Regular.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Regular.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "stylesheet",
+      "status": 200,
+      "url": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "path": "/build/css/app.css",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/css/app.css?v=1795590068",
+      "redirected": false,
+      "contentType": "text/css; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "script",
+      "status": 200,
+      "url": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "path": "/build/js/app.js",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/js/app.js?v=1795518775",
+      "redirected": false,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "path": "/build/fonts/Vazirmatn-Medium.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Medium.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "type": "font",
+      "status": 200,
+      "url": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "path": "/build/fonts/Vazirmatn-Bold.woff2",
+      "sameOrigin": true,
+      "finalUrl": "http://audit.local:35663/build/fonts/Vazirmatn-Bold.woff2",
+      "redirected": false,
+      "contentType": "font/woff2",
+      "contentLength": "",
+      "cacheControl": "public, max-age=3600"
+    }
+  ],
+  "console": [],
+  "verdict": {
+    "emittedAllRelative": true,
+    "noFixedAbsoluteInBuild": true,
+    "everyAssetSameOrigin": true,
+    "everyAsset200": true,
+    "stylesheetApplied": true,
+    "customFontApplied": true,
+    "noConsoleErrors": true,
+    "counts": {
+      "assetRequests": 15,
+      "stylesheets": 3,
+      "scripts": 3,
+      "fonts": 9
+    }
+  },
+  "dom": {
+    "href": "/build/css/app.css?v=1795590068",
+    "sheetsLoaded": true,
+    "font": "Vazirmatn",
+    "bg": "rgb(246, 245, 248)"
+  },
+  "reloads": {
+    "firstLoadRequests": 7,
+    "totalRequests": 21
+  },
+  "directFetch": [
+    {
+      "path": "/build/css/app.css?v=1795590068",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "bytes": 144300
+    },
+    {
+      "path": "/build/js/app.js?v=1795518775",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8",
+      "bytes": 67159
+    },
+    {
+      "path": "/build/fonts/Vazirmatn-Regular.woff2",
+      "status": 200,
+      "contentType": "font/woff2",
+      "bytes": 50684
+    }
+  ],
+  "originSubstitution": {
+    "note": "The page fetched from a different host must contain the same bytes once that host is substituted out. If any URL were baked to an absolute host, the substitution would leave the old one behind.",
+    "identicalAfterSubstitution": true
+  }
+}

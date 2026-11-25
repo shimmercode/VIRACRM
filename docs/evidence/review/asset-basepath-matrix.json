@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-11-25T11:57:51.807Z",
+  "caveat": "Node reverse proxy + PHP-WASM. Characterises URL resolution, not Apache/cPanel/mod_rewrite behaviour. Production compatibility remains unverified.",
+  "results": [
+    {
+      "scenario": "A",
+      "label": "domain root · ASSET_URL=/",
+      "assetUrl": "/",
+      "expectedWorks": true,
+      "dom": {
+        "href": "/build/css/app.css?v=1795590068",
+        "sheetsLoaded": true,
+        "font": "Vazirmatn"
+      },
+      "requests": {
+        "stylesheets": 1,
+        "fonts": 3
+      },
+      "allAssetPathsStartWith": "/build/",
+      "assetPathsOk": true,
+      "allAsset200": true,
+      "styled": true
+    },
+    {
+      "scenario": "B",
+      "label": "installed under /crm · ASSET_URL=/ (the mistake)",
+      "assetUrl": "/",
+      "expectedWorks": false,
+      "dom": {
+        "href": "/build/css/app.css?v=1795590068",
+        "sheetsLoaded": true,
+        "font": "\"Times New Roman\""
+      },
+      "requests": {
+        "stylesheets": 1,
+        "fonts": 1
+      },
+      "allAssetPathsStartWith": "/crm/build/",
+      "assetPathsOk": false,
+      "allAsset200": false,
+      "styled": false
+    },
+    {
+      "scenario": "C",
+      "label": "installed under /crm · ASSET_URL=/crm (correct)",
+      "assetUrl": "/crm",
+      "expectedWorks": true,
+      "dom": {
+        "href": "/crm/build/css/app.css?v=1795590068",
+        "sheetsLoaded": true,
+        "font": "Vazirmatn"
+      },
+      "requests": {
+        "stylesheets": 1,
+        "fonts": 3
+      },
+      "allAssetPathsStartWith": "/crm/build/",
+      "assetPathsOk": true,
+      "allAsset200": true,
+      "styled": true
+    }
+  ],
+  "compliantWithExpectations": true,
+  "conclusion": {
+    "rule": "ASSET_URL must equal the path prefix the application is served from.",
+    "rootDeployment": "root install -> ASSET_URL=/ (scenario A)",
+    "subDirectory": "sub-directory install -> ASSET_URL=/<prefix> (scenario C)",
+    "theMistake": "sub-directory install with ASSET_URL=/ shows an unstyled page and no error (scenario B)",
+    "productionDefault": "ASSET_URL unset -> absolute URLs from APP_URL; correct when APP_URL matches the public origin, which is the normal cPanel case"
+  }
+}
