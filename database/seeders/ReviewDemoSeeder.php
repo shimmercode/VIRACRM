@@ -51,7 +51,7 @@ class ReviewDemoSeeder extends Seeder
     /**
      * Demo password for every review account.
      *
-     * NOT a constant any more. The previous version hardcoded 'ReviewDemo!2026'
+     * NOT a constant any more. The previous version hardcoded the password here
      * in the class, which meant the credential lived in Git for anyone to read
      * and could never be rotated without a commit. It now comes from
      * VIRA_REVIEW_DEMO_PASSWORD (an environment secret), and the seeder refuses

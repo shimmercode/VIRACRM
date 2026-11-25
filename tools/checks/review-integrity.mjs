@@ -120,6 +120,53 @@ check('T-REV-read-only', !/Route::(post|put|patch|delete)/.test(routes),
       : `${offenders.length} lines: ${offenders.slice(0, 4).join(', ')}`);
 }
 
+/*
+ * ── 9. no credential literal anywhere in the tree ─────────────────────────
+ *
+ * The demo password lived as a literal in a seeder, two check scripts and a
+ * doc. Rotation removed the value but left the string in three explanatory
+ * comments; a scanner still flags it and a reader learns nothing. Worse, the
+ * original defect was invisible because nothing looked for it.
+ *
+ * This scans the tracked-suffix files for an assignment-shaped password and
+ * for the specific retired literal, so neither can come back unnoticed.
+ */
+const CREDENTIAL_PATTERNS = [
+  [/ReviewDemo!/, 'the retired demo password literal'],
+  [/['"]password['"]\s*=>\s*['"][^'"$]{8,}['"]/, 'a hardcoded password value'],
+  [/const\s+DEMO_PASSWORD\s*=/, 'a password constant'],
+];
+
+const SCAN_DIRS = ['database/seeders', 'tools', 'docs', 'resources/views/review'];
+const SCAN_EXT = /\.(php|mjs|js|md|blade\.php)$/;
+const offenders = [];
+
+const walk = (dir) => {
+  const abs = path.join(ROOT, dir);
+  if (!fs.existsSync(abs)) return;
+  for (const entry of fs.readdirSync(abs, { withFileTypes: true })) {
+    const rel = path.join(dir, entry.name);
+    if (entry.isDirectory()) { walk(rel); continue; }
+    if (!SCAN_EXT.test(entry.name)) continue;
+    if (rel.includes('node_modules')) continue;
+    // This file defines the patterns; scanning it would always match.
+    if (rel === 'tools/checks/review-integrity.mjs') continue;
+    const text = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+    for (const [re, what] of CREDENTIAL_PATTERNS) {
+      if (re.test(text)) offenders.push(`${rel}: ${what}`);
+    }
+  }
+};
+SCAN_DIRS.forEach(walk);
+
+check('T-REV-no-credential-literal', offenders.length === 0,
+  offenders.length === 0
+    ? `${SCAN_DIRS.length} directories scanned, no credential literal`
+    : `${offenders.length}: ${offenders.slice(0, 3).join(' · ')}`);
+
+// Counted here, after every check has run. An earlier version computed this
+// above check 9, so the new check printed PASS while the summary said 8/9 —
+// a check that cannot fail its own suite.
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n--- summary ---\n${passed}/${results.length} passed`);
 process.exit(passed === results.length ? 0 : 1);

@@ -3,7 +3,7 @@
  *
  * WHY THIS FILE EXISTS
  * --------------------
- * The password used to be the literal 'ReviewDemo!2026' in three test scripts
+ * The password used to be a literal in three test scripts
  * and a class constant. That is a credential in Git: readable by anyone, and
  * impossible to rotate without a commit. It is now read from the environment
  * (VIRA_REVIEW_DEMO_PASSWORD), the same variable the seeder uses, so there is
