@@ -99,7 +99,15 @@ const startWrapper = (appBase, origin, port = 0) => new Promise((resolve) => {
   server.listen(port, '0.0.0.0', () => resolve(server));
 });
 
+/*
+ * Mirror the review environment's own start command: allow the wrapper origin
+ * to frame the app, and emit root-relative asset URLs. The latter is the
+ * structural fix this suite exists to protect — without it the page still
+ * renders here (same origin), but the assertion below would not notice a
+ * regression back to absolute URLs.
+ */
 process.env.VIRA_PREVIEW_EMBED = 'http://wrapper.local:*';
+process.env.ASSET_URL = '/';
 
 const flow = await startBrowserFlow('review-embed', {
   viewport: { width: 1280, height: 1000 },
@@ -170,6 +178,17 @@ if (frame) {
 
   record('stylesheet loads (no mixed content)', styled.loaded && styled.sheets > 0,
     `${styled.sheets} sheet(s), applied=${styled.loaded}`);
+
+  /*
+   * Root-relative asset URLs are the structural fix: the browser resolves them
+   * against whatever origin served the page, so no proxy header, port or scheme
+   * can send the stylesheet somewhere else. Assert the shape, not just the
+   * outcome, so a regression back to absolute URLs is caught here rather than
+   * by the client seeing an unstyled page.
+   */
+  const href = await frame.evaluate(() =>
+    document.querySelector('link[rel=stylesheet]')?.getAttribute('href') || '');
+  record('asset URLs are root-relative', href.startsWith('/'), `href=${href}`);
 
   /*
    * Assert the custom face won, not merely that some font is set. An earlier

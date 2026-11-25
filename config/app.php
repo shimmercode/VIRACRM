@@ -55,6 +55,24 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
+     * Root for asset() URLs.
+     *
+     * Behind the preview proxy the application's own origin is not knowable in
+     * advance: the proxy terminates TLS, forwards plaintext, and does not
+     * reliably tell the app which host and scheme the browser used. An absolute
+     * asset URL built from a guess is wrong in a way that leaves the page
+     * unstyled and unframeable — and it was wrong twice, once as http-on-https
+     * and once as the wrong port.
+     *
+     * Setting this to "/" makes asset() emit "/build/css/app.css". The browser
+     * resolves that against the origin it is already on, so it cannot be wrong,
+     * whatever the proxy forwards. The review environment sets ASSET_URL=/;
+     * a production deploy leaves it unset and keeps absolute URLs, which it may
+     * need for a CDN or a sub-path.
+     */
+    'asset_url' => env('ASSET_URL'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
