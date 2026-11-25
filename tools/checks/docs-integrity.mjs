@@ -101,6 +101,17 @@ check('T-DOC-traceability-current', regen.status === 0,
     ? 'document matches the catalogue'
     : (regen.stderr || regen.stdout || '').trim().split('\n')[0]);
 
+// The page inventory is generated from the review catalogue. Two hand-written
+// inventories once disagreed (4 preview vs 19) and both looked authoritative;
+// deriving the document removed the possibility.
+const inventory = spawnSync(process.execPath, ['tools/generate-page-inventory.mjs', '--check'], {
+  cwd: ROOT, encoding: 'utf8', timeout: 300_000,
+});
+check('T-DOC-page-inventory-current', inventory.status === 0,
+  inventory.status === 0
+    ? 'document matches the catalogue'
+    : (inventory.stderr || inventory.stdout || '').trim().split('\n')[0]);
+
 // F0 file-workspace traceability is generated from the requirements document;
 // like the main matrix it must not be hand-edited or left stale.
 const fileTrace = spawnSync(process.execPath, ['docs/tools/generate-file-traceability.mjs', '--check'], {

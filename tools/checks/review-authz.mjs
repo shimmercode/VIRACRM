@@ -235,8 +235,14 @@ fs.writeFileSync(OUT, JSON.stringify({
   results,
 }, null, 2));
 
+/*
+ * The runner parses "N/M passed" and nothing else. An earlier version of this
+ * summary printed "passed 9" / "tests 9", which the runner could not read — so
+ * the suite ran, exited 0, and contributed zero assertions to the total. The
+ * number stayed at 979 while a nine-test suite reported success, which is the
+ * precise shape of a silent pass. Print the format the runner understands.
+ */
 console.log('\n--- summary ---');
-console.log(`tests    ${results.length}`);
-console.log(`passed   ${results.length - failures}`);
-console.log(`failed   ${failures}`);
+console.log(`${results.length - failures}/${results.length} passed`);
+if (failures) console.log(`failed: ${results.filter((r) => !r.ok).map((r) => r.id).join(' · ')}`);
 process.exit(failures === 0 ? 0 : 1);
