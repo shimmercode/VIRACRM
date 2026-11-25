@@ -1,6 +1,6 @@
 # بستهٔ تحویل — Delivery & Verification
 
-**شاخه:** `arena/3b43de84-viracrm` · **کامیت نهایی:** `01b31e3`
+**شاخه:** `arena/3b43de84-viracrm` · **کامیت نهایی:** `74f9685`
 **کامیت مبنا:** `42299bf` · **تعداد کامیت این چرخه:** ۱۰
 
 ---
@@ -9,14 +9,14 @@
 
 | بسته | حجم | فایل | محتوا |
 |------|-----|------|-------|
-| **منبع** | ۱۷ MB | `viracrm-source-01b31e3.zip` | ۷۸۷ فایل — کد نسخه‌بندی‌شده + `public/build` |
-| **تولید** | ۲۵ MB | `viracrm-production-01b31e3.zip` | ۶٬۳۱۰ فایل — همان + `vendor/` |
+| **منبع** | ۱۷ MB | `viracrm-source-74f9685.zip` | ۷۸۹ فایل — کد نسخه‌بندی‌شده + `public/build` |
+| **تولید** | ۲۵ MB | `viracrm-production-74f9685.zip` | ۶٬۳۱۲ فایل — همان + `vendor/` |
 
 ### SHA-256
 
 ```
-7938b3c26a26a2bfc3a91043e1ffc16259ef2e4acbc1017fceee0a06a88089d5  viracrm-source-01b31e3.zip
-ee1d19b94fcc4e825df8a3fea658ceec62f943ff70455c32747a1a8d92ade056  viracrm-production-01b31e3.zip
+a07630b169a3846ea02c4772fbb6216607f6cddd7b38726b174955ce8312741d  viracrm-source-74f9685.zip
+ab4bf9c1dbe752efe40b80de626fd3ca855670c99957e82442583a5ae957d6c6  viracrm-production-74f9685.zip
 ```
 
 ---
@@ -48,9 +48,11 @@ zip -qr -9 viracrm-source.zip viracrm
 | بررسی | روش | نتیجه |
 |-------|-----|-------|
 | سلامت آرشیو | `unzip -t` | ✅ `No errors detected` |
-| هش هر فایل | استخراج تازه + `sha256sum -c` | ✅ **۷۸۷/۷۸۷** (منبع)، **۶۳۱۰/۶۳۱۰** (تولید) |
+| هش هر فایل | استخراج تازه + `sha256sum -c` | ✅ **۷۸۹/۷۸۹** (منبع)، **۶۳۱۲/۶۳۱۲** (تولید) |
 | نبودِ راز | جست‌وجوی `.env`, `*.sqlite`, `*.log`, `*.pem` | ✅ صفر مورد |
-| اجرای واقعی | `php tests/run.php` از ZIP **استخراج‌شده** | ✅ **۸/۸ · ۴۰۹ اَسِرشن** |
+| اجرای واقعی (تولید) | `php tests/run.php` از ZIP **استخراج‌شده** | ✅ **۸/۸ · ۴۰۹ اَسِرشن** |
+| اجرای واقعی (منبع) | همان | ❌ انتظاری — `vendor/` ندارد |
+| `README_DELIVERY.md` در آرشیو | `ls` | ✅ موجود |
 | `vendor/autoload.php` | `ls` در بستهٔ تولید | ✅ موجود |
 
 > اجرای تست از داخل ZIP استخراج‌شده مهم است. یک ZIP می‌تواند سالم باشد و
