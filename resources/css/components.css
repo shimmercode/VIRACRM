@@ -2776,3 +2776,16 @@ a.v-list__main:hover .v-list__title {
 .v-card--spaced {
     margin-top: var(--vira-space-4);
 }
+
+/*
+ * A long unbroken token — a URL, a hostname — must wrap rather than widen its
+ * container. Without this the credentials table pushed the card wider than a
+ * 390px viewport and the URL rendered outside the card border.
+ *
+ * `overflow-wrap: anywhere` is deliberate over `word-break: break-all`: it only
+ * breaks where it must, so a short URL is still readable as one piece.
+ */
+.v-break {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}

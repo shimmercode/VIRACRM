@@ -114,6 +114,7 @@ const SUITES = (() => {
   { id: 'login-shots', label: 'Login page', kind: 'browser', script: 'tools/checks/ui-login-shots.mjs', required: true },
   { id: 'ui-shots', label: 'Layout (11 pages x 7 widths)', kind: 'browser', script: 'tools/checks/ui-shots.mjs', required: true },
   { id: 'table-cards', label: 'Responsive tables (cards on phones)', kind: 'browser', script: 'tools/checks/table-cards.mjs', required: true },
+  { id: 'credential-shots', label: 'Credentials render + no secret in DOM', kind: 'browser', script: 'tools/checks/credential-shots.mjs', required: true },
   { id: 'overflow-1024', label: 'No overflow at 768/1024/1440', kind: 'browser', script: 'tools/checks/overflow.mjs', required: true },
     { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
     { id: 'filter-chips', label: 'Active filter chips', kind: 'browser', script: 'tools/checks/filter-chips.mjs', required: true },

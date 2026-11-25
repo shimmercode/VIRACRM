@@ -57,7 +57,7 @@
                 <h2 class="v-card__title">فهرست دسترسی‌ها</h2>
                 <span class="v-card__meta">{{ \App\Support\Money::toPersianDigits((string) $credentials->count()) }} مورد</span>
             </header>
-            <div class="v-table-wrap">
+            <div class="v-tablewrap">
                 <table class="v-table">
                     <thead>
                         <tr>
@@ -84,7 +84,7 @@
                                 </td>
                                 <td data-label="نشانی">
                                     @if ($credential->public_url)
-                                        <a href="{{ $credential->public_url }}" target="_blank" rel="noopener noreferrer" dir="ltr">
+                                        <a href="{{ $credential->public_url }}" target="_blank" rel="noopener noreferrer" dir="ltr" class="v-break">
                                             {{ $credential->public_url }}
                                         </a>
                                     @else

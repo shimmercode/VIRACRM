@@ -107,6 +107,28 @@ $_SERVER['DOCUMENT_ROOT'] = $root . '/public';
 $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 $_SERVER['HTTP_ACCEPT'] = $accept;
 $_SERVER['HTTP_USER_AGENT'] = (string) ($spec['user_agent'] ?? 'vira-dev-server');
+
+/*
+ * Arbitrary request headers, e.g. X-CSRF-TOKEN.
+ *
+ * WHY THIS IS NEEDED: the app's own JavaScript sends the CSRF token as an
+ * X-CSRF-TOKEN header, not as a form field. The dev-server proxy used to
+ * forward only a fixed list (cookie, content-type, accept) and silently
+ * dropped everything else, so every fetch() from a page got 419 in the
+ * preview environment while working on a real host. A test that posted the
+ * token in the body passed, which is exactly how the gap survived.
+ *
+ * Header names are validated so a spec cannot inject arbitrary $_SERVER keys.
+ */
+foreach ((array) ($spec['headers'] ?? []) as $headerName => $headerValue) {
+    if (! is_string($headerName) || ! preg_match('/^[A-Za-z][A-Za-z0-9-]*$/', $headerName)) {
+        fwrite(STDERR, "refusing malformed header name\n");
+        continue;
+    }
+
+    $key = 'HTTP_' . strtoupper(str_replace('-', '_', $headerName));
+    $_SERVER[$key] = (string) $headerValue;
+}
 $_SERVER['CONTENT_TYPE'] = $contentType;
 $_SERVER['CONTENT_LENGTH'] = (string) strlen($postBody);
 $_SERVER['HTTPS'] = 'off';
@@ -169,6 +191,14 @@ try {
     $request->headers->set('Host', $host);
     $request->headers->set('Accept', $accept);
     $request->headers->set('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+
+    // Request::create() ignores the superglobals above, so anything the app
+    // reads through the Request object has to be attached here as well.
+    foreach ((array) ($spec['headers'] ?? []) as $headerName => $headerValue) {
+        if (is_string($headerName) && preg_match('/^[A-Za-z][A-Za-z0-9-]*$/', $headerName)) {
+            $request->headers->set($headerName, (string) $headerValue);
+        }
+    }
 
     /*
      * Request::create() builds its own server bag from its arguments and

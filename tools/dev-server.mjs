@@ -85,7 +85,7 @@ function readBody(req) {
  * request for "/" no matter what the browser asked for. A file path in argv is
  * the one channel that works.
  */
-function renderRequest({ method, uri, cookie, body, contentType, host, accept, userAgent, forwarded = {} }) {
+function renderRequest({ method, uri, cookie, body, contentType, host, accept, userAgent, forwarded = {}, headers = {} }) {
   const specPath = path.join(
     fs.mkdtempSync(path.join(ROOT, '.arena', 'req-')),
     'request.json'
@@ -102,6 +102,15 @@ function renderRequest({ method, uri, cookie, body, contentType, host, accept, u
       content_type: contentType || '',
       accept: accept || 'text/html',
       user_agent: userAgent || 'vira-dev-server',
+      /*
+       * Headers the application's own JavaScript sends.
+       *
+       * X-CSRF-TOKEN is the important one: fetch() posts carry the token in a
+       * header, and without forwarding it every AJAX write in the preview
+       * returned 419 while working on a real host — a difference between
+       * environments that no test had covered.
+       */
+      headers: headers || {},
       // Proxy headers, forwarded only when the proxy actually sent them. The
       // preview harness terminates TLS and speaks plain HTTP to this server, so
       // without these Laravel builds every asset URL as http:// and the browser
@@ -112,7 +121,17 @@ function renderRequest({ method, uri, cookie, body, contentType, host, accept, u
       // runner starts a private server on a private copy so that capturing
       // screenshots cannot write sessions or audit rows into the shared
       // database. When DB_DATABASE is unset, behaviour is unchanged.
-      env: process.env.DB_DATABASE ? { DB_DATABASE: process.env.DB_DATABASE } : {},
+      //
+      // VIRA_CREDENTIAL_KEY travels for the same reason: the PHP-WASM runtime
+      // does not inherit the parent environment, so without an explicit
+      // handover every browser suite would see a server with no key and the
+      // credential pages would render their "storage disabled" banner instead
+      // of the feature. Forwarding it keeps the browser path able to test the
+      // same configuration a real host would run.
+      env: {
+        ...(process.env.DB_DATABASE ? { DB_DATABASE: process.env.DB_DATABASE } : {}),
+        ...(process.env.VIRA_CREDENTIAL_KEY ? { VIRA_CREDENTIAL_KEY: process.env.VIRA_CREDENTIAL_KEY } : {}),
+      },
     })
   );
 
@@ -198,6 +217,11 @@ const server = http.createServer(async (req, res) => {
       host: req.headers.host,
       accept: req.headers.accept,
       userAgent: req.headers['user-agent'],
+      headers: Object.fromEntries(
+        Object.entries(req.headers).filter(([name]) =>
+          ['x-csrf-token', 'x-requested-with', 'x-xsrf-token'].includes(name)
+        )
+      ),
       forwarded: {
         /*
          * The preview proxy does not always send X-Forwarded-Proto, and when
