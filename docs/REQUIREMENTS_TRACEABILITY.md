@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 26 | 27.1% |
+| `VERIFIED` | 28 | 29.2% |
 | `PARTIAL` | 20 | 20.8% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 41 | 42.7% |
+| `NOT_IMPLEMENTED` | 39 | 40.6% |
 | `BLOCKED` | 7 | 7.3% |
 | **جمع** | **96** | **100%** |
 
@@ -25,12 +25,12 @@
 
 | وضعیت | تعداد |
 |-------|------:|
-| `VERIFIED` | 8 |
+| `VERIFIED` | 9 |
 | `PARTIAL` | 7 |
-| `NOT_IMPLEMENTED` | 20 |
+| `NOT_IMPLEMENTED` | 19 |
 | `BLOCKED` | 4 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۸ مورد اثبات‌شده** و **۲۰ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۹ مورد اثبات‌شده** و **۱۹ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -129,10 +129,10 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `CRED-001` | `REQ-06.01` | مدیریت دسترسی‌های پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | — | — | M1–M8 |
+| `CRED-001` | `REQ-06.01` | مدیریت دسترسی‌های پروژه | P1 | doc | **`VERIFIED`** | ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21 | — | — |
 | `CRED-002` | `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | P0 | doc | **`NOT_IMPLEMENTED`** | credential_requirements empty | — | M1–M8 |
-| `CRED-003` | `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | P0 | brief | **`PARTIAL`** | EnvelopeEncrypter AES-256-GCM, 26 asserts | NOT WIRED — no caller | M1/M3 |
-| `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`NOT_IMPLEMENTED`** | audit writes exist | no credential audit view | M1–M8 |
+| `CRED-003` | `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | P0 | brief | **`VERIFIED`** | AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML | — | — |
+| `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`PARTIAL`** | reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet | audit recorded, not browsable | M1/M3 |
 | `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`NOT_IMPLEMENTED`** | no PDF engine | — | M1–M8 |
 | `CRED-006` | `REQ-06.07` | هشدار محرمانگی روی فایل حاوی رمز | P1 | doc | **`NOT_IMPLEMENTED`** | no files | — | M1–M8 |
 
@@ -335,9 +335,7 @@
 | `CNT-006` | تاریخچه و نسخه‌های قرارداد | Contracts | P1 |
 | `CNT-008` | ثبت تمدید قرارداد | Contracts | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
-| `CRED-001` | مدیریت دسترسی‌های پروژه | Credentials | P1 |
 | `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
-| `CRED-004` | Audit مشاهده و دریافت خروجی محرمانه | Credentials | P0 |
 | `CRED-005` | PDF محرمانه دسترسی‌ها | Credentials | P0 |
 | `PRJ-003` | جداسازی اطلاعات عمومی و محرمانه پروژه | Projects | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
