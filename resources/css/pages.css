@@ -878,3 +878,136 @@ a.v-stat:focus-visible {
         justify-content: center;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   §17 — ORGANISATIONAL STRUCTURE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* A two-level tree. Not a nested <ul>: at 390px a nested list indents itself
+   into a column too narrow for a code, a title and a badge, so the child row is
+   marked with a single connector line and a background tone instead. */
+.v-tree {
+    display: flex;
+    flex-direction: column;
+}
+
+.v-tree__group + .v-tree__group {
+    border-top: 1px solid var(--vira-border);
+}
+
+.v-tree__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vira-space-3);
+    padding: var(--vira-space-3) var(--vira-space-4);
+    min-height: 52px;
+}
+
+.v-tree__row:hover {
+    background: var(--vira-surface-hover);
+}
+
+.v-tree__row--child {
+    /* The connector line is the only thing that says "inside the row above",
+       so it is drawn rather than relying on indentation alone. */
+    position: relative;
+    margin-inline-start: var(--vira-space-5);
+    padding-inline-start: var(--vira-space-4);
+    background: var(--vira-surface-sunken);
+}
+
+.v-tree__row--child::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 0;
+    width: 2px;
+    background: var(--vira-border-strong);
+}
+
+.v-tree__main {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.v-tree__code {
+    font-family: var(--vira-font-mono, monospace);
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+.v-tree__title {
+    font-size: var(--vira-text-sm);
+    font-weight: var(--vira-weight-medium, 500);
+    color: var(--vira-ink);
+    overflow-wrap: anywhere;
+}
+
+.v-tree__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--vira-space-2);
+    flex-wrap: wrap;
+    font-size: var(--vira-text-xs);
+    color: var(--vira-text-muted);
+}
+
+/* Inline edit panel: a <details> so editing a row needs no page navigation and
+   no JavaScript. The summary is the pencil icon; the panel opens beneath. */
+.v-inlineedit {
+    display: inline-flex;
+}
+
+.v-inlineedit > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.v-inlineedit > summary::-webkit-details-marker {
+    display: none;
+}
+
+.v-inlineedit__panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--vira-space-3);
+    padding: var(--vira-space-3);
+    margin-top: var(--vira-space-2);
+    background: var(--vira-surface);
+    border: 1px solid var(--vira-border);
+    border-radius: var(--vira-radius-sm);
+}
+
+/* An open panel inside the meta row would be squeezed into the flex line, so on
+   narrow screens it takes the full row. */
+@media (max-width: 767px) {
+    .v-tree__row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--vira-space-2);
+    }
+
+    .v-tree__meta {
+        justify-content: space-between;
+    }
+
+    .v-inlineedit__panel {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .v-inlineedit__panel .v-field,
+    .v-inlineedit__panel .v-input,
+    .v-inlineedit__panel .v-textarea {
+        width: 100%;
+        max-width: none;
+    }
+}

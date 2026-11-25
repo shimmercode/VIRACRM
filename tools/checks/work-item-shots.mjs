@@ -102,6 +102,18 @@ const PAGES = [
     text: ['پرسنل'],
     classes: ['v-filterbar'],
   },
+  // §17 — the organisational tree. The two-level rows with an inline edit
+  // <details> are the hardest thing on the site to keep inside 390px.
+  {
+    key: 'organization',
+    url: '/organization',
+    text: ['ساختار سازمانی', 'مراکز هزینه'],
+    // NOT `v-tree`: a fresh install has no departments, because a client's org
+    // structure is their own data and seeding an invented one would be fake
+    // content. On an empty install the page correctly shows its empty state, so
+    // the assertion is the create form, which exists either way.
+    classes: ['v-inlineform'],
+  },
   {
     key: 'payroll',
     url: '/payroll',

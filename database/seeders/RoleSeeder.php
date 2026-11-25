@@ -40,6 +40,8 @@ class RoleSeeder extends Seeder
                 'work_items.view', 'work_items.complete', 'work_items.create', 'work_items.cancel',
                 // OD-41: a manager reads financial reports but does not post entries.
                 'accounting.view', 'invoices.view',
+                // §17: the manager owns the organisational structure.
+                'departments.view', 'departments.manage', 'departments.delete',
             ],
         ],
 
@@ -59,6 +61,8 @@ class RoleSeeder extends Seeder
                 'accounting.view', 'accounting.post', 'accounting.close', 'accounting.reopen',
                 'invoices.view', 'invoices.create', 'invoices.issue', 'invoices.void',
                 'invoices.record_payment',
+                // Reads the dimensions it posts against; does not restructure them.
+                'departments.view',
             ],
         ],
 
@@ -69,6 +73,7 @@ class RoleSeeder extends Seeder
                 'customers.view', 'customers.create', 'customers.update',
                 'contracts.view', 'contracts.create', 'contracts.update',
                 'projects.view', 'projects.update',
+                'departments.view',
                 'credentials.view', 'credentials.manage',
                 'notes.view', 'notes.create', 'notes.update',
                 'files.download',

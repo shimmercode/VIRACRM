@@ -8,9 +8,11 @@
      * TWO DELIBERATE OMISSIONS
      * ------------------------
      * 1. There is no salary field (OD-16): pay comes from the monthly payslip.
-     * 2. There is no department or manager field yet. The tables exist but the
-     *    Departments screen is a later phase; shipping a select with no rows to
-     *    choose from would be a dead control. It is added with that screen.
+     * 2. Department and manager are HERE, now that §17 exists. Both are optional:
+     *    a new hire may be recorded before the organisational chart is finalised,
+     *    and a required field would push people to pick a wrong unit just to
+     *    save the form. The organisation screen reports anyone left unassigned,
+     *    so the omission is visible rather than silent.
      */
     $isEdit = $employee->exists;
 
@@ -143,6 +145,34 @@
                        data-jalali autocomplete="off">
                 <p class="v-hint">برای کارمندان شاغل خالی بگذارید.</p>
                 @error('end_date')<p class="v-error">{{ $message }}</p>@enderror
+            </div>
+
+            <div class="v-field">
+                <label class="v-label" for="department_id">واحد سازمانی</label>
+                <select id="department_id" name="department_id" class="v-select{{ $errSelect('department_id') }}">
+                    <option value="">— بدون واحد —</option>
+                    @foreach ($departments as $department)
+                        <option value="{{ $department->id }}"
+                            @selected((string) old('department_id', $employee->department_id ?? '') === (string) $department->id)>
+                            {{ $department->title }}{{ $department->parent_id ? ' (زیرمجموعه)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('department_id')<p class="v-error">{{ $message }}</p>@enderror
+            </div>
+
+            <div class="v-field">
+                <label class="v-label" for="manager_id">مدیر مستقیم</label>
+                <select id="manager_id" name="manager_id" class="v-select{{ $errSelect('manager_id') }}">
+                    <option value="">— بدون مدیر —</option>
+                    @foreach ($managers as $manager)
+                        <option value="{{ $manager->id }}"
+                            @selected((string) old('manager_id', $employee->manager_id ?? '') === (string) $manager->id)>
+                            {{ $manager->displayName() }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('manager_id')<p class="v-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="v-field">

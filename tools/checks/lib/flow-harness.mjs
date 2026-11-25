@@ -232,6 +232,23 @@ export class Flow {
     return result.out.trim();
   }
 
+  /**
+   * Fixture setup: run one guarded INSERT against this flow's private database.
+   *
+   * Separate from `query()`, which is SELECT-only so an assertion can never
+   * mutate what it is measuring. Use this only for state no product route can
+   * create yet, and never inside a check.
+   */
+  async exec(sql) {
+    const result = await php(path.join(ROOT, 'tools/checks/flow-exec.php'), [this.db, sql]);
+
+    if (!/^OK /m.test(result.out)) {
+      throw new Error(`fixture insert failed: ${result.out}${result.err}`);
+    }
+
+    return result.out.trim();
+  }
+
   /** Remove the flow directory. Keeps `.arena/` from growing without bound. */
   cleanup() {
     fs.rmSync(this.dir, { recursive: true, force: true });

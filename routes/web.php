@@ -10,6 +10,7 @@ use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\Hr\EmployeeController;
 use App\Http\Controllers\Hr\PayrollController;
 use App\Http\Controllers\Notes\NoteController;
+use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
@@ -148,6 +149,26 @@ Route::middleware(['auth'])->group(function () {
 
             Route::post('/invoices/{invoice}/void', [AccountingController::class, 'voidInvoice'])
                 ->middleware('permission:invoices.void')->name('invoices.void');
+        });
+
+        // ── ساختار سازمانی (§17 / §19.3) ─────────────────────────────
+        // One screen for departments and their cost centres. Editing the
+        // structure is an administrative act, deliberately NOT implied by
+        // `accounting.post`: an accountant posts against the dimensions, a
+        // manager restructures them.
+        Route::prefix('organization')->name('organization.')->group(function () {
+            Route::get('/', [DepartmentController::class, 'index'])
+                ->middleware('permission:departments.view')->name('index');
+            Route::post('/departments', [DepartmentController::class, 'store'])
+                ->middleware('permission:departments.manage')->name('departments.store');
+            Route::put('/departments/{department}', [DepartmentController::class, 'update'])
+                ->middleware('permission:departments.manage')->name('departments.update');
+            Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])
+                ->middleware('permission:departments.delete')->name('departments.destroy');
+            Route::post('/cost-centers', [DepartmentController::class, 'storeCostCenter'])
+                ->middleware('permission:departments.manage')->name('cost-centers.store');
+            Route::delete('/cost-centers/{costCenter}', [DepartmentController::class, 'destroyCostCenter'])
+                ->middleware('permission:departments.delete')->name('cost-centers.destroy');
         });
 
         // ── پرسنل (§15 / REQ-07) ─────────────────────────────────────

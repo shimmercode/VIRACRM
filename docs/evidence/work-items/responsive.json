@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T19:00:18.343Z",
+  "generatedAt": "2026-11-25T19:17:34.927Z",
   "widths": [
     390,
     430,
@@ -99,6 +99,17 @@
       "tappable": 6
     },
     {
+      "key": "organization",
+      "width": 390,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "payroll",
       "width": 390,
       "status": 200,
@@ -198,6 +209,17 @@
       "tappable": 6
     },
     {
+      "key": "organization",
+      "width": 430,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "payroll",
       "width": 430,
       "status": 200,
@@ -297,6 +319,17 @@
       "tappable": 6
     },
     {
+      "key": "organization",
+      "width": 576,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "payroll",
       "width": 576,
       "status": 200,
@@ -396,6 +429,17 @@
       "tappable": 6
     },
     {
+      "key": "organization",
+      "width": 768,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 4
+    },
+    {
       "key": "payroll",
       "width": 768,
       "status": 200,
@@ -495,6 +539,17 @@
       "tappable": 7
     },
     {
+      "key": "organization",
+      "width": 1024,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "payroll",
       "width": 1024,
       "status": 200,
@@ -594,6 +649,17 @@
       "tappable": 7
     },
     {
+      "key": "organization",
+      "width": 1280,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
+    },
+    {
       "key": "payroll",
       "width": 1280,
       "status": 200,
@@ -691,6 +757,17 @@
         "a.v-skip"
       ],
       "tappable": 7
+    },
+    {
+      "key": "organization",
+      "width": 1440,
+      "status": 200,
+      "ok": true,
+      "overflow": 0,
+      "overflowers": [
+        "a.v-skip"
+      ],
+      "tappable": 5
     },
     {
       "key": "payroll",

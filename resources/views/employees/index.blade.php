@@ -43,6 +43,19 @@
         </div>
 
         <div class="v-filterbar__group">
+            <label class="v-filterbar__label" for="f-dept">واحد</label>
+            <select id="f-dept" name="department_id" class="v-select v-select--sm">
+                <option value="">همه</option>
+                @foreach ($departments as $department)
+                    <option value="{{ $department->id }}"
+                        @selected($filters['department_id'] === (string) $department->id)>
+                        {{ $department->title }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="v-filterbar__group">
             <label class="v-filterbar__label" for="f-position">سِمت</label>
             <input id="f-position" type="text" name="position" value="{{ $filters['position'] }}"
                    class="v-input" placeholder="مثلاً کارشناس">
@@ -52,14 +65,16 @@
             <x-icon name="filter" :size="16" /> اعمال
         </button>
 
-        @if ($filters['q'] !== '' || $filters['status'] !== '' || $filters['position'] !== '')
+        @if ($filters['q'] !== '' || $filters['status'] !== '' || $filters['position'] !== ''
+            || $filters['department_id'] !== '')
             <a href="{{ route('employees.index') }}" class="v-btn v-btn--ghost v-btn--sm">پاک‌کردن</a>
         @endif
     </form>
 
     <div class="v-card">
         @if ($employees->isEmpty())
-            @if ($filters['q'] !== '' || $filters['status'] !== '' || $filters['position'] !== '')
+            @if ($filters['q'] !== '' || $filters['status'] !== '' || $filters['position'] !== ''
+            || $filters['department_id'] !== '')
                 <x-empty-state title="کارمندی با این فیلترها پیدا نشد"
                     description="عبارت جست‌وجو یا فیلترها را تغییر دهید." icon="search">
                     <a href="{{ route('employees.index') }}" class="v-btn v-btn--ghost v-btn--sm">حذف فیلترها</a>
@@ -83,6 +98,7 @@
                             <th scope="col">کارمند</th>
                             <th scope="col">کد پرسنلی</th>
                             <th scope="col">سِمت</th>
+                            <th scope="col">واحد</th>
                             <th scope="col">تماس</th>
                             <th scope="col">شروع همکاری</th>
                             <th scope="col">وضعیت</th>
@@ -109,6 +125,7 @@
                                     {{ $employee->code ? Money::toPersianDigits($employee->code) : '—' }}
                                 </td>
                                 <td data-label="سِمت">{{ $employee->position ?: '—' }}</td>
+                                <td data-label="واحد">{{ $employee->department?->title ?? '—' }}</td>
                                 <td data-label="تماس" class="v-table__nowrap" dir="ltr">
                                     {{ $employee->mobile ? Money::toPersianDigits($employee->mobile) : '—' }}
                                 </td>

@@ -127,6 +127,21 @@ final class PermissionCatalog
             'reopen' => ['بازکردن دوره مالی', true],
         ],
 
+        /*
+         * §17 / §19.3 — organisational structure.
+         *
+         * Departments and cost centres are the two dimensions every financial
+         * report slices by, and they also decide which employees a manager sees
+         * and which files a department owns. Editing them is therefore an
+         * administrative act, not an accounting one — `accounting.post` must not
+         * imply "may restructure the company".
+         */
+        'departments' => [
+            'view' => ['مشاهده ساختار سازمانی', false],
+            'manage' => ['ایجاد و ویرایش واحدها و مراکز هزینه', false],
+            'delete' => ['حذف واحد سازمانی', false],
+        ],
+
         /* OD-41 §19.6/§19.7 — invoices and payments carry money, so every action
            here is sensitive by definition. */
         'invoices' => [

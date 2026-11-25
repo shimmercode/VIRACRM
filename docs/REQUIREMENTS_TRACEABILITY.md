@@ -209,7 +209,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `PERM-001` | `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | P0 | doc | **`VERIFIED`** | 39 permissions + permission: on 22/22 routes | — | — |
+| `PERM-001` | `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | P0 | doc | **`VERIFIED`** | 55 permissions; permission: middleware on every employee/payroll/organization/accounting route; 2-session 403 proofs | — | — |
 
 ### Audit
 

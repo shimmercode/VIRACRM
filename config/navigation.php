@@ -97,6 +97,15 @@ return [
             'enabled' => true,
         ],
 
+        // §17 — departments and cost centres.
+        [
+            'label' => 'ساختار سازمانی',
+            'icon' => 'settings',
+            'route' => 'organization.index',
+            'permission' => 'departments.view',
+            'enabled' => true,
+        ],
+
         // OD-16 — payroll.
         [
             'label' => 'حقوق و دستمزد',

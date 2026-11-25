@@ -41,9 +41,14 @@ class EmployeeController extends Controller
             'q' => trim((string) $request->query('q', '')),
             'status' => (string) $request->query('status', ''),
             'position' => trim((string) $request->query('position', '')),
+            'department_id' => (string) $request->query('department_id', ''),
         ];
 
-        $query = Employee::query()->withCount('payslips');
+        $query = Employee::query()->withCount('payslips')->with('department:id,title');
+
+        if ($filters['department_id'] !== '') {
+            $query->where('department_id', (int) $filters['department_id']);
+        }
 
         if ($filters['status'] !== '') {
             $query->where('status', $filters['status']);
@@ -75,6 +80,7 @@ class EmployeeController extends Controller
             'statuses' => Employee::STATUSES,
             'counts' => $counts,
             'canSeePayroll' => $request->user()->hasPermission('payroll.view'),
+            'departments' => $this->departmentOptions(),
         ]);
     }
 
@@ -83,6 +89,8 @@ class EmployeeController extends Controller
         return view('employees.create', [
             'statuses' => Employee::STATUSES,
             'users' => $this->userOptions(),
+            'departments' => $this->departmentOptions(),
+            'managers' => $this->managerOptions(),
         ]);
     }
 
@@ -144,6 +152,10 @@ class EmployeeController extends Controller
             'employee' => $employee,
             'statuses' => Employee::STATUSES,
             'users' => $this->userOptions(),
+            'departments' => $this->departmentOptions(),
+            // Excluded from the list so the form cannot offer the cycle the
+            // request validator would then reject.
+            'managers' => $this->managerOptions($employee->id),
         ]);
     }
 
@@ -195,6 +207,34 @@ class EmployeeController extends Controller
         $max = (int) Employee::withTrashed()->max('id');
 
         return 'VIRA-E-' . str_pad((string) ($max + 1), 4, '0', STR_PAD_LEFT);
+    }
+
+    /** Departments, for the form and the list filter. */
+    private function departmentOptions()
+    {
+        return \App\Models\Department::query()
+            ->select('id', 'code', 'title', 'parent_id')
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+    }
+
+    /**
+     * Possible managers.
+     *
+     * The employee being edited is excluded, and so are employees who already
+     * report to them — offering a choice the server then rejects is a worse
+     * experience than not offering it.
+     */
+    private function managerOptions(?int $excludeId = null)
+    {
+        return Employee::query()
+            ->select('id', 'first_name', 'last_name')
+            ->when($excludeId !== null, fn ($q) => $q->whereKeyNot($excludeId))
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->limit(500)
+            ->get();
     }
 
     private function userOptions()

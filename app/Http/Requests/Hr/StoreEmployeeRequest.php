@@ -39,6 +39,10 @@ class StoreEmployeeRequest extends FormRequest
         return [
             'code' => ['nullable', 'string', 'max:32', Rule::unique('employees', 'code')->ignore($employeeId)],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'department_id' => ['nullable', 'integer', 'exists:departments,id'],
+            // Not `exists:employees,id` only — a person cannot be their own
+            // manager, which would make the org chart a one-node cycle.
+            'manager_id' => ['nullable', 'integer', 'exists:employees,id'],
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'national_id' => [
@@ -68,6 +72,8 @@ class StoreEmployeeRequest extends FormRequest
             'email.email' => 'ایمیل معتبر نیست.',
             'code.unique' => 'این کد پرسنلی قبلاً استفاده شده است.',
             'user_id.exists' => 'کاربر انتخاب‌شده معتبر نیست.',
+            'department_id.exists' => 'واحد سازمانی انتخاب‌شده معتبر نیست.',
+            'manager_id.exists' => 'مدیر انتخاب‌شده معتبر نیست.',
         ];
     }
 
@@ -77,6 +83,7 @@ class StoreEmployeeRequest extends FormRequest
             function ($validator): void {
                 $this->checkNationalId($validator);
                 $this->checkDates($validator);
+                $this->checkManager($validator);
             },
         ];
     }
@@ -113,6 +120,17 @@ class StoreEmployeeRequest extends FormRequest
 
         if (! $valid) {
             $validator->errors()->add('national_id', 'کد ملی معتبر نیست؛ رقم کنترل آن درست نیست.');
+        }
+    }
+
+    /** A manager must not be the employee themselves. */
+    private function checkManager($validator): void
+    {
+        $self = $this->route('employee')?->id;
+        $managerId = $this->input('manager_id');
+
+        if ($self !== null && $managerId !== null && $managerId !== '' && (int) $managerId === (int) $self) {
+            $validator->errors()->add('manager_id', 'یک کارمند نمی‌تواند مدیر خودش باشد.');
         }
     }
 
@@ -155,6 +173,8 @@ class StoreEmployeeRequest extends FormRequest
 
         $data['code'] = $this->filled('code') ? (string) $this->input('code') : null;
         $data['user_id'] = $this->filled('user_id') ? (int) $this->input('user_id') : null;
+        $data['department_id'] = $this->filled('department_id') ? (int) $this->input('department_id') : null;
+        $data['manager_id'] = $this->filled('manager_id') ? (int) $this->input('manager_id') : null;
 
         $data['start_date'] = $this->filled('start_date')
             ? JalaliDate::parse((string) $this->input('start_date'))?->toDateString()
