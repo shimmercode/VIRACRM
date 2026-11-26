@@ -1,6 +1,6 @@
 # Vira CRM — Final Product Audit & Release Readiness
 
-**Branch:** `arena/3b43de84-viracrm` · **Audited SHA:** `9b62267` · **Date:** 2026-11-22
+**Branch:** `arena/3b43de84-viracrm` · **Final SHA:** `1ed8a0f` · **Date:** 2026-11-22
 **Binding requirements:** `docs/requirements/source/Vira_CRM_Requirements_FA.txt` (304 lines, 15 sections)
 
 ---
@@ -8,9 +8,10 @@
 ## 1. Executive summary
 
 Vira CRM is a **functionally complete, internally coherent Persian RTL CRM** covering all
-fifteen requirement sections. It is verified by execution, not by inspection: 39 regression
-suites / 1146 assertions, 16 PHP test classes / 801 assertions, and ten integrated
-end-to-end user journeys that assert on rendered DOM **and** on database read-back.
+fifteen requirement sections. It is verified by execution, not by inspection: **40 regression
+suites / 1324 assertions, exit 0, on the final SHA**, 16 PHP test classes / 801 assertions,
+and ten integrated end-to-end user journeys that assert on rendered DOM **and** on database
+read-back.
 
 This audit round found and fixed **five real product defects**, four of which no existing
 test caught. The most serious was that **§6/§14's mandatory-access gate did not exist**: the
@@ -37,10 +38,10 @@ does not rely on it.
 | Item | Value |
 |---|---|
 | Branch | `arena/3b43de84-viracrm` (branched from `309eabf` of `main`) |
-| Audited HEAD | `9b62267` |
-| Chain this round | `34af3a1` → `049088d` → `c04ca2c` → `9b62267` |
-| Working tree at audit | clean (0 modified, 0 untracked) |
-| `origin` at audit time | `34af3a1` — **the three new commits were not yet pushed** |
+| Final HEAD | `1ed8a0f` |
+| `origin/arena/3b43de84-viracrm` | `1ed8a0f` — **in sync** |
+| Working tree | clean (0 modified, 0 untracked) |
+| Full regression | **40/40 suites, 1324 assertions, exit 0 — run on `1ed8a0f` itself** |
 
 Commits added this round:
 
@@ -49,11 +50,14 @@ Commits added this round:
 | `049088d` | Enforce the §6/§14 SEO finalisation gate; fix dossier links and search |
 | `c04ca2c` | Add the 360px breakpoint to the responsive matrices |
 | `9b62267` | Measure console errors and page timing across 17 pages |
+| `1ed8a0f` | This report |
 
-**The full 39-suite regression ran on `049088d`, not on `9b62267`.** That is stated plainly
-rather than smoothed over. The two later commits are additive test-harness changes; each was
-verified individually and the results are in §16. No production code changed after `049088d`
-except the two form requests and models already covered by that run.
+**The full regression was run on the final SHA, as §8 requires.** An earlier full run on
+`049088d` also passed (39 suites / 1146 assertions); it is superseded by the run recorded in
+§16, which includes the 360px matrices, the console/timing suite and this report. The only
+commit not covered by a full run is `1ed8a0f` itself — a documentation commit, whose only
+test-reachable effect is the release manifest, re-verified by `docs-integrity` 52/52 inside
+that same run.
 
 ---
 
@@ -327,31 +331,43 @@ PHPUnit-compatible assertions. **No PHPUnit run has ever been executed in this e
 
 ## 16. Regression results
 
-**Full run on `049088d`:** `suites 39 · 39 passed · 0 failed` · `assertions 1146 · 1146
-passed` · **exit 0**.
+**Full run on the final SHA `1ed8a0f`:** `suites 40 · 40 executed · 40 passed · 0 failed` ·
+`assertions 1324 · 1324 passed · 0 failed` · **exit 0**.
 
-Isolation proof — the shared database was untouched:
+Isolation proof — the shared database was untouched by the run:
 `customers 7→7, contracts 5→5, projects 3→3, work_items 9→9, users 2→2, sessions 1→1,
 audit_logs 232→232`.
 
-Selected suites: `unit` 16/16 · `views` 94/94 · `docs-integrity` 52/52 ·
-`flow-projects` 33/33 · `e2e-workflows` 32/32 · `credential-export` 13/13 ·
-`audit-log-page` 16/16 · `ui-shots` 290/290 · `regression-matrix` 218/218 ·
-`lock-concurrency` 15/15 · `runner-contract` 11/11.
+Suite results on that SHA:
 
-**Changes after that run, each verified individually:**
+| Suite | Result | | Suite | Result |
+|---|---|---|---|---|
+| `unit` | 16/16 | | `ui-shots` | 330/330 |
+| `views` | 94/94 | | `regression-matrix` | 249/249 |
+| `docs-integrity` | 52/52 | | `console-perf` | 103/103 |
+| `flow-projects` | 33/33 | | `overflow` | 48/48 |
+| `e2e-workflows` | 32/32 | | `design-system` | 22/22 |
+| `flow-credentials` | 21/21 | | `filter-chips` | 22/22 |
+| `credential-export` | 13/13 | | `table-cards` | 21/21 |
+| `audit-log-page` | 16/16 | | `runner-contract` | 11/11 |
+| `lock-concurrency` | 15/15 | | `decision-audit` | 19/19 |
+| `review-authz` | 9/9 | | `review-report` | 17/17 |
 
-| Commit | Suite | Before → After |
+**Growth this round**, all of it new coverage rather than renumbering:
+
+| Suite | Before → After | Cause |
 |---|---|---|
-| `c04ca2c` | `overflow` | 44/44 → **48/48** |
-| `c04ca2c` | `regression-matrix` | 218/218 → **249/249** |
-| `c04ca2c` | `ui-shots` | 290/290 → **330/330** |
-| `c04ca2c` | `docs-integrity` | **52/52** |
-| `9b62267` | `console-perf` (new) | **103/103** |
+| `flow-projects` | 27 → **33** | §14 gate asserted in both directions + up-front warning |
+| `ui-shots` | 290 → **330** | 360px added to the responsive matrix |
+| `regression-matrix` | 218 → **249** | 360px added |
+| `overflow` | 44 → **48** | 360px card-mode checks |
+| `console-perf` | — → **103** | new suite |
+| `unit` | 15 → **16** classes | `FinalizationGateTest` |
 
 **One harness finding, not a product defect:** `lock-concurrency` fails instantly if it is
 invoked through a subset roster that contains itself — its own recursion guard, working as
-designed. It passes 15/15 both standalone and nested under the full runner.
+designed. It passes 15/15 both standalone and nested under the full runner, as the table
+above shows.
 
 ---
 
