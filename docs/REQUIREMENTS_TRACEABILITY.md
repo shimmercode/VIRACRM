@@ -294,7 +294,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SET-001` | `REQ-15.01` | تنظیمات مدیریتی سامانه | P1 | doc | **`PARTIAL`** | settings table (4) read by app | no settings UI | M1/M3 |
+| `SET-001` | `REQ-15.01` | تنظیمات مدیریتی سامانه | P1 | doc | **`PARTIAL`** | settings UI live: GET /settings (settings.view) + POST /settings (settings.manage), rules derived from each row's stored type, writes settings_history and one settings.updated audit event; nav entry enabled; tools/checks/settings-page.mjs 15/15 incl. a threshold change moving the dashboard's expiring-contract count. Contract/PDF templates have their own UI (6 routes). | no UI for contract types, project types (Project::TYPES is a PHP constant), SEO packages, required accesses, payroll method, project amounts or roles/permissions — those rows in REQ-15.01 are still code/seed-only | M1/M3 |
 
 ### Backup
 

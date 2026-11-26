@@ -121,6 +121,13 @@ const SUITES = (() => {
   // SECURITY AUDIT — the audit trail page: who may read it, that reading is
   // itself logged, that no secret reaches the HTML, and that it is read-only.
   { id: 'audit-log-page', label: 'Security: audit log page (§10)', kind: 'node', script: 'tools/checks/audit-log-page.mjs', required: true },
+  // SETTINGS — the `settings` table, `Setting::get()/set()` and the
+  // `settings.view`/`settings.manage` permissions already existed, and four
+  // call sites already read the values; `Setting::set()` simply had no callers.
+  // This proves the screen saves, records history, is audited, is refused
+  // without the permission, and — the only check that really matters — that a
+  // saved threshold moves what the dashboard reports.
+  { id: 'settings-page', label: 'Settings screen persists and drives behaviour (§15)', kind: 'node', script: 'tools/checks/settings-page.mjs', required: true },
   // PRODUCT AUDIT — the ten end-to-end user journeys, run as connected
   // journeys rather than per-module, to catch what breaks at the seams.
   { id: 'e2e-workflows', label: 'End-to-end user journeys (10 flows)', kind: 'node', script: 'tools/checks/e2e-workflows.mjs', required: true },

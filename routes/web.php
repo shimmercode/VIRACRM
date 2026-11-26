@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Audit\AuditLogController;
+use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
@@ -68,6 +69,23 @@ Route::middleware(['auth'])->group(function () {
          */
         Route::get('/audit', [AuditLogController::class, 'index'])
             ->middleware('permission:audit.view')->name('audit.index');
+
+        /*
+         * §15 — configurable settings.
+         *
+         * View and manage are separate permissions: reading a threshold and
+         * moving it are different powers. The update route is POST, not PUT, so
+         * the whole form is one submission and the CSRF token covers every
+         * field at once.
+         *
+         * There is deliberately no store or destroy here. The set of settings is
+         * defined by the seeder, not by the user: an endpoint that accepts
+         * arbitrary keys is how a typo becomes a permanent orphan row.
+         */
+        Route::get('/settings', [SettingController::class, 'index'])
+            ->middleware('permission:settings.view')->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'update'])
+            ->middleware('permission:settings.manage')->name('settings.update');
 
         // ── Customers (§3) ─────────────────────────────────────────────
         Route::prefix('customers')->name('customers.')->group(function () {

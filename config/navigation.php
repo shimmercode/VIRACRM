@@ -171,10 +171,9 @@ return [
         [
             'label' => 'تنظیمات',
             'icon' => 'settings',
-            'route' => null,
+            'route' => 'settings.index',
             'permission' => 'settings.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
     ],
 ];
