@@ -117,13 +117,46 @@ for (const r of roles) {
 /* Permissions that no role holds are a real finding: either dead, or a role is
    missing from the seed. Surface them rather than letting the matrix hide them. */
 const orphans = perms.filter((p) => !assignment.has(p.id));
+/*
+ * A permission held by no role is reachable only by a super admin, because
+ * User::hasPermission() short-circuits on is_superadmin. That is sometimes the
+ * intent and sometimes a seed gap, and telling them apart is the whole point of
+ * this section — an unlabelled list would let a real gap hide inside a
+ * deliberate decision.
+ */
+const SUPERADMIN_ONLY = {
+  // SECURITY & RELEASE READINESS AUDIT, stage 1.1 — deliberate. Export gathers
+  // every password on a project into one portable file; once saved, no
+  // permission, audit row or no-store header can reach it. The route is also
+  // not scoped to owned projects, so any role holding it could export every
+  // project's secrets.
+  'credentials.export': 'عمدی — تصمیم ممیزی امنیت، مرحلهٔ ۱.۱',
+  // The audit log records every user's logins, IPs and user agents — including
+  // the super admin's. Whoever can read it can profile everyone, and reading it
+  // is itself logged (audit.viewed), so a role that both reads the log and
+  // administers users could cover its own tracks by reading first. Left with no
+  // role until there is an explicit decision about who should see it.
+  'audit.view': 'عمدی — لاگ شامل IP و user-agent همهٔ کاربران است؛ تا تصمیم صریح، فقط ابرمدیر',
+};
+
 md += `\n## مجوزهای بدون نقش\n\n`;
 if (orphans.length === 0) {
   md += 'هیچ — هر مجوز حداقل به یک نقش داده شده است.\n';
 } else {
-  md += `این مجوزها به هیچ نقشی داده نشده‌اند؛ فقط ابرمدیر می‌تواند از آن‌ها
-استفاده کند. اگر این عمدی نیست، seed نقش‌ها ناقص است.\n\n`;
-  for (const p of orphans) md += `- \`${p.code}\`\n`;
+  const deliberate = orphans.filter((p) => SUPERADMIN_ONLY[p.code]);
+  const gaps = orphans.filter((p) => !SUPERADMIN_ONLY[p.code]);
+
+  if (deliberate.length) {
+    md += `### عمدی — فقط ابرمدیر\n\n`;
+    for (const p of deliberate) md += `- \`${p.code}\` — ${SUPERADMIN_ONLY[p.code]}\n`;
+    md += '\n';
+  }
+  if (gaps.length) {
+    md += `### بدون توجیه — احتمالاً seed ناقص\n\n`;
+    md += `این‌ها به هیچ نقشی داده نشده‌اند و دلیل ثبت‌شده‌ای هم ندارند. یا باید به
+نقشی داده شوند یا دلیل ابرمدیر-only بودنشان مستند شود.\n\n`;
+    for (const p of gaps) md += `- \`${p.code}\`\n`;
+  }
 }
 
 md += `

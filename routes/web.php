@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Contracts\ContractController;
@@ -52,6 +53,21 @@ Route::middleware(['auth'])->group(function () {
         // The dashboard is the landing page for every signed-in user; the
         // individual counts inside it are permission-gated per area (§2).
         Route::get('/', DashboardController::class)->name('dashboard');
+
+        /*
+         * ── Audit trail (§10) ──────────────────────────────────────────
+         *
+         * ONE route, and it reads. There is deliberately no POST, PUT, PATCH or
+         * DELETE here: an audit log an administrator can amend is not evidence.
+         * The absence is enforced by AuditLogPageTest, which asserts those verbs
+         * are refused, so a later "quick fix" that adds one fails a test.
+         *
+         * `audit.view` is granted to no seeded role, which means in practice
+         * only a superadmin reaches this page — the log names who did what, so
+         * the people who appear in it must not be the ones reading it.
+         */
+        Route::get('/audit', [AuditLogController::class, 'index'])
+            ->middleware('permission:audit.view')->name('audit.index');
 
         // ── Customers (§3) ─────────────────────────────────────────────
         Route::prefix('customers')->name('customers.')->group(function () {

@@ -43,7 +43,7 @@
 | `contracts.view` |  | ✅ | ✅ | ✅ | ✅ |
 | `contracts.view_financials` | ⚠️ | ✅ | ✅ | — | — |
 | **credentials** | | | | | |
-| `credentials.export` | ⚠️ | ✅ | — | — | — |
+| `credentials.export` | ⚠️ | — | — | — | — |
 | `credentials.manage` |  | ✅ | — | ✅ | — |
 | `credentials.reveal` | ⚠️ | ✅ | — | — | — |
 | `credentials.view` |  | ✅ | — | ✅ | — |
@@ -104,17 +104,23 @@
 
 | نقش | کد | تعداد مجوز |
 |---|---|---|
-| مدیر | `manager` | 37 |
+| مدیر | `manager` | 36 |
 | حسابدار | `accountant` | 22 |
 | کارشناس حساب | `account_manager` | 17 |
 | مشاهده‌گر | `viewer` | 5 |
 
 ## مجوزهای بدون نقش
 
-این مجوزها به هیچ نقشی داده نشده‌اند؛ فقط ابرمدیر می‌تواند از آن‌ها
-استفاده کند. اگر این عمدی نیست، seed نقش‌ها ناقص است.
+### عمدی — فقط ابرمدیر
 
-- `audit.view`
+- `audit.view` — عمدی — لاگ شامل IP و user-agent همهٔ کاربران است؛ تا تصمیم صریح، فقط ابرمدیر
+- `credentials.export` — عمدی — تصمیم ممیزی امنیت، مرحلهٔ ۱.۱
+
+### بدون توجیه — احتمالاً seed ناقص
+
+این‌ها به هیچ نقشی داده نشده‌اند و دلیل ثبت‌شده‌ای هم ندارند. یا باید به
+نقشی داده شوند یا دلیل ابرمدیر-only بودنشان مستند شود.
+
 - `payroll.approve`
 - `personnel.create`
 - `personnel.delete`

@@ -92,6 +92,51 @@ class AuditLog extends Model
     }
 
     /**
+     * Scrub a free-text field for anything that looks like a secret value.
+     *
+     * `redact()` works on structured change sets, where the KEY names the field
+     * and the value can simply be replaced. A description is one flat string —
+     * «password changed for user 4» and «password is Hunter2» look the same to
+     * the database, and only the second is a leak. So this masks the token that
+     * follows a secret-ish keyword rather than dropping the whole message: the
+     * event still has to be reviewable, which is the point of the audit page.
+     *
+     * This is the last line, not the first. Callers must not put secrets in a
+     * description; nothing here can reliably tell a secret from a sentence.
+     */
+    public static function scrub(?string $text): ?string
+    {
+        if ($text === null || $text === '') {
+            return $text;
+        }
+
+        $keywords = 'password|passwd|secret|token|api[_-]?key|apikey|private[_-]?key|credential';
+
+        /*
+         * Only the `key: value` / `key = value` forms are masked.
+         *
+         * The first draft also masked any word after the keyword, which turned
+         * «password changed for user 4» into «password [redacted] for user 4» —
+         * destroying the very information the audit page exists to show, and
+         * making the control look stronger than it was. A secret assigned with
+         * `:` or `=` is the realistic shape; a bare word after the keyword is
+         * far more likely to be prose.
+         */
+        $assigned = '/\b(' . $keywords . ')\s*([:=])\s*(\S+)/iu';
+        $text = (string) preg_replace($assigned, '$1$2 [redacted]', $text);
+
+        /*
+         * The application's own envelope prefix. EnvelopeEncrypter writes `v1:`
+         * followed by base64, so if a ciphertext ever reached a description this
+         * catches it even with no keyword in front of it. 16 characters is long
+         * enough that ordinary text is never mistaken for one.
+         */
+        $envelope = '/\bv1:[A-Za-z0-9+\/=]{16,}/';
+
+        return (string) preg_replace($envelope, '[redacted]', $text);
+    }
+
+    /**
      * Compare two versions of a model and return what actually changed.
      * Only fields present in both arrays are compared, so a partial update
      * does not produce phantom "removed" entries.

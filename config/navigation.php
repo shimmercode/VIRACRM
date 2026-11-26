@@ -161,6 +161,14 @@ return [
         ],
 
         [
+            'label' => 'گزارش رویدادها',
+            'icon' => 'clock',
+            'route' => 'audit.index',
+            'permission' => 'audit.view',
+            'enabled' => true,
+        ],
+
+        [
             'label' => 'تنظیمات',
             'icon' => 'settings',
             'route' => null,

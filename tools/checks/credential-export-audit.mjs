@@ -17,7 +17,8 @@
  *   T-CEA-02  the stored secret is ciphertext, never plaintext
  *   T-CEA-03  the export writes an audit row
  *   T-CEA-04  that audit row does not contain the secret
- *   T-CEA-05  a manager (holds credentials.export) may export
+ *   T-CEA-05  a manager is REFUSED the export — export is super-admin only
+ *   T-CEA-05b ...but the same manager may still reveal (separate grant)
  *   T-CEA-06  an account_manager (holds view + manage, NOT export) is refused
  *   T-CEA-07  a viewer is refused
  *   T-CEA-08  an account_manager may not reveal either — view is not reveal
@@ -217,11 +218,28 @@ const asRole = async (username, role) => {
   };
 };
 
+/*
+ * T-CEA-05 flipped from 200 to 403 on purpose.
+ *
+ * This check originally proved a manager COULD export, because RoleSeeder
+ * granted credentials.export to manager. Stage 1.1 of the security decisions
+ * removed that grant: export is now reachable only by a super admin. So the
+ * assertion is inverted, not deleted — the positive case is still covered by
+ * T-CEA-01 (admin, who is a super admin) and the negative coverage is now one
+ * role wider. A test that was weakened would assert less; this one asserts that
+ * the most privileged ordinary role in the system is refused.
+ */
 const manager = await asRole('audit_manager', 'manager');
 check(
   'T-CEA-05',
-  manager.export.status === 200 && trim(manager.export.body).startsWith('%PDF-'),
-  `manager (holds credentials.export) -> ${manager.export.status}`,
+  manager.export.status === 403 && !trim(manager.export.body).startsWith('%PDF-'),
+  `manager holds view+manage+reveal but NOT export -> ${manager.export.status}`,
+);
+check(
+  'T-CEA-05b',
+  manager.reveal.status === 200,
+  `the same manager may still reveal -> ${manager.reveal.status} (reveal is a `
+    + 'separate grant and was not touched by the export restriction)',
 );
 
 const acct = await asRole('audit_acctmgr', 'account_manager');

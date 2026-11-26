@@ -116,7 +116,7 @@ permissions_code_unique	CREATE UNIQUE INDEX "permissions_code_unique" on "permis
 
 ### `role_permissions`
 
-ردیف‌های موجود در پایگاه نمونه: **81**
+ردیف‌های موجود در پایگاه نمونه: **80**
 
 | ستون | نوع | NULL مجاز | پیش‌فرض | کلید |
 |---|---|---|---|---|

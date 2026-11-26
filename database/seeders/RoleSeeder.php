@@ -32,12 +32,22 @@ class RoleSeeder extends Seeder
                 // reveal is the sensitive one: reading a stored password back.
                 // It is granted to the manager only, deliberately (see docs).
                 //
-                // export is separate from both. Reveal exposes one password on
-                // screen, to one person, in one session; export concentrates
-                // every password on a project into one portable file that leaves
-                // the system the moment it is saved. Same reasoning, one rung up.
+                // export is separate from both, and is deliberately NOT granted
+                // to any role. Reveal exposes one password on screen, to one
+                // person, in one session; export concentrates every password on a
+                // project into one portable file that leaves the system the
+                // moment it is saved. That last step is the one with no
+                // technical control left behind it — once the file is saved, no
+                // permission, no audit row and no `no-store` header can reach it.
+                //
+                // So it stays with the super admin, who is the only actor the
+                // product already treats as fully trusted (User::hasPermission
+                // short-circuits on is_superadmin). Granting it to a role would
+                // mean every holder could export every project's secrets, since
+                // the route is not scoped to owned projects.
+                //
+                // DECISION: SECURITY & RELEASE READINESS AUDIT, stage 1.1.
                 'credentials.view', 'credentials.manage', 'credentials.reveal',
-                'credentials.export',
                 'notes.view', 'notes.create', 'notes.update', 'notes.delete',
                 'reports.view', 'reports.export',
                 'files.download', 'files.download_confidential',
