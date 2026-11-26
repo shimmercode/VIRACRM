@@ -92,6 +92,13 @@ const WIDTHS = [
   ['tablet-576', 576, 960],
   ['phone-430', 430, 932],
   ['phone-390', 390, 844],
+  /*
+   * 360 is the narrowest width the audit brief calls for and the one most
+   * likely to overflow: it is 30px less than an iPhone 12 and is still the
+   * default viewport on a great many low-end Android handsets. A layout that
+   * only ever proved itself at 390 has not proved itself at 360.
+   */
+  ['phone-360', 360, 800],
 ];
 
 for (const [name, uri, needsAuth] of PAGES) {

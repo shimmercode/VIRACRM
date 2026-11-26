@@ -29,7 +29,8 @@ const record = (id, ok, detail) => {
 // this matrix and from every other suite; it is the "compact tablet / large
 // phone" band where the card layout has already kicked in but the sidebar has
 // not yet collapsed, so it is the width most likely to break unnoticed.
-const WIDTHS = [390, 430, 576, 768, 1024, 1280, 1440];
+// 360 first: the narrowest brief-mandated width, and the strictest test.
+const WIDTHS = [360, 390, 430, 576, 768, 1024, 1280, 1440];
 const PAGES = [
   { path: '/customers', name: 'customers', list: true },
   { path: '/contracts', name: 'contracts', list: true },

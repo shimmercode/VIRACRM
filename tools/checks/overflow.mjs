@@ -99,8 +99,17 @@ for (const width of WIDTHS) {
 }
 
 // ── The fix must not have broken card view below 768px ────────────────────
-{
-  const page = await flow.browser.newPage({ viewport: { width: 390, height: 844 } });
+/*
+ * 360 joins 390 here rather than in WIDTHS above, because these widths are
+ * card-mode: the table is intentionally display:none and replaced by
+ * .v-card-row elements. Running the table assertions at 360 would assert
+ * against a layout the design system deliberately does not use, and "fail"
+ * on correct behaviour.
+ */
+const CARD_WIDTHS = [[390, 844], [360, 800]];
+
+for (const [cardWidth, cardHeight] of CARD_WIDTHS) {
+  const page = await flow.browser.newPage({ viewport: { width: cardWidth, height: cardHeight } });
   await uiLogin(page, flow.baseUrl, 'admin', flow.password);
 
   for (const path of PAGES) {
@@ -118,9 +127,9 @@ for (const width of WIDTHS) {
     });
 
     const tag = path.slice(1);
-    record(`T-OVF-${tag}-390-cards`, m.cards > 0 && m.tableDisplay === 'none',
-      `${m.cards} cards, table display=${m.tableDisplay} at 390px`);
-    record(`T-OVF-${tag}-390-overflow`, m.wrapOverflow <= 0 && m.docOverflow <= 0,
+    record(`T-OVF-${tag}-${cardWidth}-cards`, m.cards > 0 && m.tableDisplay === 'none',
+      `${m.cards} cards, table display=${m.tableDisplay} at ${cardWidth}px`);
+    record(`T-OVF-${tag}-${cardWidth}-overflow`, m.wrapOverflow <= 0 && m.docOverflow <= 0,
       `wrapper ${m.wrapOverflow}px, page ${m.docOverflow}px`);
   }
 

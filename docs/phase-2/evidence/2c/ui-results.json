@@ -145,6 +145,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-dashboard-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /"
+  },
+  {
+    "id": "T-RESP-dashboard-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-dashboard-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-dashboard-phone-360",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-customers-list-desktop-1440",
     "ok": true,
     "detail": "HTTP 200 for /customers"
@@ -281,6 +301,26 @@
   },
   {
     "id": "T-MOBILE-customers-list-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customers-list-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /customers"
+  },
+  {
+    "id": "T-RESP-customers-list-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-customers-list-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customers-list-phone-360",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -425,6 +465,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-customer-detail-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/4"
+  },
+  {
+    "id": "T-RESP-customer-detail-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 offenders: v-stat v-stat--static,v-stat__value v-stat__value--money"
+  },
+  {
+    "id": "T-RTL-customer-detail-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-detail-phone-360",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-customer-form-desktop-1440",
     "ok": true,
     "detail": "HTTP 200 for /customers/create"
@@ -561,6 +621,26 @@
   },
   {
     "id": "T-MOBILE-customer-form-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-customer-form-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /customers/create"
+  },
+  {
+    "id": "T-RESP-customer-form-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-customer-form-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-customer-form-phone-360",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -705,6 +785,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-contracts-list-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts"
+  },
+  {
+    "id": "T-RESP-contracts-list-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-contracts-list-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contracts-list-phone-360",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-contract-detail-desktop-1440",
     "ok": true,
     "detail": "HTTP 200 for /contracts/5"
@@ -841,6 +941,26 @@
   },
   {
     "id": "T-MOBILE-contract-detail-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-contract-detail-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/5"
+  },
+  {
+    "id": "T-RESP-contract-detail-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-contract-detail-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-detail-phone-360",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -985,6 +1105,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-contract-form-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /contracts/create"
+  },
+  {
+    "id": "T-RESP-contract-form-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-contract-form-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-contract-form-phone-360",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-projects-list-desktop-1440",
     "ok": true,
     "detail": "HTTP 200 for /projects"
@@ -1121,6 +1261,26 @@
   },
   {
     "id": "T-MOBILE-projects-list-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-projects-list-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /projects"
+  },
+  {
+    "id": "T-RESP-projects-list-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-projects-list-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-projects-list-phone-360",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
@@ -1265,6 +1425,26 @@
     "detail": "sidebar hidden=true topbar=true"
   },
   {
+    "id": "T-STATUS-project-detail-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /projects/1"
+  },
+  {
+    "id": "T-RESP-project-detail-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-project-detail-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-project-detail-phone-360",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
     "id": "T-STATUS-project-form-desktop-1440",
     "ok": true,
     "detail": "HTTP 200 for /projects/create"
@@ -1401,6 +1581,26 @@
   },
   {
     "id": "T-MOBILE-project-form-phone-390",
+    "ok": true,
+    "detail": "sidebar hidden=true topbar=true"
+  },
+  {
+    "id": "T-STATUS-project-form-phone-360",
+    "ok": true,
+    "detail": "HTTP 200 for /projects/create"
+  },
+  {
+    "id": "T-RESP-project-form-phone-360",
+    "ok": true,
+    "detail": "overflowX=0px doc=360/360 "
+  },
+  {
+    "id": "T-RTL-project-form-phone-360",
+    "ok": true,
+    "detail": "dir=rtl lang=fa"
+  },
+  {
+    "id": "T-MOBILE-project-form-phone-360",
     "ok": true,
     "detail": "sidebar hidden=true topbar=true"
   },
