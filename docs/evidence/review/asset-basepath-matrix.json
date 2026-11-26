@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T05:53:16.573Z",
+  "generatedAt": "2026-11-26T06:20:19.015Z",
   "caveat": "Node reverse proxy + PHP-WASM. Characterises URL resolution, not Apache/cPanel/mod_rewrite behaviour. Production compatibility remains unverified.",
   "results": [
     {
