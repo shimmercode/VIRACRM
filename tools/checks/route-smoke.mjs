@@ -88,6 +88,14 @@ const TABLES = {
   workItem: 'work_items',
   note: 'notes',
   credential: 'project_credentials',
+  // Route-model binding resolves these from their table, so the inventory can
+  // fill them. seo_packages is seeded; the other two are empty in the base
+  // fixture, which is fine — a 404 still proves the router matched and binding
+  // resolved, and skipping the route would hide exactly the gap this suite
+  // exists to close.
+  seoPackage: 'seo_packages',
+  keyword: 'project_keywords',
+  assignment: 'project_assignments',
 };
 
 const ids = {};

@@ -391,8 +391,8 @@
  ],
  "REQ-15.01": [
   "PARTIAL",
-  "settings UI live: GET /settings (settings.view) + POST /settings (settings.manage), rules derived from each row's stored type, writes settings_history and one settings.updated audit event; nav entry enabled; tools/checks/settings-page.mjs 15/15 incl. a threshold change moving the dashboard's expiring-contract count. Contract/PDF templates have their own UI (6 routes).",
-  "no UI for contract types, project types (Project::TYPES is a PHP constant), SEO packages, required accesses, payroll method, project amounts or roles/permissions — those rows in REQ-15.01 are still code/seed-only"
+  "/settings edits the general key/value settings. SEO service packages now have a full admin at /settings/seo-packages (permission settings.view / settings.manage) with a tested effect: tools/checks/seo-packages.mjs 14/14 creates a package with a ceiling of 2 through the UI, watches a project on it refuse a third keyword, raises the ceiling to 3 and watches the same keyword go through, then deactivates it and sees it leave the project form.",
+  "six configuration domains still have no screen: contract types, project types (Project::TYPES is a PHP constant), required accesses for finalisation, payroll method, project amount ranges, and roles/permissions. SEO packages are done."
  ],
  "REQ-15.02": [
   "VERIFIED",

@@ -184,6 +184,13 @@ return [
         ],
 
         [
+            'label' => 'پکیج‌های سئو',
+            'icon' => 'folder',
+            'route' => 'settings.seo-packages.index',
+            'permission' => 'settings.view',
+            'enabled' => true,
+        ],
+        [
             'label' => 'تنظیمات',
             'icon' => 'settings',
             'route' => 'settings.index',

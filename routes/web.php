@@ -3,6 +3,7 @@
 use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Reports\ContractReportController;
 use App\Http\Controllers\Reports\ExpertWorkloadController;
+use App\Http\Controllers\Settings\SeoPackageController;
 use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -90,6 +91,30 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('permission:settings.view')->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])
             ->middleware('permission:settings.manage')->name('settings.update');
+
+        /*
+         * §15 / REQ-15.01 — SEO service packages.
+         *
+         * These live outside the key/value settings screen on purpose: that
+         * screen is deliberately fixed-set with no store or destroy, and a
+         * package is a row in a table, not a setting. The table was read by the
+         * project form's dropdown and by nothing else, so the keyword ceiling a
+         * package imposes could not be changed by anyone.
+         */
+        Route::prefix('settings/seo-packages')->name('settings.seo-packages.')->group(function () {
+            Route::get('/', [SeoPackageController::class, 'index'])
+                ->middleware('permission:settings.view')->name('index');
+            Route::get('/create', [SeoPackageController::class, 'create'])
+                ->middleware('permission:settings.manage')->name('create');
+            Route::post('/', [SeoPackageController::class, 'store'])
+                ->middleware('permission:settings.manage')->name('store');
+            Route::get('/{seoPackage}/edit', [SeoPackageController::class, 'edit'])
+                ->middleware('permission:settings.manage')->name('edit');
+            Route::put('/{seoPackage}', [SeoPackageController::class, 'update'])
+                ->middleware('permission:settings.manage')->name('update');
+            Route::delete('/{seoPackage}', [SeoPackageController::class, 'destroy'])
+                ->middleware('permission:settings.manage')->name('destroy');
+        });
 
         /*
          * ── Reports (§9) ───────────────────────────────────────────────

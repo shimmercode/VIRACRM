@@ -128,6 +128,7 @@ const SUITES = (() => {
   { id: 'project-assignment', label: 'Attach an expert to a project + effect on the report (REQ-05.05)', kind: 'node', script: 'tools/checks/project-assignment.mjs', required: true },
   { id: 'contract-report', label: 'Contract report: derived expiring state, reconciled buckets (REQ-09.04)', kind: 'node', script: 'tools/checks/contract-report.mjs', required: true },
   { id: 'project-keyword', label: 'Keyword CRUD + count computed from rows, not typed (REQ-05.03)', kind: 'node', script: 'tools/checks/project-keyword.mjs', required: true },
+  { id: 'seo-packages', label: 'SEO package admin + keyword ceiling effect (REQ-15.01)', kind: 'node', script: 'tools/checks/seo-packages.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,
