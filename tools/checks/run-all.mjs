@@ -132,6 +132,10 @@ const SUITES = (() => {
     { id: 'design-system', label: 'Design System components', kind: 'browser', script: 'tools/checks/design-system.mjs', required: true },
     { id: 'filter-chips', label: 'Active filter chips', kind: 'browser', script: 'tools/checks/filter-chips.mjs', required: true },
     { id: 'regression-matrix', label: '7 widths x 4 pages', kind: 'browser', script: 'tools/checks/regression-matrix.mjs', required: true },
+    // Every other browser suite asserts on the DOM. This one listens to what
+    // the browser said while rendering: uncaught exceptions, console.error,
+    // 4xx/5xx requests, cross-origin calls, and load time per page.
+    { id: 'console-perf', label: 'Console errors + page timing (17 pages)', kind: 'browser', script: 'tools/checks/console-perf.mjs', required: true },
     { id: 'runner-contract', label: 'Runner exit codes 0/1/2', kind: 'node', script: 'tools/checks/runner-contract.mjs', required: true },
     { id: 'lock-concurrency', label: 'Regression lock + concurrency', kind: 'node', script: 'tools/checks/lock-concurrency.mjs', required: true },
 
