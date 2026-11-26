@@ -155,9 +155,9 @@
   "—"
  ],
  "REQ-05.05": [
-  "PARTIAL",
-  "ProjectAssignment model + Project::assignments()/Employee::assignments(); the active-project count per expert is reported at GET /reports/expert-workload and verified by expert-workload.mjs 14/14 against an independent query.",
-  "no UI to create or edit an assignment — rows are only populated by the review seeder, so in the product an expert cannot yet be attached to a project through a screen"
+  "VERIFIED",
+  "Both halves of the requirement. Attaching: POST/PUT/DELETE /projects/{project}/assignments behind projects.update, with a form on the project page offering only employable staff; duplicates, reversed date ranges and impossible Jalali dates are field errors, and an assignment reached through another project's URL is a 404. Viewing: GET /reports/expert-workload. tools/checks/project-assignment.mjs 15/15 and tools/checks/expert-workload.mjs 14/14; T-PA-12 is the link between them, reading the report's own figure before and after an attach (1 -> 2 -> 1).",
+  "—"
  ],
  "REQ-06.01": [
   "VERIFIED",

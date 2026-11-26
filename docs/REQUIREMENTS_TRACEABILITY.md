@@ -14,8 +14,8 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 56 | 58.3% |
-| `PARTIAL` | 17 | 17.7% |
+| `VERIFIED` | 57 | 59.4% |
+| `PARTIAL` | 16 | 16.7% |
 | `NOT_VERIFIED` | 2 | 2.1% |
 | `NOT_IMPLEMENTED` | 17 | 17.7% |
 | `BLOCKED` | 4 | 4.2% |
@@ -109,7 +109,7 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`VERIFIED`** | projects module + type-driven form + 28-assert flow | — | — |
-| `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`PARTIAL`** | ProjectAssignment model + Project::assignments()/Employee::assignments(); the active-project count per expert is reported at GET /reports/expert-workload and verified by expert-workload.mjs 14/14 against an independent query. | no UI to create or edit an assignment — rows are only populated by the review seeder, so in the product an expert cannot yet be attached to a project through a screen | M1/M3 |
+| `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`VERIFIED`** | Both halves of the requirement. Attaching: POST/PUT/DELETE /projects/{project}/assignments behind projects.update, with a form on the project page offering only employable staff; duplicates, reversed date ranges and impossible Jalali dates are field errors, and an assignment reached through another project's URL is a 404. Viewing: GET /reports/expert-workload. tools/checks/project-assignment.mjs 15/15 and tools/checks/expert-workload.mjs 14/14; T-PA-12 is the link between them, reading the report's own figure before and after an attach (1 -> 2 -> 1). | — | — |
 | `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`VERIFIED`** | ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data | — | — |
 
 ### SeoProjects

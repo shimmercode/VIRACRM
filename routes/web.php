@@ -17,6 +17,7 @@ use App\Http\Controllers\Notes\NoteController;
 use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Documents\ExportController;
+use App\Http\Controllers\Projects\AssignmentController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -103,6 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/expert-workload', ExpertWorkloadController::class)
                 ->middleware('permission:reports.view')->name('expert-workload');
+
         });
 
         // ── Customers (§3) ─────────────────────────────────────────────
@@ -209,6 +211,26 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:projects.update')->name('update');
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')->name('destroy');
+
+            /*
+             * ── Project assignments (§5-3, REQ-05.05) ──────────────────
+             * «اتصال پروژه به کارشناس». Gated by `projects.update`, not by a
+             * new permission area: naming who works on a project is an edit of
+             * that project. Without this group the table behind
+             * /reports/expert-workload could only be filled by a seeder, so the
+             * report described a state the product could never reach.
+             *
+             * No index route: assignments are read on the project page, which is
+             * already gated by `projects.view`.
+             */
+            Route::prefix('{project}/assignments')->name('assignments.')->group(function () {
+                Route::post('/', [AssignmentController::class, 'store'])
+                    ->middleware('permission:projects.update')->name('store');
+                Route::put('/{assignment}', [AssignmentController::class, 'update'])
+                    ->middleware('permission:projects.update')->name('update');
+                Route::delete('/{assignment}', [AssignmentController::class, 'destroy'])
+                    ->middleware('permission:projects.update')->name('destroy');
+            });
         });
 
         // ── فاکتورها (OD-41 §19.6) ────────────────────────────────────

@@ -308,6 +308,133 @@
                     </div>
                 @endif
             </section>
+
+            {{-- ── §5-3 / REQ-05.05 — who is on this project ─────────────
+                 Attach an expert here, or the workload report at
+                 /reports/expert-workload describes a table the product could
+                 never fill. Every action is audited, because this is how a
+                 person's fee reaches the payroll input.
+            --}}
+            <section class="v-card" id="assignments">
+                <header class="v-card__head">
+                    <h2 class="v-card__title">کارشناسان پروژه</h2>
+                </header>
+                <div class="v-card__body">
+                    @if ($project->assignments->isEmpty())
+                        <x-empty-state
+                            title="هنوز کارشناسی تخصیص نیافته"
+                            description="با افزودن کارشناس، تعداد پروژه‌های فعال او در گزارش بار کاری به‌روز می‌شود."
+                            icon="users"
+                        />
+                    @else
+                        <table class="v-table">
+                            <thead>
+                                <tr>
+                                    <th>کارشناس</th>
+                                    <th>نقش</th>
+                                    @if ($canSeeAmounts)<th>ضریب</th><th>مبلغ مؤثر</th>@endif
+                                    <th>بازه</th>
+                                    <th>وضعیت</th>
+                                    @if ($canAssign)<th></th>@endif
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($project->assignments as $assignment)
+                                    <tr>
+                                        <td class="v-table__primary">
+                                            {{ trim($assignment->employee?->first_name . ' ' . $assignment->employee?->last_name) ?: '—' }}
+                                            <span class="v-table__sub">{{ $assignment->employee?->position }}</span>
+                                        </td>
+                                        <td>{{ $assignment->role ?? '—' }}</td>
+                                        @if ($canSeeAmounts)
+                                            <td class="v-table__num">{{ \App\Support\Money::toPersianDigits((string) $assignment->coefficient) }}٪</td>
+                                            {{-- formatPersian, not toPersianDigits: the Arabic
+                                                 thousands separator keeps the number one visual run
+                                                 under the bidi algorithm, which an ASCII comma breaks. --}}
+                                            <td class="v-table__num v-money" dir="ltr">{{ \App\Support\Money::fromRial((int) round($assignment->amount * $assignment->coefficient / 100))->formatPersian() }}</td>
+                                        @endif
+                                        <td>
+                                            @if ($assignment->started_on || $assignment->ended_on)
+                                                <x-fa-date :value="$assignment->started_on" />
+                                                —
+                                                <x-fa-date :value="$assignment->ended_on" />
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="v-badge {{ $assignment->is_active ? 'v-badge--success' : 'v-badge--neutral' }}">
+                                                {{ $assignment->is_active ? 'فعال' : 'غیرفعال' }}
+                                            </span>
+                                        </td>
+                                        @if ($canAssign)
+                                            <td class="v-table__num">
+                                                <form method="POST" action="{{ route('projects.assignments.destroy', [$project, $assignment]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="v-btn v-btn--ghost v-btn--sm v-btn--danger">حذف</button>
+                                                </form>
+                                            </td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+
+                    @if ($canAssign)
+                        {{-- Only unassigned, employable staff are offered; the
+                             unique index would reject a duplicate anyway, and
+                             this way the reason is a shorter list, not an error. --}}
+                        @php($remaining = $assignableEmployees->reject(fn ($e) => in_array($e->id, $assignedEmployeeIds, true)))
+                        <form method="POST" action="{{ route('projects.assignments.store', $project) }}" class="v-form">
+                            @csrf
+                            <div class="v-grid v-grid--2">
+                                <div class="v-field">
+                                    <label class="v-label" for="employee_id">کارشناس</label>
+                                    <select id="employee_id" name="employee_id" class="v-select{{ $errors->has('employee_id') ? ' is-invalid' : '' }}" required>
+                                        <option value="">انتخاب کنید…</option>
+                                        @foreach ($remaining as $employee)
+                                            <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}{{ $employee->position ? ' — ' . $employee->position : '' }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('employee_id')<p class="v-error">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="v-field">
+                                    <label class="v-label" for="assignment_role">نقش در پروژه</label>
+                                    <input id="assignment_role" name="role" type="text" class="v-input" maxlength="32" placeholder="کارشناس سئو">
+                                </div>
+                                @if ($canSeeAmounts)
+                                    <div class="v-field">
+                                        <label class="v-label" for="assignment_amount">مبلغ توافق‌شده (ریال)</label>
+                                        <input id="assignment_amount" name="amount" type="text" class="v-input" inputmode="numeric" placeholder="۰">
+                                        @error('amount')<p class="v-error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="v-field">
+                                        <label class="v-label" for="assignment_coefficient">ضریب (٪)</label>
+                                        <input id="assignment_coefficient" name="coefficient" type="text" class="v-input" value="۱۰۰" inputmode="numeric">
+                                        @error('coefficient')<p class="v-error">{{ $message }}</p>@enderror
+                                    </div>
+                                @endif
+                                <div class="v-field">
+                                    <label class="v-label" for="assignment_started">تاریخ شروع</label>
+                                    <input id="assignment_started" name="started_on" type="text" class="v-input" data-jalali inputmode="numeric" placeholder="۱۴۰۴/۰۱/۱۵">
+                                    @error('started_on')<p class="v-error">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="v-field">
+                                    <label class="v-label" for="assignment_ended">تاریخ پایان</label>
+                                    <input id="assignment_ended" name="ended_on" type="text" class="v-input" data-jalali inputmode="numeric" placeholder="۱۴۰۴/۱۲/۲۹">
+                                    @error('ended_on')<p class="v-error">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div class="v-formactions">
+                                <button type="submit" class="v-btn v-btn--primary">افزودن کارشناس</button>
+                            </div>
+                        </form>
+                    @endif
+                </div>
+            </section>
+
         </div>
 
         {{-- ── Aside ─────────────────────────────────────────────────── --}}

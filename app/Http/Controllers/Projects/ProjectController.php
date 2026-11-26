@@ -128,11 +128,26 @@ class ProjectController extends Controller
             'designDetails',
             'keywords' => fn ($q) => $q->orderByRaw("case when status = 'working' then 0 when status = 'pending' then 1 when status = 'done' then 2 else 3 end")->orderBy('id'),
             'workItems' => fn ($q) => $q->orderBy('due_date'),
+            // §5-3 / REQ-05.05 — who is on this project. Loaded here so the
+            // section is one query per relation rather than one per row.
+            'assignments' => fn ($q) => $q->orderBy('is_active', 'desc')->orderBy('id'),
         ]);
 
         return view('projects.show', [
             'project' => $project,
             'canSeeAmounts' => $request->user()->hasPermission('projects.view_financials'),
+            'canAssign' => $request->user()->hasPermission('projects.update'),
+            /*
+             * Only employable staff are offered. A terminated or soft-deleted
+             * expert would attach fine and then distort the workload report,
+             * which counts assignments joined to employees.
+             */
+            'assignableEmployees' => \App\Models\Employee::query()
+                ->whereNull('deleted_at')
+                ->where('status', '!=', 'terminated')
+                ->orderBy('first_name')
+                ->get(['id', 'first_name', 'last_name', 'position', 'status']),
+            'assignedEmployeeIds' => $project->assignments->pluck('employee_id')->all(),
             /*
              * §6 — which mandatory accesses are still missing.
              *
