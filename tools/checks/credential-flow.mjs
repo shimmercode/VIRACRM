@@ -89,7 +89,9 @@ const mkProject = async (title) => {
     method: 'POST', uri: '/projects',
     body: form({
       _token: tok(p.body), customer_id: customerId, type: 'seo',
-      title, status: 'active', amount: '1000000',
+      // Draft: §6 blocks activating an SEO project without its mandatory
+      // accesses, and this suite is about credentials, not project status.
+      title, status: 'draft', amount: '1000000',
     }),
   });
   return (r.headers.location || '').match(/\/projects\/(\d+)$/)?.[1];

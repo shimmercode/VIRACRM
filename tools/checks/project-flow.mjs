@@ -124,7 +124,7 @@ const created = await render({
   body: form({
     _token: tok(page.body),
     customer_id: custA, contract_id: contractA,
-    type: 'seo', title: 'سئو فروشگاه ' + uniq, status: 'active',
+    type: 'seo', title: 'سئو فروشگاه ' + uniq, status: 'draft',
     amount: '25000000', start_date: '1405/02/01', end_date: '1405/08/01',
     keyword_count: 25, recurrence: 'monthly', reminder_offset_days: 2,
     notes: 'یادداشت آزمون',
@@ -132,8 +132,43 @@ const created = await render({
 });
 
 const projectId = (created.headers.location || '').match(/\/projects\/(\d+)$/)?.[1];
-check('T-PRJ-09', created.status === 302 && !!projectId,
-  `POST valid project -> ${created.status} -> ${created.headers.location}`);
+
+// ── §14 acceptance: an SEO project without its mandatory accesses may NOT ──
+// be finalised. The document's own acceptance criterion is «پروژه سئو بدون
+// تکمیل دسترسی‌های اجباری قابل نهایی‌سازی نباشد». Before the gate was wired to
+// credential_requirements this save went through, so two seeded SEO projects sat
+// at status=active with no accesses at all.
+const editBlocked = await render({ uri: `/projects/${projectId}/edit` });
+const activateRefused = await render({
+  method: 'POST', uri: `/projects/${projectId}`,
+  body: form({
+    _token: tok(editBlocked.body), _method: 'PUT',
+    customer_id: custA, contract_id: contractA,
+    type: 'seo', title: 'سئو فروشگاه ' + uniq, status: 'active',
+    amount: '25000000', start_date: '1405-02-01', end_date: '1405-08-01',
+    keyword_count: 25, recurrence: 'monthly', reminder_offset_days: 2,
+  }),
+});
+const stillDraft = String(await flow.query(
+  `SELECT status FROM projects WHERE id = ${Number(projectId)}`
+)).trim();
+check('T-PRJ-09b', activateRefused.status === 302 && stillDraft === 'draft',
+  `activation without accesses refused; status stayed "${stillDraft}"`);
+
+const refusedPage = await render({ uri: `/projects/${projectId}/edit` });
+check('T-PRJ-09c', /دسترسی‌های اجباری/.test(refusedPage.body)
+  && /«وردپرس»/.test(refusedPage.body),
+  'the refusal names the missing accesses in Persian, not just "incomplete"');
+
+// The project page must say the same thing BEFORE the user tries to save. A gate
+// that only fires on submit is a gate the user discovers by losing their form.
+const gatedPage = await render({ uri: `/projects/${projectId}` });
+check('T-PRJ-09g', gatedPage.status === 200
+  && /قابل فعال‌سازی نیست/.test(gatedPage.body)
+  && /هاست \/ cPanel/.test(gatedPage.body)
+  && gatedPage.body.includes('v-alert--warning'),
+  'project page warns about the missing accesses up front');
+
 
 const detail = await render({ uri: `/projects/${projectId}` });
 check('T-PRJ-11', detail.status === 200 && detail.body.includes('سئو فروشگاه ' + uniq),
@@ -164,6 +199,55 @@ const crossPage = await render({ uri: '/projects/create' });
 check('T-PRJ-14', crossCustomer.status === 302
   && /متعلق به این مشتری نیست/.test(crossPage.body),
   'a contract belonging to a different customer is refused with a Persian reason');
+
+// ── Complete the mandatory accesses, then activate ─────────────────────
+// wordpress / hosting / domain are the seeded blockers for type=seo. No secret
+// is stored here on purpose: the gate asks which KINDS exist, and posting one
+// would make this test depend on VIRA_CREDENTIAL_KEY being set.
+const credForm = await render({ uri: `/projects/${projectId}/credentials/create` });
+const typeIds = {};
+for (const [code, label] of [['wordpress', 'وردپرس'], ['hosting', 'هاست / cPanel'], ['domain', 'دامنه']]) {
+  const m = credForm.body.match(new RegExp('<option value="(\\d+)"[^>]*>\\s*' + label));
+  typeIds[code] = m && m[1];
+}
+check('T-PRJ-09d', !!(typeIds.wordpress && typeIds.hosting && typeIds.domain),
+  `credential types resolved: ${JSON.stringify(typeIds)}`);
+
+for (const [code, label] of [['wordpress', 'ورود وردپرس'], ['hosting', 'پنل هاست'], ['domain', 'ثبت‌کننده دامنه']]) {
+  if (!typeIds[code]) continue;
+  await render({
+    method: 'POST', uri: `/projects/${projectId}/credentials`,
+    body: form({
+      _token: tok(credForm.body),
+      credential_type_id: typeIds[code],
+      label: label + ' ' + uniq,
+      username: 'vira',
+      public_url: 'https://example.invalid',
+    }),
+  });
+}
+const credCount = String(await flow.query(
+  `SELECT COUNT(*) FROM project_credentials WHERE project_id = ${Number(projectId)}`
+)).trim();
+check('T-PRJ-09e', credCount === '3', `three mandatory accesses stored (count=${credCount})`);
+
+page = await render({ uri: `/projects/${projectId}/edit` });
+const activateOk = await render({
+  method: 'POST', uri: `/projects/${projectId}`,
+  body: form({
+    _token: tok(page.body), _method: 'PUT',
+    customer_id: custA, contract_id: contractA,
+    type: 'seo', title: 'سئو فروشگاه ' + uniq, status: 'active',
+    amount: '25000000', start_date: '1405-02-01', end_date: '1405-08-01',
+    keyword_count: 25, recurrence: 'monthly', reminder_offset_days: 2,
+  }),
+});
+const nowActive = String(await flow.query(
+  `SELECT status FROM projects WHERE id = ${Number(projectId)}`
+)).trim();
+check('T-PRJ-09f', activateOk.status === 302 && nowActive === 'active',
+  `with the accesses in place the gate releases; status="${nowActive}"`);
+
 
 // ── Edit: rename and move to design, which must drop the SEO row ───────
 page = await render({ uri: `/projects/${projectId}/edit` });

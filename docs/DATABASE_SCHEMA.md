@@ -714,7 +714,7 @@ credential_values_project_credential_id_field_unique	CREATE UNIQUE INDEX "creden
 
 ### `credential_requirements`
 
-ردیف‌های موجود در پایگاه نمونه: **۰**
+ردیف‌های موجود در پایگاه نمونه: **3**
 
 | ستون | نوع | NULL مجاز | پیش‌فرض | کلید |
 |---|---|---|---|---|

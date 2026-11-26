@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * The catalogue of credential kinds (WordPress admin, hosting panel, domain
@@ -34,6 +35,16 @@ class CredentialType extends Model
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
+
+    /**
+     * Which project types require this credential kind (§6).
+     *
+     * @return HasMany<CredentialRequirement>
+     */
+    public function requirements(): HasMany
+    {
+        return $this->hasMany(CredentialRequirement::class);
+    }
 
     /** @return list<string> keys of the fields that hold secrets */
     public function secretFields(): array

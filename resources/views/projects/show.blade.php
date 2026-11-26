@@ -45,6 +45,26 @@
         </div>
     </header>
 
+    {{-- §6/§14 — the finalisation gate, explained where the user can act on it.
+         A refusal on save with no prior signal is how users end up retrying the
+         same submit three times. --}}
+    @if (!empty($missingAccesses))
+        <x-alert type="warning">
+            <strong>پروژه سئو هنوز قابل فعال‌سازی نیست.</strong>
+            دسترسی‌های اجباری زیر ثبت نشده‌اند:
+            <ul class="v-alert__list">
+                @foreach ($missingAccesses as $accessType)
+                    <li>{{ $accessType->title }}</li>
+                @endforeach
+            </ul>
+            @if (auth()->user()->hasPermission('credentials.manage'))
+                <a href="{{ route('credentials.create', $project) }}" class="v-btn v-btn--ghost v-btn--sm">
+                    <x-icon name="key" :size="14" /> ثبت دسترسی
+                </a>
+            @endif
+        </x-alert>
+    @endif
+
     <div class="v-detail-grid">
         <div class="v-detail-grid__main">
 

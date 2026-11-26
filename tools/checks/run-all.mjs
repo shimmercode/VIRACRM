@@ -115,6 +115,9 @@ const SUITES = (() => {
   // SECURITY AUDIT — the audit trail page: who may read it, that reading is
   // itself logged, that no secret reaches the HTML, and that it is read-only.
   { id: 'audit-log-page', label: 'Security: audit log page (§10)', kind: 'node', script: 'tools/checks/audit-log-page.mjs', required: true },
+  // PRODUCT AUDIT — the ten end-to-end user journeys, run as connected
+  // journeys rather than per-module, to catch what breaks at the seams.
+  { id: 'e2e-workflows', label: 'End-to-end user journeys (10 flows)', kind: 'node', script: 'tools/checks/e2e-workflows.mjs', required: true },
   { id: 'css-audit', label: 'Token discipline', kind: 'node', script: 'tools/checks/css-audit.mjs', required: true },
   { id: 'contrast', label: 'Contrast', kind: 'node', script: 'tools/checks/contrast.mjs', required: true },
   { id: 'unstyled', label: 'Unstyled classes', kind: 'node', script: 'tools/checks/unstyled.mjs', required: true },

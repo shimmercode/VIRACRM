@@ -87,8 +87,38 @@ class UpdateProjectRequest extends FormRequest
                 $this->validateAmount($validator);
                 $this->validateDates($validator);
                 $this->validateDomain($validator);
+                $this->validateFinalizationGate($validator);
             },
         ];
+    }
+
+    /**
+     * §6 / §14 — moving an SEO project into a gated status needs its mandatory
+     * accesses in place.
+     *
+     * Unlike create, this checks the accesses the project ALREADY has, so the
+     * normal path works: save as draft, add the accesses, then set it active.
+     */
+    protected function validateFinalizationGate($validator): void
+    {
+        $project = $this->route('project');
+        $projectId = $project instanceof \App\Models\Project
+            ? (int) $project->id
+            : ($project !== null ? (int) $project : null);
+
+        $type = (string) $this->input('type', '');
+        $status = (string) $this->input('status', '');
+
+        if (! \App\Services\Projects\FinalizationGate::blocks($projectId, $type, $status)) {
+            return;
+        }
+
+        $validator->errors()->add(
+            'status',
+            \App\Services\Projects\FinalizationGate::message(
+                \App\Services\Projects\FinalizationGate::missing($projectId, $type),
+            ),
+        );
     }
 
     /** The chosen contract must belong to the chosen customer. */

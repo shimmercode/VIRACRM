@@ -85,8 +85,34 @@ class StoreProjectRequest extends FormRequest
                 $this->validateAmount($validator);
                 $this->validateDates($validator);
                 $this->validateDomain($validator);
+                $this->validateFinalizationGate($validator, null);
             },
         ];
+    }
+
+    /**
+     * §6 / §14 — an SEO project cannot be created already-active.
+     *
+     * A brand-new project has no accesses yet, so asking for a gated status here
+     * is always refused, and the message says what to do instead: save the draft,
+     * add the accesses, then activate. That is the workflow §12 describes, and it
+     * is the only order in which the gate can be satisfied.
+     */
+    protected function validateFinalizationGate($validator, ?int $projectId): void
+    {
+        $type = (string) $this->input('type', '');
+        $status = (string) $this->input('status', '');
+
+        $missing = \App\Services\Projects\FinalizationGate::missing($projectId, $type);
+
+        if (! \App\Services\Projects\FinalizationGate::blocks($projectId, $type, $status)) {
+            return;
+        }
+
+        $validator->errors()->add(
+            'status',
+            \App\Services\Projects\FinalizationGate::message($missing),
+        );
     }
 
     /** The chosen contract must belong to the chosen customer. */

@@ -133,6 +133,18 @@ class ProjectController extends Controller
         return view('projects.show', [
             'project' => $project,
             'canSeeAmounts' => $request->user()->hasPermission('projects.view_financials'),
+            /*
+             * §6 — which mandatory accesses are still missing.
+             *
+             * Shown on the page, not only as a validation error, because a gate
+             * that refuses a save without saying what to do first just gets the
+             * user to retry. Only for types that actually have requirements
+             * configured, so a design project gets no banner about SEO accesses.
+             */
+            'missingAccesses' => \App\Services\Projects\FinalizationGate::missing(
+                (int) $project->id,
+                (string) $project->type,
+            ),
             'auditTrail' => AuditLog::query()
                 ->with('user:id,name,username')
                 ->where('subject_type', Project::class)

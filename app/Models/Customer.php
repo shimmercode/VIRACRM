@@ -364,11 +364,31 @@ class Customer extends Model
 
     // ── Scopes ───────────────────────────────────────────────────────────
 
-    /** §3: search across name, phone, national ID and domain. */
+    /**
+     * §3: search across name, phone, national ID and domain.
+     *
+     * The phone/ID branch only runs on a digit run of MIN_SEARCH_DIGITS or more.
+     *
+     * WHY THAT GATE EXISTS: `normalizeMobile()` strips every non-digit, so a
+     * purely textual query that happens to contain one digit — a reference code,
+     * a ticket number, «قرارداد ۳» — collapsed to that single digit and then
+     * matched `normalized_mobile LIKE '%9%'`, which is most of the table. Found
+     * by the W-06 end-to-end journey: searching for a string that exists nowhere
+     * returned all eight customers, while an equally unrelated string with no
+     * digits correctly returned none. Four digits is the shortest fragment
+     * anyone meaningfully searches a phone or national ID by; below that the
+     * query is text and must be treated as text.
+     */
+    private const MIN_SEARCH_DIGITS = 4;
+
     public function scopeSearch(Builder $query, string $term): Builder
     {
         $normalized = self::normalizePersianText($term);
         $digits = self::normalizeMobile($term);
+
+        if ($digits !== null && strlen($digits) < self::MIN_SEARCH_DIGITS) {
+            $digits = null;
+        }
 
         if ($normalized === '' && $digits === null) {
             return $query;

@@ -222,26 +222,50 @@
                 </div>
             </section>
 
-            {{-- Projects: real relation, currently empty until 2-D --}}
+            {{-- Projects (§3 — the dossier is the hub for everything related) --}}
             <section class="v-card">
                 <header class="v-card__head">
                     <h2 class="v-card__title">پروژه‌ها</h2>
                 </header>
                 <div class="v-card__body v-card__body--flush">
                     @if ($customer->projects->isEmpty())
+                        {{--
+                            This used to read «ماژول پروژه‌ها در مرحلهٔ بعدی فعال
+                            می‌شود» — the projects module is live, so the message
+                            told users a working feature did not exist. A stale
+                            empty state is worse than none: it sends people to the
+                            projects menu to look for something already here.
+                        --}}
                         <x-empty-state
                             title="پروژه‌ای ثبت نشده"
-                            description="ماژول پروژه‌ها در مرحلهٔ بعدی فعال می‌شود."
+                            description="پروژه‌های این مشتری پس از ثبت اینجا نمایش داده می‌شوند."
                             icon="folder"
-                        />
+                        >
+                            @if (auth()->user()->hasPermission('projects.create'))
+                                <a href="{{ route('projects.create', ['customer_id' => $customer->id]) }}"
+                                   class="v-btn v-btn--ghost v-btn--sm">
+                                    <x-icon name="plus" :size="14" /> ثبت پروژه
+                                </a>
+                            @endif
+                        </x-empty-state>
                     @else
                         <ul class="v-list">
                             @foreach ($customer->projects as $project)
                                 <li class="v-list__item">
-                                    <div class="v-list__main">
+                                    {{--
+                                        A link, matching the contract rows above.
+                                        This was a plain <div>, so the dossier
+                                        listed the project's name but gave no way
+                                        to open it — §3 makes this page the hub
+                                        every related record hangs off, and a hub
+                                        you cannot navigate out of is only half
+                                        built. Found by the W-02 end-to-end
+                                        journey, not by any per-module test.
+                                    --}}
+                                    <a class="v-list__main" href="{{ route('projects.show', $project) }}">
                                         <span class="v-list__title">{{ $project->title }}</span>
                                         <span class="v-list__meta">{{ $project->typeLabel() }}</span>
-                                    </div>
+                                    </a>
                                     <x-badge :tone="$project->status === 'active' ? 'success' : 'neutral'">
                                         {{ $project->statusLabel() }}
                                     </x-badge>

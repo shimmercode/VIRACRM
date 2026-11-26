@@ -79,6 +79,20 @@ class Project extends Model
         return $this->hasMany(ProjectKeyword::class);
     }
 
+    /**
+     * §6 — the project's accesses (WordPress, host, domain, …).
+     *
+     * Added for the finalisation gate, which has to ask "which mandatory kinds
+     * does this project already have?" — a question the credential controller
+     * was answering with its own ad-hoc query.
+     *
+     * @return HasMany<ProjectCredential>
+     */
+    public function credentials(): HasMany
+    {
+        return $this->hasMany(ProjectCredential::class);
+    }
+
     // ── Scopes ───────────────────────────────────────────────────────────
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CredentialRequirement;
 use App\Models\CredentialType;
 use Illuminate\Database\Seeder;
 
@@ -65,12 +66,29 @@ class CredentialTypeSeeder extends Seeder
         ],
     ];
 
+    /**
+     * §6 — which of those kinds an SEO project must have before it can be
+     * activated.
+     *
+     * THESE ARE A DEFAULT, NOT A DECISION. The requirements document mandates
+     * the mechanism («سیستم باید امکان تعریف فهرست دسترسی‌های ضروری را داشته
+     * باشد») and §14 makes the gate an acceptance criterion, but it never says
+     * WHICH kinds are mandatory. The three below are the ones §6 names first for
+     * a project's access section — WordPress, host, domain — so they are the most
+     * defensible starting point, and they live in a table precisely so the client
+     * can change the list without a release. Confirming the list is an open
+     * client decision; shipping an empty list would have left the gate unable to
+     * fire at all, which is the state the code was in.
+     */
+    private const REQUIRED_FOR_SEO = ['wordpress', 'hosting', 'domain'];
+
     public function run(): void
     {
         $order = 0;
+        $ids = [];
 
         foreach (self::TYPES as $code => $definition) {
-            CredentialType::updateOrCreate(
+            $type = CredentialType::updateOrCreate(
                 ['code' => $code],
                 [
                     'title' => $definition['title'],
@@ -79,8 +97,22 @@ class CredentialTypeSeeder extends Seeder
                     'sort_order' => $order++,
                 ]
             );
+
+            $ids[$code] = $type->id;
         }
 
-        $this->command?->info('Credential types: ' . count(self::TYPES) . ' synced.');
+        foreach (self::REQUIRED_FOR_SEO as $code) {
+            if (! isset($ids[$code])) {
+                continue;
+            }
+
+            CredentialRequirement::updateOrCreate(
+                ['project_type' => 'seo', 'credential_type_id' => $ids[$code]],
+                ['is_required' => true, 'blocks_finalize' => true],
+            );
+        }
+
+        $this->command?->info('Credential types: ' . count(self::TYPES) . ' synced, '
+            . count(self::REQUIRED_FOR_SEO) . ' mandatory for SEO.');
     }
 }
