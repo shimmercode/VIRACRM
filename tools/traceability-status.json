@@ -141,13 +141,13 @@
  ],
  "REQ-05.02": [
   "PARTIAL",
-  "seo_project_details model + form + detail page",
-  "no keyword CRUD UI yet"
+  "SEO project form carries name, customer, contract, package/service level, amount, notes, owner and start/end dates; the keyword list is now managed (REQ-05.03). seo_project_details holds package, recurrence and reminder offset.",
+  "verified, not assumed: the SEO fieldset of resources/views/projects/_form.blade.php contains only seo_package_id, keyword_count, recurrence and reminder_offset_days. §5-1 also names «آدرس وب‌سایت» for an SEO project and there is no such field — the only domain column is design_project_details.domain (the design fieldset). A website address can be recorded at customer level in customer_websites, but not on the SEO project itself."
  ],
  "REQ-05.03": [
-  "PARTIAL",
-  "project_keywords model + normalize + read-only list",
-  "no add/remove UI"
+  "VERIFIED",
+  "POST/PUT/DELETE /projects/{project}/keywords behind projects.update, with an add form, an inline status control and a delete button on the SEO project page. Uniqueness is enforced on ProjectKeyword::normalize() output, so ZWNJ, doubled whitespace and Arabic ي/ك cannot create duplicates; the package keyword_limit is a ceiling on real rows. The count on the page is $project->keywords->count() and T-KW-04 sets seo_project_details.keyword_count to 99 to prove the typed field has no effect on it. tools/checks/project-keyword.mjs 15/15.",
+  "—"
  ],
  "REQ-05.04": [
   "VERIFIED",

@@ -216,11 +216,17 @@
 
             {{-- ── Keywords (SEO only) ───────────────────────────────── --}}
             @if ($project->type === 'seo')
-                <section class="v-card">
+                {{-- REQ-05.03: the count is computed from real rows, never typed.
+                     The package limit is checked against those rows, so a
+                     manually entered number would enforce nothing. --}}
+                <section class="v-card" id="keywords">
                     <header class="v-card__head">
                         <h2 class="v-card__title">کلمات کلیدی</h2>
                         <span class="v-card__meta">
                             {{ Money::toPersianDigits((string) $project->keywords->count()) }} کلمه
+                            @if (($limit = (int) ($project->seoDetails?->package?->keyword_limit ?? 0)) > 0)
+                                از {{ Money::toPersianDigits((string) $limit) }}
+                            @endif
                         </span>
                     </header>
 
@@ -237,12 +243,18 @@
                                     <tr>
                                         <th scope="col">کلمهٔ کلیدی</th>
                                         <th scope="col">وضعیت</th>
+                                        @if ($canAssign)<th scope="col">تغییر وضعیت</th><th scope="col"></th>@endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($project->keywords as $keyword)
                                         <tr>
-                                            <td>{{ $keyword->keyword }}</td>
+                                            <td class="v-table__primary">
+                                                {{ $keyword->keyword }}
+                                                @if ($keyword->notes)
+                                                    <span class="v-table__sub">{{ $keyword->notes }}</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <x-badge :tone="match ($keyword->status) {
                                                     'working' => 'info',
@@ -251,10 +263,68 @@
                                                     default => 'neutral',
                                                 }">{{ $keyword->statusLabel() }}</x-badge>
                                             </td>
+                                            @if ($canAssign)
+                                                <td class="v-table__num">
+                                                    <form method="POST" action="{{ route('projects.keywords.update', [$project, $keyword]) }}" class="v-inlineform">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="keyword" value="{{ $keyword->keyword }}">
+                                                        <input type="hidden" name="notes" value="{{ $keyword->notes }}">
+                                                        <select name="status" class="v-select v-select--sm"
+                                                                aria-label="وضعیت {{ $keyword->keyword }}" onchange="this.form.submit()">
+                                                            @foreach (\App\Models\ProjectKeyword::STATUSES as $value => $label)
+                                                                <option value="{{ $value }}" @selected($keyword->status === $value)>{{ $label }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </form>
+                                                </td>
+                                                <td class="v-table__num">
+                                                    <form method="POST" action="{{ route('projects.keywords.destroy', [$project, $keyword]) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="v-btn v-btn--ghost v-btn--sm v-btn--danger">حذف</button>
+                                                    </form>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    @endif
+                
+                    @if ($canAssign)
+                        <div class="v-card__body">
+                            <form method="POST" action="{{ route('projects.keywords.store', $project) }}" class="v-form">
+                                @csrf
+                                <div class="v-grid v-grid--2">
+                                    <div class="v-field">
+                                        <label class="v-label" for="keyword_text">کلمهٔ کلیدی</label>
+                                        <input id="keyword_text" name="keyword" type="text" class="v-input{{ $errors->has('keyword') ? ' is-invalid' : '' }}"
+                                               maxlength="191" required placeholder="طراحی سایت">
+                                        @error('keyword')<p class="v-error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="v-field">
+                                        <label class="v-label" for="keyword_status">وضعیت</label>
+                                        <select id="keyword_status" name="status" class="v-select{{ $errors->has('status') ? ' is-invalid' : '' }}">
+                                            @foreach (\App\Models\ProjectKeyword::STATUSES as $value => $label)
+                                                <option value="{{ $value }}">{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        {{-- A select cannot produce this through the UI, but a stale
+                                             tab or a hand-edited request can, and a refusal with
+                                             nowhere to appear is a dead end for the user. --}}
+                                        @error('status')<p class="v-error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="v-field v-field--span2">
+                                        <label class="v-label" for="keyword_notes">یادداشت</label>
+                                        <input id="keyword_notes" name="notes" type="text" class="v-input" maxlength="2000">
+                                    </div>
+                                </div>
+                                <div class="v-formactions">
+                                    <button type="submit" class="v-btn v-btn--primary">افزودن کلمهٔ کلیدی</button>
+                                </div>
+                            </form>
                         </div>
                     @endif
                 </section>

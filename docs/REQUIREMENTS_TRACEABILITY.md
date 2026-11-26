@@ -14,8 +14,8 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 58 | 60.4% |
-| `PARTIAL` | 15 | 15.6% |
+| `VERIFIED` | 59 | 61.5% |
+| `PARTIAL` | 14 | 14.6% |
 | `NOT_VERIFIED` | 2 | 2.1% |
 | `NOT_IMPLEMENTED` | 17 | 17.7% |
 | `BLOCKED` | 4 | 4.2% |
@@ -116,8 +116,8 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`PARTIAL`** | seo_project_details model + form + detail page | no keyword CRUD UI yet | M1/M3 |
-| `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`PARTIAL`** | project_keywords model + normalize + read-only list | no add/remove UI | M1/M3 |
+| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`PARTIAL`** | SEO project form carries name, customer, contract, package/service level, amount, notes, owner and start/end dates; the keyword list is now managed (REQ-05.03). seo_project_details holds package, recurrence and reminder offset. | verified, not assumed: the SEO fieldset of resources/views/projects/_form.blade.php contains only seo_package_id, keyword_count, recurrence and reminder_offset_days. §5-1 also names «آدرس وب‌سایت» for an SEO project and there is no such field — the only domain column is design_project_details.domain (the design fieldset). A website address can be recorded at customer level in customer_websites, but not on the SEO project itself. | M1/M3 |
+| `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`VERIFIED`** | POST/PUT/DELETE /projects/{project}/keywords behind projects.update, with an add form, an inline status control and a delete button on the SEO project page. Uniqueness is enforced on ProjectKeyword::normalize() output, so ZWNJ, doubled whitespace and Arabic ي/ك cannot create duplicates; the package keyword_limit is a ceiling on real rows. The count on the page is $project->keywords->count() and T-KW-04 sets seo_project_details.keyword_count to 99 to prove the typed field has no effect on it. tools/checks/project-keyword.mjs 15/15. | — | — |
 
 ### DesignProjects
 

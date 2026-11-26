@@ -19,6 +19,7 @@ use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\WorkItems\WorkItemController;
 use App\Http\Controllers\Documents\ExportController;
 use App\Http\Controllers\Projects\AssignmentController;
+use App\Http\Controllers\Projects\KeywordController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -232,6 +233,22 @@ Route::middleware(['auth'])->group(function () {
              * No index route: assignments are read on the project page, which is
              * already gated by `projects.view`.
              */
+            /*
+             * ── Project keywords (§5-1, REQ-05.03) ─────────────────────
+             * «فهرست کلمات کلیدی هدف و تعداد کلمات». The count on the project
+             * page was already computed from rows; nothing could create one, so
+             * it was permanently zero. Gated by `projects.update` for the same
+             * reason as assignments.
+             */
+            Route::prefix('{project}/keywords')->name('keywords.')->group(function () {
+                Route::post('/', [KeywordController::class, 'store'])
+                    ->middleware('permission:projects.update')->name('store');
+                Route::put('/{keyword}', [KeywordController::class, 'update'])
+                    ->middleware('permission:projects.update')->name('update');
+                Route::delete('/{keyword}', [KeywordController::class, 'destroy'])
+                    ->middleware('permission:projects.update')->name('destroy');
+            });
+
             Route::prefix('{project}/assignments')->name('assignments.')->group(function () {
                 Route::post('/', [AssignmentController::class, 'store'])
                     ->middleware('permission:projects.update')->name('store');
