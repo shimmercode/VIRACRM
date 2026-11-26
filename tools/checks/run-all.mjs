@@ -102,6 +102,12 @@ const SUITES = (() => {
   // permission it needs. That claim was previously unverified, so this suite
   // exists to make it a control rather than a comment.
   { id: 'route-permissions', label: 'Route permission audit (PHP)', kind: 'php', script: 'tools/checks/route-permissions.php', required: true },
+  // EVERY ROUTE, ASKED FOR A RESPONSE. The list comes from the live router, so
+  // a route added tomorrow is swept tomorrow. Exists because a missing import
+  // in one FormRequest made every customer create return 500 while the suite
+  // stayed green: the narrower tests asserted a row existed, and seeded rows
+  // exist whether or not the POST worked.
+  { id: 'route-smoke', label: 'Every GET and POST route responds without a fatal', kind: 'node', script: 'tools/checks/route-smoke.mjs', required: true },
   // Composer state: what is declared vs installed, and the absent lock file.
   // A missing lock is a reproducibility risk, so it is asserted, not noted.
   { id: 'composer-integrity', label: 'Composer declared vs installed', kind: 'node', script: 'tools/checks/composer-integrity.mjs', required: true },
