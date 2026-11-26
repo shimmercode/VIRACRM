@@ -230,9 +230,9 @@
   "—"
  ],
  "REQ-09.01": [
-  "NOT_IMPLEMENTED",
-  "per-entity search only",
-  "no global search"
+  "VERIFIED",
+  "topbar search form rendered by layouts/app.blade.php on every authenticated page, GET customers.index?q=; Customer::scopeSearch covers search_key/first/last/company name, normalized_mobile, normalized_national_id and customer_websites.domain (all four fields §3 line 56 names); tools/checks/global-search.mjs 9/9 — box present on /projects, /notes and /audit; hits found by company name, by Persian-digit mobile, by national ID and by domain; result opens the customer file; no-match empty state; SQL metacharacters harmless",
+  "—"
  ],
  "REQ-09.02": [
   "VERIFIED",

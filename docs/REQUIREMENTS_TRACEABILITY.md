@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 56 | 58.3% |
+| `VERIFIED` | 57 | 59.4% |
 | `PARTIAL` | 15 | 15.6% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 19 | 19.8% |
+| `NOT_IMPLEMENTED` | 18 | 18.8% |
 | `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
 
@@ -162,7 +162,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SRCH-001` | `REQ-09.01` | جستجوی سراسری | P1 | doc | **`NOT_IMPLEMENTED`** | per-entity search only | no global search | M1–M8 |
+| `SRCH-001` | `REQ-09.01` | جستجوی سراسری | P1 | doc | **`VERIFIED`** | topbar search form rendered by layouts/app.blade.php on every authenticated page, GET customers.index?q=; Customer::scopeSearch covers search_key/first/last/company name, normalized_mobile, normalized_national_id and customer_websites.domain (all four fields §3 line 56 names); tools/checks/global-search.mjs 9/9 — box present on /projects, /notes and /audit; hits found by company name, by Persian-digit mobile, by national ID and by domain; result opens the customer file; no-match empty state; SQL metacharacters harmless | — | — |
 
 ### Invoices
 
@@ -330,7 +330,6 @@
 | `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
-| `SRCH-001` | جستجوی سراسری | Search | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
 | `INV-005` | ثبت مشخصات و فایل فاکتور پس از ارسال | Invoices | P1 |

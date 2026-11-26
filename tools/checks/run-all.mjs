@@ -128,6 +128,12 @@ const SUITES = (() => {
   // without the permission, and — the only check that really matters — that a
   // saved threshold moves what the dashboard reports.
   { id: 'settings-page', label: 'Settings screen persists and drives behaviour (§15)', kind: 'node', script: 'tools/checks/settings-page.mjs', required: true },
+  // GLOBAL SEARCH — REQ-09.01 was recorded as NOT_IMPLEMENTED ("no global
+  // search"). The topbar search form is on every authenticated page and
+  // Customer::scopeSearch() covers all four fields §3 names. This proves it
+  // works from a page that is not the customers list, rather than adding a
+  // /search route to make a checklist item go green.
+  { id: 'global-search', label: 'Global customer search (§9 REQ-09.01)', kind: 'node', script: 'tools/checks/global-search.mjs', required: true },
   // PRODUCT AUDIT — the ten end-to-end user journeys, run as connected
   // journeys rather than per-module, to catch what breaks at the seams.
   { id: 'e2e-workflows', label: 'End-to-end user journeys (10 flows)', kind: 'node', script: 'tools/checks/e2e-workflows.mjs', required: true },
