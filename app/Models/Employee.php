@@ -58,6 +58,16 @@ class Employee extends Model
         'terminated' => 'پایان همکاری',
     ];
 
+    /**
+     * REQ-05.05 / REQ-09.07 — this expert's project assignments.
+     *
+     * @return HasMany<ProjectAssignment, $this>
+     */
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(ProjectAssignment::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

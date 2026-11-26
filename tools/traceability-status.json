@@ -155,9 +155,9 @@
   "—"
  ],
  "REQ-05.05": [
-  "NOT_IMPLEMENTED",
-  "project_assignments empty",
-  "—"
+  "PARTIAL",
+  "ProjectAssignment model + Project::assignments()/Employee::assignments(); the active-project count per expert is reported at GET /reports/expert-workload and verified by expert-workload.mjs 14/14 against an independent query.",
+  "no UI to create or edit an assignment — rows are only populated by the review seeder, so in the product an expert cannot yet be attached to a project through a screen"
  ],
  "REQ-06.01": [
   "VERIFIED",
@@ -245,9 +245,9 @@
   "—"
  ],
  "REQ-09.04": [
-  "VERIFIED",
-  "Trial balance + P&L + balance sheet, all from journal_lines",
-  "—"
+  "PARTIAL",
+  "the per-expert half is delivered: GET /reports/expert-workload with amounts gated behind projects.view_financials (expert-workload.mjs 14/14). Contracts have status filters and the dashboard reports the near-expiry count from the configurable threshold.",
+  "no dedicated contract report page combining active / finished / near-expiry in one view; the previous entry cited a trial balance and P&L, which are REQ-07 deliverables and say nothing about this requirement"
  ],
  "REQ-09.05": [
   "VERIFIED",
@@ -261,7 +261,7 @@
  ],
  "REQ-09.07": [
   "VERIFIED",
-  "P&L by service and by customer dimensions",
+  "GET /reports/expert-workload (permission reports.view) — grouped aggregate over project_assignments joined to employees and projects; active count, all-assignments count and effective amount per expert; filters on project status, employment status and name; sorting; pagination; empty state. tools/checks/expert-workload.mjs 14/14, including reconciliation of every figure against an independent SQL count.",
   "—"
  ],
  "REQ-10.01": [

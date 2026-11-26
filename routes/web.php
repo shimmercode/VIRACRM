@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Audit\AuditLogController;
+use App\Http\Controllers\Reports\ExpertWorkloadController;
 use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -86,6 +87,23 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('permission:settings.view')->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])
             ->middleware('permission:settings.manage')->name('settings.update');
+
+        /*
+         * ── Reports (§9) ───────────────────────────────────────────────
+         *
+         * `reports.view` has been in the permission catalogue and granted to
+         * seeded roles since the first release, with no route behind it — the
+         * same gap `settings.view` had. §9-6 asks for the number of projects
+         * each expert carries together with what payroll needs from it.
+         *
+         * The counts sit behind `reports.view`. The per-project amounts are
+         * payroll inputs, so the controller reveals them only to a user who
+         * also holds `projects.view_financials`.
+         */
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/expert-workload', ExpertWorkloadController::class)
+                ->middleware('permission:reports.view')->name('expert-workload');
+        });
 
         // ── Customers (§3) ─────────────────────────────────────────────
         Route::prefix('customers')->name('customers.')->group(function () {

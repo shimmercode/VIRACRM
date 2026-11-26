@@ -75,6 +75,16 @@ class Project extends Model
         return $this->belongsTo(User::class, 'owner_user_id');
     }
 
+    /**
+     * REQ-05.05 — the experts assigned to this project.
+     *
+     * @return HasMany<ProjectAssignment, $this>
+     */
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(ProjectAssignment::class);
+    }
+
     public function workItems(): HasMany
     {
         return $this->hasMany(WorkItem::class);

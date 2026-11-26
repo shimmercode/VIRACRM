@@ -169,6 +169,14 @@ return [
         ],
 
         [
+            'label' => 'گزارش بار کاری',
+            'icon' => 'chart',
+            'route' => 'reports.expert-workload',
+            'permission' => 'reports.view',
+            'enabled' => true,
+        ],
+
+        [
             'label' => 'تنظیمات',
             'icon' => 'settings',
             'route' => 'settings.index',

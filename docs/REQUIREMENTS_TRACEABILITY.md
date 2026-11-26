@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 57 | 59.4% |
-| `PARTIAL` | 15 | 15.6% |
+| `VERIFIED` | 56 | 58.3% |
+| `PARTIAL` | 17 | 17.7% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 18 | 18.8% |
+| `NOT_IMPLEMENTED` | 17 | 17.7% |
 | `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
 
@@ -109,7 +109,7 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `PRJ-001` | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | P1 | doc | **`VERIFIED`** | projects module + type-driven form + 28-assert flow | — | — |
-| `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`NOT_IMPLEMENTED`** | project_assignments empty | — | M1–M8 |
+| `PRJ-002` | `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | P1 | doc | **`PARTIAL`** | ProjectAssignment model + Project::assignments()/Employee::assignments(); the active-project count per expert is reported at GET /reports/expert-workload and verified by expert-workload.mjs 14/14 against an independent query. | no UI to create or edit an assignment — rows are only populated by the review seeder, so in the product an expert cannot yet be attached to a project through a screen | M1/M3 |
 | `PRJ-003` | `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | P1 | brief | **`VERIFIED`** | ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data | — | — |
 
 ### SeoProjects
@@ -178,8 +178,8 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`VERIFIED`** | Trial balance + P&L + balance sheet, all from journal_lines | — | — |
-| `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`VERIFIED`** | P&L by service and by customer dimensions | — | — |
+| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`PARTIAL`** | the per-expert half is delivered: GET /reports/expert-workload with amounts gated behind projects.view_financials (expert-workload.mjs 14/14). Contracts have status filters and the dashboard reports the near-expiry count from the configurable threshold. | no dedicated contract report page combining active / finished / near-expiry in one view; the previous entry cited a trial balance and P&L, which are REQ-07 deliverables and say nothing about this requirement | M1/M3 |
+| `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`VERIFIED`** | GET /reports/expert-workload (permission reports.view) — grouped aggregate over project_assignments joined to employees and projects; active count, all-assignments count and effective amount per expert; filters on project status, employment status and name; sorting; pagination; empty state. tools/checks/expert-workload.mjs 14/14, including reconciliation of every figure against an independent SQL count. | — | — |
 
 ### Pdf
 
@@ -328,7 +328,6 @@
 | شناسه | عنوان | ماژول | اولویت |
 |-------|-------|-------|:------:|
 | `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
-| `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |

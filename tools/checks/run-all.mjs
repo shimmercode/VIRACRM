@@ -124,6 +124,7 @@ const SUITES = (() => {
   // after the POST and asserted > 0, which passes on seeded rows whether or not
   // the request worked — that is how a 500 on every customer create stayed green.
   { id: 'customer-create', label: 'Customer create: real success, new id, isolation', kind: 'node', script: 'tools/checks/customer-create.mjs', required: true },
+  { id: 'expert-workload', label: 'Expert workload report, reconciled against SQL (REQ-05.05/09.07)', kind: 'node', script: 'tools/checks/expert-workload.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,
