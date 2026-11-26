@@ -1,6 +1,6 @@
 # Vira CRM — Production Readiness
 
-**Branch:** `arena/3b43de84-viracrm` · **Baseline SHA:** `4e9aec4` · **Date:** 2026-11-22
+**Branch:** `arena/3b43de84-viracrm` · **Final SHA:** `d1a17b1` · **Date:** 2026-11-22
 **Scope of this round:** stabilisation, documentation alignment and production preparation.
 **No new features were added to the CRM.**
 
@@ -34,11 +34,19 @@ Every item ends with one of: **Pass** · **Fail** · **Not Tested** · **Blocked
 |---|---|
 | Branch | `arena/3b43de84-viracrm` (from `309eabf` of `main`) |
 | Baseline for this round | `4e9aec4` — clean tree, HEAD = origin |
+| This round's commit | `d1a17b1` |
+| Full regression on `d1a17b1` | **42/42 suites · 1352 assertions · exit 0** |
+| Isolation proof | `customers 7→7, contracts 5→5, projects 3→3, work_items 9→9, users 2→2, sessions 1→1, audit_logs 232→232` |
 | Commit preserved | yes; nothing was rewritten, reverted or force-pushed |
 
 The previous round's chain (`049088d` → `c04ca2c` → `9b62267` → `4e9aec4`) is intact. This
-round adds only: two new check scripts, a runner registration, traceability corrections, and
-this document. No CRM feature code changed.
+round adds three check scripts, a runner registration, traceability corrections and this
+document. **No CRM feature code changed.**
+
+Suite growth 40 → **42**; assertions 1324 → **1352**. The increase is the two new suites
+(`composer-integrity` 9, `query-performance` 19) — new coverage, not renumbering. The one
+commit not covered by that full run is the commit containing this sentence, whose only
+test-reachable effect is the release manifest, re-verified by `docs-integrity` 52/52 inside it.
 
 ---
 
