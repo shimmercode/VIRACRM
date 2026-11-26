@@ -14,8 +14,8 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 57 | 59.4% |
-| `PARTIAL` | 16 | 16.7% |
+| `VERIFIED` | 58 | 60.4% |
+| `PARTIAL` | 15 | 15.6% |
 | `NOT_VERIFIED` | 2 | 2.1% |
 | `NOT_IMPLEMENTED` | 17 | 17.7% |
 | `BLOCKED` | 4 | 4.2% |
@@ -178,7 +178,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`PARTIAL`** | the per-expert half is delivered: GET /reports/expert-workload with amounts gated behind projects.view_financials (expert-workload.mjs 14/14). Contracts have status filters and the dashboard reports the near-expiry count from the configurable threshold. | no dedicated contract report page combining active / finished / near-expiry in one view; the previous entry cited a trial balance and P&L, which are REQ-07 deliverables and say nothing about this requirement | M1/M3 |
+| `RPT-001` | `REQ-09.04` | گزارش قراردادها و پرسنل | P1 | doc | **`VERIFIED`** | GET /reports/contracts (permission reports.view) classifies every contract into one mutually exclusive bucket — near-expiry, overdue, active, finished, draft — and reconciles their sum against the contract total on the page itself. Near-expiry is computed from end_date through the same expiringWithin() scope the dashboard uses, over the configurable contracts.expiry_warning_days window; amounts are gated behind contracts.view_financials. tools/checks/contract-report.mjs 14/14, with every bucket count recomputed in independent SQL and T-CR-07 driving the window from 30 to 2 days through the real settings screen to prove the setting moves a contract between buckets. | — | — |
 | `RPT-002` | `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | P1 | doc | **`VERIFIED`** | GET /reports/expert-workload (permission reports.view) — grouped aggregate over project_assignments joined to employees and projects; active count, all-assignments count and effective amount per expert; filters on project status, employment status and name; sorting; pagination; empty state. tools/checks/expert-workload.mjs 14/14, including reconciliation of every figure against an independent SQL count. | — | — |
 
 ### Pdf

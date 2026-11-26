@@ -126,6 +126,7 @@ const SUITES = (() => {
   { id: 'customer-create', label: 'Customer create: real success, new id, isolation', kind: 'node', script: 'tools/checks/customer-create.mjs', required: true },
   { id: 'expert-workload', label: 'Expert workload report, reconciled against SQL (REQ-05.05/09.07)', kind: 'node', script: 'tools/checks/expert-workload.mjs', required: true },
   { id: 'project-assignment', label: 'Attach an expert to a project + effect on the report (REQ-05.05)', kind: 'node', script: 'tools/checks/project-assignment.mjs', required: true },
+  { id: 'contract-report', label: 'Contract report: derived expiring state, reconciled buckets (REQ-09.04)', kind: 'node', script: 'tools/checks/contract-report.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,

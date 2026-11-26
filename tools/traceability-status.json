@@ -245,9 +245,9 @@
   "—"
  ],
  "REQ-09.04": [
-  "PARTIAL",
-  "the per-expert half is delivered: GET /reports/expert-workload with amounts gated behind projects.view_financials (expert-workload.mjs 14/14). Contracts have status filters and the dashboard reports the near-expiry count from the configurable threshold.",
-  "no dedicated contract report page combining active / finished / near-expiry in one view; the previous entry cited a trial balance and P&L, which are REQ-07 deliverables and say nothing about this requirement"
+  "VERIFIED",
+  "GET /reports/contracts (permission reports.view) classifies every contract into one mutually exclusive bucket — near-expiry, overdue, active, finished, draft — and reconciles their sum against the contract total on the page itself. Near-expiry is computed from end_date through the same expiringWithin() scope the dashboard uses, over the configurable contracts.expiry_warning_days window; amounts are gated behind contracts.view_financials. tools/checks/contract-report.mjs 14/14, with every bucket count recomputed in independent SQL and T-CR-07 driving the window from 30 to 2 days through the real settings screen to prove the setting moves a contract between buckets.",
+  "—"
  ],
  "REQ-09.05": [
   "VERIFIED",

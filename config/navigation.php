@@ -169,6 +169,13 @@ return [
         ],
 
         [
+            'label' => 'گزارش قراردادها',
+            'icon' => 'document',
+            'route' => 'reports.contracts',
+            'permission' => 'reports.view',
+            'enabled' => true,
+        ],
+        [
             'label' => 'گزارش بار کاری',
             'icon' => 'chart',
             'route' => 'reports.expert-workload',

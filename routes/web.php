@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Audit\AuditLogController;
+use App\Http\Controllers\Reports\ContractReportController;
 use App\Http\Controllers\Reports\ExpertWorkloadController;
 use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\Auth\LoginController;
@@ -105,6 +106,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/expert-workload', ExpertWorkloadController::class)
                 ->middleware('permission:reports.view')->name('expert-workload');
 
+            /*
+             * §9-4 — active, finished and near-expiry contracts. The contracts
+             * index filters by status; this classifies every contract into one
+             * mutually exclusive bucket and reconciles the sum against the
+             * total, so the figures can be checked rather than believed.
+             */
+            Route::get('/contracts', [ContractReportController::class, 'index'])
+                ->middleware('permission:reports.view')->name('contracts');
         });
 
         // ── Customers (§3) ─────────────────────────────────────────────
