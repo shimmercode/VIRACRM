@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Customer;
 
+use App\Enums\CustomerStatus;
 use App\Enums\CustomerType;
 use App\Models\Customer;
 use App\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 /**
@@ -42,7 +44,7 @@ class StoreCustomerRequest extends FormRequest
             // Derived from the enum rather than written out again: a hardcoded
             // `in:...` list is a second definition of the same domain, and the
             // two drift the first time a status is added to CustomerStatus.
-            'status' => ['required', Rule::in(array_column(\App\Enums\CustomerStatus::cases(), 'value'))],
+            'status' => ['required', Rule::in(array_column(CustomerStatus::cases(), 'value'))],
             'mobile' => ['nullable', 'string', 'max:32'],
             'phone' => ['nullable', 'string', 'max:32'],
             'email' => ['nullable', 'email:filter', 'max:190'],

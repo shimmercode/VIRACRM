@@ -96,7 +96,19 @@ check(
 
 /* ── T-CTR-06: create a customer and a contract through the real forms ── */
 const custTok = token((await flow.render({ uri: '/customers/create' })).body);
-await flow.render({
+/*
+ * The id is captured BEFORE the POST and the row has to be strictly newer
+ * afterwards. The previous version read `order by id desc limit 1` after the
+ * POST and asserted it was > 0, which passes on a pre-existing seeded customer
+ * even when the POST 500s. That is exactly how a broken customer form went
+ * unnoticed: `Rule::in` was used without importing the class, every customer
+ * create returned 500, and this check still reported PASS.
+ *
+ * A 302 is not evidence either — a failed validation also redirects (back), so
+ * the status and the new row are asserted together.
+ */
+const maxCustomerBefore = Number(await flow.query('select coalesce(max(id),0) from customers')) || 0;
+const custRes = await flow.render({
   method: 'POST',
   uri: '/customers',
   body: form({
@@ -109,9 +121,11 @@ await flow.render({
     status: 'active',
   }),
 });
-const customerId = await flow.query('select id from customers order by id desc limit 1');
-check('T-CTR-06', Number(customerId) > 0, `customer created (id=${customerId})`);
+const customerId = await flow.query('select coalesce(max(id),0) from customers');
+check('T-CTR-06', custRes.status === 302 && Number(customerId) > maxCustomerBefore,
+  `POST /customers -> ${custRes.status}; customers ${maxCustomerBefore} -> ${customerId}`);
 
+const maxContractBefore = Number(await flow.query('select coalesce(max(id),0) from contracts')) || 0;
 const ctrForm = await flow.render({ uri: '/contracts/create' });
 const ctrTok = token(ctrForm.body);
 const contractRes = await flow.render({
@@ -130,11 +144,11 @@ const contractRes = await flow.render({
     description: 'پشتیبانی فنی در طول سال',
   }),
 });
-const contractId = await flow.query('select id from contracts order by id desc limit 1');
+const contractId = await flow.query('select coalesce(max(id),0) from contracts');
 check(
   'T-CTR-07',
-  contractRes.status === 302 && Number(contractId) > 0,
-  `POST /contracts → ${contractRes.status}; contract id=${contractId}`,
+  contractRes.status === 302 && Number(contractId) > maxContractBefore,
+  `POST /contracts → ${contractRes.status}; contracts ${maxContractBefore} -> ${contractId}`,
 );
 
 /* ── T-CTR-08: the show page offers finalisation ──────────────────────── */

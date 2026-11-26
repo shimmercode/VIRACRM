@@ -143,6 +143,7 @@ const SUITES = (() => {
    * themselves were not changed.
    */
   { id: 'contracts-flow', label: 'Contracts + template bank + finalisation (REQ-04)', kind: 'node', script: 'tools/checks/contracts-flow.mjs', required: true },
+  { id: 'template-to-pdf', label: 'Template -> contract -> finalise -> PDF, one chain (REQ-04/09.05)', kind: 'node', script: 'tools/checks/template-to-pdf.mjs', required: true },
   { id: 'pdf-flow', label: 'PDF generation: Persian, RTL, Jalali, access (REQ-09.05)', kind: 'node', script: 'tools/checks/pdf-flow.mjs', required: true },
   { id: 'payroll-flow', label: 'Payroll periods, amendments, confidentiality (REQ-08)', kind: 'node', script: 'tools/checks/payroll-flow.mjs', required: true },
   { id: 'accounting-flow', label: 'Invoices, ledger, balance sheet (REQ-07)', kind: 'node', script: 'tools/checks/accounting-flow.mjs', required: true },
