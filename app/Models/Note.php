@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,6 +10,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /** REQ-07.01–07.04 — notes/tasks, optionally attached to a customer, contract or project. */
 class Note extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'status' => 'STATUSES',
+        ];
+    }
+
     use SoftDeletes;
 
     protected $fillable = [

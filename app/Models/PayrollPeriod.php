@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +18,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class PayrollPeriod extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'state' => 'STATES',
+        ];
+    }
+
     protected $fillable = [
         'jalali_year', 'jalali_month', 'state', 'payroll_rule_id',
         'published_at', 'published_by',

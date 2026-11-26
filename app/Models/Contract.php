@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContractStatus;
+use App\Models\Concerns\HasDomainConstraints;
 use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Contract extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * @return array<string, class-string<\BackedEnum>>
+     */
+    protected function domainEnums(): array
+    {
+        return ['status' => ContractStatus::class];
+    }
+
+    protected function domainColumns(): array
+    {
+        return [];
+    }
+
     use SoftDeletes;
 
     protected $fillable = [

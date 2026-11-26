@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,6 +17,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class LedgerAccount extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'type' => 'TYPES',
+        ];
+    }
+
     protected $fillable = [
         'code', 'title', 'parent_id', 'level', 'type', 'normal_balance',
         'is_postable', 'is_active', 'is_system', 'description', 'sort_order',

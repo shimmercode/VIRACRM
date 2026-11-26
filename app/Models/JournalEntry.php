@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class JournalEntry extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'status' => 'STATUSES',
+            'source' => 'SOURCES',
+        ];
+    }
+
     protected $fillable = [
         'number', 'fiscal_period_id', 'entry_date', 'memo', 'source_type',
         'source_id', 'status', 'posted_at', 'posted_by', 'reverses_entry_id',

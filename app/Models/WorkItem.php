@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,6 +20,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class WorkItem extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'kind' => 'KINDS',
+            'state' => 'STATES',
+        ];
+    }
+
     protected $fillable = [
         'project_id', 'kind', 'due_date', 'period', 'state', 'invoice_number',
         'invoice_amount', 'invoice_issue_date', 'document_attachment_id',

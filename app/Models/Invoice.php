@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasDomainConstraints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,6 +20,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Invoice extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Columns whose value must come from the model's own constant.
+     *
+     * @return array<string, string>
+     */
+    protected function domainColumns(): array
+    {
+        return [
+            'status' => 'STATUSES',
+            'payment_state' => 'PAYMENT_STATES',
+        ];
+    }
+
     protected $fillable = [
         'number', 'customer_id', 'contract_id', 'project_id', 'service_type',
         'issue_date', 'due_date', 'subtotal', 'discount', 'tax_rate_bp',

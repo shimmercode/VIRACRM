@@ -39,7 +39,10 @@ class StoreCustomerRequest extends FormRequest
 
         $rules = [
             'type' => ['required', 'in:natural,legal'],
-            'status' => ['required', 'in:lead,prospect,active,inactive,archived'],
+            // Derived from the enum rather than written out again: a hardcoded
+            // `in:...` list is a second definition of the same domain, and the
+            // two drift the first time a status is added to CustomerStatus.
+            'status' => ['required', Rule::in(array_column(\App\Enums\CustomerStatus::cases(), 'value'))],
             'mobile' => ['nullable', 'string', 'max:32'],
             'phone' => ['nullable', 'string', 'max:32'],
             'email' => ['nullable', 'email:filter', 'max:190'],

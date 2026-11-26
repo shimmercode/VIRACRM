@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\CustomerStatus;
 use App\Enums\CustomerType;
+use App\Models\Concerns\HasDomainConstraints;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -29,6 +31,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Customer extends Model
 {
+    use HasDomainConstraints;
+
+    /**
+     * Both columns are backed enums. The FormRequest used to repeat their
+     * values as a hardcoded `in:...` list, which is how the two drift apart;
+     * the rule now derives from the enum instead.
+     *
+     * @return array<string, class-string<\BackedEnum>>
+     */
+    protected function domainEnums(): array
+    {
+        return [
+            'type' => CustomerType::class,
+            'status' => CustomerStatus::class,
+        ];
+    }
+
+    protected function domainColumns(): array
+    {
+        return [];
+    }
+
     use SoftDeletes;
 
     protected $fillable = [
