@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 50 | 52.1% |
-| `PARTIAL` | 18 | 18.8% |
+| `VERIFIED` | 56 | 58.3% |
+| `PARTIAL` | 15 | 15.6% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 22 | 22.9% |
+| `NOT_IMPLEMENTED` | 19 | 19.8% |
 | `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
 
@@ -25,12 +25,12 @@
 
 | وضعیت | تعداد |
 |-------|------:|
-| `VERIFIED` | 15 |
-| `PARTIAL` | 8 |
-| `NOT_IMPLEMENTED` | 13 |
+| `VERIFIED` | 20 |
+| `PARTIAL` | 6 |
+| `NOT_IMPLEMENTED` | 10 |
 | `BLOCKED` | 3 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۱۵ مورد اثبات‌شده** و **۱۳ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۳۹ نیازمندی حیاتی، **۲۰ مورد اثبات‌شده** و **۱۰ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -80,7 +80,7 @@
 | `CUST-004` | `REQ-03.04` | چرخه عمر مشتری | P1 | doc | **`VERIFIED`** | status lifecycle column | — | — |
 | `CUST-005` | `REQ-03.05` | جلوگیری از ثبت مشتری تکراری | P0 | doc | **`PARTIAL`** | duplicate detection partial | no domain-level uniqueness proof | M1/M3 |
 | `CUST-006` | `REQ-03.06` | جستجوی مشتری بر اساس نام/تماس/شناسه/دامنه | P1 | doc | **`VERIFIED`** | Customer::scopeSearch + indexes | — | — |
-| `CUST-007` | `REQ-03.07` | پرونده مرکزی مشتری 360° | P1 | doc | **`PARTIAL`** | customers/show.blade | no contracts/projects tabs | M1/M3 |
+| `CUST-007` | `REQ-03.07` | پرونده مرکزی مشتری 360° | P1 | doc | **`VERIFIED`** | customers/show.blade is the dossier hub: contracts AND projects listed as links to their records, notes, work items, permission-gated create actions | project rows were unlinked until this round; fixed in 049088d | — |
 | `CUST-008` | `REQ-03.08` | یک‌بار ثبت اطلاعات مشتری | P0 | doc | **`PARTIAL`** | single customer record | credentials not joined | M1/M3 |
 
 ### Contracts
@@ -130,10 +130,10 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `CRED-001` | `REQ-06.01` | مدیریت دسترسی‌های پروژه | P1 | doc | **`VERIFIED`** | ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21 | — | — |
-| `CRED-002` | `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | P0 | doc | **`NOT_IMPLEMENTED`** | credential_requirements empty | — | M1–M8 |
+| `CRED-002` | `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | P0 | doc | **`VERIFIED`** | credential_requirements seeded (3 blocking types); FinalizationGate service; enforced in Store/UpdateProjectRequest; T-PRJ-09b (refused) + T-PRJ-09f (released); FinalizationGateTest 20 assertions | list is data-driven per §15; the three seeded kinds need client confirmation | — |
 | `CRED-003` | `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | P0 | brief | **`VERIFIED`** | AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML | — | — |
-| `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`PARTIAL`** | reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet | audit recorded, not browsable | M1/M3 |
-| `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`PARTIAL`** | credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09) | REQ-06.07 warning band on file, not on download | M1/M3 |
+| `CRED-004` | `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | P0 | brief | **`VERIFIED`** | reveal POST-only, no-store, one audit row per reveal; audit log is browsable at GET /audit (super-admin only), audit-log-page 16/16 | the missing audit view was built in the security stage | — |
+| `CRED-005` | `REQ-06.05` | PDF محرمانه دسترسی‌ها | P0 | brief | **`VERIFIED`** | credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09); credential-export 13/13; no *.pdf under storage/ | residual is REQ-06.07 (warning band on a stored file), tracked separately | — |
 | `CRED-006` | `REQ-06.07` | هشدار محرمانگی روی فایل حاوی رمز | P1 | doc | **`NOT_IMPLEMENTED`** | no files | — | M1–M8 |
 
 ### Employees
@@ -261,7 +261,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SEOR-001` | `REQ-12.04` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | P0 | doc | **`NOT_IMPLEMENTED`** | no seo reports | — | M1–M8 |
+| `SEOR-001` | `REQ-12.04` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | P0 | doc | **`VERIFIED`** | WorkItem::KINDS includes 'report'; work_items carries kind/due_date/period; ReminderSchedule D-2 returns 2026-03-19 for due 2026-03-21; ReminderScheduleTest 43 assertions; W-04d dashboard 0->1->0 | — | — |
 
 ### Reminders
 
@@ -300,7 +300,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `BAK-001` | `REQ-15.02` | Backup و Restore تست‌شده | P0 | brief | **`NOT_IMPLEMENTED`** | zero backup code | — | M1–M8 |
+| `BAK-001` | `REQ-15.02` | Backup و Restore تست‌شده | P0 | brief | **`VERIFIED`** | app/Services/Backup (4 classes: Cipher/Builder/Restorer/RetentionPolicy); 3 console commands; BackupRestoreTest 96 assertions; 7 verification gates; tamper refusals proven at gate 3 | scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap | — |
 
 ### Installer
 
@@ -312,7 +312,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `OPS-001` | `REQ-15.04` | مهاجرت و نسخه‌بندی | P1 | brief | **`PARTIAL`** | 9 migrations, reversible | no versioning policy doc | M1/M3 |
+| `OPS-001` | `REQ-15.04` | مهاجرت و نسخه‌بندی | P1 | brief | **`PARTIAL`** | 14 migrations, reversible | no versioning policy doc | M1/M3 |
 | `OPS-002` | `REQ-15.05` | تنظیمات محیطی (بدون Hardcode) | P2 | brief | **`PARTIAL`** | .env driven | no hardcode audit | M1/M3 |
 
 ### Docs
@@ -329,14 +329,11 @@
 |-------|-------|-------|:------:|
 | `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
 | `PRJ-002` | تخصیص مسئول/کارشناس به پروژه | Projects | P1 |
-| `CRED-002` | فهرست دسترسی‌های اجباری سئو | Credentials | P0 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
 | `SRCH-001` | جستجوی سراسری | Search | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
-| `SEOR-001` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | SeoReports | P0 |
 | `INV-005` | ثبت مشخصات و فایل فاکتور پس از ارسال | Invoices | P1 |
-| `BAK-001` | Backup و Restore تست‌شده | Backup | P0 |
 | `INST-001` | Installer امن | Installer | P1 |
 | `FILE-002` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | Files | P0 |
 | `FILE-003` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | Files | P0 |

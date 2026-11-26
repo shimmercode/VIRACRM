@@ -1,482 +1,482 @@
 {
-  "REQ-01.01": [
-    "VERIFIED",
-    "Laravel standalone; no WP tables/deps",
-    "—"
-  ],
-  "REQ-01.02": [
-    "VERIFIED",
-    "own DB + subdomain; routes/web.php",
-    "—"
-  ],
-  "REQ-01.03": [
-    "PARTIAL",
-    "storage/ outside root",
-    "public/ uploads not yet used"
-  ],
-  "REQ-01.04": [
-    "NOT_VERIFIED",
-    "no dependency on main site found",
-    "not exercised"
-  ],
-  "REQ-02.01": [
-    "PARTIAL",
-    "DashboardController + dashboard.blade",
-    "4 of 6 KPI groups"
-  ],
-  "REQ-02.02": [
-    "VERIFIED",
-    "کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28",
-    "—"
-  ],
-  "REQ-02.03": [
-    "NOT_IMPLEMENTED",
-    "—",
-    "no notification->record link"
-  ],
-  "REQ-02.04": [
-    "VERIFIED",
-    "settings-driven expiringWithin()",
-    "—"
-  ],
-  "REQ-02.05": [
-    "VERIFIED",
-    "state=done/cancelled filter; done group reachable via /work-items?state=done",
-    "—"
-  ],
-  "REQ-03.01": [
-    "VERIFIED",
-    "customers table + type kolah",
-    "—"
-  ],
-  "REQ-03.02": [
-    "VERIFIED",
-    "legal-person fields",
-    "—"
-  ],
-  "REQ-03.03": [
-    "VERIFIED",
-    "customers/_form dynamic by type",
-    "—"
-  ],
-  "REQ-03.04": [
-    "VERIFIED",
-    "status lifecycle column",
-    "—"
-  ],
-  "REQ-03.05": [
-    "PARTIAL",
-    "duplicate detection partial",
-    "no domain-level uniqueness proof"
-  ],
-  "REQ-03.06": [
-    "VERIFIED",
-    "Customer::scopeSearch + indexes",
-    "—"
-  ],
-  "REQ-03.07": [
-    "PARTIAL",
-    "customers/show.blade",
-    "no contracts/projects tabs"
-  ],
-  "REQ-03.08": [
-    "PARTIAL",
-    "single customer record",
-    "credentials not joined"
-  ],
-  "REQ-04.01": [
-    "VERIFIED",
-    "Contract model + migration",
-    "—"
-  ],
-  "REQ-04.02": [
-    "VERIFIED",
-    "ContractStatus enum + derived Expiring",
-    "—"
-  ],
-  "REQ-04.03": [
-    "VERIFIED",
-    "hasMany contracts on customer",
-    "—"
-  ],
-  "REQ-04.04": [
-    "VERIFIED",
-    "ContractTemplate model + controller + templates index/form; T-CTR-01..05",
-    "—"
-  ],
-  "REQ-04.05": [
-    "VERIFIED",
-    "ContractRenderer whitelist (no eval); unknown token refused at save; ContractRendererTest",
-    "—"
-  ],
-  "REQ-04.06": [
-    "VERIFIED",
-    "template editor with placeholder palette; T-CTR-16..18",
-    "—"
-  ],
-  "REQ-04.07": [
-    "VERIFIED",
-    "rendered_body frozen at finalisation; template edits cannot change it; T-CTR-12/18",
-    "—"
-  ],
-  "REQ-04.08": [
-    "VERIFIED",
-    "contract_versions snapshot on finalize/renew/amend; T-CTR-14/22",
-    "—"
-  ],
-  "REQ-04.09": [
-    "VERIFIED",
-    "search + sort whitelist + filters",
-    "—"
-  ],
-  "REQ-04.10": [
-    "VERIFIED",
-    "contracts.renew + finalizer copies terms, original untouched; T-CTR-19..22",
-    "—"
-  ],
-  "REQ-05.01": [
-    "VERIFIED",
-    "projects module + type-driven form + 28-assert flow",
-    "—"
-  ],
-  "REQ-05.02": [
-    "PARTIAL",
-    "seo_project_details model + form + detail page",
-    "no keyword CRUD UI yet"
-  ],
-  "REQ-05.03": [
-    "PARTIAL",
-    "project_keywords model + normalize + read-only list",
-    "no add/remove UI"
-  ],
-  "REQ-05.04": [
-    "VERIFIED",
-    "design_project_details model + form + detail page",
-    "—"
-  ],
-  "REQ-05.05": [
-    "NOT_IMPLEMENTED",
-    "project_assignments empty",
-    "—"
-  ],
-  "REQ-06.01": [
-    "VERIFIED",
-    "ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21",
-    "—"
-  ],
-  "REQ-06.02": [
-    "NOT_IMPLEMENTED",
-    "credential_requirements empty",
-    "—"
-  ],
-  "REQ-06.03": [
-    "VERIFIED",
-    "AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML",
-    "—"
-  ],
-  "REQ-06.04": [
-    "PARTIAL",
-    "reveal is POST-only, no-store, audited (1 row per reveal); no audit VIEW yet",
-    "audit recorded, not browsable"
-  ],
-  "REQ-06.05": [
-    "PARTIAL",
-    "credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09)",
-    "REQ-06.07 warning band on file, not on download"
-  ],
-  "REQ-06.06": [
-    "VERIFIED",
-    "ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data",
-    "—"
-  ],
-  "REQ-06.07": [
-    "NOT_IMPLEMENTED",
-    "no files",
-    "—"
-  ],
-  "REQ-07.01": [
-    "VERIFIED",
-    "EmployeeController CRUD + policy + 7-width shots + payroll-flow T-PAY-02..06",
-    "—"
-  ],
-  "REQ-07.02": [
-    "VERIFIED",
-    "OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula",
-    "—"
-  ],
-  "REQ-07.03": [
-    "VERIFIED",
-    "PayslipPdf all required fields + signature lines; T-PDF-10/10b (single page)",
-    "—"
-  ],
-  "REQ-07.04": [
-    "VERIFIED",
-    "draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27",
-    "—"
-  ],
-  "REQ-07.05": [
-    "VERIFIED",
-    "payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24)",
-    "—"
-  ],
-  "REQ-08.01": [
-    "VERIFIED",
-    "Note model + migration + full CRUD controller",
-    "—"
-  ],
-  "REQ-08.02": [
-    "VERIFIED",
-    "notes index/create/edit + complete/reopen; T-WI-08..13",
-    "—"
-  ],
-  "REQ-09.01": [
-    "NOT_IMPLEMENTED",
-    "per-entity search only",
-    "no global search"
-  ],
-  "REQ-09.02": [
-    "VERIFIED",
-    "contract & project filter bars + sort whitelist",
-    "—"
-  ],
-  "REQ-09.03": [
-    "VERIFIED",
-    "Invoice model + InvoiceController + accounting-flow 19/19",
-    "—"
-  ],
-  "REQ-09.04": [
-    "VERIFIED",
-    "Trial balance + P&L + balance sheet, all from journal_lines",
-    "—"
-  ],
-  "REQ-09.05": [
-    "VERIFIED",
-    "four PDF exports: contract, project, credentials, payslip; pdf-flow 22/22",
-    "—"
-  ],
-  "REQ-09.06": [
-    "NOT_IMPLEMENTED",
-    "no Excel export",
-    "—"
-  ],
-  "REQ-09.07": [
-    "VERIFIED",
-    "P&L by service and by customer dimensions",
-    "—"
-  ],
-  "REQ-10.01": [
-    "VERIFIED",
-    "users(2) + login",
-    "—"
-  ],
-  "REQ-10.02": [
-    "PARTIAL",
-    "roles(4) seeded",
-    "no role UI"
-  ],
-  "REQ-10.03": [
-    "VERIFIED",
-    "55 permissions; permission: middleware on every employee/payroll/organization/accounting route; 2-session 403 proofs",
-    "—"
-  ],
-  "REQ-10.04": [
-    "VERIFIED",
-    "audit_logs 232 rows, incl. denied",
-    "—"
-  ],
-  "REQ-10.05": [
-    "PARTIAL",
-    "bcrypt, CSRF, throttle",
-    "no security headers test"
-  ],
-  "REQ-10.06": [
-    "NOT_IMPLEMENTED",
-    "no uploads",
-    "—"
-  ],
-  "REQ-10.07": [
-    "VERIFIED",
-    "session regenerate + password change",
-    "—"
-  ],
-  "REQ-11.01": [
-    "VERIFIED",
-    "dir=rtl, fa, 7 widths",
-    "—"
-  ],
-  "REQ-11.02": [
-    "VERIFIED",
-    "23 components + 21 DS asserts",
-    "—"
-  ],
-  "REQ-11.03": [
-    "NOT_VERIFIED",
-    "font loaded",
-    "licence not confirmed"
-  ],
-  "REQ-11.04": [
-    "VERIFIED",
-    "JalaliDate + fa-date component",
-    "—"
-  ],
-  "REQ-11.05": [
-    "PARTIAL",
-    "empty/error states exist",
-    "loading/success states partial"
-  ],
-  "REQ-12.01": [
-    "VERIFIED",
-    "invoices table + controller + issue flow",
-    "—"
-  ],
-  "REQ-12.02": [
-    "VERIFIED",
-    "controlled INV-1405-NNNN numbering at issue",
-    "—"
-  ],
-  "REQ-12.03": [
-    "VERIFIED",
-    "payment_state separate from invoice status (§19.4)",
-    "—"
-  ],
-  "REQ-12.04": [
-    "NOT_IMPLEMENTED",
-    "no seo reports",
-    "—"
-  ],
-  "REQ-12.05": [
-    "PARTIAL",
-    "ReminderSchedule unique_key design",
-    "not wired"
-  ],
-  "REQ-12.06": [
-    "PARTIAL",
-    "reschedule logic designed",
-    "not wired"
-  ],
-  "REQ-12.07": [
-    "BLOCKED",
-    "H-15 host cron unavailable",
-    "no scheduler wired"
-  ],
-  "REQ-12.08": [
-    "BLOCKED",
-    "OD-07 timezone decision pending",
-    "—"
-  ],
-  "REQ-12.09": [
-    "NOT_IMPLEMENTED",
-    "invoice PDF pending mPDF slice",
-    "—"
-  ],
-  "REQ-13.01": [
-    "VERIFIED",
-    "Gate A accepted",
-    "—"
-  ],
-  "REQ-13.02": [
-    "BLOCKED",
-    "14/21 host checks unknown",
-    "—"
-  ],
-  "REQ-14.01": [
-    "VERIFIED",
-    "22 suites, lock, repeat, no mock",
-    "—"
-  ],
-  "REQ-14.02": [
-    "VERIFIED",
-    "this document",
-    "—"
-  ],
-  "REQ-15.01": [
-    "PARTIAL",
-    "settings table (4) read by app",
-    "no settings UI"
-  ],
-  "REQ-15.02": [
-    "NOT_IMPLEMENTED",
-    "zero backup code",
-    "—"
-  ],
-  "REQ-15.03": [
-    "NOT_IMPLEMENTED",
-    "no installer",
-    "—"
-  ],
-  "REQ-15.04": [
-    "PARTIAL",
-    "9 migrations, reversible",
-    "no versioning policy doc"
-  ],
-  "REQ-15.05": [
-    "PARTIAL",
-    ".env driven",
-    "no hardcode audit"
-  ],
-  "REQ-15.06": [
-    "PARTIAL",
-    "docs/ extensive",
-    "user manual missing"
-  ],
-  "REQ-16.01": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002)",
-    "F0: معماری؛ بدون کد"
-  ],
-  "REQ-16.02": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16)",
-    "بدون UI فایل"
-  ],
-  "REQ-16.03": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_PERMISSION_MATRIX.md §4",
-    "بدون resolver؛ CRM گروه/دپارتمان ندارد"
-  ],
-  "REQ-16.04": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_VERSIONING_AND_LOCKING.md §2",
-    "بدون جدول نسخه"
-  ],
-  "REQ-16.05": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_VERSIONING_AND_LOCKING.md §4",
-    "بدون جدول قفل"
-  ],
-  "REQ-16.06": [
-    "BLOCKED",
-    "docs/WEBDAV_VPS_ARCHITECTURE.md",
-    "VPS آزمایشی موجود نیست"
-  ],
-  "REQ-16.07": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_STORAGE_ARCHITECTURE.md §10",
-    "storage قابل تعویض طراحی شد"
-  ],
-  "REQ-16.08": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_WORKSPACE_ERD.md §2.15",
-    "بدون کد آپلود"
-  ],
-  "REQ-16.09": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_WORKSPACE_ERD.md §2.12",
-    "file_relations طراحی شد"
-  ],
-  "REQ-16.10": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_SECURITY_THREAT_MODEL.md",
-    "۲۹ تهدید ثبت شد، ۰ کنترل پیاده"
-  ],
-  "REQ-16.11": [
-    "NOT_IMPLEMENTED",
-    "docs/FILE_WORKSPACE_ERD.md §2.14",
-    "بدون retention"
-  ],
-  "REQ-16.12": [
-    "NOT_IMPLEMENTED",
-    "docs/ONLINE_OFFICE_INTEGRATION.md",
-    "F3؛ طبق تصمیم کارفرما"
-  ]
+ "REQ-01.01": [
+  "VERIFIED",
+  "Laravel standalone; no WP tables/deps",
+  "—"
+ ],
+ "REQ-01.02": [
+  "VERIFIED",
+  "own DB + subdomain; routes/web.php",
+  "—"
+ ],
+ "REQ-01.03": [
+  "PARTIAL",
+  "storage/ outside root",
+  "public/ uploads not yet used"
+ ],
+ "REQ-01.04": [
+  "NOT_VERIFIED",
+  "no dependency on main site found",
+  "not exercised"
+ ],
+ "REQ-02.01": [
+  "PARTIAL",
+  "DashboardController + dashboard.blade",
+  "4 of 6 KPI groups"
+ ],
+ "REQ-02.02": [
+  "VERIFIED",
+  "کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28",
+  "—"
+ ],
+ "REQ-02.03": [
+  "NOT_IMPLEMENTED",
+  "—",
+  "no notification->record link"
+ ],
+ "REQ-02.04": [
+  "VERIFIED",
+  "settings-driven expiringWithin()",
+  "—"
+ ],
+ "REQ-02.05": [
+  "VERIFIED",
+  "state=done/cancelled filter; done group reachable via /work-items?state=done",
+  "—"
+ ],
+ "REQ-03.01": [
+  "VERIFIED",
+  "customers table + type kolah",
+  "—"
+ ],
+ "REQ-03.02": [
+  "VERIFIED",
+  "legal-person fields",
+  "—"
+ ],
+ "REQ-03.03": [
+  "VERIFIED",
+  "customers/_form dynamic by type",
+  "—"
+ ],
+ "REQ-03.04": [
+  "VERIFIED",
+  "status lifecycle column",
+  "—"
+ ],
+ "REQ-03.05": [
+  "PARTIAL",
+  "duplicate detection partial",
+  "no domain-level uniqueness proof"
+ ],
+ "REQ-03.06": [
+  "VERIFIED",
+  "Customer::scopeSearch + indexes",
+  "—"
+ ],
+ "REQ-03.07": [
+  "VERIFIED",
+  "customers/show.blade is the dossier hub: contracts AND projects listed as links to their records, notes, work items, permission-gated create actions",
+  "project rows were unlinked until this round; fixed in 049088d"
+ ],
+ "REQ-03.08": [
+  "PARTIAL",
+  "single customer record",
+  "credentials not joined"
+ ],
+ "REQ-04.01": [
+  "VERIFIED",
+  "Contract model + migration",
+  "—"
+ ],
+ "REQ-04.02": [
+  "VERIFIED",
+  "ContractStatus enum + derived Expiring",
+  "—"
+ ],
+ "REQ-04.03": [
+  "VERIFIED",
+  "hasMany contracts on customer",
+  "—"
+ ],
+ "REQ-04.04": [
+  "VERIFIED",
+  "ContractTemplate model + controller + templates index/form; T-CTR-01..05",
+  "—"
+ ],
+ "REQ-04.05": [
+  "VERIFIED",
+  "ContractRenderer whitelist (no eval); unknown token refused at save; ContractRendererTest",
+  "—"
+ ],
+ "REQ-04.06": [
+  "VERIFIED",
+  "template editor with placeholder palette; T-CTR-16..18",
+  "—"
+ ],
+ "REQ-04.07": [
+  "VERIFIED",
+  "rendered_body frozen at finalisation; template edits cannot change it; T-CTR-12/18",
+  "—"
+ ],
+ "REQ-04.08": [
+  "VERIFIED",
+  "contract_versions snapshot on finalize/renew/amend; T-CTR-14/22",
+  "—"
+ ],
+ "REQ-04.09": [
+  "VERIFIED",
+  "search + sort whitelist + filters",
+  "—"
+ ],
+ "REQ-04.10": [
+  "VERIFIED",
+  "contracts.renew + finalizer copies terms, original untouched; T-CTR-19..22",
+  "—"
+ ],
+ "REQ-05.01": [
+  "VERIFIED",
+  "projects module + type-driven form + 28-assert flow",
+  "—"
+ ],
+ "REQ-05.02": [
+  "PARTIAL",
+  "seo_project_details model + form + detail page",
+  "no keyword CRUD UI yet"
+ ],
+ "REQ-05.03": [
+  "PARTIAL",
+  "project_keywords model + normalize + read-only list",
+  "no add/remove UI"
+ ],
+ "REQ-05.04": [
+  "VERIFIED",
+  "design_project_details model + form + detail page",
+  "—"
+ ],
+ "REQ-05.05": [
+  "NOT_IMPLEMENTED",
+  "project_assignments empty",
+  "—"
+ ],
+ "REQ-06.01": [
+  "VERIFIED",
+  "ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21",
+  "—"
+ ],
+ "REQ-06.02": [
+  "VERIFIED",
+  "credential_requirements seeded (3 blocking types); FinalizationGate service; enforced in Store/UpdateProjectRequest; T-PRJ-09b (refused) + T-PRJ-09f (released); FinalizationGateTest 20 assertions",
+  "list is data-driven per §15; the three seeded kinds need client confirmation"
+ ],
+ "REQ-06.03": [
+  "VERIFIED",
+  "AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML",
+  "—"
+ ],
+ "REQ-06.04": [
+  "VERIFIED",
+  "reveal POST-only, no-store, one audit row per reveal; audit log is browsable at GET /audit (super-admin only), audit-log-page 16/16",
+  "the missing audit view was built in the security stage"
+ ],
+ "REQ-06.05": [
+  "VERIFIED",
+  "credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09); credential-export 13/13; no *.pdf under storage/",
+  "residual is REQ-06.07 (warning band on a stored file), tracked separately"
+ ],
+ "REQ-06.06": [
+  "VERIFIED",
+  "ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data",
+  "—"
+ ],
+ "REQ-06.07": [
+  "NOT_IMPLEMENTED",
+  "no files",
+  "—"
+ ],
+ "REQ-07.01": [
+  "VERIFIED",
+  "EmployeeController CRUD + policy + 7-width shots + payroll-flow T-PAY-02..06",
+  "—"
+ ],
+ "REQ-07.02": [
+  "VERIFIED",
+  "OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula",
+  "—"
+ ],
+ "REQ-07.03": [
+  "VERIFIED",
+  "PayslipPdf all required fields + signature lines; T-PDF-10/10b (single page)",
+  "—"
+ ],
+ "REQ-07.04": [
+  "VERIFIED",
+  "draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27",
+  "—"
+ ],
+ "REQ-07.05": [
+  "VERIFIED",
+  "payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24)",
+  "—"
+ ],
+ "REQ-08.01": [
+  "VERIFIED",
+  "Note model + migration + full CRUD controller",
+  "—"
+ ],
+ "REQ-08.02": [
+  "VERIFIED",
+  "notes index/create/edit + complete/reopen; T-WI-08..13",
+  "—"
+ ],
+ "REQ-09.01": [
+  "NOT_IMPLEMENTED",
+  "per-entity search only",
+  "no global search"
+ ],
+ "REQ-09.02": [
+  "VERIFIED",
+  "contract & project filter bars + sort whitelist",
+  "—"
+ ],
+ "REQ-09.03": [
+  "VERIFIED",
+  "Invoice model + InvoiceController + accounting-flow 19/19",
+  "—"
+ ],
+ "REQ-09.04": [
+  "VERIFIED",
+  "Trial balance + P&L + balance sheet, all from journal_lines",
+  "—"
+ ],
+ "REQ-09.05": [
+  "VERIFIED",
+  "four PDF exports: contract, project, credentials, payslip; pdf-flow 22/22",
+  "—"
+ ],
+ "REQ-09.06": [
+  "NOT_IMPLEMENTED",
+  "no Excel export",
+  "—"
+ ],
+ "REQ-09.07": [
+  "VERIFIED",
+  "P&L by service and by customer dimensions",
+  "—"
+ ],
+ "REQ-10.01": [
+  "VERIFIED",
+  "users(2) + login",
+  "—"
+ ],
+ "REQ-10.02": [
+  "PARTIAL",
+  "roles(4) seeded",
+  "no role UI"
+ ],
+ "REQ-10.03": [
+  "VERIFIED",
+  "55 permissions; permission: middleware on every employee/payroll/organization/accounting route; 2-session 403 proofs",
+  "—"
+ ],
+ "REQ-10.04": [
+  "VERIFIED",
+  "audit_logs 232 rows, incl. denied",
+  "—"
+ ],
+ "REQ-10.05": [
+  "PARTIAL",
+  "bcrypt, CSRF, throttle",
+  "no security headers test"
+ ],
+ "REQ-10.06": [
+  "NOT_IMPLEMENTED",
+  "no uploads",
+  "—"
+ ],
+ "REQ-10.07": [
+  "VERIFIED",
+  "session regenerate + password change",
+  "—"
+ ],
+ "REQ-11.01": [
+  "VERIFIED",
+  "dir=rtl, fa, 7 widths",
+  "—"
+ ],
+ "REQ-11.02": [
+  "VERIFIED",
+  "23 components + 21 DS asserts",
+  "—"
+ ],
+ "REQ-11.03": [
+  "NOT_VERIFIED",
+  "font loaded",
+  "licence not confirmed"
+ ],
+ "REQ-11.04": [
+  "VERIFIED",
+  "JalaliDate + fa-date component",
+  "—"
+ ],
+ "REQ-11.05": [
+  "PARTIAL",
+  "empty/error states exist",
+  "loading/success states partial"
+ ],
+ "REQ-12.01": [
+  "VERIFIED",
+  "invoices table + controller + issue flow",
+  "—"
+ ],
+ "REQ-12.02": [
+  "VERIFIED",
+  "controlled INV-1405-NNNN numbering at issue",
+  "—"
+ ],
+ "REQ-12.03": [
+  "VERIFIED",
+  "payment_state separate from invoice status (§19.4)",
+  "—"
+ ],
+ "REQ-12.04": [
+  "VERIFIED",
+  "WorkItem::KINDS includes 'report'; work_items carries kind/due_date/period; ReminderSchedule D-2 returns 2026-03-19 for due 2026-03-21; ReminderScheduleTest 43 assertions; W-04d dashboard 0->1->0",
+  "—"
+ ],
+ "REQ-12.05": [
+  "PARTIAL",
+  "ReminderSchedule unique_key design",
+  "not wired"
+ ],
+ "REQ-12.06": [
+  "PARTIAL",
+  "reschedule logic designed",
+  "not wired"
+ ],
+ "REQ-12.07": [
+  "BLOCKED",
+  "H-15 host cron unavailable",
+  "no scheduler wired"
+ ],
+ "REQ-12.08": [
+  "BLOCKED",
+  "OD-07 timezone decision pending",
+  "—"
+ ],
+ "REQ-12.09": [
+  "NOT_IMPLEMENTED",
+  "invoice PDF pending mPDF slice",
+  "—"
+ ],
+ "REQ-13.01": [
+  "VERIFIED",
+  "Gate A accepted",
+  "—"
+ ],
+ "REQ-13.02": [
+  "BLOCKED",
+  "14/21 host checks unknown",
+  "—"
+ ],
+ "REQ-14.01": [
+  "VERIFIED",
+  "22 suites, lock, repeat, no mock",
+  "—"
+ ],
+ "REQ-14.02": [
+  "VERIFIED",
+  "this document",
+  "—"
+ ],
+ "REQ-15.01": [
+  "PARTIAL",
+  "settings table (4) read by app",
+  "no settings UI"
+ ],
+ "REQ-15.02": [
+  "VERIFIED",
+  "app/Services/Backup (4 classes: Cipher/Builder/Restorer/RetentionPolicy); 3 console commands; BackupRestoreTest 96 assertions; 7 verification gates; tamper refusals proven at gate 3",
+  "scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap"
+ ],
+ "REQ-15.03": [
+  "NOT_IMPLEMENTED",
+  "no installer",
+  "—"
+ ],
+ "REQ-15.04": [
+  "PARTIAL",
+  "14 migrations, reversible",
+  "no versioning policy doc"
+ ],
+ "REQ-15.05": [
+  "PARTIAL",
+  ".env driven",
+  "no hardcode audit"
+ ],
+ "REQ-15.06": [
+  "PARTIAL",
+  "docs/ extensive",
+  "user manual missing"
+ ],
+ "REQ-16.01": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002)",
+  "F0: معماری؛ بدون کد"
+ ],
+ "REQ-16.02": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16)",
+  "بدون UI فایل"
+ ],
+ "REQ-16.03": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_PERMISSION_MATRIX.md §4",
+  "بدون resolver؛ CRM گروه/دپارتمان ندارد"
+ ],
+ "REQ-16.04": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_VERSIONING_AND_LOCKING.md §2",
+  "بدون جدول نسخه"
+ ],
+ "REQ-16.05": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_VERSIONING_AND_LOCKING.md §4",
+  "بدون جدول قفل"
+ ],
+ "REQ-16.06": [
+  "BLOCKED",
+  "docs/WEBDAV_VPS_ARCHITECTURE.md",
+  "VPS آزمایشی موجود نیست"
+ ],
+ "REQ-16.07": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_STORAGE_ARCHITECTURE.md §10",
+  "storage قابل تعویض طراحی شد"
+ ],
+ "REQ-16.08": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_WORKSPACE_ERD.md §2.15",
+  "بدون کد آپلود"
+ ],
+ "REQ-16.09": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_WORKSPACE_ERD.md §2.12",
+  "file_relations طراحی شد"
+ ],
+ "REQ-16.10": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_SECURITY_THREAT_MODEL.md",
+  "۲۹ تهدید ثبت شد، ۰ کنترل پیاده"
+ ],
+ "REQ-16.11": [
+  "NOT_IMPLEMENTED",
+  "docs/FILE_WORKSPACE_ERD.md §2.14",
+  "بدون retention"
+ ],
+ "REQ-16.12": [
+  "NOT_IMPLEMENTED",
+  "docs/ONLINE_OFFICE_INTEGRATION.md",
+  "F3؛ طبق تصمیم کارفرما"
+ ]
 }

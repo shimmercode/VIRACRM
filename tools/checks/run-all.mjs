@@ -102,6 +102,12 @@ const SUITES = (() => {
   // permission it needs. That claim was previously unverified, so this suite
   // exists to make it a control rather than a comment.
   { id: 'route-permissions', label: 'Route permission audit (PHP)', kind: 'php', script: 'tools/checks/route-permissions.php', required: true },
+  // Composer state: what is declared vs installed, and the absent lock file.
+  // A missing lock is a reproducibility risk, so it is asserted, not noted.
+  { id: 'composer-integrity', label: 'Composer declared vs installed', kind: 'node', script: 'tools/checks/composer-integrity.mjs', required: true },
+  // Query counts and N+1 detection under a realistic data volume. Every other
+  // suite asserts on rendered HTML, which cannot see four hundred queries.
+  { id: 'query-performance', label: 'Query count + N+1 (isolated volume DB)', kind: 'php', script: 'tools/checks/query-performance.php', required: true },
   { id: 'docs-integrity', label: 'Docs present + traceability current', kind: 'node', script: 'tools/checks/docs-integrity.mjs', required: true },
   { id: 'flow-login', label: 'Flow: login', kind: 'node', script: 'tools/checks/login-flow.mjs', required: true },
   { id: 'flow-authed', label: 'Flow: authenticated', kind: 'node', script: 'tools/checks/authed-flow.mjs', required: true },

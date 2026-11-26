@@ -17,8 +17,14 @@
 # =============================================================================
 
 meta:
-  document: "Vira_CRM_Requirements_FA.docx"
-  document_status: "NOT_AVAILABLE_IN_REPO"
+  document: "Vira_CRM_Requirements_FA.txt"
+  document_status: "AVAILABLE_IN_REPO"
+  document_path: "docs/requirements/source/Vira_CRM_Requirements_FA.txt"
+  document_verified: "304 lines, 15 sections (۱..۱۵) confirmed by direct read"
+  document_note_correction: >-
+    این کاتالوگ پیش‌تر سند مرجع را NOT_AVAILABLE_IN_REPO اعلام می‌کرد. این ادعا
+    نادرست بود: نسخهٔ متنی سند در مسیر بالا موجود است و ۱۵ بخش آن مستقیماً
+    خوانده و تأیید شد. نسخهٔ .docx در مخزن نیست؛ .txt مبنای الزام‌آور است.
   document_note: >-
     فایل سند مرجع ۱۵ بخشی در مخزن/محیط توسعه موجود نیست. مواد این کاتالوگ از
     بریف توسعه (که خلاصه ۱۵ بخش سند را بازگو می‌کند) استخراج شده است؛ پس از دریافت
