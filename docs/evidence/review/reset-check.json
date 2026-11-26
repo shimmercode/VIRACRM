@@ -1,6 +1,16 @@
 {
-  "generatedAt": "2026-11-25T17:05:56.458Z",
+  "generatedAt": "2026-11-26T17:16:00.102Z",
   "baseline": {
+    "users": 2,
+    "customers": 7,
+    "contracts": 5,
+    "projects": 3,
+    "employees": 1,
+    "project_assignments": 0,
+    "work_items": 9,
+    "notes": 0
+  },
+  "cleanState": {
     "users": 2,
     "customers": 7,
     "contracts": 5,
@@ -31,9 +41,18 @@
     "notes": 0
   },
   "restored": true,
+  "idempotent": true,
+  "taggedLeft": {
+    "customers": 0,
+    "contracts": 0,
+    "projects": 0,
+    "employees": 0,
+    "users": 0
+  },
+  "noTaggedLeft": true,
   "baselineUntouched": true,
-  "baselineHashBefore": "c99baf08c83ec13a306f58193d781dd8270a52e31c9275077c011b59e02e30d0",
-  "baselineHashAfter": "c99baf08c83ec13a306f58193d781dd8270a52e31c9275077c011b59e02e30d0",
+  "baselineHashBefore": "4593abe36517cc9aac1092b9a0f961ab3562020d89ee6eaf51056005b8a18478",
+  "baselineHashAfter": "4593abe36517cc9aac1092b9a0f961ab3562020d89ee6eaf51056005b8a18478",
   "finalCounts": {
     "users": 6,
     "customers": 19,

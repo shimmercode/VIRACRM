@@ -134,6 +134,21 @@ const SUITES = (() => {
   // works from a page that is not the customers list, rather than adding a
   // /search route to make a checklist item go green.
   { id: 'global-search', label: 'Global customer search (§9 REQ-09.01)', kind: 'node', script: 'tools/checks/global-search.mjs', required: true },
+  /*
+   * RECOVERED SUITES. These six end-to-end suites have existed in
+   * tools/checks/ and passed when run by hand, but none was ever listed here,
+   * so the "42/42 suites" regression figure silently excluded 121 assertions
+   * covering contracts, templates, PDF generation, payroll, accounting,
+   * organisation and work items. Registering them is the fix; the suites
+   * themselves were not changed.
+   */
+  { id: 'contracts-flow', label: 'Contracts + template bank + finalisation (REQ-04)', kind: 'node', script: 'tools/checks/contracts-flow.mjs', required: true },
+  { id: 'pdf-flow', label: 'PDF generation: Persian, RTL, Jalali, access (REQ-09.05)', kind: 'node', script: 'tools/checks/pdf-flow.mjs', required: true },
+  { id: 'payroll-flow', label: 'Payroll periods, amendments, confidentiality (REQ-08)', kind: 'node', script: 'tools/checks/payroll-flow.mjs', required: true },
+  { id: 'accounting-flow', label: 'Invoices, ledger, balance sheet (REQ-07)', kind: 'node', script: 'tools/checks/accounting-flow.mjs', required: true },
+  { id: 'organization-flow', label: 'Departments and structure (REQ-06)', kind: 'node', script: 'tools/checks/organization-flow.mjs', required: true },
+  { id: 'work-item-flow', label: 'Invoices/SEO reports and reminders (REQ-05)', kind: 'node', script: 'tools/checks/work-item-flow.mjs', required: true },
+  { id: 'review-seed-check', label: 'Review demo data repeatable, reversible, isolated', kind: 'node', script: 'tools/checks/review-seed-check.mjs', required: true },
   // PRODUCT AUDIT — the ten end-to-end user journeys, run as connected
   // journeys rather than per-module, to catch what breaks at the seams.
   { id: 'e2e-workflows', label: 'End-to-end user journeys (10 flows)', kind: 'node', script: 'tools/checks/e2e-workflows.mjs', required: true },
