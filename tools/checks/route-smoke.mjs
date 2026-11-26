@@ -272,48 +272,94 @@ for (const route of postRoutes) {
     uri,
     status: res.status,
     type: String(res.headers['content-type'] || ''),
-    body: Number(res.status) >= 500 ? String(res.body || '').slice(0, 160) : '',
+    // Full body, not a slice: truncating it broke JSON.parse and made a
+    // legitimate refusal look malformed.
+    body: Number(res.status) >= 500 ? String(res.body || '') : '',
   });
 }
 
 /*
- * A 5xx is not automatically a fault. `CredentialController::reveal` answers
- * 503 with a JSON explanation when the credential encryption key is not
- * configured (line 201) — that is the endpoint refusing to guess, which is
- * correct. What must never appear is an uncaught fatal, which arrives as a 500
- * HTML error page. So 503 is accepted only when it carries the documented
- * refusal body, and everything else 5xx is a failure.
- */
-/*
- * A 5xx is not automatically a fault. `CredentialController::reveal` answers
- * 503 with a JSON explanation when the credential encryption key is not
- * configured (line 201) — the endpoint refusing to guess, which is correct.
+ * ── WHICH 5xx RESPONSES ARE ACCEPTABLE, AND WHY THAT LIST IS SHORT ────────
  *
- * The distinction that matters is the shape of the response, and the reliable
- * signal is the content type: a designed refusal is `application/json`, while
- * an uncaught fatal renders the HTML error page. Matching on the Persian
- * sentence does not work because `json_encode` escapes non-ASCII, and the
- * harness does not surface the JSON body here.
+ * A 5xx is a failure unless it is a response the code deliberately produces.
+ * An earlier version of this check accepted any 5xx served as
+ * `application/json` on the theory that a designed refusal is JSON and an
+ * uncaught fatal is HTML. That is far too loose: content type says nothing
+ * about whether the *particular* error was intended, and a new endpoint that
+ * leaks a JSON exception page would have been waved through.
+ *
+ * So the tolerance is an explicit allowlist. Each entry names the route, the
+ * exact status, and the shape of the body, and each is tied to the line of code
+ * that produces it. A 5xx that is not on this list fails, and adding to the
+ * list means naming the code that justifies it.
  */
-const postErrors = postResults.filter((r) => {
-  if (r.status === 'THREW') return true;
-  const code = Number(r.status);
-  if (code < 500) return false;
+const DOCUMENTED_5XX = [
+  {
+    label: 'credential reveal with no encryption key configured',
+    // CredentialController.php:201 — `if (! $this->vault->isReady())`. The
+    // endpoint refuses to guess a plaintext rather than returning a wrong one.
+    matches: (uri) => /^\/projects\/\d+\/credentials\/\d+\/reveal$/.test(uri),
+    status: 503,
+    body: (text) => {
+      const parsed = JSON.parse(text);
 
-  return !r.type.includes('application/json');
-});
+      return parsed.ok === false
+        && typeof parsed.message === 'string'
+        && parsed.message.length > 0;
+    },
+  },
+];
+
+const classify5xx = (r) => {
+  for (const entry of DOCUMENTED_5XX) {
+    if (!entry.matches(r.uri)) continue;
+    if (Number(r.status) !== entry.status) continue;
+
+    try {
+      // The renderer prefixes the body with a newline; JSON.parse tolerates
+      // leading whitespace, but the earlier truncation at 200 characters cut
+      // the payload mid-string and made a valid refusal look malformed.
+      return entry.body(String(r.body || '').trim())
+        ? { ok: true, why: entry.label }
+        : { ok: false, why: `${entry.label}: body did not match the documented shape` };
+    } catch (e) {
+      return { ok: false, why: `${entry.label}: body was not parseable (${e.message})` };
+    }
+  }
+
+  return { ok: false, why: 'not a documented error response' };
+};
+
 const postSkipped = postResults.filter((r) => r.status === null);
 
 check('T-RS-07', postSkipped.length === 0 && postResults.length === postRoutes.length,
-  `all ${postRoutes.length} POST routes submitted (logout excluded); `
-  + `${postSkipped.length} skipped`);
+  `all ${postRoutes.length} POST routes submitted (logout excluded, it would end the `
+  + `session under test); ${postSkipped.length} skipped`);
+
+const postErrors = [];
+const tolerated = [];
+
+for (const r of postResults) {
+  if (r.status === 'THREW') {
+    postErrors.push(`${r.uri} threw: ${r.note}`);
+
+    continue;
+  }
+
+  if (Number(r.status) < 500) continue;
+
+  const verdict = classify5xx(r);
+  if (verdict.ok) tolerated.push(`${r.uri} -> ${r.status} (${verdict.why})`);
+  else postErrors.push(`${r.uri} -> ${r.status} [${r.type}] ${verdict.why}`);
+}
 
 check('T-RS-08', postErrors.length === 0,
   postErrors.length === 0
-    ? `no POST route failed fatally on an empty submit (${postResults.length} submitted); `
-      + 'the only 5xx is the credential reveal 503, served as JSON by the '
-      + 'documented "encryption key not configured" refusal'
-    : `fatal on empty submit: ${postErrors.map((r) => `${r.uri} -> ${r.status} [${r.type}]`).join(', ')}`);
+    ? `no POST route failed fatally on an empty submit (${postResults.length} submitted)`
+      + (tolerated.length
+        ? `; ${tolerated.length} tolerated 5xx, each matched to the code that produces it: ${tolerated.join('; ')}`
+        : '; no 5xx at all')
+    : `unacceptable 5xx: ${postErrors.join(' | ')}`);
 
 console.log('\nstatus map:');
 for (const r of results) {

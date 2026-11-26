@@ -119,6 +119,11 @@ const SUITES = (() => {
   { id: 'flow-authed', label: 'Flow: authenticated', kind: 'node', script: 'tools/checks/authed-flow.mjs', required: true },
   { id: 'flow-authz', label: 'Flow: authorization', kind: 'node', script: 'tools/checks/authz-flow.mjs', required: true },
   { id: 'flow-crud', label: 'Flow: CRUD', kind: 'node', script: 'tools/checks/crud-flow.mjs', required: true },
+  // Creating a customer, asserted from the RESPONSE rather than from a table
+  // scan. The checks that used to cover this read `order by id desc limit 1`
+  // after the POST and asserted > 0, which passes on seeded rows whether or not
+  // the request worked — that is how a 500 on every customer create stayed green.
+  { id: 'customer-create', label: 'Customer create: real success, new id, isolation', kind: 'node', script: 'tools/checks/customer-create.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,
