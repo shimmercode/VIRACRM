@@ -109,6 +109,9 @@ const SUITES = (() => {
   { id: 'flow-crud', label: 'Flow: CRUD', kind: 'node', script: 'tools/checks/crud-flow.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
+  // SECURITY AUDIT — the confidential export: who may take the passwords out,
+  // what is written to disk, and that reveal does not imply export.
+  { id: 'credential-export', label: 'Security: credential export (§6)', kind: 'node', script: 'tools/checks/credential-export-audit.mjs', required: true },
   { id: 'css-audit', label: 'Token discipline', kind: 'node', script: 'tools/checks/css-audit.mjs', required: true },
   { id: 'contrast', label: 'Contrast', kind: 'node', script: 'tools/checks/contrast.mjs', required: true },
   { id: 'unstyled', label: 'Unstyled classes', kind: 'node', script: 'tools/checks/unstyled.mjs', required: true },

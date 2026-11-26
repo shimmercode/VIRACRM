@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Contract;
+use App\Models\CredentialType;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\PayrollItem;
 use App\Models\PayrollPeriod;
 use App\Models\Payslip;
 use App\Models\Project;
+use App\Models\ProjectCredential;
 use App\Models\User;
 use App\Services\Contracts\ContractFinalizer;
 use App\Services\Contracts\ContractRenderer;
@@ -17,6 +19,8 @@ use App\Services\Pdf\CredentialPdf;
 use App\Services\Pdf\PayslipPdf;
 use App\Services\Pdf\PdfEngine;
 use App\Services\Pdf\ProjectPdf;
+use App\Services\Security\CredentialVault;
+use App\Services\Security\EnvelopeEncrypter;
 use Illuminate\Support\Facades\Hash;
 use Tests\Support\DatabaseHarness;
 use Tests\ViraTestCase;
@@ -73,6 +77,7 @@ final class PdfDocumentTest extends ViraTestCase
         $this->draftContractIsRefused();
         $this->contractBodyIsEscapedNotInterpreted();
         $this->publicProjectDocumentCannotContainAnUnlistedField();
+        $this->secretAppearsOnlyInTheConfidentialDocument();
         $this->payslipShowsTheFormulaAndTheSignatureLines();
         $this->persianTextIsRightAlignedNotLeftAligned();
         $this->htmlIsEscapedEverywhere();
@@ -208,6 +213,120 @@ final class PdfDocumentTest extends ViraTestCase
             'a column outside PUBLIC_FIELDS never reaches the customer document');
         $this->assertTrue(str_contains($html, 'دسترسی‌های فنی پروژه') || str_contains($html, 'عمومی'),
             'the document says it is the public one');
+    }
+
+    /**
+     * SECURITY AUDIT — the secret appears in exactly one document.
+     *
+     * This is the assertion the HTTP flow cannot make. mPDF writes glyph indices
+     * rather than characters, so searching the exported PDF's bytes for a
+     * password would "pass" whether or not the password was there. The HTML
+     * handed to the engine is the only trustworthy place to look, and it is the
+     * exact string that becomes the file.
+     *
+     * Three facts, each of which a plausible bug would break:
+     *   1. the confidential document really contains the plaintext (an export
+     *      that silently dropped the password would be a broken product, not a
+     *      safe one);
+     *   2. the public project document does not contain it;
+     *   3. exporting project A does not carry project B's password — the export
+     *      query is scoped by project_id, and a missing WHERE would look
+     *      identical until someone exported the wrong client's passwords.
+     */
+    private function secretAppearsOnlyInTheConfidentialDocument(): void
+    {
+        $this->boot('pdf_secret');
+
+        $customer = $this->customer();
+
+        $projectA = Project::create([
+            'code' => 'PRJ-A',
+            'customer_id' => $customer->id,
+            'type' => 'seo',
+            'title' => 'پروژهٔ آزمون الف',
+            'status' => 'active',
+            'amount' => 10_000_000,
+            'notes' => 'یادداشت عمومی الف',
+        ]);
+
+        $projectB = Project::create([
+            'code' => 'PRJ-B',
+            'customer_id' => $customer->id,
+            'type' => 'seo',
+            'title' => 'پروژهٔ آزمون ب',
+            'status' => 'active',
+            'amount' => 20_000_000,
+            'notes' => 'یادداشت عمومی ب',
+        ]);
+
+        $type = CredentialType::create([
+            'code' => 'audit_wp',
+            'title' => 'وردپرس ممیزی',
+            'fields_schema' => [
+                ['key' => 'password', 'label' => 'رمز عبور', 'required' => true],
+            ],
+            'is_active' => true,
+        ]);
+
+        /* An explicit cipher, exactly as CredentialVaultTest does. Going through
+         * the config-based path would make this test depend on VIRA_CREDENTIAL_KEY
+         * being present in the environment, and it would then fail closed for the
+         * wrong reason. */
+        $vault = new CredentialVault(
+            new EnvelopeEncrypter(base64_encode(str_repeat("\x37", 32)))
+        );
+
+        $secretA = 'Audit-Secret-A-9x7Qz';
+        $secretB = 'Audit-Secret-B-4m2Lp';
+
+        $credA = ProjectCredential::create([
+            'project_id' => $projectA->id,
+            'credential_type_id' => $type->id,
+            'label' => 'ورود مدیر الف',
+            'username' => 'admin_a',
+        ]);
+        $vault->store($credA, 'password', $secretA);
+
+        $credB = ProjectCredential::create([
+            'project_id' => $projectB->id,
+            'credential_type_id' => $type->id,
+            'label' => 'ورود مدیر ب',
+            'username' => 'admin_b',
+        ]);
+        $vault->store($credB, 'password', $secretB);
+
+        /* Precondition, asserted rather than assumed: the ciphertext on disk does
+         * not contain either plaintext. Without this the rest of the test could
+         * pass because nothing was ever encrypted. */
+        $this->assertTrue($vault->isReady(), 'the vault is usable in this test');
+        $this->assertTrue($vault->reveal($credA->fresh(), 'password') === $secretA,
+            'the secret round-trips, so there is something to leak');
+
+        $confidential = (new CredentialPdf($this->engine(), $vault))
+            ->html($projectA, [$credA->fresh()], 'ممیز امنیت');
+
+        $this->assertTrue(str_contains($confidential, $secretA),
+            'the confidential document carries the plaintext — that is its purpose');
+        $this->assertTrue(str_contains($confidential, 'محرمانه'),
+            'the confidential document says it is confidential');
+
+        /* Fact 3: project B's password must not ride along. */
+        $this->assertTrue(! str_contains($confidential, $secretB),
+            'exporting project A does not carry project B\'s password');
+        $this->assertTrue(! str_contains($confidential, 'ورود مدیر ب'),
+            'project B\'s credential row is not in project A\'s document either');
+
+        /* Fact 2: the document a customer receives. */
+        $public = (new ProjectPdf($this->engine()))->html($projectA);
+
+        $this->assertTrue(str_contains($public, 'پروژهٔ آزمون الف'),
+            'the public document really is for this project');
+        $this->assertTrue(! str_contains($public, $secretA),
+            'the plaintext password never reaches the public project document');
+        $this->assertTrue(! str_contains($public, $secretB),
+            'nor does any other project\'s password');
+        $this->assertTrue(! str_contains($public, 'admin_a'),
+            'the credential username does not reach the public document either');
     }
 
     private function payslipShowsTheFormulaAndTheSignatureLines(): void
