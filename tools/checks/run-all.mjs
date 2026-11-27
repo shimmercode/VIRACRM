@@ -108,7 +108,13 @@ const SUITES = (() => {
   // stayed green: the narrower tests asserted a row existed, and seeded rows
   // exist whether or not the POST worked.
   { id: 'cutover-runbook', label: 'Cutover runbook: commands, env keys and headers match the app', kind: 'node', script: 'tools/checks/cutover-runbook.mjs', required: true },
-  { id: 'composer-lock', label: 'composer.lock presence and provenance (BLOCKED: no registry)', kind: 'node', script: 'tools/checks/composer-lock-acceptance.mjs', required: false },
+  /* required:true is the roster's rule — no suite may be quietly optional, because
+   * an optional check that starts failing is indistinguishable from one that was
+   * never meant to run. This suite exits 1 on a genuine problem (an unparseable
+   * lock file, a missing dependency, a package without provenance) and 0 only
+   * when there is a valid lock file OR the absence is documented and BLOCKED.
+   * Both of those are pass outcomes, so it belongs in the required set. */
+  { id: 'composer-lock', label: 'composer.lock presence and provenance (BLOCKED: no registry)', kind: 'node', script: 'tools/checks/composer-lock-acceptance.mjs', required: true },
   { id: 'navigation-clarity', label: 'Every enabled sidebar entry reaches a real page; no false coming-soon', kind: 'node', script: 'tools/checks/navigation-clarity.mjs', required: true },
   { id: 'route-smoke', label: 'Every GET and POST route responds without a fatal', kind: 'node', script: 'tools/checks/route-smoke.mjs', required: true },
   // Composer state: what is declared vs installed, and the absent lock file.
