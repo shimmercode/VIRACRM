@@ -104,7 +104,21 @@ $_SERVER['SERVER_PORT'] = explode(':', $host)[1] ?? '80';
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['SCRIPT_FILENAME'] = $root . '/public/index.php';
 $_SERVER['DOCUMENT_ROOT'] = $root . '/public';
-$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+/*
+ * The remote address. Defaults to 127.0.0.1, which is what the dev server sees
+ * for a direct request.
+ *
+ * It is overridable so the trusted-proxy tests can simulate the two cases that
+ * actually matter and are otherwise impossible to distinguish here: a request
+ * arriving FROM the configured proxy (whose X-Forwarded-For must be believed)
+ * and a request arriving from anywhere else (whose X-Forwarded-For must be
+ * ignored, or an attacker spoofs their address and walks past IP throttling).
+ * Validated as an IP literal so a spec cannot inject arbitrary $_SERVER keys.
+ */
+$remoteAddr = (string) ($spec['remote_addr'] ?? '127.0.0.1');
+$_SERVER['REMOTE_ADDR'] = filter_var($remoteAddr, FILTER_VALIDATE_IP) !== false
+    ? $remoteAddr
+    : '127.0.0.1';
 $_SERVER['HTTP_ACCEPT'] = $accept;
 $_SERVER['HTTP_USER_AGENT'] = (string) ($spec['user_agent'] ?? 'vira-dev-server');
 
@@ -217,6 +231,19 @@ try {
         $request->server->set('HTTPS', 'on');
         $request->server->set('SERVER_PORT', '443');
     }
+
+    /*
+     * And the same reason a third time, for the peer address.
+     *
+     * Symfony's Request::create() defaults REMOTE_ADDR to 127.0.0.1 and never
+     * reads the superglobal, so setting only $_SERVER['REMOTE_ADDR'] left
+     * $request->ip() permanently 127.0.0.1. The consequence was not merely a
+     * missing test: anything reading $request->ip() — users.last_login_ip, the
+     * audit log, login throttling — was unobservable through this harness, so
+     * a check on client IP would have passed on the default value whatever the
+     * trusted-proxy configuration actually did.
+     */
+    $request->server->set('REMOTE_ADDR', $_SERVER['REMOTE_ADDR']);
 
     if ($contentType !== '') {
         $request->headers->set('Content-Type', $contentType);

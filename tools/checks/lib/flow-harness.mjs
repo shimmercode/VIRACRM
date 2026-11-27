@@ -199,6 +199,17 @@ export class Flow {
       post_body: spec.body || '',
       content_type: spec.body ? 'application/x-www-form-urlencoded' : '',
       accept: spec.accept || 'text/html',
+      /*
+       * Optional pass-throughs. Both default to absent, so every existing
+       * caller renders exactly as before: `headers` lets a caller send an
+       * arbitrary request header, and `remote_addr` sets the peer address the
+       * app sees. The trusted-proxy suite needs both — without a controllable
+       * REMOTE_ADDR there is no way to tell "X-Forwarded-For from the proxy"
+       * apart from "X-Forwarded-For from an attacker", which is the whole
+       * point of the control.
+       */
+      ...(spec.headers ? { headers: spec.headers } : {}),
+      ...(spec.remote_addr ? { remote_addr: spec.remote_addr } : {}),
       // The isolation: this flow's database, applied before bootstrap.
       //
       // A caller's own `env` is merged on top rather than replaced — otherwise

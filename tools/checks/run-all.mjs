@@ -136,6 +136,8 @@ const SUITES = (() => {
   { id: 'phase4-integration', label: 'Phase 4 integration scenarios A–I end to end', kind: 'node', script: 'tools/checks/phase4-integration.mjs', required: true },
   { id: 'ui-modules', label: 'UI audit of the post-phase-3 modules: payroll, reports, org, settings', kind: 'browser', script: 'tools/checks/ui-modules.mjs', required: true },
   { id: 'security-headers', label: 'Security headers + session cookie flags over real HTTP (§10-5)', kind: 'node', script: 'tools/checks/security-headers.mjs', required: true },
+  { id: 'ui-shots-auth', label: 'Login and employees at eight widths', kind: 'browser', script: 'tools/checks/ui-shots-auth.mjs', required: true },
+  { id: 'security-deployment', label: 'Proxy IP detection, session invalidation/expiry, keys, backup path guards', kind: 'node', script: 'tools/checks/security-deployment.mjs', required: true },
   { id: 'backup-hardening', label: 'Backup encryption at rest, key gates, document-root refusal (§14)', kind: 'node', script: 'tools/checks/backup-hardening.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },

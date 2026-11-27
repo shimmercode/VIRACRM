@@ -209,6 +209,79 @@ check('BK-12', exitOf(restored.out) === 0 && same,
   `restore into a fresh database exits ${exitOf(restored.out)} and reconciles:`
   + ` ${TABLES.map((t) => `${t} ${a[t]}=${b[t]}`).join(', ')}`);
 
+/* ═══ Logical fingerprint: source and restored content must match ═══════ */
+
+const fingerprint = async (db) => {
+  const r = await php('tools/checks/db-fingerprint.php', [db, '--json']);
+  try { return JSON.parse(r.out.trim()); } catch { return null; }
+};
+
+/*
+ * Compared table by table, EXCLUDING audit_logs — and that exclusion is the
+ * point, not a dodge. The backup command appends a `backup_ok` row to the
+ * source after building the container, and the restore appends `restore_ok` to
+ * the target, so the audit table is *supposed* to differ: it is the record that
+ * both operations happened. Requiring the whole-database digest to match would
+ * make a correct restore fail. Every other table must match exactly.
+ */
+const dataTables = (fp) => Object.fromEntries(
+  Object.entries(fp?.perTable ?? {}).filter(([t]) => t !== 'audit_logs'));
+
+const srcFp = await fingerprint(dbA);
+const dstFp = await fingerprint(dbB);
+const srcData = dataTables(srcFp);
+const dstData = dataTables(dstFp);
+const differing = Object.keys(srcData).filter((t) => srcData[t] !== dstData[t]);
+
+check('BK-14', Boolean(srcFp) && Boolean(dstFp) && differing.length === 0,
+  differing.length === 0
+    ? `all ${Object.keys(srcData).length} data tables are logically identical`
+      + ` between source and restored copy (${srcFp.rows} rows total); only`
+      + ` audit_logs differs, by design (backup_ok / restore_ok)`
+    : `${differing.length} table(s) differ after restore: ${differing.join(', ')}`);
+
+/*
+ * A digest match is necessary but not sufficient: it says the rows came back,
+ * not that they still refer to each other. So the relationships are re-checked
+ * against the restored copy — every foreign key resolves, and the counts that
+ * the reports depend on still line up.
+ */
+const fkCheck = await php('tools/checks/flow-query.php', [dbB, 'pragma foreign_key_check']);
+const fkOut = fkCheck.out.trim();
+const orphanContracts = await php('tools/checks/flow-query.php', [dbB,
+  'select count(*) from contracts c left join customers cu on cu.id = c.customer_id where cu.id is null']);
+const orphanWork = await php('tools/checks/flow-query.php', [dbB,
+  'select count(*) from work_items w left join customers cu on cu.id = w.customer_id where w.customer_id is not null and cu.id is null']);
+
+check('BK-15', fkOut === '' && Number(orphanContracts.out.trim()) === 0
+  && Number(orphanWork.out.trim()) === 0,
+  `relationships survive the round trip: pragma foreign_key_check returns`
+  + ` ${fkOut === '' ? 'nothing' : fkOut.slice(0, 60)},`
+  + ` ${orphanContracts.out.trim()} contract(s) and ${orphanWork.out.trim()} work`
+  + ` item(s) point at a missing customer`);
+
+/* ═══ A failed restore must leave the target untouched ══════════════════ */
+
+/*
+ * The data must be unaffected, not the file. A failed restore appends a
+ * `restore_failed` audit row, which is the correct behaviour — the failure has
+ * to be visible — so a byte-for-byte comparison would fail on a restore that
+ * did exactly the right thing. What must not happen is any change to the data.
+ */
+const fpBeforeFail = await fingerprint(dbB);
+const failedRestore = await artisan(dbB, [`VIRA_BACKUP_KEY=${WRONG}`],
+  ['vira:restore', `file=${container}`, '--force', '--no-interaction']);
+const fpAfterFail = await fingerprint(dbB);
+const failDiff = Object.keys(dataTables(fpBeforeFail))
+  .filter((t) => dataTables(fpBeforeFail)[t] !== dataTables(fpAfterFail)[t]);
+const auditGrew = fpBeforeFail?.perTable?.audit_logs !== fpAfterFail?.perTable?.audit_logs;
+
+check('BK-16', exitOf(failedRestore.out) !== 0 && failDiff.length === 0,
+  `a restore with the wrong key exits ${exitOf(failedRestore.out)}, changes`
+  + ` ${failDiff.length} data table(s), and ${auditGrew ? 'does' : 'does not'}`
+  + ` append a restore_failed audit row — a bad container cannot half-overwrite`
+  + ` a good database, and the failure is recorded`);
+
 /* ═══ None of this touched the shared database ══════════════════════════ */
 
 check('BK-13', sha(SHARED) === sharedBefore,
