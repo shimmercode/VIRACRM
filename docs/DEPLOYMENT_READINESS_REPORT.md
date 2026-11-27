@@ -468,6 +468,22 @@ group-stub entries and let the existing enabled children stand.
 | No test mutates shared development data | fingerprints identical before/after |
 | Commands, exit codes, versions, timestamps recorded | §8 and the gate reports |
 
+### 7.0 Why the reports may name an earlier SHA than HEAD
+
+The regression ran at `f73e617`. The documentation commit that followed adds
+only reports, regenerated indexes and one standalone audit tool, so naming
+`f73e617` as the tested revision is precise rather than stale. That is checkable
+rather than asserted:
+
+```bash
+git diff --name-only f73e617 HEAD -- \
+  app config resources routes database bootstrap tests tools/checks public lang
+# → only tools/checks/requirement-evidence.mjs, which is not in the roster
+```
+
+Every path the 69 suites actually executed is byte-identical to the SHA the
+reports name.
+
 ### 7.1 Shared-data isolation
 
 Every destructive operation ran against a private copy under `.arena/`. The
