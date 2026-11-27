@@ -42,6 +42,7 @@ class ProjectController extends Controller
             'status' => (string) $request->query('status', ''),
             'type' => (string) $request->query('type', ''),
             'customer_id' => (string) $request->query('customer_id', ''),
+            'owner_id' => (string) $request->query('owner_id', ''),
             'from' => (string) $request->query('from', ''),
             'to' => (string) $request->query('to', ''),
             'sort' => (string) $request->query('sort', 'created_at'),
@@ -75,6 +76,9 @@ class ProjectController extends Controller
             'filters' => $filters,
             'statuses' => Project::STATUSES,
             'types' => ProjectType::options(),
+            // Only users who can actually own a project, so the filter does not
+            // offer people who could never appear in it.
+            'owners' => User::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id'),
             'canSeeAmounts' => $request->user()->hasPermission('projects.view_financials'),
             'total' => Project::query()->count(),
         ]);

@@ -41,6 +41,16 @@
         </div>
 
         <div class="v-filterbar__group">
+            <label class="v-filterbar__label" for="f-owner">مسئول</label>
+            <select id="f-owner" name="owner_id" class="v-select v-select--sm">
+                <option value="">همه</option>
+                @foreach ($owners as $id => $name)
+                    <option value="{{ $id }}" @selected((string) $filters['owner_id'] === (string) $id)>{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="v-filterbar__group">
             <label class="v-filterbar__label" for="f-status">وضعیت</label>
             <select id="f-status" name="status" class="v-select v-select--sm">
                 <option value="">همه</option>

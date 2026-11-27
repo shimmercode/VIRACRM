@@ -96,7 +96,13 @@ final class ContractReportController extends Controller
             + $counts['finished'] + $counts['draft'];
 
         $contracts = $buckets[$category]()
-            ->with('customer:id,legal_name,first_name,last_name')
+            /*
+             * `legal_name` is not a column on customers — the legal name is
+             * `company_name` — and Customer::displayName() branches on `type`.
+             * Selecting a list that omits both made every legal customer render
+             * as «مشتری بدون نام» on this report.
+             */
+            ->with('customer:id,type,company_name,first_name,last_name')
             ->orderBy('end_date')
             ->paginate(20)
             ->withQueryString();

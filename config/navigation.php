@@ -184,6 +184,14 @@ return [
         ],
 
         [
+            'label' => 'گزارش اقدامات',
+            'icon' => 'folder',
+            'route' => 'reports.work-items',
+            'permission' => 'reports.view',
+            'enabled' => true,
+        ],
+
+        [
             'label' => 'پکیج‌های سئو',
             'icon' => 'folder',
             'route' => 'settings.seo-packages.index',

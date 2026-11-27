@@ -3,6 +3,7 @@
 use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Reports\ContractReportController;
 use App\Http\Controllers\Reports\ExpertWorkloadController;
+use App\Http\Controllers\Reports\WorkItemReportController;
 use App\Http\Controllers\Settings\AccessRequirementController;
 use App\Http\Controllers\Settings\ContractTypeController;
 use App\Http\Controllers\Settings\PayrollRuleController;
@@ -255,6 +256,14 @@ Route::middleware(['auth'])->group(function () {
              */
             Route::get('/contracts', [ContractReportController::class, 'index'])
                 ->middleware('permission:reports.view')->name('contracts');
+
+            /*
+             * §9-4 — «مشاهده فهرست فاکتورها و گزارش‌های موعددار، انجام‌شده و
+             * عقب‌افتاده». Reads work_items, the same rows the operational
+             * screens write; no new entity is introduced.
+             */
+            Route::get('/work-items', [WorkItemReportController::class, 'index'])
+                ->middleware('permission:reports.view')->name('work-items');
         });
 
         // ── Customers (§3) ─────────────────────────────────────────────

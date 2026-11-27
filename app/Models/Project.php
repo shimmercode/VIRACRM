@@ -157,6 +157,12 @@ class Project extends Model
                 ->where('type', $filters['type']))
             ->when(filled($filters['status'] ?? null), fn (Builder $q) => $q
                 ->where('status', $filters['status']))
+            /*
+             * §9-3 names «مسئول» among the project filters and it was the one
+             * missing: type, status, customer and dates were all there.
+             */
+            ->when(filled($filters['owner_id'] ?? null), fn (Builder $q) => $q
+                ->where('owner_user_id', $filters['owner_id']))
             ->when(filled($filters['from'] ?? null), fn (Builder $q) => $q
                 ->whereDate('start_date', '>=', $filters['from']))
             ->when(filled($filters['to'] ?? null), fn (Builder $q) => $q
