@@ -38,10 +38,19 @@ class SecurityHeaders
         // Only the device APIs actually needed; none are.
         $response->headers->set('Permissions-Policy', 'geolocation=(), camera=(), microphone=(), payment=()');
 
-        // Pages contain customer and credential metadata: never cache them.
-        if (! $response->headers->has('Cache-Control')) {
-            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-        }
+        /*
+         * Pages contain customer and credential metadata: never cache them.
+         *
+         * Set unconditionally. This used to be guarded by
+         * `if (! $response->headers->has('Cache-Control'))`, which looked
+         * defensive but meant the value never shipped at all: Symfony gives
+         * every response a default `Cache-Control: no-cache, private`, so the
+         * guard was always false. The result was that pages advertising
+         * themselves as uncacheable were still storeable — `no-cache` means
+         * "revalidate before reuse", not "do not store". Caught by
+         * tools/checks/security-headers.mjs (SH-cache).
+         */
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
         $response->headers->set(
             'Content-Security-Policy',

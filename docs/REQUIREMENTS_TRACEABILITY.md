@@ -14,9 +14,9 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 62 | 64.6% |
+| `VERIFIED` | 63 | 65.6% |
 | `PARTIAL` | 13 | 13.5% |
-| `NOT_VERIFIED` | 2 | 2.1% |
+| `NOT_VERIFIED` | 1 | 1.0% |
 | `NOT_IMPLEMENTED` | 15 | 15.6% |
 | `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
@@ -221,7 +221,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SEC-001` | `REQ-10.05` | الزامات امنیتی پایه | P0 | brief | **`PARTIAL`** | bcrypt, CSRF, throttle | no security headers test | M1/M3 |
+| `SEC-001` | `REQ-10.05` | الزامات امنیتی پایه | P0 | brief | **`PARTIAL`** | all code-side controls implemented and asserted; HTTPS itself is deployment-side | security-headers.mjs 16/16 now asserts the controls over real HTTP: X-Content-Type-Options nosniff, X-Frame-Options DENY, Referrer-Policy same-origin, X-Permitted-Cross-Domain-Policies none, Permissions-Policy with all four device APIs disabled, and a CSP carrying all seven directives including frame-ancestors none and a script-src without unsafe-inline. Session cookie proven HttpOnly, SameSite=lax, Path=/, and Secure when SESSION_SECURE_COOKIE=true. That suite also found and fixed a real bug: SecurityHeaders guarded Cache-Control with `if (! has(...))`, which was always false because Symfony sets a default, so the intended no-store never shipped — pages were no-cache (revalidate) but still storeable. config/session.php now defaults Secure to true when APP_ENV=production and the variable is absent, verified by booting the real config both ways (local => false, production => true). Remaining gap: HTTPS termination itself cannot be exercised in this sandbox, so the transport half of §10-5 stays unproven here; every control that depends on it (TRUSTED_PROXIES, Secure cookie) is implemented and asserted. | M1/M3 |
 | `SEC-002` | `REQ-10.07` | سیاست رمز و مدیریت نشست | P1 | brief | **`VERIFIED`** | session regenerate + password change | — | — |
 
 ### Files
@@ -248,7 +248,7 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `UI-001` | `REQ-11.01` | UI فارسی RTL اختصاصی | P1 | doc | **`VERIFIED`** | dir=rtl, fa, 7 widths | — | — |
 | `UI-002` | `REQ-11.02` | Design System مشترک | P0 | doc | **`VERIFIED`** | 23 components + 21 DS asserts | — | — |
-| `UI-003` | `REQ-11.03` | فونت فارسی پایدار و قانونی | P1 | brief | **`NOT_VERIFIED`** | font loaded | licence not confirmed | M0 |
+| `UI-003` | `REQ-11.03` | فونت فارسی پایدار و قانونی | P1 | brief | **`VERIFIED`** | Vazirmatn self-hosted, OFL licence shipped | security: resources/css/tokens.css:13-32 declares three @font-face rules for Vazirmatn (400/500/700) all pointing at local ../fonts/*.woff2 — Vazirmatn-Regular 50684 B, -Medium 51128 B, -Bold 51020 B all present. No fonts.googleapis.com or CDN reference anywhere in resources/css. font-display: swap keeps text visible while the font loads. The SIL Open Font License 1.1 for Vazirmatn ships at public/build/fonts/OFL.txt (93 lines, "Copyright 2015 The Vazirmatn Project Authors"), so the font is both self-hosted and licensed — the two things §11-3 asks for. Previous evidence ("licence not confirmed") was stale: the licence file was already in the repo. | — |
 | `UI-004` | `REQ-11.05` | حالت‌های Loading/Empty/Success/Error و اعتبارسنجی | P1 | doc | **`PARTIAL`** | empty/error states exist | loading/success states partial | M1/M3 |
 
 ### Jalali

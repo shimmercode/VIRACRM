@@ -75,6 +75,24 @@ final class BackupDatabase extends Command
         $destination = (string) ($this->option('path')
             ?: storage_path('app/' . config('vira.backup_path', 'backups')));
 
+        /*
+         * A container is an encrypted dump of the entire database. Encryption
+         * is the second line of defence here, not the only one: the document
+         * root is public/, so a --path pointing inside it would hand every
+         * backup to anyone who guesses a filename, and a leaked
+         * VIRA_BACKUP_KEY would then be the only thing standing between them
+         * and the data. Refuse the write instead of relying on that.
+         */
+        $insidePublic = $this->destinationIsWebServed($destination);
+
+        if ($insidePublic !== null) {
+            $this->error("refusing to write a backup under the document root ({$insidePublic}).");
+            $this->line('The document root is ' . realpath(public_path()) . '; anything under it can be fetched over HTTP.');
+            $this->line('Use the default storage/app/backups, or a --path outside public/.');
+
+            return self::FAILURE;
+        }
+
         $databasePath = (string) config('database.connections.sqlite.database');
 
         $this->line('database : ' . $databasePath);
@@ -189,6 +207,70 @@ final class BackupDatabase extends Command
      * exception from the thing recording it. So every event also goes to the log
      * file, which does not depend on the database being healthy.
      */
+    /**
+     * Resolve a destination to the nearest ancestor that already exists and
+     * report whether it sits inside the document root.
+     *
+     * The destination itself usually does not exist yet — the builder creates
+     * it — so the check walks up until it finds a real directory. That still
+     * catches `--path=public/backups` and `--path=public/a/b/c`, because the
+     * first existing ancestor of both is `public/`.
+     *
+     * Returns the resolved path when it is web-served, and null when it is not
+     * (or when the check cannot be resolved, which must not block a backup).
+     */
+    private function destinationIsWebServed(string $destination): ?string
+    {
+        $publicRoot = realpath(public_path());
+
+        if ($publicRoot === false) {
+            return null;
+        }
+
+        $target = $destination;
+
+        if (! str_starts_with($target, DIRECTORY_SEPARATOR)) {
+            $target = base_path($target);
+        }
+
+        $probe = $target;
+
+        // Walk up to the nearest existing directory. Bounded so a pathological
+        // path cannot loop; 40 levels is far past any real filesystem depth.
+        for ($i = 0; $i < 40; $i++) {
+            if (is_dir($probe)) {
+                break;
+            }
+
+            $parent = dirname($probe);
+
+            if ($parent === $probe) {
+                return null;
+            }
+
+            $probe = $parent;
+        }
+
+        $resolved = realpath($probe);
+
+        if ($resolved === false) {
+            return null;
+        }
+
+        /*
+         * A real prefix test. The first version of this used
+         * substr($resolved, strlen($publicRoot)) and compared to '', which is
+         * wrong: substr returns '' for ANY offset past the end of the string,
+         * so every path shorter than the document root — /tmp included —
+         * looked like it was inside it, and legitimate backups were refused.
+         */
+        if ($resolved === $publicRoot || str_starts_with($resolved, $publicRoot . DIRECTORY_SEPARATOR)) {
+            return $resolved;
+        }
+
+        return null;
+    }
+
     private function audit(string $event, string $description): void
     {
         Log::info('vira backup: ' . $event . ' — ' . $description);

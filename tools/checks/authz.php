@@ -7,8 +7,57 @@
  */
 require __DIR__ . '/../../vendor/autoload.php';
 
+/*
+ * ISOLATION — this script writes fixtures (it creates `viewer1` and rewrites
+ * that account's password), so it must never run against the shared database.
+ *
+ * For most of this project's life it did exactly that. It went unnoticed
+ * because the runner's isolation check compared `select count(*)` over seven
+ * tables, and rewriting one column of one existing row leaves every row count
+ * identical. The bug was only found by fingerprinting the database *content*
+ * before and after a regression run (tools/checks/db-fingerprint.php).
+ *
+ * It is the same mechanism policies.php already uses, and the same one the
+ * browser flows use: copy the database into a private directory and point
+ * DB_DATABASE at the copy BEFORE bootstrap, so Laravel's immutable Dotenv
+ * never sees the shared path. The copy starts from the shared database, so the
+ * seeded `viewer` role this script needs is present, and nothing it does here
+ * can reach a real account.
+ */
+$flowRoot = getenv('VIRA_FLOW_ROOT') ?: (dirname(__DIR__, 2) . '/.arena/flows');
+$privateDir = rtrim($flowRoot, '/') . '/authz';
+
+if (! is_dir($privateDir) && ! mkdir($privateDir, 0o775, true) && ! is_dir($privateDir)) {
+    fwrite(STDERR, "cannot create {$privateDir}\n");
+    exit(2);
+}
+
+$sharedDb = getenv('VIRA_BASE_DB') ?: (dirname(__DIR__, 2) . '/database/database.sqlite');
+$privateDb = $privateDir . '/database.sqlite';
+
+if (! copy($sharedDb, $privateDb)) {
+    fwrite(STDERR, "cannot copy database to {$privateDb}\n");
+    exit(2);
+}
+
+// A stale WAL/SHM beside the shared database would make the copy inconsistent.
+foreach (['-wal', '-shm'] as $suffix) {
+    @unlink($privateDb . $suffix);
+}
+
+$_ENV['DB_DATABASE'] = $privateDb;
+$_SERVER['DB_DATABASE'] = $privateDb;
+putenv('DB_DATABASE=' . $privateDb);
+
 $app = require __DIR__ . '/../../bootstrap/app.php';
 $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+
+// Belt and braces: if the override somehow did not take, rewriting a real
+// account's password is the one thing this script must not do.
+if (realpath((string) config('database.connections.sqlite.database')) === realpath($sharedDb)) {
+    fwrite(STDERR, "refusing to run: still pointed at the shared database\n");
+    exit(2);
+}
 
 use App\Models\Role;
 use App\Models\User;

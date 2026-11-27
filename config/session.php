@@ -169,7 +169,20 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    /*
+     * Fail-safe default. `env('SESSION_SECURE_COOKIE')` alone returns null when
+     * the variable is absent, and null is falsy — so a deployment that simply
+     * forgot the line silently shipped its session cookie over plain HTTP,
+     * which is the one security setting where "not configured" and "off" must
+     * not mean the same thing.
+     *
+     * An explicit value always wins, so `SESSION_SECURE_COOKIE=false` still
+     * works for local development. Only the *absent* case changes, and it now
+     * changes to Secure whenever APP_ENV is production.
+     *
+     * Proved by tools/checks/security-headers.mjs (SH-secure-default).
+     */
+    'secure' => env('SESSION_SECURE_COOKIE', env('APP_ENV') === 'production'),
 
     /*
     |--------------------------------------------------------------------------

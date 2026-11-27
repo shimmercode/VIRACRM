@@ -134,6 +134,9 @@ const SUITES = (() => {
   { id: 'admin-config', label: '§15 config screens and their effects (REQ-15.01)', kind: 'node', script: 'tools/checks/admin-config.mjs', required: true },
   { id: 'work-item-report', label: 'Due/done/overdue report + project owner filter (REQ-09.04)', kind: 'node', script: 'tools/checks/work-item-report.mjs', required: true },
   { id: 'phase4-integration', label: 'Phase 4 integration scenarios A–I end to end', kind: 'node', script: 'tools/checks/phase4-integration.mjs', required: true },
+  { id: 'ui-modules', label: 'UI audit of the post-phase-3 modules: payroll, reports, org, settings', kind: 'browser', script: 'tools/checks/ui-modules.mjs', required: true },
+  { id: 'security-headers', label: 'Security headers + session cookie flags over real HTTP (§10-5)', kind: 'node', script: 'tools/checks/security-headers.mjs', required: true },
+  { id: 'backup-hardening', label: 'Backup encryption at rest, key gates, document-root refusal (§14)', kind: 'node', script: 'tools/checks/backup-hardening.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,
@@ -270,20 +273,37 @@ function run(suite) {
   });
 }
 
-/** Row counts of the shared database, to prove the flows did not touch it. */
-async function sharedCounts() {
-  const tables = ['customers', 'contracts', 'projects', 'work_items', 'users', 'sessions', 'audit_logs'];
-  const counts = {};
+/**
+ * Content fingerprint of the shared database: one digest per table, plus the
+ * whole-database digest under `__whole__`.
+ *
+ * This replaced a row-count comparison over seven hardcoded tables. Row counts
+ * are structurally blind to the class of leak that actually happened here:
+ * `authz.php` rewrote `users.password` for `viewer1` on every single run, which
+ * changes content while leaving every row count identical — so the old check
+ * printed "shared database untouched" on runs that were not untouched, for as
+ * long as it existed. A digest over every row of every table cannot be fooled
+ * that way, and the per-table digests let the failure name the table.
+ *
+ * `__whole__` is a real table-shaped key so the existing comparison loop needs
+ * no special case; it just prints alongside the tables.
+ */
+async function sharedFingerprint() {
+  const result = await php('tools/checks/db-fingerprint.php', [
+    path.join(ROOT, 'database/database.sqlite'),
+    '--json',
+  ]);
 
-  for (const table of tables) {
-    const result = await php('tools/checks/flow-query.php', [
-      path.join(ROOT, 'database/database.sqlite'),
-      `select count(*) from ${table}`,
-    ]);
-    counts[table] = result.out.trim();
+  let parsed;
+  try {
+    parsed = JSON.parse(result.out.trim());
+  } catch {
+    // A fingerprint we cannot read is not a passing isolation check. Failing
+    // loudly is the only safe reading of an unparseable digest.
+    throw new Error(`db-fingerprint.php produced no parseable output: ${result.out.trim() || result.err.trim()}`);
   }
 
-  return counts;
+  return { __whole__: parsed.sha256, ...parsed.perTable };
 }
 
 // ── Execution lock ────────────────────────────────────────────────────────
@@ -304,7 +324,7 @@ if (!lock.acquired) {
   process.exit(lock.exitCode);
 }
 
-const before = await sharedCounts();
+const before = await sharedFingerprint();
 
 const runs = [];
 
@@ -316,7 +336,7 @@ const passIsolation = [];
 for (let pass = 1; pass <= repeats; pass++) {
   if (repeats > 1) console.log(`\n══════════ pass ${pass} of ${repeats} ══════════`);
 
-  const passBefore = repeats > 1 ? await sharedCounts() : null;
+  const passBefore = repeats > 1 ? await sharedFingerprint() : null;
   const passResults = [];
 
   for (const suite of SUITES) {
@@ -352,13 +372,13 @@ for (let pass = 1; pass <= repeats; pass++) {
   }
 
   if (repeats > 1) {
-    passIsolation.push({ pass, before: passBefore, after: await sharedCounts() });
+    passIsolation.push({ pass, before: passBefore, after: await sharedFingerprint() });
   }
 
   runs.push(passResults);
 }
 
-const after = await sharedCounts();
+const after = await sharedFingerprint();
 
 // ── Per-pass isolation (§14.5: "تغییرات ناخواسته Database بررسی شود") ─────
 // Measured around EVERY pass, not just around the whole command. A leak that
@@ -382,10 +402,23 @@ if (passIsolation.length > 0) {
 console.log('\n── shared database untouched ──');
 let isolationOk = true;
 
-for (const table of Object.keys(before)) {
-  const same = before[table] === after[table];
-  if (!same) isolationOk = false;
-  console.log(`${same ? '  ok ' : '  BAD'} ${table.padEnd(12)} ${before[table]} -> ${after[table]}`);
+// Over the union of keys, so a table that appeared or disappeared during the
+// run is reported as drift rather than silently skipped.
+const short = (d) => (d ?? '(absent)').slice(0, 16);
+const drifted = [...new Set([...Object.keys(before), ...Object.keys(after)])]
+  .filter((key) => before[key] !== after[key]);
+
+if (drifted.length === 0) {
+  const tableCount = Object.keys(before).length - 1; // minus __whole__
+  console.log(`  ok  ${tableCount} tables · every row identical · digest ${short(before.__whole__)}…`);
+} else {
+  for (const key of drifted) {
+    isolationOk = false;
+    const label = key === '__whole__' ? 'WHOLE DATABASE' : key;
+    console.log(`  BAD ${label.padEnd(22)} ${short(before[key])}… -> ${short(after[key])}…`);
+  }
+  const named = drifted.filter((k) => k !== '__whole__');
+  console.log(`  BAD ${named.length} table(s) changed content; a whole-database change with no named table means a table was added or dropped`);
 }
 
 // ── Repeatability: every pass must produce the same totals per suite ──────
