@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Project;
 
 use App\Models\Project;
+use App\Models\SeoProjectDetail;
 use App\Support\JalaliDate;
 use App\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
@@ -50,6 +51,11 @@ class StoreProjectRequest extends FormRequest
             // SEO-only, ignored for design projects (see validatedForModel).
             'seo_package_id' => ['nullable', 'integer', 'exists:seo_packages,id'],
             'keyword_count' => ['nullable', 'integer', 'min:0', 'max:100000'],
+            // §5-1 «آدرس وب‌سایت». The shape is checked by a dedicated validator
+            // in withValidator, because Laravel's `url` rule would reject the
+            // bare `example.ir` form that is the common way to write it.
+            'website_url' => ['nullable', 'string', 'max:2048'],
+            'financial_notes' => ['nullable', 'string', 'max:5000'],
             'recurrence' => ['nullable', Rule::in(array_keys(\App\Models\SeoProjectDetail::RECURRENCES))],
             'reminder_offset_days' => ['nullable', 'integer', 'min:0', 'max:60'],
 
@@ -85,6 +91,7 @@ class StoreProjectRequest extends FormRequest
                 $this->validateAmount($validator);
                 $this->validateDates($validator);
                 $this->validateDomain($validator);
+                $this->validateWebsiteUrl($validator);
                 $this->validateFinalizationGate($validator, null);
             },
         ];
@@ -216,6 +223,26 @@ class StoreProjectRequest extends FormRequest
         $this->merge(['domain' => $host]);
     }
 
+    /**
+     * §5-1 — the SEO project's website address.
+     *
+     * Only for SEO projects: a design project records its domain in
+     * design_project_details.domain, and writing this field for one would put
+     * the two fieldsets in disagreement about which type the project is.
+     */
+    protected function validateWebsiteUrl($validator): void
+    {
+        if ($this->input('type') !== 'seo') {
+            return;
+        }
+
+        $error = SeoProjectDetail::websiteError((string) ($this->input('website_url') ?? ''));
+
+        if ($error !== null) {
+            $validator->errors()->add('website_url', $error);
+        }
+    }
+
     /** Attributes ready for the model. */
     public function validatedForModel(): array
     {
@@ -253,6 +280,12 @@ class StoreProjectRequest extends FormRequest
         return [
             'seo_package_id' => $this->filled('seo_package_id') ? (int) $this->input('seo_package_id') : null,
             'keyword_count' => (int) ($this->input('keyword_count') ?? 0),
+            'website_url' => $this->filled('website_url')
+                ? trim((string) $this->input('website_url'))
+                : null,
+            'financial_notes' => $this->filled('financial_notes')
+                ? trim((string) $this->input('financial_notes'))
+                : null,
             'recurrence' => $this->filled('recurrence') ? (string) $this->input('recurrence') : null,
             'reminder_offset_days' => (int) ($this->input('reminder_offset_days') ?? 2),
         ];

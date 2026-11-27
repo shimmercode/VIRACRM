@@ -138,12 +138,38 @@
                 @endif
             </div>
 
+            {{-- §5-1 «آدرس وب‌سایت». Lives in the SEO fieldset only: the design
+                 project has its own domain field, and the two must not share a
+                 column or the type-specific fieldsets stop meaning anything. --}}
+            <div class="v-field v-field--span2">
+                <label class="v-label" for="website_url">آدرس وب‌سایت</label>
+                <input id="website_url" name="website_url" type="text"
+                       class="v-input{{ $err('website_url') }}" dir="ltr" maxlength="2048"
+                       value="{{ $val('website_url') ?: ($seo->website_url ?? '') }}"
+                       placeholder="example.ir یا https://example.ir/blog"
+                       aria-describedby="website_url-hint">
+                <p class="v-hint" id="website_url-hint">با یا بدون https:// — آدرس کامل صفحه نیز پذیرفته می‌شود.</p>
+                @error('website_url')<p class="v-error">{{ $message }}</p>@enderror
+            </div>
+
             <div class="v-field">
                 <label class="v-label" for="keyword_count">تعداد کلمات کلیدی</label>
                 <input id="keyword_count" name="keyword_count" type="number" min="0" step="1"
                        class="v-input{{ $err('keyword_count') }}" dir="ltr"
                        value="{{ $val('keyword_count') ?: ($seo->keyword_count ?? '') }}">
                 @error('keyword_count')<p class="v-error">{{ $message }}</p>@enderror
+            </div>
+
+            {{-- §5-1 «مبلغ قرارداد و توضیحات مالی مرتبط». Distinct from the
+                 internal note further down: one is about money, the other is
+                 about the work, and the document names both. --}}
+            <div class="v-field v-field--span2">
+                <label class="v-label" for="financial_notes">توضیحات مالی</label>
+                <textarea id="financial_notes" name="financial_notes" rows="2"
+                          class="v-input{{ $err('financial_notes') }}" maxlength="5000"
+                          aria-describedby="financial_notes-hint">{{ $val('financial_notes') ?: ($seo->financial_notes ?? '') }}</textarea>
+                <p class="v-hint" id="financial_notes-hint">توافق مالی مربوط به این پروژه؛ با یادداشت داخلی تفاوت دارد.</p>
+                @error('financial_notes')<p class="v-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="v-field">

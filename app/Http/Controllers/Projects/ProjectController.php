@@ -58,7 +58,10 @@ class ProjectController extends Controller
             ->with([
                 'customer:id,type,company_name,first_name,last_name',
                 'owner:id,name,username',
-                'seoDetails:id,project_id,seo_package_id,keyword_count',
+                // website_url is listed even though the list does not show it: a
+                // column-limited eager load silently returns null for anything
+                // omitted, which is how a field goes missing without an error.
+                'seoDetails:id,project_id,seo_package_id,keyword_count,website_url',
                 'designDetails:id,project_id,domain',
             ])
             ->filter($filters)

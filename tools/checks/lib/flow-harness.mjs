@@ -31,7 +31,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 // lib/ -> checks/ -> tools/ -> repo root
@@ -43,6 +43,27 @@ const RENDERER = path.join(ROOT, 'tools/http-render.php');
 const PHP_WASM_PATH = process.env.PHP_WASM_PATH || '/tmp/phpwasm/node_modules';
 const BASE_DB = process.env.VIRA_BASE_DB || path.join(ROOT, 'database/database.sqlite');
 const FLOW_ROOT = process.env.VIRA_FLOW_ROOT || path.join(ROOT, '.arena/flows');
+
+/*
+ * Migrations added after the shared development database was last built.
+ *
+ * setup() copies that database verbatim, and it must never be migrated itself —
+ * it is the one file the product develops against. Its `migrations` ledger is
+ * also empty, because it was built by tools/seed.php rather than by the
+ * migrator. So a copy arrives with the OLD schema and no record of what
+ * produced it, and a plain `migrate` dies on the first table that already
+ * exists.
+ *
+ * setup() therefore backfills the ledger for every migration the copy already
+ * reflects and runs the migrator for the rest, bringing the disposable copy —
+ * and only the copy — up to date.
+ *
+ * Add an entry when a migration lands after the base database was built; remove
+ * it once the base database has been re-seeded from the full migration set.
+ */
+const PENDING_MIGRATIONS = [
+  '2026_02_02_000100_add_website_url_to_seo_project_details',
+];
 
 /** Run one PHP script through the WASM CLI and return its stdout. */
 export function php(script, args = [], { env = {} } = {}) {
@@ -98,10 +119,65 @@ export class Flow {
       }
     }
 
+    await this._applyPendingMigrations();
+
     this.jar.clear();
     this.requests = 0;
 
     return this;
+  }
+
+  /**
+   * Bring this flow's private copy up to the current schema.
+   *
+   * Only ever touches `this.db`, which is a throwaway file under .arena/flows/.
+   * The shared database is not opened for writing here or anywhere in this file.
+   */
+  async _applyPendingMigrations() {
+    if (PENDING_MIGRATIONS.length === 0) {
+      return;
+    }
+
+    const dir = path.join(ROOT, 'database/migrations');
+    const files = fs.readdirSync(dir).filter((f) => f.endsWith('.php')).sort();
+    const applied = files
+      .map((f) => f.replace(/\.php$/, ''))
+      .filter((name) => !PENDING_MIGRATIONS.includes(name));
+
+    const rows = JSON.stringify(applied);
+    const db = JSON.stringify(this.db);
+    const script = [
+      'import sqlite3, json, sys',
+      `db = json.loads(${JSON.stringify(db)})`,
+      `names = json.loads(${JSON.stringify(rows)})`,
+      'c = sqlite3.connect(db)',
+      "has = c.execute(\"select count(*) from sqlite_master where type='table' and name='migrations'\").fetchone()[0]",
+      'if has:',
+      '    c.execute("delete from migrations")',
+      '    c.executemany("insert into migrations (migration, batch) values (?, 1)", [(n,) for n in names])',
+      '    c.commit()',
+      'print("ledger", len(names))',
+    ].join('\n');
+
+    const backfill = spawnSync('python3', ['-c', script], { encoding: 'utf8' });
+
+    if (backfill.status !== 0) {
+      throw new Error(`could not backfill the migration ledger: ${backfill.stderr}`);
+    }
+
+    const probe = path.join(ROOT, 'tools/checks/migration-probe.php');
+    const rel = path.relative(ROOT, this.db);
+    const res = await php(probe, [rel, 'migrate']);
+    const out = `${res.out ?? ''}${res.err ?? ''}`;
+
+    // A migration that did not apply must fail loudly here. Silently continuing
+    // would leave every suite asserting against a stale schema, which is exactly
+    // the kind of quiet wrong this harness exists to prevent.
+    if (out.includes('MIGRATION FAILED')) {
+      throw new Error(`pending migrations failed to apply to ${rel}: ${out.trim()}`);
+    }
+
+    return res;
   }
 
   /** Path of the request file for the next render; kept unique per request. */

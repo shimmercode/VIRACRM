@@ -14,8 +14,8 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 59 | 61.5% |
-| `PARTIAL` | 14 | 14.6% |
+| `VERIFIED` | 60 | 62.5% |
+| `PARTIAL` | 13 | 13.5% |
 | `NOT_VERIFIED` | 2 | 2.1% |
 | `NOT_IMPLEMENTED` | 17 | 17.7% |
 | `BLOCKED` | 4 | 4.2% |
@@ -116,7 +116,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`PARTIAL`** | SEO project form carries name, customer, contract, package/service level, amount, notes, owner and start/end dates; the keyword list is now managed (REQ-05.03). seo_project_details holds package, recurrence and reminder offset. | verified, not assumed: the SEO fieldset of resources/views/projects/_form.blade.php contains only seo_package_id, keyword_count, recurrence and reminder_offset_days. §5-1 also names «آدرس وب‌سایت» for an SEO project and there is no such field — the only domain column is design_project_details.domain (the design fieldset). A website address can be recorded at customer level in customer_websites, but not on the SEO project itself. | M1/M3 |
+| `SEO-001` | `REQ-05.02` | فیلدهای پروژه سئو | P1 | doc | **`VERIFIED`** | Every field §5-1 names for an SEO project now has storage and a form field: نام پروژه, نام مشتری, قرارداد, پکیج/سطح خدمات, مبلغ, تاریخ شروع/پایان and the internal note already existed; the keyword list is REQ-05.03; the owner/expert is REQ-05.04; the invoice-issue and report dates and the state of scheduled actions live on work_items. The two that had nowhere to go were «آدرس وب‌سایت» and «توضیحات مالی مرتبط». design_project_details.domain belongs to the design fieldset and projects.notes is the internal note named in a different bullet, so neither could carry them; migration 2026_02_02_000100 adds nullable seo_project_details.website_url and .financial_notes instead. Both appear in the SEO fieldset only, are validated by SeoProjectDetail::websiteError, and render on the project page. | tools/checks/seo-website.mjs 14/14: bare domain accepted (Laravel's own `url` rule would reject it), URL with port/path/query/fragment stored as typed, Persian IDN in Arabic script, a space refused with no row written, a doubled scheme refused, empty stored as NULL, a record written before the column existed still loads and saves with keyword_count intact, edit replaces the value, nothing leaks into design_project_details.domain, financial and internal notes kept in separate columns. tools/checks/migration-safety.mjs 11/11: up/down/re-up on a disposable database, a second up is a no-op, a pre-existing row survives the migration untouched and reads NULL, and the probe refuses the shared database and path traversal. Mutation: disabling the space rejection drops the suite to 13/14. PENDING HOST ACTION — the migration has deliberately NOT been applied to the shared database/database.sqlite, which needs explicit authorization; until it runs, creating or editing an SEO project against that database fails with "no column named website_url". Command: node docs/tools/php-cli.mjs tools/migrate.php | — |
 | `SEO-002` | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | P1 | doc | **`VERIFIED`** | POST/PUT/DELETE /projects/{project}/keywords behind projects.update, with an add form, an inline status control and a delete button on the SEO project page. Uniqueness is enforced on ProjectKeyword::normalize() output, so ZWNJ, doubled whitespace and Arabic ي/ك cannot create duplicates; the package keyword_limit is a ceiling on real rows. The count on the page is $project->keywords->count() and T-KW-04 sets seo_project_details.keyword_count to 99 to prove the typed field has no effect on it. tools/checks/project-keyword.mjs 15/15. | — | — |
 
 ### DesignProjects

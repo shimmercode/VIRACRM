@@ -161,6 +161,19 @@
                                 <dd>{{ $project->seoDetails?->package?->title ?? '—' }}</dd>
                             </div>
                             <div>
+                                <dt>آدرس وب‌سایت</dt>
+                                {{-- §5-1. Its own column on seo_project_details, not
+                                     design_project_details.domain. --}}
+                                <dd dir="ltr">
+                                    @if ($project->seoDetails?->website_url)
+                                        <a href="{{ $project->seoDetails->website_url }}"
+                                           target="_blank" rel="noopener noreferrer nofollow">{{ $project->seoDetails->website_url }}</a>
+                                    @else
+                                        —
+                                    @endif
+                                </dd>
+                            </div>
+                            <div>
                                 <dt>کلمات کلیدی قراردادی</dt>
                                 <dd>{{ Money::toPersianDigits((string) ($project->seoDetails?->keyword_count ?? 0)) }} کلمه</dd>
                             </div>
@@ -168,6 +181,12 @@
                                 <dt>کلمات ثبت‌شده در سامانه</dt>
                                 <dd>{{ Money::toPersianDigits((string) $project->keywords->count()) }} کلمه</dd>
                             </div>
+                            @if ($project->seoDetails?->financial_notes)
+                                <div>
+                                    <dt>توضیحات مالی</dt>
+                                    <dd>{{ $project->seoDetails->financial_notes }}</dd>
+                                </div>
+                            @endif
                             <div>
                                 <dt>دورهٔ تکرار</dt>
                                 <dd>
