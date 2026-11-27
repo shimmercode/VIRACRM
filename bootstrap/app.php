@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,6 +21,37 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        /*
+         * Reverse-proxy trust.
+         *
+         * The framework ships TrustProxies configured to trust NOTHING, which is
+         * the right default and wrong for every real deployment: this product is
+         * meant to sit behind nginx or a load balancer, and without naming the
+         * proxy the application sees the proxy's address as the client's. Three
+         * things break, and all three are security evidence rather than cosmetics:
+         * audit rows and users.last_login_ip record the proxy instead of the
+         * person, IP-based login throttling counts every user as one address,
+         * and the forwarded scheme is ignored so a TLS-terminated deployment
+         * believes it is serving http and will not set a Secure cookie.
+         *
+         * Left unset the behaviour is exactly what it was before — trust nothing
+         * — so a developer running the app directly is unaffected and nobody is
+         * silently taught to trust `*`.
+         */
+        $middleware->trustProxies(
+            // The parameter is `at`, not `proxies` — Middleware::trustProxies()
+            // takes (array|string|null $at, ?int $headers). Naming it wrong is a
+            // fatal at boot, not a warning, which is why the render check below
+            // exists.
+            at: ($proxies = env('TRUSTED_PROXIES')) === null || $proxies === ''
+                ? null
+                : array_values(array_filter(array_map('trim', explode(',', (string) $proxies)))),
+            headers: Request::HEADER_X_FORWARDED_FOR
+                | Request::HEADER_X_FORWARDED_HOST
+                | Request::HEADER_X_FORWARDED_PORT
+                | Request::HEADER_X_FORWARDED_PROTO,
+        );
+
         // Appended to the web group so it runs after the session starts:
         // the permission middleware needs a resolved user.
         // TrustPreviewProxy must run BEFORE SecurityHeaders: it rewrites the
