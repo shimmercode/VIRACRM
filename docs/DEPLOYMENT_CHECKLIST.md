@@ -57,11 +57,29 @@ add a dependency on it.
 | Dependencies match lock | `composer install --no-dev --optimize-autoloader` | no "lock file is not up to date" |
 | Clean-room install | install into an empty directory, then `php artisan --version` | version prints |
 
-> **Status in this handover: NOT DONE.** `composer.lock` could not be generated
-> in the delivery environment because `repo.packagist.org` was unreachable
-> (`ECONNRESET`). Run all four commands above on a host with network access and
-> commit the resulting `composer.lock`. Until it exists, "reproducible install"
-> is unproven.
+> **Status in this handover: BLOCKED, and documented in detail.**
+> `composer.lock` could not be generated in the delivery environment. There is no
+> `composer` binary, and every package repository tried — `repo.packagist.org`,
+> `packagist.org`, `getcomposer.org`, and four mirrors — fails the TLS handshake
+> at the egress boundary (`SSL_ERROR_SYSCALL` immediately after Client hello, so
+> TCP connects but the connection is cut). Only `api.github.com` and
+> `registry.npmjs.org` are allowed, and neither is a PHP package index.
+>
+> `vendor/` exists in the sandbox but is **not** Composer output: package
+> directories are flattened (`laravel--framework`, not `laravel/framework`),
+> there is no `vendor/composer/` at all, and the tree is gitignored. It cannot be
+> back-converted into a lock file, which needs a dist URL, a source commit and a
+> content hash per package.
+>
+> **No lock file was fabricated** — inventing the metadata would pass a glance,
+> fail `composer install` on this host, and assert a reproducibility that was
+> never established. Run the four commands above on a host with egress to
+> `repo.packagist.org` and commit the result. Until it exists, "reproducible
+> install" is unproven.
+>
+> Full reasoning, probe results and closure procedure:
+> `docs/COMPOSER_LOCK_ACCEPTANCE.md`. Validator:
+> `node tools/checks/composer-lock-acceptance.mjs`.
 
 ## 4. MySQL / MariaDB
 
@@ -255,7 +273,8 @@ php artisan vira:backup --path=<dir>              # dir must be OUTSIDE public/
 php artisan vira:backup --no-prune                # keep every container
 ```
 
-Verified by `tools/checks/backup-hardening.mjs` (**16/16**):
+Verified by `tools/checks/backup-hardening.mjs` (**16/16**) and
+`tools/checks/backup-driver-matrix.mjs` (**22/22**):
 
 | Check | Result |
 |---|---|
@@ -286,21 +305,45 @@ No cron daemon, no init system (`systemctl` → `Failed to connect to bus`), and
 Verify by allowing two cycles and confirming two containers plus a growing audit
 trail — not by reading the crontab.
 
-### 13.2 Backup on MySQL — DEFECT, blocks cutover
+### 13.2 Backup on MySQL — defect FIXED, success path still BLOCKED
 
-`vira:backup` uses the native `SQLite3` API and reads
-`database.connections.sqlite.database`, **not** the default connection. On a
-MySQL deployment that value is a schema name, not a path, and the live database
-is never consulted.
+**The defect is closed** (`884e68e`). `vira:backup` no longer reads
+`database.connections.sqlite.database`; it asks the live connection for its driver
+and selects a strategy. On a MySQL deployment it now uses `mysqldump` through
+`proc_open`, and when `mysqldump` is absent it **refuses before writing
+anything** instead of producing a file from a schema name:
 
-```bash
-DB_CONNECTION=mysql DB_DATABASE=vira_prod php tools/checks/backup-driver-probe.php
-# → RESULT: MISMATCH, exit 1
+```
+backup REFUSED: mysqldump was not found on PATH (checked "mysqldump" and
+MYSQLDUMP_PATH). …
+Nothing was written. No previous backup was deleted.
 ```
 
-**Do not switch `DB_CONNECTION` to mysql until a driver-aware backup strategy
-exists and has been tested against a real server.** See
-`docs/MYSQL_COMPATIBILITY_REPORT.md` §3.
+Exit 1, destination directory not created. Full detail in
+`docs/MYSQL_BACKUP_REMEDIATION.md`.
+
+**What is still open:** the MySQL *success* path has never run, because no MySQL
+server and no `mysqldump` binary exist in this environment. Before relying on it:
+
+```bash
+php artisan vira:backup --path=/var/backups/vira-check
+# expect: format : mysqldump (mysql), with a row count matching the live database
+```
+
+Then prove the dump restores into a **separate empty schema** and contains
+`INSERT INTO` rows — see `docs/CUTOVER_RUNBOOK.md` §7.3. This is matrix rows
+M-39..M-41, marked **BLOCKED**, not passed.
+
+Prerequisites on the production host:
+
+| Requirement | Check |
+|---|---|
+| `mysqldump` on PATH (or `MYSQLDUMP_PATH`) | `command -v mysqldump` |
+| `proc_open` not disabled | `php -r 'var_dump(function_exists("proc_open"));'` |
+| InnoDB tables | `SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='vira';` — `--single-transaction` does not give a consistent snapshot of MyISAM |
+
+**Do not treat a container's existence as proof it holds the database.** That is
+the exact assumption the original defect exploited.
 
 ## 14. Restore
 

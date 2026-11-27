@@ -139,6 +139,23 @@ for (const [id, destination, label] of [
 check('BDM-12', !fs.existsSync(path.join(ROOT, 'public/backups')),
   `public/backups does not exist after the attempts`);
 
+/*
+ * A symlink is the traversal case a string prefix test cannot see. The guard
+ * resolves realpath, so it should be caught — but "should be" is the reasoning
+ * that let the original defect ship, so it is executed.
+ */
+const linkDir = path.join(work, 'link-to-public');
+fs.symlinkSync(path.join(ROOT, 'public'), linkDir);
+const linkRun = await artisan({ VIRA_BACKUP_KEY: KEY },
+  ['vira:backup', `--path=${path.relative(ROOT, linkDir)}/leaked`, '--no-prune']);
+
+check('BDM-12b', exitOf(linkRun.out) === 1 && /document root/.test(linkRun.out),
+  `a symlink pointing into the document root is refused (exit 1) — realpath resolves it, `
+  + `which a plain prefix test would not`);
+
+check('BDM-12c', !fs.existsSync(path.join(ROOT, 'public/leaked')),
+  `nothing was created inside public/ through the symlink`);
+
 /* ═══ 6. Wrong key on restore → refused, target unchanged ══════════════ */
 
 const container = path.join(outDir, containers[0]);
