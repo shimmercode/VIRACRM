@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ContractStatus;
 use App\Models\Contract;
 use App\Models\Customer;
+use App\Models\Note;
 use App\Models\Project;
 use App\Models\Setting;
 use App\Models\WorkItem;
@@ -81,9 +82,28 @@ class DashboardController extends Controller
                 ->get()
             : collect();
 
+        /*
+         * §8 «امکان ثبت یادداشت آزاد توسط مدیر در داشبورد» and §2's
+         * «کارهای مهم و نزدیک به سررسید». Notes carry a due date and a priority
+         * like any other task, and the کارتابل above only covers scheduled
+         * invoices and reports — so an open note with a deadline was visible
+         * nowhere on the landing page.
+         *
+         * NULL due dates sort last: a note with no deadline is not more urgent
+         * than one due yesterday.
+         */
+        $openNotes = $user->hasPermission('notes.view')
+            ? Note::query()
+                ->where('status', 'open')
+                ->orderByRaw('due_date is null, due_date')
+                ->limit(8)
+                ->get()
+            : collect();
+
         return view('dashboard', [
             'counts' => $counts,
             'buckets' => $buckets,
+            'openNotes' => $openNotes,
             'doneThisMonth' => $doneThisMonth,
             'expiring' => $expiring,
             'warningDays' => $warningDays,

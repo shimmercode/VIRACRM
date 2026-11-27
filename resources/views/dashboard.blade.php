@@ -161,12 +161,40 @@
                 </div>
             </section>
         @endif
-    </div>
 
-    {{-- Honest note about scope: the remaining modules are real parts of the
-         document that are not built yet. Saying so is better than a dashboard
-         tile that pretends otherwise. --}}
-    <p class="v-note">
-        ماژول‌های پروژه، دسترسی‌های پروژه، پرسنل، حقوق و دستمزد و گزارش‌ها در مرحلهٔ بعد فعال می‌شوند.
-    </p>
+        {{-- §8 — open notes with their deadlines. Scheduled invoices and reports
+             have the کارتابل above; a free note the manager typed has a due date
+             and a priority too, and before this it appeared nowhere on the
+             landing page. --}}
+        @if (auth()->user()->hasPermission('notes.view'))
+            <section class="v-card">
+                <header class="v-card__head">
+                    <h2 class="v-card__title">یادداشت‌های باز</h2>
+                    <a class="v-btn v-btn--ghost v-btn--sm" href="{{ route('notes.index') }}">همهٔ یادداشت‌ها</a>
+                </header>
+                <div class="v-card__body">
+                    @if ($openNotes->isEmpty())
+                        <x-empty-state
+                            title="یادداشت بازی نیست"
+                            description="یادداشت تازه را از صفحهٔ یادداشت‌ها ثبت کنید."
+                            icon="document"
+                        />
+                    @else
+                        <ul class="v-list">
+                            @foreach ($openNotes as $note)
+                                <li>
+                                    <a href="{{ route('notes.edit', $note) }}">{{ $note->title }}</a>
+                                    @if ($note->due_date)
+                                        <span class="v-badge {{ $note->due_date->lt(now()->startOfDay()) ? 'v-badge--danger' : 'v-badge--neutral' }}">
+                                            <x-fa-date :value="$note->due_date" />
+                                        </span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+            </section>
+        @endif
+    </div>
 @endsection
