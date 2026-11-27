@@ -93,16 +93,38 @@ final class BackupDatabase extends Command
             return self::FAILURE;
         }
 
-        $databasePath = (string) config('database.connections.sqlite.database');
+        /*
+         * Resolve the source from the connection the application is ACTUALLY
+         * using — not from a config key naming a particular driver.
+         *
+         * This used to read `database.connections.sqlite.database` directly,
+         * which is correct only while the deployment is SQLite. Under
+         * DB_CONNECTION=mysql that key is the schema NAME, and the command
+         * treated it as a filesystem path: it neither backed up the live
+         * database nor refused. The factory now throws for any driver with no
+         * implemented strategy, before a directory is created.
+         */
+        try {
+            $source = \App\Services\Backup\Snapshot\SnapshotSourceFactory::fromContainer()->make();
+            $source->assertReady();
+        } catch (\App\Services\Backup\Snapshot\SnapshotUnavailable $e) {
+            $this->audit('backup_failed', 'بکاپ ناموفق: ' . $e->getMessage());
 
-        $this->line('database : ' . $databasePath);
+            $this->error('backup REFUSED: ' . $e->getMessage());
+            $this->line('Nothing was written. No previous backup was deleted.');
+
+            return self::FAILURE;
+        }
+
+        $this->line('database : ' . $source->describe());
+        $this->line('format   : ' . $source->format());
         $this->line('storage  : ' . storage_path('app'));
         $this->line('target   : ' . $destination);
 
         try {
             $builder = new \App\Services\Backup\BackupBuilder(
                 new BackupCipher($decoded),
-                $databasePath,
+                $source,
                 storage_path('app'),
             );
 
@@ -127,7 +149,8 @@ final class BackupDatabase extends Command
         $this->audit(
             'backup',
             sprintf(
-                'بکاپ موفق: %s (%s بایت، %d جدول، %d ردیف، %d فایل)',
+                'بکاپ موفق [%s]: %s (%s بایت، %d جدول، %d ردیف، %d فایل)',
+                (string) $result['format'],
                 basename((string) $result['path']),
                 number_format((int) $result['bytes']),
                 (int) $result['tables'],
@@ -136,8 +159,9 @@ final class BackupDatabase extends Command
             ),
         );
 
-        $this->info('backup written');
+        $this->info('backup written and verified');
         $this->line('  file   : ' . basename((string) $result['path']));
+        $this->line('  format : ' . (string) $result['format'] . ' (' . (string) $result['driver'] . ')');
         $this->line('  bytes  : ' . number_format((int) $result['bytes']));
         $this->line('  tables : ' . (int) $result['tables']);
         $this->line('  rows   : ' . (int) $result['rows']);

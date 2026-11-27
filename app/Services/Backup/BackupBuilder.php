@@ -2,8 +2,8 @@
 
 namespace App\Services\Backup;
 
+use App\Services\Backup\Snapshot\DatabaseSnapshotSource;
 use RuntimeException;
-use SQLite3;
 use ZipArchive;
 
 /**
@@ -13,23 +13,29 @@ use ZipArchive;
  * ----------------
  *   magic   "VIRABK1\n"
  *   header  one line of JSON + "\n"
- *   body    gzip( zip( manifest.json + database.sqlite + files/... ) )
+ *   body    gzip( zip( manifest.json + <database member> + files/... ) )
  *           encrypted with AES-256-GCM
  *
- * WHY NOTHING HERE SHELLS OUT
- * ---------------------------
- * docs/HOST_COMPATIBILITY.md marks SSH and cron BLOCKED and warns that `exec`
- * may be disabled outright. A backup that needed `sqlite3 .backup` or `tar`
- * would be a backup that cannot run on the host it is for. Every step below is
- * pure PHP: SQLite3::backup(), ZipArchive, gzencode, openssl — each of which
- * tools/checks/env-capabilities.php verifies at runtime.
+ * The database member is `database.sqlite` for a SQLite source and
+ * `database.sql` for a MySQL dump. Which one it is, and therefore which
+ * restorer may open the container, is recorded in the manifest under
+ * `database.format` and mirrored in the header. A restore that is handed the
+ * wrong kind refuses instead of installing something the target cannot read.
  *
- * WHY SQLite3::backup() AND NOT copy()
- * ------------------------------------
- * copy() takes no lock. A concurrent writer produces a torn file that may still
- * open and still pass `PRAGMA integrity_check`, which is the worst outcome: a
- * backup that looks restorable and is not. SQLite3::backup() is the online
- * backup API — it holds the read lock across the copy.
+ * WHY THE SOURCE IS AN OBJECT AND NOT A PATH
+ * ------------------------------------------
+ * This class used to take a `$databasePath` string and call `SQLite3::backup()`
+ * on it, with the path supplied from the SQLite config key regardless of which
+ * driver was active. Taking a `DatabaseSnapshotSource` instead means the
+ * decision "how is this database backed up" is made once, explicitly, from the
+ * live connection — and a driver with no strategy cannot reach this code at
+ * all. See Snapshot\SnapshotSourceFactory.
+ *
+ * WHAT "SUCCESS" MEANS HERE
+ * -------------------------
+ * The container is written, then RE-OPENED and verified through the same gates
+ * a restore uses, and only then renamed to its final name. A build that
+ * produces a file the restorer would reject is a failure, not a backup.
  */
 final class BackupBuilder
 {
@@ -48,20 +54,31 @@ final class BackupBuilder
 
     public function __construct(
         private readonly BackupCipher $cipher,
-        private readonly string $databasePath,
+        private readonly DatabaseSnapshotSource $source,
         private readonly string $storagePath,
     ) {
     }
 
     /**
-     * @return array{path:string,bytes:int,rows:int,tables:int,files:int,sha256:string}
+     * @return array{path:string,bytes:int,rows:int,tables:int,files:int,sha256:string,format:string,driver:string}
      */
     public function build(string $destinationDirectory): array
     {
         if (! BackupCipher::supports()) {
             throw new RuntimeException('aes-256-gcm unavailable; refusing to build an unauthenticated backup.');
         }
-        if (! is_dir($destinationDirectory) && ! mkdir($destinationDirectory, 0750, true) && ! is_dir($destinationDirectory)) {
+
+        /* Readiness first — before a directory is created or a byte written.
+         * A strategy that cannot run (missing mysqldump, unsupported driver,
+         * proc_open disabled, unreadable database) must fail here so that
+         * nothing downstream can be mistaken for progress. */
+        $this->source->assertReady();
+
+        /* @-suppressed deliberately: a destination that cannot be created is an
+         * expected, tested outcome (an unwritable or read-only target), and the
+         * refusal below is what the operator needs to see — not a PHP warning
+         * above it. The exception carries the real information. */
+        if (! is_dir($destinationDirectory) && ! @mkdir($destinationDirectory, 0750, true) && ! is_dir($destinationDirectory)) {
             throw new RuntimeException("cannot create backup directory: {$destinationDirectory}");
         }
 
@@ -71,15 +88,20 @@ final class BackupBuilder
         }
 
         try {
-            $snapshot = $work . '/database.sqlite';
-            $stats = $this->snapshotDatabase($snapshot);
+            $snapshotMember = $this->source->member();
+            $snapshot = $work . '/' . $snapshotMember;
+            $stats = $this->source->snapshot($snapshot);
 
             $files = $this->collectStorageFiles();
 
             $manifest = [
-                'version' => 1,
+                'version' => 2,
                 'created_at' => gmdate('c'),
                 'database' => [
+                    'format' => $this->source->format(),
+                    'driver' => $this->source->driver(),
+                    'source' => $this->source->describe(),
+                    'member' => $snapshotMember,
                     'sha256' => hash_file('sha256', $snapshot),
                     'bytes' => filesize($snapshot),
                     'tables' => $stats['tables'],
@@ -94,7 +116,7 @@ final class BackupBuilder
                 throw new RuntimeException('cannot create payload archive');
             }
 
-            $zip->addFile($snapshot, 'database.sqlite');
+            $zip->addFile($snapshot, $snapshotMember);
 
             foreach ($files as $absolute => $relative) {
                 $zip->addFile($absolute, 'files/' . $relative);
@@ -142,6 +164,10 @@ final class BackupBuilder
                 'manifest_sha256' => $manifestSha,
                 'payload_bytes' => strlen($gz),
                 'created_at' => $manifest['created_at'],
+                /* Mirrored here so a restorer can reject an incompatible
+                 * container from the header alone, without decrypting. */
+                'database_format' => $manifest['database']['format'],
+                'database_driver' => $manifest['database']['driver'],
                 'contents' => [
                     'database_bytes' => $manifest['database']['bytes'],
                     'database_tables' => $manifest['database']['tables'],
@@ -166,6 +192,44 @@ final class BackupBuilder
                 throw new RuntimeException("cannot write {$partial}");
             }
 
+            /* ── verify what was written, before it is called a backup ──────
+             *
+             * Requirement 1.6: validate integrity and encryption BEFORE
+             * reporting success. The container is handed to the same restorer a
+             * recovery would use. If the restorer would reject it, so do we —
+             * while the .partial name still makes the file unusable, so a bad
+             * container can never sit in the directory looking restorable.
+             */
+            $verification = (new BackupRestorer($this->cipher))->verifyDeep($partial);
+
+            if (! $verification['ok']) {
+                @unlink($partial);
+
+                throw new RuntimeException(sprintf(
+                    'the container was written but FAILED verification at gate %d (%s). '
+                    . 'Nothing was kept; this is not a backup.',
+                    (int) $verification['gate'],
+                    (string) $verification['error'],
+                ));
+            }
+
+            /* And the verified file must describe the same database we read. */
+            $verifiedRows = (int) ($verification['manifest']['database']['rows'] ?? -1);
+            $verifiedFormat = (string) ($verification['manifest']['database']['format'] ?? '');
+
+            if ($verifiedFormat !== $this->source->format() || $verifiedRows !== (int) $stats['rows']) {
+                @unlink($partial);
+
+                throw new RuntimeException(sprintf(
+                    'verification disagrees with what was read: expected %s/%d rows, '
+                    . 'the container holds %s/%d. Refusing to report this as a backup.',
+                    $this->source->format(),
+                    (int) $stats['rows'],
+                    $verifiedFormat,
+                    $verifiedRows,
+                ));
+            }
+
             $sha = hash_file('sha256', $partial);
             if (! rename($partial, $final)) {
                 @unlink($partial);
@@ -183,60 +247,12 @@ final class BackupBuilder
                 'tables' => $stats['tables'],
                 'files' => count($manifest['files']),
                 'sha256' => $sha,
+                'format' => $this->source->format(),
+                'driver' => $this->source->driver(),
             ];
         } finally {
             $this->removeTree($work);
         }
-    }
-
-    /**
-     * @return array{tables:int,rows:int}
-     */
-    private function snapshotDatabase(string $target): array
-    {
-        if (! file_exists($this->databasePath)) {
-            throw new RuntimeException("database not found: {$this->databasePath}");
-        }
-
-        /* Read-only handle: a backup must never be able to write to the source. */
-        $source = new SQLite3($this->databasePath, SQLITE3_OPEN_READONLY);
-        $dest = new SQLite3($target);
-
-        try {
-            if ($source->backup($dest) !== true) {
-                throw new RuntimeException('SQLite3::backup() failed');
-            }
-        } finally {
-            $source->close();
-        }
-
-        $tables = (int) $dest->querySingle(
-            "select count(*) from sqlite_master where type = 'table' and name not like 'sqlite_%'"
-        );
-
-        $rows = 0;
-        $result = $dest->query(
-            "select name from sqlite_master where type = 'table' and name not like 'sqlite_%'"
-        );
-        $names = [];
-        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $names[] = (string) $row['name'];
-        }
-        $result->finalize();
-
-        foreach ($names as $name) {
-            $rows += (int) $dest->querySingle('select count(*) from "' . str_replace('"', '""', $name) . '"');
-        }
-
-        /* A snapshot that fails its own integrity check must not ship. */
-        $integrity = (string) $dest->querySingle('PRAGMA integrity_check');
-        $dest->close();
-
-        if ($integrity !== 'ok') {
-            throw new RuntimeException("snapshot failed integrity_check: {$integrity}");
-        }
-
-        return ['tables' => $tables, 'rows' => $rows];
     }
 
     /**

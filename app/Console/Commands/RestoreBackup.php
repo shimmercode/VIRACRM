@@ -110,7 +110,44 @@ final class RestoreBackup extends Command
             return self::SUCCESS;
         }
 
-        $databasePath = (string) config('database.connections.sqlite.database');
+        /*
+         * Where the restore lands, and what format it expects, both come from
+         * the live connection. A SQLite deployment gets its file replaced; a
+         * MySQL deployment cannot have its server overwritten by copying a file,
+         * so it refuses until a mysql-client restore path exists — rather than
+         * copying a dump over a path that is not a database.
+         */
+        $connection = app(\Illuminate\Database\DatabaseManager::class)->connection();
+        $driver = (string) $connection->getDriverName();
+
+        $targetFormat = match ($driver) {
+            'sqlite' => 'sqlite-file',
+            'mysql', 'mariadb' => 'mysqldump',
+            default => throw new \RuntimeException(
+                "no restore strategy is implemented for the \"{$driver}\" driver."
+            ),
+        };
+
+        $databasePath = (string) $connection->getDatabaseName();
+
+        $this->line('target driver : ' . $driver);
+        $this->line('target format : ' . $targetFormat);
+
+        if ($targetFormat === 'mysqldump') {
+            $this->error('restoring into a MySQL/MariaDB server is not implemented.');
+            $this->line('A restore there must be performed with the mysql client');
+            $this->line('(mysql --user=... --password=... <database> < the extracted .sql),');
+            $this->line('which this command cannot do safely without a live server to verify');
+            $this->line('against. Nothing was written.');
+            $this->warn('The container is verified and intact; the extraction is manual.');
+
+            $this->audit(
+                'restore_failed',
+                'بازیابی MySQL پشتیبانی نمی‌شود؛ فایل تأیید شد ولی چیزی نوشته نشد.',
+            );
+
+            return self::FAILURE;
+        }
 
         $this->warn('This replaces ' . $databasePath);
 
@@ -129,7 +166,7 @@ final class RestoreBackup extends Command
         }
 
         try {
-            $result = $restorer->restore($file, $databasePath, storage_path('app'));
+            $result = $restorer->restore($file, $databasePath, storage_path('app'), $targetFormat);
         } catch (\Throwable $e) {
             $this->audit('restore_failed', 'بازیابی ناموفق: ' . $e->getMessage());
 
@@ -157,6 +194,7 @@ final class RestoreBackup extends Command
         $this->line('  tables         : ' . (int) $result['tables']);
         $this->line('  rows           : ' . (int) $result['rows']);
         $this->line('  files restored : ' . (int) $result['files']);
+        $this->line('  format         : ' . (string) ($result['format'] ?? 'sqlite-file'));
 
         return self::SUCCESS;
     }

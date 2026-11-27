@@ -35,6 +35,13 @@ use ZipArchive;
  *  6 per-member sha256    — no single file inside was swapped or corrupted
  *  7 integrity_check      — the database itself is structurally sound
  *
+ * Gate 2 additionally carries a FORMAT check: a container records which database
+ * format it holds (`sqlite-file` or `mysqldump`), and a restore refuses to
+ * install one that does not match what it is being asked to restore into. That
+ * is a gate of its own in spirit — an incompatible container is exactly as
+ * unusable as a corrupt one, and the operator should be told which it is before
+ * anything is moved aside.
+ *
  * Gate 3 is the one CBC could not provide. Gates 5 and 6 are belt-and-braces:
  * GCM already covers them, but they turn "the file is bad" into "this specific
  * member is bad", which is the difference between a shrug and a diagnosis.
@@ -181,16 +188,30 @@ final class BackupRestorer
                 }
             }
 
+            /* The manifest is now the authority on which member holds the
+             * database. Container version 1 always used `database.sqlite`; a
+             * version 2 container names it, so a MySQL dump is not mistaken for
+             * a SQLite file. Defaulting to the old name keeps v1 containers
+             * restorable rather than orphaning them. */
+            $member = (string) ($v['manifest']['database']['member'] ?? 'database.sqlite');
+
             // ── gate 7: database integrity ───────────────────────────────
-            $dbPath = $extracted['database'];
-            $expectedDb = $v['manifest']['database']['sha256'] ?? null;
-            if ($expectedDb !== null && ! hash_equals((string) $expectedDb, (string) hash_file('sha256', $dbPath))) {
-                return $this->deepFail(7, 'database.sqlite failed its checksum');
+            $dbPath = $extracted['database'][$member] ?? null;
+
+            if ($dbPath === null) {
+                return $this->deepFail(7, "the archive does not contain the declared database member '{$member}'");
             }
 
-            $integrity = $this->integrityCheck($dbPath);
+            $expectedDb = $v['manifest']['database']['sha256'] ?? null;
+            if ($expectedDb !== null && ! hash_equals((string) $expectedDb, (string) hash_file('sha256', $dbPath))) {
+                return $this->deepFail(7, "{$member} failed its checksum");
+            }
+
+            $format = (string) ($v['manifest']['database']['format'] ?? 'sqlite-file');
+
+            $integrity = $this->integrityCheck($dbPath, $format);
             if ($integrity !== 'ok') {
-                return $this->deepFail(7, "database integrity_check: {$integrity}");
+                return $this->deepFail(7, "database integrity_check ({$format}): {$integrity}");
             }
 
             return ['ok' => true, 'gate' => null, 'error' => null, 'manifest' => $v['manifest'], 'header' => $v['header']];
@@ -202,16 +223,48 @@ final class BackupRestorer
     /**
      * Restore, but only after every gate has passed.
      *
-     * @return array{database:string,files:int,rows:int,tables:int}
+     * DRIVER AWARENESS
+     * ----------------
+     * `$targetFormat` is the format the DESTINATION expects, derived from the
+     * live connection (`sqlite-file` or `mysqldump`). It defaults to
+     * `sqlite-file` so every existing caller and every v1 container keeps the
+     * behaviour it had.
+     *
+     * The compatibility check runs before anything is moved aside. Installing a
+     * MySQL dump over a SQLite file would produce a "database" that no process
+     * can open, and the previous file would already have been renamed — the
+     * operator would be left with two unusable files and no clear cause. So an
+     * incompatible container is refused the same way a corrupt one is, and for
+     * the same reason.
+     *
+     * @return array{database:string,files:int,rows:int,tables:int,format:string}
      */
-    public function restore(string $containerPath, string $databasePath, string $storagePath): array
-    {
+    public function restore(
+        string $containerPath,
+        string $databasePath,
+        string $storagePath,
+        string $targetFormat = 'sqlite-file',
+    ): array {
         $deep = $this->verifyDeep($containerPath);
         if (! $deep['ok']) {
             throw new RuntimeException(
                 "restore refused at gate {$deep['gate']}: {$deep['error']}. "
                 . 'The destination was not modified.'
             );
+        }
+
+        $containerFormat = (string) ($deep['manifest']['database']['format'] ?? 'sqlite-file');
+
+        if ($containerFormat !== $targetFormat) {
+            throw new RuntimeException(sprintf(
+                'incompatible container: it holds a "%s" database but this host runs "%s". '
+                . 'Refusing before anything is written. Restore a %s container here, or '
+                . 'restore this one on a %s host.',
+                $containerFormat,
+                $targetFormat,
+                $targetFormat,
+                $containerFormat,
+            ));
         }
 
         $stage = rtrim(sys_get_temp_dir(), '/') . '/vira-rs-' . bin2hex(random_bytes(6));
@@ -233,7 +286,11 @@ final class BackupRestorer
             }
 
             try {
-                if (! copy($extracted['database'], $databasePath)) {
+                $member = (string) ($deep['manifest']['database']['member'] ?? 'database.sqlite');
+                $dbSource = $extracted['database'][$member]
+                    ?? throw new RuntimeException("the archive does not contain '{$member}'");
+
+                if (! copy($dbSource, $databasePath)) {
                     throw new RuntimeException("cannot install the restored database at {$databasePath}");
                 }
 
@@ -253,7 +310,7 @@ final class BackupRestorer
                     $installed++;
                 }
 
-                $integrity = $this->integrityCheck($databasePath);
+                $integrity = $this->integrityCheck($databasePath, $containerFormat);
                 if ($integrity !== 'ok') {
                     throw new RuntimeException("installed database failed integrity_check: {$integrity}");
                 }
@@ -263,6 +320,7 @@ final class BackupRestorer
                     'files' => $installed,
                     'rows' => (int) ($deep['manifest']['database']['rows'] ?? 0),
                     'tables' => (int) ($deep['manifest']['database']['tables'] ?? 0),
+                    'format' => $containerFormat,
                 ];
             } catch (\Throwable $e) {
                 /* Put the old database back. This is the whole reason it was
@@ -278,7 +336,9 @@ final class BackupRestorer
     }
 
     /**
-     * @return array{database:string,files:array<string,string>}
+     * @return array{database:array<string,string>,files:array<string,string>}
+     *         `database` is keyed by archive member name — a container holds
+     *         exactly one, either `database.sqlite` or `database.sql`.
      */
     private function extract(string $zipBytes, string $stage): array
     {
@@ -290,7 +350,9 @@ final class BackupRestorer
             throw new RuntimeException('payload archive will not open');
         }
 
-        $database = null;
+        /* Keyed by member name: the manifest says which one is the database, and
+         * the restorer must find exactly that rather than assuming SQLite. */
+        $databases = [];
         $files = [];
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -304,9 +366,10 @@ final class BackupRestorer
                 throw new RuntimeException("archive member escapes the staging directory: {$name}");
             }
 
-            if ($name === 'database.sqlite') {
-                $database = $stage . '/database.sqlite';
+            if ($name === 'database.sqlite' || $name === 'database.sql') {
+                $database = $stage . '/' . $name;
                 file_put_contents($database, (string) $zip->getFromIndex($i));
+                $databases[$name] = $database;
 
                 continue;
             }
@@ -332,15 +395,31 @@ final class BackupRestorer
 
         $zip->close();
 
-        if ($database === null) {
-            throw new RuntimeException('archive contains no database.sqlite');
+        if ($databases === []) {
+            throw new RuntimeException('archive contains no database member');
         }
 
-        return ['database' => $database, 'files' => $files];
+        return ['database' => $databases, 'files' => $files];
     }
 
-    private function integrityCheck(string $path): string
+    /**
+     * Structural validation, by format.
+     *
+     * SQLite: its own integrity_check, which is the definitive answer.
+     *
+     * MySQL dump: there is no local server to ask, so this validates what a dump
+     * must structurally contain — a mysqldump trailer, at least one CREATE TABLE,
+     * and balanced statement termination. That is NOT a substitute for restoring
+     * the dump into a real server, which is why real MySQL acceptance stays
+     * BLOCKED until somebody does that; it catches truncation and garbage, which
+     * is what this gate is for.
+     */
+    private function integrityCheck(string $path, string $format = 'sqlite-file'): string
     {
+        if ($format === 'mysqldump') {
+            return $this->mysqlDumpIntegrityCheck($path);
+        }
+
         try {
             $pdo = new PDO('sqlite:' . $path, null, null, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -350,6 +429,49 @@ final class BackupRestorer
         } catch (\Throwable $e) {
             return 'unreadable (' . $e->getMessage() . ')';
         }
+    }
+
+    /**
+     * Structural check of a mysqldump file.
+     *
+     * mysqldump ends every complete dump with "-- Dump completed on ...". Its
+     * absence is the reliable signature of a truncated file, which is the
+     * failure that otherwise survives to a restore.
+     */
+    private function mysqlDumpIntegrityCheck(string $path): string
+    {
+        $size = @filesize($path);
+
+        if ($size === false || $size === 0) {
+            return 'empty dump';
+        }
+
+        $handle = @fopen($path, 'rb');
+
+        if ($handle === false) {
+            return 'unreadable dump';
+        }
+
+        $head = (string) fread($handle, 4096);
+
+        /* Read the tail without loading a multi-hundred-megabyte file whole. */
+        fseek($handle, max(0, $size - 65536));
+        $tail = (string) fread($handle, 65536);
+        fclose($handle);
+
+        if (! str_contains($head, 'MySQL dump')) {
+            return 'not a mysqldump file (no header)';
+        }
+
+        if (! str_contains($tail, 'Dump completed')) {
+            return 'truncated dump (no completion trailer)';
+        }
+
+        if (! preg_match('/^CREATE TABLE /m', $tail) && ! str_contains($head . $tail, 'CREATE TABLE')) {
+            return 'dump contains no CREATE TABLE';
+        }
+
+        return 'ok';
     }
 
     /** @return array{ok:bool,gate:int,error:string,manifest:null,header:null} */

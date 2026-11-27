@@ -6,6 +6,7 @@ use App\Services\Backup\BackupBuilder;
 use App\Services\Backup\BackupCipher;
 use App\Services\Backup\BackupRestorer;
 use App\Services\Backup\RetentionPolicy;
+use App\Services\Backup\Snapshot\SqliteSnapshotSource;
 use RuntimeException;
 use Tests\Support\DatabaseHarness;
 use Tests\ViraTestCase;
@@ -106,11 +107,15 @@ final class BackupRestoreTest extends ViraTestCase
 
     // ── helpers ─────────────────────────────────────────────────────────
 
-    private function builder(): BackupBuilder
+    private function builder(?string $databasePath = null): BackupBuilder
     {
+        /* The builder now takes a strategy object rather than a path. For the
+         * SQLite tests that is SqliteSnapshotSource over the harness database;
+         * the driver is named explicitly here because these tests are about the
+         * SQLite path specifically. */
         return new BackupBuilder(
             new BackupCipher(base64_decode($this->backupKey, true)),
-            $this->db->path,
+            new SqliteSnapshotSource($databasePath ?? $this->db->path),
             $this->storageRoot,
         );
     }
