@@ -491,7 +491,7 @@ re-run with one command. Evidence strings are reproduced verbatim from
 |---|---|---|---|---|
 | `REQ-01.01` | استقلال کامل نرم‌افزار از وردپرس | ۱ | P0 | — |
 | `REQ-01.02` | دیتابیس مستقل و ساب‌دامین مستقل | ۱ | P0 | — |
-| `REQ-02.02` | کارتابل تفکیک‌شده | ۲ | P1 | — |
+| `REQ-02.02` | کارتابل تفکیک‌شده | ۲ | P1 | tools/checks/work-item-flow.mjs; tools/checks/run-all.mjs |
 | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | ۲ | P1 | tools/checks/phase4-integration.mjs P4-G3: every alert on the dashboard is a link to the record it warns about, not a count — کارتابل tasks → /work-it… |
 | `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | ۲ | P1 | — |
 | `REQ-02.05` | داشبورد خلوت و کاربردی | ۲ | P1 | — |

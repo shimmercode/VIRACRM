@@ -26,8 +26,8 @@
  ],
  "REQ-02.02": [
   "VERIFIED",
-  "کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28",
-  "—"
+  "کارتابل page + completion: tools/checks/work-item-flow.mjs 13/13 (run in the roster)",
+  "tools/checks/work-item-flow.mjs; tools/checks/run-all.mjs"
  ],
  "REQ-02.03": [
   "VERIFIED",

@@ -164,6 +164,24 @@ TRUSTED_PROXIES=<proxy ip or cidr>
 their address and walk straight past IP throttling. Unset means "trust nothing",
 which is the safe default.
 
+All three cases are executed, not asserted — `tools/checks/security-deployment.mjs`
+(**16/16**):
+
+| Case | Observed `last_login_ip` |
+|---|---|
+| `TRUSTED_PROXIES` unset, client sends `X-Forwarded-For: 203.0.113.9` | `127.0.0.1` — the forwarded value is ignored |
+| `TRUSTED_PROXIES=10.0.0.5`, request arrives **from** `10.0.0.5` | `203.0.113.9` — the real client |
+| `TRUSTED_PROXIES=10.0.0.5`, request arrives from `198.51.100.7` carrying the same forged header | `198.51.100.7` — the forgery is ignored |
+
+The third row is why the value must never be `*`: with a wildcard, that last
+case would record `203.0.113.9`, an address the caller invented.
+
+> Note: until this round the harness **could not test any of this**. It set
+> `$_SERVER['REMOTE_ADDR']` and then built the request with
+> `Request::create()`, which ignores the superglobal and defaults the address to
+> `127.0.0.1` — so every such assertion would have passed on the default. Fixed
+> in `tools/http-render.php` by setting the request's server bag.
+
 ## 9. Session cookie security
 
 Proved by `tools/checks/security-headers.mjs` (16/16):
@@ -237,7 +255,7 @@ php artisan vira:backup --path=<dir>              # dir must be OUTSIDE public/
 php artisan vira:backup --no-prune                # keep every container
 ```
 
-Verified by `tools/checks/backup-hardening.mjs` (13/13):
+Verified by `tools/checks/backup-hardening.mjs` (**16/16**):
 
 | Check | Result |
 |---|---|
@@ -250,6 +268,39 @@ Verified by `tools/checks/backup-hardening.mjs` (13/13):
 | Wrong key on restore | exit 1, `restore_failed` audit row |
 | One flipped bit | exit 1, audited — the GCM tag catches it before anything is written |
 | Real restore | exit 0, row counts reconcile across all tables |
+| Fingerprint equality | **all 56 data tables identical** between source and restored copy (485 rows); only `audit_logs` differs, because `backup_ok`/`restore_ok` record the operations |
+| Relationships | `pragma foreign_key_check` clean; 0 orphan contracts, 0 orphan work items |
+| Failed restore | wrong key → exit 1, **0 data tables changed**, `restore_failed` audited — a bad container cannot half-overwrite a good database |
+| Traversal / symlink | `public/../public/backups` and a symlink into `public/` both refused — the destination is judged by `realpath()` |
+
+### 13.1 Scheduled backup — NOT VERIFIED here
+
+No cron daemon, no init system (`systemctl` → `Failed to connect to bus`), and
+`/etc/cron.d` is root-owned with nothing running. The schedule entry below is
+**unexecuted** and must be installed and observed on the production host:
+
+```cron
+0 2 * * * vira  cd /var/www/vira && php artisan vira:backup --no-interaction >> storage/logs/backup.log 2>&1
+```
+
+Verify by allowing two cycles and confirming two containers plus a growing audit
+trail — not by reading the crontab.
+
+### 13.2 Backup on MySQL — DEFECT, blocks cutover
+
+`vira:backup` uses the native `SQLite3` API and reads
+`database.connections.sqlite.database`, **not** the default connection. On a
+MySQL deployment that value is a schema name, not a path, and the live database
+is never consulted.
+
+```bash
+DB_CONNECTION=mysql DB_DATABASE=vira_prod php tools/checks/backup-driver-probe.php
+# → RESULT: MISMATCH, exit 1
+```
+
+**Do not switch `DB_CONNECTION` to mysql until a driver-aware backup strategy
+exists and has been tested against a real server.** See
+`docs/MYSQL_COMPATIBILITY_REPORT.md` §3.
 
 ## 14. Restore
 
