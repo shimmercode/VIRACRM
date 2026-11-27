@@ -107,6 +107,7 @@ const SUITES = (() => {
   // in one FormRequest made every customer create return 500 while the suite
   // stayed green: the narrower tests asserted a row existed, and seeded rows
   // exist whether or not the POST worked.
+  { id: 'navigation-clarity', label: 'Every enabled sidebar entry reaches a real page; no false coming-soon', kind: 'node', script: 'tools/checks/navigation-clarity.mjs', required: true },
   { id: 'route-smoke', label: 'Every GET and POST route responds without a fatal', kind: 'node', script: 'tools/checks/route-smoke.mjs', required: true },
   // Composer state: what is declared vs installed, and the absent lock file.
   // A missing lock is a reproducibility risk, so it is asserted, not noted.

@@ -64,13 +64,21 @@ return [
             'enabled' => true,
         ],
 
+        /*
+         * Project credentials are SCOPED TO A PROJECT — `credentials.index` takes
+         * a `{project}` parameter, so there is no single page this could link to.
+         * It used to carry the note «به‌زودی» ("coming soon"), which was untrue:
+         * the feature has been built and working under every project. The note
+         * now says where it actually lives, which is the honest thing to show a
+         * user who goes looking for it here.
+         */
         [
             'label' => 'دسترسی‌های پروژه',
             'icon' => 'key',
             'route' => null,
             'permission' => 'credentials.view',
             'enabled' => false,
-            'note' => 'به‌زودی',
+            'note' => 'از صفحهٔ پروژه',
         ],
 
         // ── Review Environment entry ─────────────────────────────────────
@@ -115,13 +123,19 @@ return [
             'enabled' => true,
         ],
 
+        /*
+         * «گزارش‌ها» was a routeless stub marked «به‌زودی», directly above three
+         * WORKING report entries (contracts, workload, work items). A client
+         * reading the sidebar concluded reporting was unbuilt while three
+         * separate «گزارش …» links sat underneath it. It now leads to the report
+         * area instead of contradicting it.
+         */
         [
             'label' => 'گزارش‌ها',
             'icon' => 'chart',
-            'route' => null,
+            'route' => 'reports.contracts',
             'permission' => 'reports.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'enabled' => true,
         ],
 
         // EXP-NOTE-001 — no longer a placeholder.
@@ -151,13 +165,21 @@ return [
             'enabled' => true,
         ],
 
+        /*
+         * Users and roles ARE implemented (settings/roles is enabled further
+         * down this list as «نقش‌ها و مجوزها»). This entry claimed «به‌زودی»,
+         * which told a client the opposite of the truth. It now points at the
+         * same working screen. The duplication is deliberate and temporary: a
+         * single top-level "users" entry versus a settings-section entry is a
+         * product decision that has not been taken, and deleting either would
+         * be changing the navigation architecture without authorization.
+         */
         [
             'label' => 'کاربران و نقش‌ها',
             'icon' => 'user',
-            'route' => null,
-            'permission' => 'users.view',
-            'enabled' => false,
-            'note' => 'به‌زودی',
+            'route' => 'settings.roles.index',
+            'permission' => 'users.manage',
+            'enabled' => true,
         ],
 
         [
