@@ -103,7 +103,18 @@ class PayrollController extends Controller
             'jalali_year' => $data['jalali_year'],
             'jalali_month' => $data['jalali_month'],
             'state' => 'draft',
-            'payroll_rule_id' => PayrollRule::query()->where('is_active', true)->value('id'),
+            /*
+             * Both flags, not just `is_active`. PayrollRule::isUsable() is the
+             * documented contract — a rule that has not been approved must not
+             * be stamped onto payslips, or the approval gate would only stop
+             * rules nobody was creating anyway. Picking the lowest id keeps the
+             * choice deterministic when more than one rule is usable.
+             */
+            'payroll_rule_id' => PayrollRule::query()
+                ->where('is_active', true)
+                ->where('is_approved', true)
+                ->orderBy('id')
+                ->value('id'),
         ]);
 
         AuditRecorder::record('payroll.period_created', $period, 'ایجاد دورهٔ حقوق ' . $period->title());

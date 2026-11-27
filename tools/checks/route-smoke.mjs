@@ -94,6 +94,13 @@ const TABLES = {
   // resolved, and skipping the route would hide exactly the gap this suite
   // exists to close.
   seoPackage: 'seo_packages',
+  // §15 configuration screens. All five tables are seeded, so the inventory can
+  // resolve a real row for each and the route is exercised rather than skipped.
+  contractType: 'contract_types',
+  projectType: 'project_types',
+  accessRequirement: 'credential_requirements',
+  payrollRule: 'payroll_rules',
+  role: 'roles',
   keyword: 'project_keywords',
   assignment: 'project_assignments',
 };

@@ -3,6 +3,11 @@
 use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Reports\ContractReportController;
 use App\Http\Controllers\Reports\ExpertWorkloadController;
+use App\Http\Controllers\Settings\AccessRequirementController;
+use App\Http\Controllers\Settings\ContractTypeController;
+use App\Http\Controllers\Settings\PayrollRuleController;
+use App\Http\Controllers\Settings\ProjectTypeController;
+use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SeoPackageController;
 use App\Http\Controllers\Settings\SettingController;
 use App\Http\Controllers\Auth\LoginController;
@@ -114,6 +119,116 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('permission:settings.manage')->name('update');
             Route::delete('/{seoPackage}', [SeoPackageController::class, 'destroy'])
                 ->middleware('permission:settings.manage')->name('destroy');
+        });
+
+        /*
+         * §15 / REQ-15.01 — «تعریف انواع قرارداد».
+         *
+         * `contract_types` was seeded and read by ContractController and
+         * ContractTemplateController, so the list was already doing real work;
+         * what never existed was a way to change it. A type in use is retired
+         * rather than deleted: the FK is ON DELETE SET NULL, so a delete would
+         * wipe the type off every contract written on it.
+         */
+        Route::prefix('settings/contract-types')->name('settings.contract-types.')->group(function () {
+            Route::get('/', [ContractTypeController::class, 'index'])
+                ->middleware('permission:settings.view')->name('index');
+            Route::get('/create', [ContractTypeController::class, 'create'])
+                ->middleware('permission:settings.manage')->name('create');
+            Route::post('/', [ContractTypeController::class, 'store'])
+                ->middleware('permission:settings.manage')->name('store');
+            Route::get('/{contractType}/edit', [ContractTypeController::class, 'edit'])
+                ->middleware('permission:settings.manage')->name('edit');
+            Route::put('/{contractType}', [ContractTypeController::class, 'update'])
+                ->middleware('permission:settings.manage')->name('update');
+            Route::delete('/{contractType}', [ContractTypeController::class, 'destroy'])
+                ->middleware('permission:settings.manage')->name('destroy');
+        });
+
+        /*
+         * §15 / REQ-15.01 — «تعریف انواع پروژه».
+         *
+         * `project_types` was seeded and read by nothing; the form and the
+         * validator both used the Project::TYPES constant, so the table was an
+         * uneditable copy of a constant. ProjectType::options() now feeds both.
+         */
+        Route::prefix('settings/project-types')->name('settings.project-types.')->group(function () {
+            Route::get('/', [ProjectTypeController::class, 'index'])
+                ->middleware('permission:settings.view')->name('index');
+            Route::get('/create', [ProjectTypeController::class, 'create'])
+                ->middleware('permission:settings.manage')->name('create');
+            Route::post('/', [ProjectTypeController::class, 'store'])
+                ->middleware('permission:settings.manage')->name('store');
+            Route::get('/{projectType}/edit', [ProjectTypeController::class, 'edit'])
+                ->middleware('permission:settings.manage')->name('edit');
+            Route::put('/{projectType}', [ProjectTypeController::class, 'update'])
+                ->middleware('permission:settings.manage')->name('update');
+            Route::delete('/{projectType}', [ProjectTypeController::class, 'destroy'])
+                ->middleware('permission:settings.manage')->name('destroy');
+        });
+
+        /*
+         * §15 / REQ-15.01 — «فهرست دسترسی‌های الزامی», which is also §6's
+         * finalisation gate in editable form: FinalizationGate::blockingFor()
+         * reads credential_requirements on every gated save.
+         */
+        Route::prefix('settings/access-requirements')->name('settings.access-requirements.')->group(function () {
+            Route::get('/', [AccessRequirementController::class, 'index'])
+                ->middleware('permission:settings.view')->name('index');
+            Route::get('/create', [AccessRequirementController::class, 'create'])
+                ->middleware('permission:settings.manage')->name('create');
+            Route::post('/', [AccessRequirementController::class, 'store'])
+                ->middleware('permission:settings.manage')->name('store');
+            Route::get('/{accessRequirement}/edit', [AccessRequirementController::class, 'edit'])
+                ->middleware('permission:settings.manage')->name('edit');
+            Route::put('/{accessRequirement}', [AccessRequirementController::class, 'update'])
+                ->middleware('permission:settings.manage')->name('update');
+            Route::delete('/{accessRequirement}', [AccessRequirementController::class, 'destroy'])
+                ->middleware('permission:settings.manage')->name('destroy');
+        });
+
+        /*
+         * §15 / REQ-15.01 — «نحوه محاسبه حقوق». The screen records and approves
+         * a rule; it does not create a formula. Client decision OD-16 fixes the
+         * method at salary plus manual lines, and PayrollRule::METHODS holds
+         * exactly that one entry.
+         */
+        Route::prefix('settings/payroll-rules')->name('settings.payroll-rules.')->group(function () {
+            Route::get('/', [PayrollRuleController::class, 'index'])
+                ->middleware('permission:settings.view')->name('index');
+            Route::get('/create', [PayrollRuleController::class, 'create'])
+                ->middleware('permission:settings.manage')->name('create');
+            Route::post('/', [PayrollRuleController::class, 'store'])
+                ->middleware('permission:settings.manage')->name('store');
+            Route::get('/{payrollRule}/edit', [PayrollRuleController::class, 'edit'])
+                ->middleware('permission:settings.manage')->name('edit');
+            Route::put('/{payrollRule}', [PayrollRuleController::class, 'update'])
+                ->middleware('permission:settings.manage')->name('update');
+            Route::delete('/{payrollRule}', [PayrollRuleController::class, 'destroy'])
+                ->middleware('permission:settings.manage')->name('destroy');
+        });
+
+        /*
+         * §15 / REQ-15.01 — «نقش‌ها و مجوزهای کاربران».
+         *
+         * Behind `users.manage`, which no seeded role holds, so only a
+         * superadmin can reach it. RoleRequest additionally refuses to hand out
+         * a permission the actor does not hold, so widening access to this
+         * screen later cannot become a way to widen one's own access.
+         */
+        Route::prefix('settings/roles')->name('settings.roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])
+                ->middleware('permission:users.manage')->name('index');
+            Route::get('/create', [RoleController::class, 'create'])
+                ->middleware('permission:users.manage')->name('create');
+            Route::post('/', [RoleController::class, 'store'])
+                ->middleware('permission:users.manage')->name('store');
+            Route::get('/{role}/edit', [RoleController::class, 'edit'])
+                ->middleware('permission:users.manage')->name('edit');
+            Route::put('/{role}', [RoleController::class, 'update'])
+                ->middleware('permission:users.manage')->name('update');
+            Route::delete('/{role}', [RoleController::class, 'destroy'])
+                ->middleware('permission:users.manage')->name('destroy');
         });
 
         /*

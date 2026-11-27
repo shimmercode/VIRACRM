@@ -81,6 +81,22 @@ trait HasDomainConstraints
 
         foreach ($this->domainColumns() as $column => $constant) {
             /*
+             * A column whose allowed set lives in the database rather than in a
+             * constant — `projects.type` is decided by the `project_types`
+             * table, because §15 makes the type list something the owner edits.
+             * Only a non-string callable is treated as dynamic: a string is
+             * always a constant name, so no existing model changes meaning and
+             * a constant that happens to share a name with a global function
+             * cannot be mistaken for one.
+             */
+            if (is_callable($constant) && ! is_string($constant)) {
+                $allowed = $constant();
+                $domains[$column] = is_array($allowed) ? array_keys($allowed) : [];
+
+                continue;
+            }
+
+            /*
              * `constant()` is a global function, not a model method — writing
              * `static::constant(...)` here produced "Call to undefined method"
              * on the first const-backed model. The FQN form also silences any

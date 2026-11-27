@@ -20,4 +20,32 @@ class ProjectType extends Model
     {
         return ['is_active' => 'boolean'];
     }
+
+    /**
+     * The selectable project types, as `code => title`.
+     *
+     * This is what the project form offers and what the request validates
+     * against, so retiring a type here really does stop new projects of that
+     * kind. `Project::TYPES` stays the behavioural map — it is what decides
+     * which detail fieldset a type has and which accesses block finalisation —
+     * and it is also the fallback below.
+     *
+     * The fallback matters: if every type were deactivated at once the project
+     * form would render an empty required select and no project could be
+     * created at all, with no way back except the database. Falling back to the
+     * two built-in kinds keeps the product usable after that mistake, while a
+     * partial deactivation (the normal case) takes effect immediately.
+     *
+     * @return array<string, string>
+     */
+    public static function options(): array
+    {
+        $rows = static::query()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->pluck('title', 'code')
+            ->all();
+
+        return $rows === [] ? Project::TYPES : $rows;
+    }
 }

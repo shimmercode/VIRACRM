@@ -101,7 +101,12 @@ final class FinalizationGate
     {
         $titles = array_map(static fn (CredentialType $t) => '«' . $t->title . '»', $missing);
 
-        return 'پروژه سئو بدون تکمیل دسترسی‌های اجباری قابل فعال‌سازی نیست. موارد ناقص: '
+        /*
+         * Not «پروژه سئو». Which types are gated is data — credential_requirements
+         * is keyed by project_type and the client can require accesses for any
+         * type — so a message that names one type would be a lie for every other.
+         */
+        return 'پروژه بدون تکمیل دسترسی‌های اجباری قابل فعال‌سازی نیست. موارد ناقص: '
             . implode('، ', $titles)
             . '. پروژه را به‌صورت پیش‌نویس ذخیره کنید و پس از ثبت دسترسی‌ها آن را فعال کنید.';
     }

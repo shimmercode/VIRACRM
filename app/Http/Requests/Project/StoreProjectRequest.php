@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Project;
 
 use App\Models\Project;
+use App\Models\ProjectType;
 use App\Models\SeoProjectDetail;
 use App\Support\JalaliDate;
 use App\Support\Money;
@@ -39,7 +40,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'customer_id' => ['required', 'integer', 'exists:customers,id'],
             'contract_id' => ['nullable', 'integer', 'exists:contracts,id'],
-            'type' => ['required', Rule::in(array_keys(Project::TYPES))],
+            'type' => ['required', Rule::in(array_keys(ProjectType::options()))],
             'title' => ['required', 'string', 'max:190'],
             'status' => ['required', Rule::in(array_keys(Project::STATUSES))],
             'amount' => ['nullable', 'string', 'max:32'],

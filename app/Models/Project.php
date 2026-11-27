@@ -29,7 +29,15 @@ class Project extends Model
     protected function domainColumns(): array
     {
         return [
-            'type' => 'TYPES',
+            /*
+             * Not 'TYPES'. §15 makes the project type list something the owner
+             * defines in `project_types`, and ProjectType::options() is the same
+             * source the form and the request validator use — so the model
+             * guard, the dropdown and the validation rule cannot disagree.
+             * TYPES stays as the behavioural map (which detail fieldset, which
+             * accesses block finalisation) and as the fallback inside options().
+             */
+            'type' => [ProjectType::class, 'options'],
             'status' => 'STATUSES',
         ];
     }

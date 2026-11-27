@@ -131,6 +131,7 @@ const SUITES = (() => {
   { id: 'seo-packages', label: 'SEO package admin + keyword ceiling effect (REQ-15.01)', kind: 'node', script: 'tools/checks/seo-packages.mjs', required: true },
   { id: 'seo-website', label: 'SEO website address: valid, invalid, empty, legacy (REQ-05.02)', kind: 'node', script: 'tools/checks/seo-website.mjs', required: true },
   { id: 'migration-safety', label: 'Migration up/down/re-up on a disposable database', kind: 'node', script: 'tools/checks/migration-safety.mjs', required: true },
+  { id: 'admin-config', label: '§15 config screens and their effects (REQ-15.01)', kind: 'node', script: 'tools/checks/admin-config.mjs', required: true },
   { id: 'flow-projects', label: 'Flow: projects', kind: 'node', script: 'tools/checks/project-flow.mjs', required: true },
   { id: 'flow-credentials', label: 'Flow: credentials (§6)', kind: 'node', script: 'tools/checks/credential-flow.mjs', required: true },
   // SECURITY AUDIT — the confidential export: who may take the passwords out,

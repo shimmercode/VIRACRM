@@ -8,6 +8,7 @@ use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Models\AuditLog;
 use App\Models\Customer;
 use App\Models\Project;
+use App\Models\ProjectType;
 use App\Models\SeoPackage;
 use App\Models\Setting;
 use App\Models\User;
@@ -73,7 +74,7 @@ class ProjectController extends Controller
             'projects' => $projects,
             'filters' => $filters,
             'statuses' => Project::STATUSES,
-            'types' => Project::TYPES,
+            'types' => ProjectType::options(),
             'canSeeAmounts' => $request->user()->hasPermission('projects.view_financials'),
             'total' => Project::query()->count(),
         ]);
@@ -83,7 +84,7 @@ class ProjectController extends Controller
     {
         return view('projects.create', [
             'statuses' => Project::STATUSES,
-            'types' => Project::TYPES,
+            'types' => ProjectType::options(),
             'customers' => $this->customerOptions(),
             'users' => $this->userOptions(),
             'packages' => $this->packageOptions(),
@@ -180,7 +181,7 @@ class ProjectController extends Controller
         return view('projects.edit', [
             'project' => $project,
             'statuses' => Project::STATUSES,
-            'types' => Project::TYPES,
+            'types' => ProjectType::options(),
             'customers' => $this->customerOptions(),
             'users' => $this->userOptions(),
             'packages' => $this->packageOptions(),
