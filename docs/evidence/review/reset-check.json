@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-27T12:32:05.079Z",
+  "generatedAt": "2026-11-27T14:55:32.667Z",
   "baseline": {
     "users": 2,
     "customers": 7,
@@ -51,8 +51,8 @@
   },
   "noTaggedLeft": true,
   "baselineUntouched": true,
-  "baselineHashBefore": "76a62b25d50c6379225e9e346d52f8b5dde9d0f407e8acf64f8d88e6d841ee36",
-  "baselineHashAfter": "76a62b25d50c6379225e9e346d52f8b5dde9d0f407e8acf64f8d88e6d841ee36",
+  "baselineHashBefore": "69d8b91f7ef3ba239287c14eead1cbe54c6e41b939912a9698f880ae12d31d9e",
+  "baselineHashAfter": "69d8b91f7ef3ba239287c14eead1cbe54c6e41b939912a9698f880ae12d31d9e",
   "finalCounts": {
     "users": 6,
     "customers": 19,
