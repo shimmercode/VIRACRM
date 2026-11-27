@@ -118,6 +118,15 @@ let out = `# Vira CRM — Requirement Closure (بستن الزامات)
 > **Nothing here is claimed as done that was not actually executed.** Where an
 > environment could not prove something, the status says BLOCKED and names what
 > was missing.
+>
+> **Every VERIFIED row carries a citation that resolves.** An audit of all 96
+> rows on 2026-11-22 found 58 \`VERIFIED\` rows whose evidence named nothing a
+> script could follow — fifteen controller paths missing their domain
+> subdirectory and four suite filenames that do not exist under those names.
+> All were corrected to real paths. \`node tools/checks/requirement-evidence.mjs\`
+> reports \`0\` unevidenced and \`0\` missing-file citations and exits 0. No status
+> was changed by that audit; what a citation does and does not prove is set out
+> in [docs/REQUIREMENT_EVIDENCE_AUDIT.md](REQUIREMENT_EVIDENCE_AUDIT.md).
 
 ## Summary
 

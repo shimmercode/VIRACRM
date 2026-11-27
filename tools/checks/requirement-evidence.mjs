@@ -71,6 +71,7 @@ const isReal = (citation) => {
   const base = first.replace(/\.(mjs|php)$/, '');
   if (knownName(base)) return true;
 
+
   /* anything else is prose, not a citation */
   return null;
 };

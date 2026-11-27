@@ -2,12 +2,12 @@
  "REQ-01.01": [
   "VERIFIED",
   "Laravel standalone; no WP tables/deps",
-  "—"
+  "composer.json; tools/checks/composer-integrity.mjs"
  ],
  "REQ-01.02": [
   "VERIFIED",
   "own DB + subdomain; routes/web.php",
-  "—"
+  "routes/web.php; config/database.php"
  ],
  "REQ-01.03": [
   "PARTIAL",
@@ -37,32 +37,32 @@
  "REQ-02.04": [
   "VERIFIED",
   "settings-driven expiringWithin()",
-  "—"
+  "app/Models/Contract.php; tests/Feature/FinalizationGateTest.php"
  ],
  "REQ-02.05": [
   "VERIFIED",
   "state=done/cancelled filter; done group reachable via /work-items?state=done",
-  "—"
+  "tools/checks/work-item-flow.mjs; tools/checks/work-item-report.mjs"
  ],
  "REQ-03.01": [
   "VERIFIED",
   "customers table + type kolah",
-  "—"
+  "database/migrations/2026_01_01_000200_create_customer_tables.php; tests/Feature/CustomerDeduplicationTest.php"
  ],
  "REQ-03.02": [
   "VERIFIED",
   "legal-person fields",
-  "—"
+  "app/Models/Customer.php; tests/Feature/CustomerDeduplicationTest.php"
  ],
  "REQ-03.03": [
   "VERIFIED",
   "customers/_form dynamic by type",
-  "—"
+  "resources/views/customers/_form.blade.php; tools/checks/customer-create.mjs"
  ],
  "REQ-03.04": [
   "VERIFIED",
   "status lifecycle column",
-  "—"
+  "app/Models/Customer.php; tools/checks/customer-create.mjs"
  ],
  "REQ-03.05": [
   "PARTIAL",
@@ -72,12 +72,12 @@
  "REQ-03.06": [
   "VERIFIED",
   "Customer::scopeSearch + indexes",
-  "—"
+  "app/Models/Customer.php; tools/checks/global-search.mjs"
  ],
  "REQ-03.07": [
   "VERIFIED",
   "customers/show.blade is the dossier hub: contracts AND projects listed as links to their records, notes, work items, permission-gated create actions",
-  "project rows were unlinked until this round; fixed in 049088d"
+  "resources/views/customers/show.blade.php; tools/checks/crud-flow.mjs — project rows were unlinked until this round; fixed in 049088d"
  ],
  "REQ-03.08": [
   "PARTIAL",
@@ -87,57 +87,57 @@
  "REQ-04.01": [
   "VERIFIED",
   "Contract model + migration",
-  "—"
+  "app/Models/Contract.php; database/migrations/2026_01_01_000300_create_contract_tables.php"
  ],
  "REQ-04.02": [
   "VERIFIED",
   "ContractStatus enum + derived Expiring",
-  "—"
+  "app/Models/Contract.php; tools/checks/contract-report.mjs"
  ],
  "REQ-04.03": [
   "VERIFIED",
   "hasMany contracts on customer",
-  "—"
+  "app/Models/Customer.php; tests/Feature/DatabaseSchemaTest.php"
  ],
  "REQ-04.04": [
   "VERIFIED",
   "ContractTemplate model + controller + templates index/form; T-CTR-01..05",
-  "—"
+  "app/Models/ContractTemplate.php; tools/checks/contracts-flow.mjs"
  ],
  "REQ-04.05": [
   "VERIFIED",
   "ContractRenderer whitelist (no eval); unknown token refused at save; ContractRendererTest",
-  "—"
+  "app/Services/Contracts/ContractRenderer.php; tests/Feature/ContractRendererTest.php"
  ],
  "REQ-04.06": [
   "VERIFIED",
   "template editor with placeholder palette; T-CTR-16..18",
-  "—"
+  "resources/views/contracts; tools/checks/contracts-flow.mjs"
  ],
  "REQ-04.07": [
   "VERIFIED",
   "rendered_body frozen at finalisation; template edits cannot change it; T-CTR-12/18",
-  "—"
+  "app/Services/Contracts/ContractRenderer.php; tests/Feature/FinalizationGateTest.php"
  ],
  "REQ-04.08": [
   "VERIFIED",
   "contract_versions snapshot on finalize/renew/amend; T-CTR-14/22",
-  "—"
+  "database/migrations/2026_01_01_000300_create_contract_tables.php; tools/checks/contracts-flow.mjs"
  ],
  "REQ-04.09": [
   "VERIFIED",
   "search + sort whitelist + filters",
-  "—"
+  "app/Http/Controllers/Contracts/ContractController.php; tools/checks/contracts-flow.mjs"
  ],
  "REQ-04.10": [
   "VERIFIED",
   "contracts.renew + finalizer copies terms, original untouched; T-CTR-19..22",
-  "—"
+  "app/Http/Controllers/Contracts/ContractController.php; tools/checks/contracts-flow.mjs"
  ],
  "REQ-05.01": [
   "VERIFIED",
   "projects module + type-driven form + 28-assert flow",
-  "—"
+  "app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-flow.mjs"
  ],
  "REQ-05.02": [
   "VERIFIED",
@@ -147,47 +147,47 @@
  "REQ-05.03": [
   "VERIFIED",
   "POST/PUT/DELETE /projects/{project}/keywords behind projects.update, with an add form, an inline status control and a delete button on the SEO project page. Uniqueness is enforced on ProjectKeyword::normalize() output, so ZWNJ, doubled whitespace and Arabic ي/ك cannot create duplicates; the package keyword_limit is a ceiling on real rows. The count on the page is $project->keywords->count() and T-KW-04 sets seo_project_details.keyword_count to 99 to prove the typed field has no effect on it. tools/checks/project-keyword.mjs 15/15.",
-  "—"
+  "app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-keyword.mjs"
  ],
  "REQ-05.04": [
   "VERIFIED",
   "design_project_details model + form + detail page",
-  "—"
+  "database/migrations/2026_01_01_000400_create_project_tables.php; tools/checks/project-flow.mjs"
  ],
  "REQ-05.05": [
   "VERIFIED",
   "Both halves of the requirement. Attaching: POST/PUT/DELETE /projects/{project}/assignments behind projects.update, with a form on the project page offering only employable staff; duplicates, reversed date ranges and impossible Jalali dates are field errors, and an assignment reached through another project's URL is a 404. Viewing: GET /reports/expert-workload. tools/checks/project-assignment.mjs 15/15 and tools/checks/expert-workload.mjs 14/14; T-PA-12 is the link between them, reading the report's own figure before and after an attach (1 -> 2 -> 1).",
-  "—"
+  "tools/checks/project-assignment.mjs; tools/checks/expert-workload.mjs"
  ],
  "REQ-06.01": [
   "VERIFIED",
   "ProjectCredential + CredentialVault + CredentialController; credential-flow 21/21",
-  "—"
+  "app/Http/Controllers/Credentials/CredentialController.php; tools/checks/credential-flow.mjs"
  ],
  "REQ-06.02": [
   "VERIFIED",
   "credential_requirements seeded (3 blocking types); FinalizationGate service; enforced in Store/UpdateProjectRequest; T-PRJ-09b (refused) + T-PRJ-09f (released); FinalizationGateTest 20 assertions",
-  "list is data-driven per §15; the three seeded kinds need client confirmation"
+  "app/Services/Projects/FinalizationGate.php; tests/Feature/FinalizationGateTest.php — list is data-driven per §15; the three seeded kinds need client confirmation"
  ],
  "REQ-06.03": [
   "VERIFIED",
   "AES-256-GCM wired: vault is the only read/write path; plaintext never in column or HTML",
-  "—"
+  "app/Services/Security/CredentialVault.php; tests/Feature/CredentialVaultTest.php"
  ],
  "REQ-06.04": [
   "VERIFIED",
   "reveal POST-only, no-store, one audit row per reveal; audit log is browsable at GET /audit (super-admin only), audit-log-page 16/16",
-  "the missing audit view was built in the security stage"
+  "resources/views/audit/index.blade.php; tools/checks/audit-log-page.mjs — the missing audit view was built in the security stage"
  ],
  "REQ-06.05": [
   "VERIFIED",
   "credentials PDF: POST-only, credentials.export, audit row, no-store, empty refused (T-PDF-09); credential-export 13/13; no *.pdf under storage/",
-  "residual is REQ-06.07 (warning band on a stored file), tracked separately"
+  "app/Services/Pdf; tools/checks/credential-export-audit.mjs — residual is REQ-06.07 (warning band on a stored file), tracked separately"
  ],
  "REQ-06.06": [
   "VERIFIED",
   "ProjectPdf PUBLIC_FIELDS allow-list; T-PDF-08/08b prove no credential data",
-  "—"
+  "app/Services/Pdf; tests/Feature/PdfDocumentTest.php"
  ],
  "REQ-06.07": [
   "NOT_IMPLEMENTED",
@@ -197,52 +197,52 @@
  "REQ-07.01": [
   "VERIFIED",
   "EmployeeController CRUD + policy + 7-width shots + payroll-flow T-PAY-02..06",
-  "—"
+  "app/Http/Controllers/Hr/EmployeeController.php; tools/checks/payroll-flow.mjs"
  ],
  "REQ-07.02": [
   "VERIFIED",
   "OD-16 formula in PayrollCalculator; payroll_rules.is_approved gate; projectsTotalNeverEntersTheFormula",
-  "—"
+  "app/Services/Payroll/PayrollCalculator.php; tests/Feature/PayrollTest.php"
  ],
  "REQ-07.03": [
   "VERIFIED",
   "PayslipPdf all required fields + signature lines; T-PDF-10/10b (single page)",
-  "—"
+  "app/Services/Pdf; tests/Feature/PdfDocumentTest.php"
  ],
  "REQ-07.04": [
   "VERIFIED",
   "draft→computed→published state machine + payslip_versions snapshot on amend; T-PAY-25..27",
-  "—"
+  "app/Models/Payslip.php; tools/checks/payroll-flow.mjs"
  ],
  "REQ-07.05": [
   "VERIFIED",
   "payroll.* are sensitive permissions; manager 403 on /payroll proven with two sessions (T-PAY-22..24)",
-  "—"
+  "tools/checks/route-permissions.php; tests/Feature/AuthorizationTest.php"
  ],
  "REQ-08.01": [
   "VERIFIED",
   "Note model + migration + full CRUD controller",
-  "—"
+  "app/Models/Note.php; database/migrations/2026_01_01_000600_create_personnel_and_payroll_tables.php"
  ],
  "REQ-08.02": [
   "VERIFIED",
   "notes index/create/edit + complete/reopen; T-WI-08..13",
-  "—"
+  "resources/views/notes; tests/Feature/WorkItemAndNoteLifecycleTest.php"
  ],
  "REQ-09.01": [
   "VERIFIED",
   "topbar search form rendered by layouts/app.blade.php on every authenticated page, GET customers.index?q=; Customer::scopeSearch covers search_key/first/last/company name, normalized_mobile, normalized_national_id and customer_websites.domain (all four fields §3 line 56 names); tools/checks/global-search.mjs 9/9 — box present on /projects, /notes and /audit; hits found by company name, by Persian-digit mobile, by national ID and by domain; result opens the customer file; no-match empty state; SQL metacharacters harmless",
-  "—"
+  "resources/views/layouts/app.blade.php; tools/checks/global-search.mjs"
  ],
  "REQ-09.02": [
   "VERIFIED",
   "contract & project filter bars + sort whitelist",
-  "—"
+  "resources/views/contracts; tools/checks/contracts-flow.mjs"
  ],
  "REQ-09.03": [
   "VERIFIED",
   "Invoice model + InvoiceController + accounting-flow 19/19",
-  "—"
+  "app/Http/Controllers/Invoices/InvoiceController.php; tools/checks/accounting-flow.mjs"
  ],
  "REQ-09.04": [
   "VERIFIED",
@@ -252,7 +252,7 @@
  "REQ-09.05": [
   "VERIFIED",
   "four PDF exports: contract, project, credentials, payslip; pdf-flow 22/22",
-  "—"
+  "app/Services/Pdf; tools/checks/pdf-flow.mjs"
  ],
  "REQ-09.06": [
   "NOT_IMPLEMENTED",
@@ -262,27 +262,27 @@
  "REQ-09.07": [
   "VERIFIED",
   "GET /reports/expert-workload (permission reports.view) — grouped aggregate over project_assignments joined to employees and projects; active count, all-assignments count and effective amount per expert; filters on project status, employment status and name; sorting; pagination; empty state. tools/checks/expert-workload.mjs 14/14, including reconciliation of every figure against an independent SQL count.",
-  "—"
+  "app/Http/Controllers/Reports; tools/checks/expert-workload.mjs"
  ],
  "REQ-10.01": [
   "VERIFIED",
   "users(2) + login",
-  "—"
+  "app/Http/Controllers/Auth/LoginController.php; tools/checks/login-flow.mjs"
  ],
  "REQ-10.02": [
   "VERIFIED",
   "نقش‌ها داده‌اند نه کد: جدول roles + permissions + role_permissions با رابط مدیریتی کامل.",
-  "The four seeded roles were data from the start but there was no way to change them — the only writer was the seeder. /settings/roles now lists every role with its permission and user counts and edits the permission matrix, behind users.manage, which no seeded role holds, so out of the box only a superadmin can reach it. tools/checks/admin-config.mjs T-CFG-RO-01..06: a permission granted to a role really reaches a user on it (200 on /customers), a permission the role lacks really returns 403 (/payroll), a role people are attached to cannot be deleted, and the screen is closed to anyone without users.manage. The authorization architecture is unchanged: User::hasPermission still resolves through user_roles → role_permissions, and is_superadmin still implies every permission. Nothing escalates by accident — RoleRequest::escalationAttempt refuses to hand out a permission the actor does not hold, and removing that guard lets an editor grant themselves payroll.approve, which drops the suite to 23/24. The client's own words are «فعال‌سازی با تأیید کارفرما», so the role list staying editable data rather than an enum is the requirement being met, not deferred."
+  "resources/views/settings/roles; tools/checks/admin-config.mjs — The four seeded roles were data from the start but there was no way to change them — the only writer was the seeder. /settings/roles now lists every role with its permission and user counts and edits the permission matrix, behind users.manage, which no seeded role holds, so out of the box only a superadmin can reach it. tools/checks/admin-config.mjs T-CFG-RO-01..06: a permission granted to a role really reaches a user on it (200 on /customers), a permission the role lacks really returns 403 (/payroll), a role people are attached to cannot be deleted, and the screen is closed to anyone without users.manage. The authorization architecture is unchanged: User::hasPermission still resolves through user_roles → role_permissions, and is_superadmin still implies every permission. Nothing escalates by accident — RoleRequest::escalationAttempt refuses to hand out a permission the actor does not hold, and removing that guard lets an editor grant themselves payroll.approve, which drops the suite to 23/24. The client's own words are «فعال‌سازی با تأیید کارفرما», so the role list staying editable data rather than an enum is the requirement being met, not deferred."
  ],
  "REQ-10.03": [
   "VERIFIED",
   "55 permissions; permission: middleware on every employee/payroll/organization/accounting route; 2-session 403 proofs",
-  "—"
+  "tools/checks/route-permissions.php; tests/Feature/AuthorizationTest.php"
  ],
  "REQ-10.04": [
   "VERIFIED",
   "audit_logs 232 rows, incl. denied",
-  "—"
+  "app/Services/Security/AuditRecorder.php; tools/checks/audit-log-page.mjs"
  ],
  "REQ-10.05": [
   "PARTIAL",
@@ -297,27 +297,27 @@
  "REQ-10.07": [
   "VERIFIED",
   "session regenerate + password change",
-  "—"
+  "app/Http/Controllers/Auth/LoginController.php; tools/checks/security-deployment.mjs"
  ],
  "REQ-11.01": [
   "VERIFIED",
   "dir=rtl, fa, 7 widths",
-  "—"
+  "resources/views/layouts/app.blade.php; tools/checks/ui-modules.mjs"
  ],
  "REQ-11.02": [
   "VERIFIED",
   "23 components + 21 DS asserts",
-  "—"
+  "resources/views/components; tools/checks/design-system.mjs"
  ],
  "REQ-11.03": [
   "VERIFIED",
   "Vazirmatn self-hosted, OFL licence shipped",
-  "security: resources/css/tokens.css:13-32 declares three @font-face rules for Vazirmatn (400/500/700) all pointing at local ../fonts/*.woff2 — Vazirmatn-Regular 50684 B, -Medium 51128 B, -Bold 51020 B all present. No fonts.googleapis.com or CDN reference anywhere in resources/css. font-display: swap keeps text visible while the font loads. The SIL Open Font License 1.1 for Vazirmatn ships at public/build/fonts/OFL.txt (93 lines, \"Copyright 2015 The Vazirmatn Project Authors\"), so the font is both self-hosted and licensed — the two things §11-3 asks for. Previous evidence (\"licence not confirmed\") was stale: the licence file was already in the repo."
+  "public/build/fonts/OFL.txt; resources/css/tokens.css — security: resources/css/tokens.css:13-32 declares three @font-face rules for Vazirmatn (400/500/700) all pointing at local ../fonts/*.woff2 — Vazirmatn-Regular 50684 B, -Medium 51128 B, -Bold 51020 B all present. No fonts.googleapis.com or CDN reference anywhere in resources/css. font-display: swap keeps text visible while the font loads. The SIL Open Font License 1.1 for Vazirmatn ships at public/build/fonts/OFL.txt (93 lines, \"Copyright 2015 The Vazirmatn Project Authors\"), so the font is both self-hosted and licensed — the two things §11-3 asks for. Previous evidence (\"licence not confirmed\") was stale: the licence file was already in the repo."
  ],
  "REQ-11.04": [
   "VERIFIED",
   "JalaliDate + fa-date component",
-  "—"
+  "app/Services/I18n; tests/Unit/JalaliDateTest.php"
  ],
  "REQ-11.05": [
   "PARTIAL",
@@ -327,22 +327,22 @@
  "REQ-12.01": [
   "VERIFIED",
   "invoices table + controller + issue flow",
-  "—"
+  "app/Http/Controllers/Invoices/InvoiceController.php; tools/checks/accounting-flow.mjs"
  ],
  "REQ-12.02": [
   "VERIFIED",
   "controlled INV-1405-NNNN numbering at issue",
-  "—"
+  "app/Models/Invoice.php; tools/checks/accounting-flow.mjs"
  ],
  "REQ-12.03": [
   "VERIFIED",
   "payment_state separate from invoice status (§19.4)",
-  "—"
+  "app/Models/Invoice.php; tests/Feature/AccountingLedgerTest.php"
  ],
  "REQ-12.04": [
   "VERIFIED",
   "WorkItem::KINDS includes 'report'; work_items carries kind/due_date/period; ReminderSchedule D-2 returns 2026-03-19 for due 2026-03-21; ReminderScheduleTest 43 assertions; W-04d dashboard 0->1->0",
-  "—"
+  "app/Models/WorkItem.php; tests/Unit/ReminderScheduleTest.php"
  ],
  "REQ-12.05": [
   "PARTIAL",
@@ -372,7 +372,7 @@
  "REQ-13.01": [
   "VERIFIED",
   "Gate A accepted",
-  "—"
+  "docs/CRM_REVIEW_CLIENT_DECISIONS.md"
  ],
  "REQ-13.02": [
   "BLOCKED",
@@ -387,7 +387,7 @@
  "REQ-14.02": [
   "VERIFIED",
   "this document",
-  "—"
+  "docs/REQUIREMENT_CLOSURE.md"
  ],
  "REQ-15.01": [
   "PARTIAL",
@@ -397,7 +397,7 @@
  "REQ-15.02": [
   "VERIFIED",
   "app/Services/Backup (4 classes: Cipher/Builder/Restorer/RetentionPolicy); 3 console commands; BackupRestoreTest 96 assertions; 7 verification gates; tamper refusals proven at gate 3",
-  "scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap"
+  "app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap"
  ],
  "REQ-15.03": [
   "NOT_IMPLEMENTED",

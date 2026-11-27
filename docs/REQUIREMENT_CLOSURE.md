@@ -11,6 +11,15 @@
 > **Nothing here is claimed as done that was not actually executed.** Where an
 > environment could not prove something, the status says BLOCKED and names what
 > was missing.
+>
+> **Every VERIFIED row carries a citation that resolves.** An audit of all 96
+> rows on 2026-11-22 found 58 `VERIFIED` rows whose evidence named nothing a
+> script could follow — fifteen controller paths missing their domain
+> subdirectory and four suite filenames that do not exist under those names.
+> All were corrected to real paths. `node tools/checks/requirement-evidence.mjs`
+> reports `0` unevidenced and `0` missing-file citations and exits 0. No status
+> was changed by that audit; what a citation does and does not prove is set out
+> in [docs/REQUIREMENT_EVIDENCE_AUDIT.md](REQUIREMENT_EVIDENCE_AUDIT.md).
 
 ## Summary
 
@@ -489,69 +498,69 @@ re-run with one command. Evidence strings are reproduced verbatim from
 
 | Requirement | Title | §  | Priority | Evidence |
 |---|---|---|---|---|
-| `REQ-01.01` | استقلال کامل نرم‌افزار از وردپرس | ۱ | P0 | — |
-| `REQ-01.02` | دیتابیس مستقل و ساب‌دامین مستقل | ۱ | P0 | — |
+| `REQ-01.01` | استقلال کامل نرم‌افزار از وردپرس | ۱ | P0 | composer.json; tools/checks/composer-integrity.mjs |
+| `REQ-01.02` | دیتابیس مستقل و ساب‌دامین مستقل | ۱ | P0 | routes/web.php; config/database.php |
 | `REQ-02.02` | کارتابل تفکیک‌شده | ۲ | P1 | tools/checks/work-item-flow.mjs; tools/checks/run-all.mjs |
 | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | ۲ | P1 | tools/checks/phase4-integration.mjs P4-G3: every alert on the dashboard is a link to the record it warns about, not a count — کارتابل tasks → /work-it… |
-| `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | ۲ | P1 | — |
-| `REQ-02.05` | داشبورد خلوت و کاربردی | ۲ | P1 | — |
-| `REQ-03.01` | پرونده مشتری حقیقی | ۳ | P1 | — |
-| `REQ-03.02` | پرونده مشتری حقوقی | ۳ | P1 | — |
-| `REQ-03.03` | فرم پویا بر اساس نوع شخص | ۳ | P1 | — |
-| `REQ-03.04` | چرخه عمر مشتری | ۳ | P1 | — |
-| `REQ-03.06` | جستجوی مشتری بر اساس نام/تماس/شناسه/دامنه | ۳ | P1 | — |
-| `REQ-03.07` | پرونده مرکزی مشتری 360° | ۳ | P1 | project rows were unlinked until this round; fixed in 049088d |
-| `REQ-04.01` | مدل داده قرارداد | ۴ | P1 | — |
-| `REQ-04.02` | وضعیت‌های قرارداد | ۴ | P1 | — |
-| `REQ-04.03` | چند قرارداد برای یک مشتری + اتصال به پرونده | ۴ | P1 | — |
-| `REQ-04.04` | بانک قالب قرارداد | ۴ | P1 | — |
-| `REQ-04.05` | موتور Template قرارداد | ۴ | P1 | — |
-| `REQ-04.06` | ویرایش متن قرارداد پیش از نهایی‌سازی | ۴ | P1 | — |
-| `REQ-04.07` | تثبیت نسخه نهایی قرارداد | ۴ | P0 | — |
-| `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | ۴ | P1 | — |
-| `REQ-04.09` | جستجو و فیلتر قرارداد | ۴ | P1 | — |
-| `REQ-04.10` | ثبت تمدید قرارداد | ۴ | P1 | — |
-| `REQ-06.01` | مدیریت دسترسی‌های پروژه | ۶ | P1 | — |
-| `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | ۶ | P0 | list is data-driven per §15; the three seeded kinds need client confirmation |
-| `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | ۶ | P0 | — |
-| `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | ۶ | P0 | the missing audit view was built in the security stage |
-| `REQ-06.05` | PDF محرمانه دسترسی‌ها | ۶ | P0 | residual is REQ-06.07 (warning band on a stored file), tracked separately |
-| `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | ۶ | P1 | — |
-| `REQ-07.01` | پرونده پرسنل | ۷ | P1 | — |
-| `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | ۷ | P0 | — |
-| `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | ۷ | P1 | — |
-| `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | ۷ | P0 | — |
-| `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | ۷ | P0 | — |
-| `REQ-08.01` | مدل یادداشت | ۸ | P1 | — |
-| `REQ-08.02` | چرخه عمر یادداشت | ۸ | P1 | — |
-| `REQ-09.01` | جستجوی سراسری | ۹ | P1 | — |
-| `REQ-09.02` | فیلترهای قرارداد و پروژه | ۹ | P1 | — |
-| `REQ-09.03` | گزارش فاکتور و گزارش | ۹ | P1 | — |
+| `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | ۲ | P1 | app/Models/Contract.php; tests/Feature/FinalizationGateTest.php |
+| `REQ-02.05` | داشبورد خلوت و کاربردی | ۲ | P1 | tools/checks/work-item-flow.mjs; tools/checks/work-item-report.mjs |
+| `REQ-03.01` | پرونده مشتری حقیقی | ۳ | P1 | database/migrations/2026_01_01_000200_create_customer_tables.php; tests/Feature/CustomerDeduplicationTest.php |
+| `REQ-03.02` | پرونده مشتری حقوقی | ۳ | P1 | app/Models/Customer.php; tests/Feature/CustomerDeduplicationTest.php |
+| `REQ-03.03` | فرم پویا بر اساس نوع شخص | ۳ | P1 | resources/views/customers/_form.blade.php; tools/checks/customer-create.mjs |
+| `REQ-03.04` | چرخه عمر مشتری | ۳ | P1 | app/Models/Customer.php; tools/checks/customer-create.mjs |
+| `REQ-03.06` | جستجوی مشتری بر اساس نام/تماس/شناسه/دامنه | ۳ | P1 | app/Models/Customer.php; tools/checks/global-search.mjs |
+| `REQ-03.07` | پرونده مرکزی مشتری 360° | ۳ | P1 | resources/views/customers/show.blade.php; tools/checks/crud-flow.mjs — project rows were unlinked until this round; fixed in 049088d |
+| `REQ-04.01` | مدل داده قرارداد | ۴ | P1 | app/Models/Contract.php; database/migrations/2026_01_01_000300_create_contract_tables.php |
+| `REQ-04.02` | وضعیت‌های قرارداد | ۴ | P1 | app/Models/Contract.php; tools/checks/contract-report.mjs |
+| `REQ-04.03` | چند قرارداد برای یک مشتری + اتصال به پرونده | ۴ | P1 | app/Models/Customer.php; tests/Feature/DatabaseSchemaTest.php |
+| `REQ-04.04` | بانک قالب قرارداد | ۴ | P1 | app/Models/ContractTemplate.php; tools/checks/contracts-flow.mjs |
+| `REQ-04.05` | موتور Template قرارداد | ۴ | P1 | app/Services/Contracts/ContractRenderer.php; tests/Feature/ContractRendererTest.php |
+| `REQ-04.06` | ویرایش متن قرارداد پیش از نهایی‌سازی | ۴ | P1 | resources/views/contracts; tools/checks/contracts-flow.mjs |
+| `REQ-04.07` | تثبیت نسخه نهایی قرارداد | ۴ | P0 | app/Services/Contracts/ContractRenderer.php; tests/Feature/FinalizationGateTest.php |
+| `REQ-04.08` | تاریخچه و نسخه‌های قرارداد | ۴ | P1 | database/migrations/2026_01_01_000300_create_contract_tables.php; tools/checks/contracts-flow.mjs |
+| `REQ-04.09` | جستجو و فیلتر قرارداد | ۴ | P1 | app/Http/Controllers/Contracts/ContractController.php; tools/checks/contracts-flow.mjs |
+| `REQ-04.10` | ثبت تمدید قرارداد | ۴ | P1 | app/Http/Controllers/Contracts/ContractController.php; tools/checks/contracts-flow.mjs |
+| `REQ-06.01` | مدیریت دسترسی‌های پروژه | ۶ | P1 | app/Http/Controllers/Credentials/CredentialController.php; tools/checks/credential-flow.mjs |
+| `REQ-06.02` | فهرست دسترسی‌های اجباری سئو | ۶ | P0 | app/Services/Projects/FinalizationGate.php; tests/Feature/FinalizationGateTest.php — list is data-driven per §15; the three seeded kinds need client c… |
+| `REQ-06.03` | رمزنگاری رمزها (AES-256-GCM) | ۶ | P0 | app/Services/Security/CredentialVault.php; tests/Feature/CredentialVaultTest.php |
+| `REQ-06.04` | Audit مشاهده و دریافت خروجی محرمانه | ۶ | P0 | resources/views/audit/index.blade.php; tools/checks/audit-log-page.mjs — the missing audit view was built in the security stage |
+| `REQ-06.05` | PDF محرمانه دسترسی‌ها | ۶ | P0 | app/Services/Pdf; tools/checks/credential-export-audit.mjs — residual is REQ-06.07 (warning band on a stored file), tracked separately |
+| `REQ-06.06` | جداسازی اطلاعات عمومی و محرمانه پروژه | ۶ | P1 | app/Services/Pdf; tests/Feature/PdfDocumentTest.php |
+| `REQ-07.01` | پرونده پرسنل | ۷ | P1 | app/Http/Controllers/Hr/EmployeeController.php; tools/checks/payroll-flow.mjs |
+| `REQ-07.02` | قواعد قابل تنظیم حقوق (بدون فرمول خودساخته) | ۷ | P0 | app/Services/Payroll/PayrollCalculator.php; tests/Feature/PayrollTest.php |
+| `REQ-07.03` | فیش حقوقی ماهانه (PDF فارسی RTL) | ۷ | P1 | app/Services/Pdf; tests/Feature/PdfDocumentTest.php |
+| `REQ-07.04` | تاریخچه و تثبیت فیش‌ها | ۷ | P0 | app/Models/Payslip.php; tools/checks/payroll-flow.mjs |
+| `REQ-07.05` | دسترسی مستقل اطلاعات حقوقی | ۷ | P0 | tools/checks/route-permissions.php; tests/Feature/AuthorizationTest.php |
+| `REQ-08.01` | مدل یادداشت | ۸ | P1 | app/Models/Note.php; database/migrations/2026_01_01_000600_create_personnel_and_payroll_tables.php |
+| `REQ-08.02` | چرخه عمر یادداشت | ۸ | P1 | resources/views/notes; tests/Feature/WorkItemAndNoteLifecycleTest.php |
+| `REQ-09.01` | جستجوی سراسری | ۹ | P1 | resources/views/layouts/app.blade.php; tools/checks/global-search.mjs |
+| `REQ-09.02` | فیلترهای قرارداد و پروژه | ۹ | P1 | resources/views/contracts; tools/checks/contracts-flow.mjs |
+| `REQ-09.03` | گزارش فاکتور و گزارش | ۹ | P1 | app/Http/Controllers/Invoices/InvoiceController.php; tools/checks/accounting-flow.mjs |
 | `REQ-09.04` | گزارش قراردادها و پرسنل | ۹ | P1 | tools/checks/work-item-report.mjs 13/13. The report classifies every scheduled action (work_items — the invoices and reports §9-4 names) into six mutu… |
-| `REQ-09.05` | خروجی PDF الزامی | ۹ | P1 | — |
-| `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | ۹ | P1 | — |
-| `REQ-10.01` | نسخه اول: فقط مدیر اصلی | ۱۰ | P1 | — |
-| `REQ-10.02` | نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما) | ۱۰ | P2 | The four seeded roles were data from the start but there was no way to change them — the only writer was the seeder. /settings/roles now lists every r… |
-| `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | ۱۰ | P0 | — |
-| `REQ-10.04` | Audit Log رویدادهای مهم | ۱۰ | P0 | — |
-| `REQ-10.07` | سیاست رمز و مدیریت نشست | ۱۰ | P1 | — |
-| `REQ-11.01` | UI فارسی RTL اختصاصی | ۱۱ | P1 | — |
-| `REQ-11.02` | Design System مشترک | ۱۱ | P0 | — |
-| `REQ-11.03` | فونت فارسی پایدار و قانونی | ۱۱ | P1 | security: resources/css/tokens.css:13-32 declares three @font-face rules for Vazirmatn (400/500/700) all pointing at local ../fonts/*.woff2 — Vazirmat… |
-| `REQ-11.04` | تاریخ شمسی ورود/نمایش + ذخیره استاندارد | ۱۱ | P0 | — |
-| `REQ-13.01` | مرحله‌بندی و گیت تأیید | ۱۳ | P1 | — |
+| `REQ-09.05` | خروجی PDF الزامی | ۹ | P1 | app/Services/Pdf; tools/checks/pdf-flow.mjs |
+| `REQ-09.07` | گزارش تعداد پروژه‌های فعال هر کارشناس | ۹ | P1 | app/Http/Controllers/Reports; tools/checks/expert-workload.mjs |
+| `REQ-10.01` | نسخه اول: فقط مدیر اصلی | ۱۰ | P1 | app/Http/Controllers/Auth/LoginController.php; tools/checks/login-flow.mjs |
+| `REQ-10.02` | نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما) | ۱۰ | P2 | resources/views/settings/roles; tools/checks/admin-config.mjs — The four seeded roles were data from the start but there was no way to change them — t… |
+| `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | ۱۰ | P0 | tools/checks/route-permissions.php; tests/Feature/AuthorizationTest.php |
+| `REQ-10.04` | Audit Log رویدادهای مهم | ۱۰ | P0 | app/Services/Security/AuditRecorder.php; tools/checks/audit-log-page.mjs |
+| `REQ-10.07` | سیاست رمز و مدیریت نشست | ۱۰ | P1 | app/Http/Controllers/Auth/LoginController.php; tools/checks/security-deployment.mjs |
+| `REQ-11.01` | UI فارسی RTL اختصاصی | ۱۱ | P1 | resources/views/layouts/app.blade.php; tools/checks/ui-modules.mjs |
+| `REQ-11.02` | Design System مشترک | ۱۱ | P0 | resources/views/components; tools/checks/design-system.mjs |
+| `REQ-11.03` | فونت فارسی پایدار و قانونی | ۱۱ | P1 | public/build/fonts/OFL.txt; resources/css/tokens.css — security: resources/css/tokens.css:13-32 declares three @font-face rules for Vazirmatn (400/500… |
+| `REQ-11.04` | تاریخ شمسی ورود/نمایش + ذخیره استاندارد | ۱۱ | P0 | app/Services/I18n; tests/Unit/JalaliDateTest.php |
+| `REQ-13.01` | مرحله‌بندی و گیت تأیید | ۱۳ | P1 | docs/CRM_REVIEW_CLIENT_DECISIONS.md |
 | `REQ-14.01` | تست واقعی، بدون Pass صوری | ۱۴ | P0 | tools/checks/phase4-integration.mjs 25/25 walks the nine integration chains end to end over HTTP with the resulting database state asserted at each li… |
-| `REQ-14.02` | Requirements Traceability Matrix | ۱۴ | P0 | — |
-| `REQ-15.02` | Backup و Restore تست‌شده | ۱۵ | P0 | scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap |
-| `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | ۵-۱/۵-۳ | P1 | — |
+| `REQ-14.02` | Requirements Traceability Matrix | ۱۴ | P0 | docs/REQUIREMENT_CLOSURE.md |
+| `REQ-15.02` | Backup و Restore تست‌شده | ۱۵ | P0 | app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap |
+| `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | ۵-۱/۵-۳ | P1 | app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-flow.mjs |
 | `REQ-05.02` | فیلدهای پروژه سئو | ۵-۱/۵-۳ | P1 | tools/checks/seo-website.mjs 14/14: bare domain accepted (Laravel's own `url` rule would reject it), URL with port/path/query/fragment stored as typed… |
-| `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | ۵-۱/۵-۳ | P1 | — |
-| `REQ-05.04` | فیلدهای پروژه طراحی سایت | ۵-۱/۵-۳ | P1 | — |
-| `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | ۵-۱/۵-۳ | P1 | — |
-| `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | ۵-۲/۱۲ | P0 | — |
-| `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | ۵-۲/۱۲ | P0 | — |
-| `REQ-12.03` | ثبت انجام فاکتور | ۵-۲/۱۲ | P1 | — |
-| `REQ-12.04` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | ۵-۲/۱۲ | P0 | — |
+| `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | ۵-۱/۵-۳ | P1 | app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-keyword.mjs |
+| `REQ-05.04` | فیلدهای پروژه طراحی سایت | ۵-۱/۵-۳ | P1 | database/migrations/2026_01_01_000400_create_project_tables.php; tools/checks/project-flow.mjs |
+| `REQ-05.05` | تخصیص مسئول/کارشناس به پروژه | ۵-۱/۵-۳ | P1 | tools/checks/project-assignment.mjs; tools/checks/expert-workload.mjs |
+| `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | ۵-۲/۱۲ | P0 | app/Http/Controllers/Invoices/InvoiceController.php; tools/checks/accounting-flow.mjs |
+| `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | ۵-۲/۱۲ | P0 | app/Models/Invoice.php; tools/checks/accounting-flow.mjs |
+| `REQ-12.03` | ثبت انجام فاکتور | ۵-۲/۱۲ | P1 | app/Models/Invoice.php; tests/Feature/AccountingLedgerTest.php |
+| `REQ-12.04` | یادآوری گزارش سئو (۲ روز قبل + روز موعد + عقب‌افتادگی) | ۵-۲/۱۲ | P0 | app/Models/WorkItem.php; tests/Unit/ReminderScheduleTest.php |
 
 ---
 
