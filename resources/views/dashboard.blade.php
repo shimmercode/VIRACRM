@@ -102,21 +102,27 @@
 
                             <ul class="v-tasklist">
                                 @foreach ($items->take(6) as $item)
+                                    {{-- §2-3 «کلیک روی هر اعلان کاربر را به پروندهٔ
+                                         مرتبط منتقل کند». These were plain text, so the
+                                         one thing the کارتابل could not do was take you
+                                         to the work it was telling you about. --}}
                                     <li class="v-task">
-                                        <span class="v-task__dot" aria-hidden="true"></span>
-                                        <div class="v-task__body">
-                                            <span class="v-task__title">{{ $item->title }}</span>
-                                            @if ($item->project)
-                                                <span class="v-task__meta">
-                                                    {{ $item->project->customer?->display_name ?? '—' }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <span class="v-task__date">
-                                            {{ $item->due_date
-                                                ? \App\Support\JalaliDate::fromCarbon(\Carbon\CarbonImmutable::parse($item->due_date))->formatPersian()
-                                                : '—' }}
-                                        </span>
+                                        <a class="v-task__link" href="{{ route('work-items.show', $item) }}">
+                                            <span class="v-task__dot" aria-hidden="true"></span>
+                                            <div class="v-task__body">
+                                                <span class="v-task__title">{{ $item->title }}</span>
+                                                @if ($item->project)
+                                                    <span class="v-task__meta">
+                                                        {{ $item->project->customer?->display_name ?? '—' }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <span class="v-task__date">
+                                                {{ $item->due_date
+                                                    ? \App\Support\JalaliDate::fromCarbon(\Carbon\CarbonImmutable::parse($item->due_date))->formatPersian()
+                                                    : '—' }}
+                                            </span>
+                                        </a>
                                     </li>
                                 @endforeach
                             </ul>

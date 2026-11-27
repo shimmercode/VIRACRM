@@ -14,10 +14,10 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 60 | 62.5% |
+| `VERIFIED` | 62 | 64.6% |
 | `PARTIAL` | 13 | 13.5% |
 | `NOT_VERIFIED` | 2 | 2.1% |
-| `NOT_IMPLEMENTED` | 17 | 17.7% |
+| `NOT_IMPLEMENTED` | 15 | 15.6% |
 | `BLOCKED` | 4 | 4.2% |
 | **جمع** | **96** | **100%** |
 
@@ -66,7 +66,7 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `DSH-001` | `REQ-02.01` | شاخص‌های داشبورد | P1 | doc | **`PARTIAL`** | DashboardController + dashboard.blade | 4 of 6 KPI groups | M1/M3 |
 | `DSH-002` | `REQ-02.02` | کارتابل تفکیک‌شده | P1 | doc | **`VERIFIED`** | کارتابل page + completion: work-items-flow 13/13, 7-width shots 28/28 | — | — |
-| `DSH-003` | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | P1 | doc | **`NOT_IMPLEMENTED`** | — | no notification->record link | M1–M8 |
+| `DSH-003` | `REQ-02.03` | ناوبری مستقیم از اعلان به رکورد | P1 | doc | **`VERIFIED`** | کلیک روی هر اعلان داشبورد کاربر را به پروندهٔ مرتبط می‌برد. | tools/checks/phase4-integration.mjs P4-G3: every alert on the dashboard is a link to the record it warns about, not a count — کارتابل tasks → /work-items/{id} (9 in the test run), contract expiry warnings → /contracts/{id}, open notes → /notes/{id}/edit, and the five count tiles → the filtered index behind them. This was a real gap: the کارتابل rows were plain <li> text, so the one thing the task list could not do was take the user to the work it was describing. The anchor carries a new .v-task__link rule in resources/css/pages.css that takes over .v-task's inner flex layout, because wrapping the row without it collapsed the dot, meta and date into one underlined string. | — |
 | `DSH-004` | `REQ-02.04` | هشدار انقضای قرارداد با آستانه قابل تنظیم | P1 | doc | **`VERIFIED`** | settings-driven expiringWithin() | — | — |
 | `DSH-005` | `REQ-02.05` | داشبورد خلوت و کاربردی | P1 | doc | **`VERIFIED`** | state=done/cancelled filter; done group reachable via /work-items?state=done | — | — |
 
@@ -172,7 +172,7 @@
 | `INV-002` | `REQ-12.01` | یادآوری فاکتور دو روز تقویمی قبل | P0 | doc | **`VERIFIED`** | invoices table + controller + issue flow | — | — |
 | `INV-003` | `REQ-12.02` | یادآوری روز سررسید فاکتور و عقب‌افتادگی | P0 | doc | **`VERIFIED`** | controlled INV-1405-NNNN numbering at issue | — | — |
 | `INV-004` | `REQ-12.03` | ثبت انجام فاکتور | P1 | doc | **`VERIFIED`** | payment_state separate from invoice status (§19.4) | — | — |
-| `INV-005` | `REQ-12.09` | ثبت مشخصات و فایل فاکتور پس از ارسال | P1 | doc | **`NOT_IMPLEMENTED`** | invoice PDF pending mPDF slice | — | M1–M8 |
+| `INV-005` | `REQ-12.09` | ثبت مشخصات و فایل فاکتور پس از ارسال | P1 | doc | **`PARTIAL`** | پس از ارسال فاکتور، شماره، مبلغ و تاریخ صدور ثبت می‌شود؛ فایل فاکتور نه. | The traceability summary previously read "invoice PDF pending mPDF slice", which misstated the requirement: §12-9 asks for the invoice number, amount, issue date AND the invoice file to be recorded after sending. It is not a PDF-generation requirement — §9-7 names four PDFs (contract, project dossier, access information, payslip) and an invoice is not among them. Three of the four are implemented: POST /work-items/{id}/complete requires invoice_number and invoice_amount for an invoice item, validates the amount through Money::parse rather than silently storing 0, and stores invoice_issue_date. The fourth is not: work_items.document_attachment_id is fillable but nothing in app/ ever writes it, because recording a file needs the upload subsystem (REQ-10.06), which is not built. Marked PARTIAL rather than NOT_IMPLEMENTED because the previous status understated what works, and rather than VERIFIED because the file half genuinely does not. | M1/M3 |
 
 ### Reports
 
@@ -203,7 +203,7 @@
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `ROLE-001` | `REQ-10.02` | نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما) | P2 | proposed | **`PARTIAL`** | roles(4) seeded | no role UI | M1/M3 |
+| `ROLE-001` | `REQ-10.02` | نقش‌های نمونه آینده (فعال‌سازی با تأیید کارفرما) | P2 | proposed | **`VERIFIED`** | نقش‌ها داده‌اند نه کد: جدول roles + permissions + role_permissions با رابط مدیریتی کامل. | The four seeded roles were data from the start but there was no way to change them — the only writer was the seeder. /settings/roles now lists every role with its permission and user counts and edits the permission matrix, behind users.manage, which no seeded role holds, so out of the box only a superadmin can reach it. tools/checks/admin-config.mjs T-CFG-RO-01..06: a permission granted to a role really reaches a user on it (200 on /customers), a permission the role lacks really returns 403 (/payroll), a role people are attached to cannot be deleted, and the screen is closed to anyone without users.manage. The authorization architecture is unchanged: User::hasPermission still resolves through user_roles → role_permissions, and is_superadmin still implies every permission. Nothing escalates by accident — RoleRequest::escalationAttempt refuses to hand out a permission the actor does not hold, and removing that guard lets an editor grant themselves payroll.approve, which drops the suite to 23/24. The client's own words are «فعال‌سازی با تأیید کارفرما», so the role list staying editable data rather than an enum is the requirement being met, not deferred. | — |
 
 ### Permissions
 
@@ -229,18 +229,18 @@
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `FILE-001` | `REQ-10.06` | امنیت فایل‌های آپلودی و IDOR | P0 | brief | **`NOT_IMPLEMENTED`** | no uploads | — | M1–M8 |
-| `FILE-002` | `REQ-16.01` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002) | F0: معماری؛ بدون کد | M1–M8 |
-| `FILE-003` | `REQ-16.02` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16) | بدون UI فایل | M1–M8 |
-| `FILE-004` | `REQ-16.03` | مجوزهای Granular با وراثت و Deny/Allow صریح | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_PERMISSION_MATRIX.md §4 | بدون resolver؛ CRM گروه/دپارتمان ندارد | M1–M8 |
-| `FILE-005` | `REQ-16.04` | نسخه‌بندی غیرمخرب با هش و Restore به‌صورت نسخهٔ جدید | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §2 | بدون جدول نسخه | M1–M8 |
-| `FILE-006` | `REQ-16.05` | قفل‌گذاری واقعی و سرور-محور بدون Lost Update | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §4 | بدون جدول قفل | M1–M8 |
-| `FILE-007` | `REQ-16.06` | WebDAV روی VPS مستقل با CRM به‌عنوان تنها مرجع مجوز | P0 | brief | **`BLOCKED`** | docs/WEBDAV_VPS_ARCHITECTURE.md | VPS آزمایشی موجود نیست | خارجی |
-| `FILE-008` | `REQ-16.07` | Storage جدا از CRM با Backend قابل تعویض | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_STORAGE_ARCHITECTURE.md §10 | storage قابل تعویض طراحی شد | M1–M8 |
-| `FILE-009` | `REQ-16.08` | آپلود تکه‌ای/قابل ادامه با تأیید هش و بدون فایل یتیم | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.15 | بدون کد آپلود | M1–M8 |
-| `FILE-010` | `REQ-16.09` | اتصال فایل به موجودیت‌های CRM بدون دور زدن مجوز | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.12 | file_relations طراحی شد | M1–M8 |
-| `FILE-011` | `REQ-16.10` | مدل تهدید و کنترل‌های امنیتی فایل | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_SECURITY_THREAT_MODEL.md | ۲۹ تهدید ثبت شد، ۰ کنترل پیاده | M1–M8 |
-| `FILE-012` | `REQ-16.11` | طبقه‌بندی و Retention با Recycle Bin | P1 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.14 | بدون retention | M1–M8 |
-| `FILE-013` | `REQ-16.12` | Online Office و ویرایش هم‌زمان (F3) | P2 | brief | **`NOT_IMPLEMENTED`** | docs/ONLINE_OFFICE_INTEGRATION.md | F3؛ طبق تصمیم کارفرما | M1–M8 |
+| `FILE-002` | `REQ-16.01` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002) | F0: معماری؛ بدون کد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-003` | `REQ-16.02` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16) | بدون UI فایل SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-004` | `REQ-16.03` | مجوزهای Granular با وراثت و Deny/Allow صریح | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_PERMISSION_MATRIX.md §4 | بدون resolver؛ CRM گروه/دپارتمان ندارد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-005` | `REQ-16.04` | نسخه‌بندی غیرمخرب با هش و Restore به‌صورت نسخهٔ جدید | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §2 | بدون جدول نسخه SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-006` | `REQ-16.05` | قفل‌گذاری واقعی و سرور-محور بدون Lost Update | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_VERSIONING_AND_LOCKING.md §4 | بدون جدول قفل SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-007` | `REQ-16.06` | WebDAV روی VPS مستقل با CRM به‌عنوان تنها مرجع مجوز | P0 | brief | **`BLOCKED`** | docs/WEBDAV_VPS_ARCHITECTURE.md | VPS آزمایشی موجود نیست SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | خارجی |
+| `FILE-008` | `REQ-16.07` | Storage جدا از CRM با Backend قابل تعویض | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_STORAGE_ARCHITECTURE.md §10 | storage قابل تعویض طراحی شد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-009` | `REQ-16.08` | آپلود تکه‌ای/قابل ادامه با تأیید هش و بدون فایل یتیم | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.15 | بدون کد آپلود SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-010` | `REQ-16.09` | اتصال فایل به موجودیت‌های CRM بدون دور زدن مجوز | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.12 | file_relations طراحی شد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-011` | `REQ-16.10` | مدل تهدید و کنترل‌های امنیتی فایل | P0 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_SECURITY_THREAT_MODEL.md | ۲۹ تهدید ثبت شد، ۰ کنترل پیاده SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-012` | `REQ-16.11` | طبقه‌بندی و Retention با Recycle Bin | P1 | brief | **`NOT_IMPLEMENTED`** | docs/FILE_WORKSPACE_ERD.md §2.14 | بدون retention SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
+| `FILE-013` | `REQ-16.12` | Online Office و ویرایش هم‌زمان (F3) | P2 | brief | **`NOT_IMPLEMENTED`** | docs/ONLINE_OFFICE_INTEGRATION.md | F3؛ طبق تصمیم کارفرما SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it. | M1–M8 |
 
 ### UI
 
@@ -327,11 +327,9 @@
 
 | شناسه | عنوان | ماژول | اولویت |
 |-------|-------|-------|:------:|
-| `DSH-003` | ناوبری مستقیم از اعلان به رکورد | Dashboard | P1 |
 | `CRED-006` | هشدار محرمانگی روی فایل حاوی رمز | Credentials | P1 |
 | `XLS-001` | خروجی Excel تکمیلی | Excel | P2 |
 | `FILE-001` | امنیت فایل‌های آپلودی و IDOR | Files | P0 |
-| `INV-005` | ثبت مشخصات و فایل فاکتور پس از ارسال | Invoices | P1 |
 | `INST-001` | Installer امن | Installer | P1 |
 | `FILE-002` | فضای کاری سازمانی به‌عنوان دامنهٔ اصلی محصول | Files | P0 |
 | `FILE-003` | File Explorer با تمام قابلیت‌های ناوبری و عملیات | Files | P0 |

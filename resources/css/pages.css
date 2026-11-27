@@ -256,6 +256,32 @@
 .v-task:last-child {
     border-bottom: none;
 }
+/*
+ * The whole row is a link (§2-3: clicking a notification opens the record).
+ * `.v-task` is the flex row with the padding and the divider, so the anchor
+ * takes over the inner flex layout and inherits the text colour — otherwise the
+ * row would render as a single blue underlined string and the dot, meta and
+ * date would lose their alignment.
+ */
+.v-task__link {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--vira-space-3);
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+.v-task__link:hover,
+.v-task__link:focus-visible {
+    text-decoration: none;
+    color: var(--vira-primary);
+}
+.v-task__link:focus-visible {
+    outline: 2px solid var(--vira-primary);
+    outline-offset: 2px;
+    border-radius: var(--vira-radius-sm);
+}
 .v-task:hover {
     background: var(--vira-surface-hover);
 }

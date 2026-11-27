@@ -465,6 +465,22 @@ check('P4-G2', noteStatus === 'done' && auditRows >= 1,
   `completing the note moves it to "${noteStatus}" and writes ${auditRows} activity row(s)`
   + ` naming it`);
 
+/*
+ * §2-3 — «کلیک روی هر اعلان کاربر را به پروندهٔ مرتبط منتقل کند». Every alert on
+ * the dashboard has to carry the record it is warning about, not just a count.
+ */
+const taskLinks = [...dashWithNote.matchAll(/v-task__link" href="[^"]*\/work-items\/(\d+)"/g)]
+  .map((m) => m[1]);
+const contractWarnings = [...dashWithNote.matchAll(/v-list__main" href="[^"]*\/contracts\/(\d+)"/g)]
+  .map((m) => m[1]);
+const noteLinks = [...dashWithNote.matchAll(/href="[^"]*\/notes\/(\d+)\/edit"/g)].map((m) => m[1]);
+
+check('P4-G3', taskLinks.length > 0 && noteLinks.includes(noteId)
+  && taskLinks.every((id) => /^\d+$/.test(id)),
+  `the dashboard's alerts are links to records, not counts: ${taskLinks.length} کارتابل task(s)`
+  + ` → /work-items/{id}, ${contractWarnings.length} expiry warning(s) → /contracts/{id}, and the`
+  + ` new note ${noteId} → /notes/${noteId}/edit`);
+
 /* ═══════════ H: global search → navigation → record authorization ═══════════ */
 
 const search = await flow.render({ uri: `/customers?q=${encodeURIComponent(COMPANY)}` });

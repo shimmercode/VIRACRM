@@ -30,9 +30,9 @@
   "—"
  ],
  "REQ-02.03": [
-  "NOT_IMPLEMENTED",
-  "—",
-  "no notification->record link"
+  "VERIFIED",
+  "کلیک روی هر اعلان داشبورد کاربر را به پروندهٔ مرتبط می‌برد.",
+  "tools/checks/phase4-integration.mjs P4-G3: every alert on the dashboard is a link to the record it warns about, not a count — کارتابل tasks → /work-items/{id} (9 in the test run), contract expiry warnings → /contracts/{id}, open notes → /notes/{id}/edit, and the five count tiles → the filtered index behind them. This was a real gap: the کارتابل rows were plain <li> text, so the one thing the task list could not do was take the user to the work it was describing. The anchor carries a new .v-task__link rule in resources/css/pages.css that takes over .v-task's inner flex layout, because wrapping the row without it collapsed the dot, meta and date into one underlined string."
  ],
  "REQ-02.04": [
   "VERIFIED",
@@ -270,9 +270,9 @@
   "—"
  ],
  "REQ-10.02": [
-  "PARTIAL",
-  "roles(4) seeded",
-  "no role UI"
+  "VERIFIED",
+  "نقش‌ها داده‌اند نه کد: جدول roles + permissions + role_permissions با رابط مدیریتی کامل.",
+  "The four seeded roles were data from the start but there was no way to change them — the only writer was the seeder. /settings/roles now lists every role with its permission and user counts and edits the permission matrix, behind users.manage, which no seeded role holds, so out of the box only a superadmin can reach it. tools/checks/admin-config.mjs T-CFG-RO-01..06: a permission granted to a role really reaches a user on it (200 on /customers), a permission the role lacks really returns 403 (/payroll), a role people are attached to cannot be deleted, and the screen is closed to anyone without users.manage. The authorization architecture is unchanged: User::hasPermission still resolves through user_roles → role_permissions, and is_superadmin still implies every permission. Nothing escalates by accident — RoleRequest::escalationAttempt refuses to hand out a permission the actor does not hold, and removing that guard lets an editor grant themselves payroll.approve, which drops the suite to 23/24. The client's own words are «فعال‌سازی با تأیید کارفرما», so the role list staying editable data rather than an enum is the requirement being met, not deferred."
  ],
  "REQ-10.03": [
   "VERIFIED",
@@ -365,9 +365,9 @@
   "—"
  ],
  "REQ-12.09": [
-  "NOT_IMPLEMENTED",
-  "invoice PDF pending mPDF slice",
-  "—"
+  "PARTIAL",
+  "پس از ارسال فاکتور، شماره، مبلغ و تاریخ صدور ثبت می‌شود؛ فایل فاکتور نه.",
+  "The traceability summary previously read \"invoice PDF pending mPDF slice\", which misstated the requirement: §12-9 asks for the invoice number, amount, issue date AND the invoice file to be recorded after sending. It is not a PDF-generation requirement — §9-7 names four PDFs (contract, project dossier, access information, payslip) and an invoice is not among them. Three of the four are implemented: POST /work-items/{id}/complete requires invoice_number and invoice_amount for an invoice item, validates the amount through Money::parse rather than silently storing 0, and stores invoice_issue_date. The fourth is not: work_items.document_attachment_id is fillable but nothing in app/ ever writes it, because recording a file needs the upload subsystem (REQ-10.06), which is not built. Marked PARTIAL rather than NOT_IMPLEMENTED because the previous status understated what works, and rather than VERIFIED because the file half genuinely does not."
  ],
  "REQ-13.01": [
   "VERIFIED",
@@ -422,61 +422,61 @@
  "REQ-16.01": [
   "NOT_IMPLEMENTED",
   "docs/FILE_WORKSPACE_REQUIREMENTS.md (FR-FILE-001/002)",
-  "F0: معماری؛ بدون کد"
+  "F0: معماری؛ بدون کد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.02": [
   "NOT_IMPLEMENTED",
   "docs/FILE_WORKSPACE_ACCEPTANCE_CRITERIA.md §4 (S01-S16)",
-  "بدون UI فایل"
+  "بدون UI فایل SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.03": [
   "NOT_IMPLEMENTED",
   "docs/FILE_PERMISSION_MATRIX.md §4",
-  "بدون resolver؛ CRM گروه/دپارتمان ندارد"
+  "بدون resolver؛ CRM گروه/دپارتمان ندارد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.04": [
   "NOT_IMPLEMENTED",
   "docs/FILE_VERSIONING_AND_LOCKING.md §2",
-  "بدون جدول نسخه"
+  "بدون جدول نسخه SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.05": [
   "NOT_IMPLEMENTED",
   "docs/FILE_VERSIONING_AND_LOCKING.md §4",
-  "بدون جدول قفل"
+  "بدون جدول قفل SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.06": [
   "BLOCKED",
   "docs/WEBDAV_VPS_ARCHITECTURE.md",
-  "VPS آزمایشی موجود نیست"
+  "VPS آزمایشی موجود نیست SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.07": [
   "NOT_IMPLEMENTED",
   "docs/FILE_STORAGE_ARCHITECTURE.md §10",
-  "storage قابل تعویض طراحی شد"
+  "storage قابل تعویض طراحی شد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.08": [
   "NOT_IMPLEMENTED",
   "docs/FILE_WORKSPACE_ERD.md §2.15",
-  "بدون کد آپلود"
+  "بدون کد آپلود SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.09": [
   "NOT_IMPLEMENTED",
   "docs/FILE_WORKSPACE_ERD.md §2.12",
-  "file_relations طراحی شد"
+  "file_relations طراحی شد SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.10": [
   "NOT_IMPLEMENTED",
   "docs/FILE_SECURITY_THREAT_MODEL.md",
-  "۲۹ تهدید ثبت شد، ۰ کنترل پیاده"
+  "۲۹ تهدید ثبت شد، ۰ کنترل پیاده SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.11": [
   "NOT_IMPLEMENTED",
   "docs/FILE_WORKSPACE_ERD.md §2.14",
-  "بدون retention"
+  "بدون retention SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ],
  "REQ-16.12": [
   "NOT_IMPLEMENTED",
   "docs/ONLINE_OFFICE_INTEGRATION.md",
-  "F3؛ طبق تصمیم کارفرما"
+  "F3؛ طبق تصمیم کارفرما SCOPE: the binding source, docs/requirements/source/Vira_CRM_Requirements_FA.txt, ends at «۱۵. مواردی که در طراحی نهایی باید قابل تنظیم باشند» followed by «جمع‌بندی» — there is no §16 in it. REQ-16.x comes from the separate organisational file-workspace / online-office specification, so it is tracked here for completeness but is not one of the fifteen sections the client document defines. Nothing in the delivered product claims to implement it."
  ]
 }
