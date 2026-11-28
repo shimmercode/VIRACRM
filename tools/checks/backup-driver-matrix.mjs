@@ -53,8 +53,18 @@ const WRONG = crypto.randomBytes(32).toString('base64');
 
 const PROBE = 'tools/checks/artisan-probe.php';
 
-/** Run an artisan command against the private database. */
+/**
+ * Run an artisan command against the private database at `privateDb`.
+ *
+ * The first positional argument to artisan-probe IS the database: the probe
+ * force-sets DB_DATABASE from it after reading any KEY=VALUE pairs. So a
+ * `DB_DATABASE` inside `env` is overwritten and means nothing — to act on a
+ * different database, change `privateDb` for that call via `artisanOn()`.
+ */
 const artisan = (env, args) => php(PROBE, [privateDb, ...Object.entries(env).map(([k, v]) => `${k}=${v}`), '--', ...args]);
+
+/** Same, but against an explicit database path. */
+const artisanOn = (db, env, args) => php(PROBE, [db, ...Object.entries(env).map(([k, v]) => `${k}=${v}`), '--', ...args]);
 
 const exitOf = (out) => {
   const m = String(out).match(/\[exit (\d+)\]/);
@@ -156,26 +166,59 @@ check('BDM-12b', exitOf(linkRun.out) === 1 && /document root/.test(linkRun.out),
 check('BDM-12c', !fs.existsSync(path.join(ROOT, 'public/leaked')),
   `nothing was created inside public/ through the symlink`);
 
-/* ═══ 6. Wrong key on restore → refused, target unchanged ══════════════ */
+/* ═══ 6. Wrong key on restore → refused, data untouched ════════════════ */
 
 const container = path.join(outDir, containers[0]);
 const target = path.join(work, 'target.sqlite');
 fs.copyFileSync(SHARED, target);
 
-const fp = async (db) => (await php('tools/checks/db-fingerprint.php', [db, '--json'])).out.trim();
+/*
+ * Read the per-table digests, not the single whole-database hash.
+ *
+ * artisan-probe ALWAYS sets DB_DATABASE to the path given as its first argument,
+ * so a restore can only ever be pointed at a private database by passing it
+ * there. The first version of this test passed `DB_DATABASE: target` as an env
+ * pair while artisan-probe's positional argument still named the SOURCE
+ * database — so the restore ran against the source and `target` was never
+ * touched. Comparing `target` before and after then compared a file to itself
+ * and passed for the wrong reason.
+ *
+ * Even against the correct database the whole-database hash is the wrong
+ * assertion: a refused restore appends a `restore_failed` audit row by design
+ * (that is the evidence trail), so the file legitimately changes. What must not
+ * change is any DATA table.
+ */
+const fp = async (db) => JSON.parse(
+  (await php('tools/checks/db-fingerprint.php', [db, '--json'])).out.trim().split('\n')[0],
+);
 
 const beforeWrong = await fp(target);
-const wrongKeyRun = await artisan(
-  { VIRA_BACKUP_KEY: WRONG, DB_DATABASE: target },
+
+const wrongKeyRun = await artisanOn(
+  target,
+  { VIRA_BACKUP_KEY: WRONG },
   ['vira:restore', `file=${container}`, '--force', '--no-interaction'],
 );
+/* artisan-probe's first positional already points the restore at `target`. */
+
 const afterWrong = await fp(target);
 
 check('BDM-13', exitOf(wrongKeyRun.out) === 1,
   `restoring with the wrong key exits 1 (gate 3, GCM authentication)`);
 
-check('BDM-14', beforeWrong === afterWrong,
-  `the target database is unchanged by the refused restore`);
+const changedData = Object.keys(beforeWrong.perTable)
+  .filter((t) => t !== 'audit_logs')
+  .filter((t) => beforeWrong.perTable[t] !== afterWrong.perTable[t]);
+
+check('BDM-14', changedData.length === 0,
+  `no DATA table changed in the target database (${Object.keys(beforeWrong.perTable).length - 1} compared, `
+  + `audit_logs excluded because the refusal records itself)`);
+
+check('BDM-14b',
+  beforeWrong.perTable.audit_logs !== afterWrong.perTable.audit_logs
+  && afterWrong.rows === beforeWrong.rows + 1,
+  `the refused restore did append exactly one audit row (${beforeWrong.rows} → ${afterWrong.rows}) — `
+  + `so the restore really did run against this database, which is what BDM-14 depends on`);
 
 /* ═══ 7. Corrupted container → refused ════════════════════════════════ */
 
@@ -185,21 +228,26 @@ bytes[Math.floor(bytes.length / 2)] ^= 0x01;   // flip one bit mid-ciphertext
 fs.writeFileSync(corrupt, bytes);
 
 const beforeCorrupt = await fp(target);
-const corruptRun = await artisan(
+const corruptRun = await artisanOn(
+  target,
   { VIRA_BACKUP_KEY: KEY },
   ['vira:restore', `file=${corrupt}`, '--force', '--no-interaction'],
 );
 const afterCorrupt = await fp(target);
 
-check('BDM-15', exitOf(corruptRun.out) === 1 && beforeCorrupt === afterCorrupt,
-  `a one-bit flip is refused (exit 1) and leaves the target unchanged — the GCM tag catches it before any write`);
+const corruptChanged = Object.keys(beforeCorrupt.perTable)
+  .filter((t) => t !== 'audit_logs')
+  .filter((t) => beforeCorrupt.perTable[t] !== afterCorrupt.perTable[t]);
+
+check('BDM-15', exitOf(corruptRun.out) === 1 && corruptChanged.length === 0,
+  `a one-bit flip is refused (exit 1) and no data table changed — the GCM tag catches it before any write`);
 
 /* ═══ 8. Truncated container → refused ════════════════════════════════ */
 
 const truncated = path.join(work, 'truncated.vbk1');
 fs.writeFileSync(truncated, fs.readFileSync(container).subarray(0, 4096));
 
-const truncRun = await artisan({ VIRA_BACKUP_KEY: KEY },
+const truncRun = await artisanOn(target, { VIRA_BACKUP_KEY: KEY },
   ['vira:restore', `file=${truncated}`, '--force', '--no-interaction']);
 
 check('BDM-16', exitOf(truncRun.out) === 1,
@@ -210,7 +258,7 @@ check('BDM-16', exitOf(truncRun.out) === 1,
 const garbage = path.join(work, 'garbage.bin');
 fs.writeFileSync(garbage, crypto.randomBytes(2048));
 
-const garbageRun = await artisan({ VIRA_BACKUP_KEY: KEY },
+const garbageRun = await artisanOn(target, { VIRA_BACKUP_KEY: KEY },
   ['vira:restore', `file=${garbage}`, '--force', '--no-interaction']);
 
 check('BDM-17', exitOf(garbageRun.out) === 1 && /gate 1|not a VIRA backup/.test(garbageRun.out),
@@ -218,7 +266,7 @@ check('BDM-17', exitOf(garbageRun.out) === 1 && /gate 1|not a VIRA backup/.test(
 
 /* ═══ 10. Restore succeeds and reports format ═════════════════════════ */
 
-const goodRun = await artisan({ VIRA_BACKUP_KEY: KEY },
+const goodRun = await artisanOn(target, { VIRA_BACKUP_KEY: KEY },
   ['vira:restore', `file=${container}`, '--force', '--no-interaction']);
 
 check('BDM-18', exitOf(goodRun.out) === 0 && goodRun.out.includes('format         : sqlite-file'),
@@ -226,7 +274,10 @@ check('BDM-18', exitOf(goodRun.out) === 0 && goodRun.out.includes('format       
 
 /* ═══ 11. Restore is driver-aware: a sqlite container on mysql ════════ */
 
-const mysqlRestore = await artisan(
+/* DB_CONNECTION alone: artisan-probe sets DB_DATABASE from its positional
+ * argument, so passing one here would be silently ignored. */
+const mysqlRestore = await artisanOn(
+  target,
   { VIRA_BACKUP_KEY: KEY, DB_CONNECTION: 'mysql' },
   ['vira:restore', `file=${container}`, '--force', '--no-interaction'],
 );

@@ -3,7 +3,7 @@
 **Date:** 2026-11-22
 **Commit:** `884e68e`
 **Suites:** `tests/Feature/BackupDriverMatrixTest.php` (38 assertions),
-`tools/checks/backup-driver-matrix.mjs` (22/22),
+`tools/checks/backup-driver-matrix.mjs` (23/23),
 `tools/checks/backup-hardening.mjs` (16/16)
 **Verdict:** every command-level row executable in this environment passes;
 **3 BLOCKED** on the absence of a MySQL server.
@@ -85,8 +85,8 @@ changes.
 
 | # | Case | Expected | Observed | Result |
 |---|---|---|---|---|
-| M-23 | Restore with the **wrong key** | refuse at gate 3 (GCM tag) | exit 1, target byte-identical | **PASS** |
-| M-24 | One-bit flip mid-ciphertext | refuse | exit 1, target unchanged | **PASS** |
+| M-23 | Restore with the **wrong key** | refuse at gate 3 (GCM tag) | exit 1; 56 data tables identical in the target, plus exactly one `restore_failed` audit row (484 → 485) | **PASS** |
+| M-24 | One-bit flip mid-ciphertext | refuse | exit 1, no data table changed | **PASS** |
 | M-25 | Truncated container | refuse | exit 1 | **PASS** |
 | M-26 | Random bytes | refuse at gate 1 (magic) | exit 1, "not a VIRA backup" | **PASS** |
 | M-27 | Container with a modified header | refuse | exit 1 | **PASS** |
@@ -189,17 +189,54 @@ the check that makes the rest of the matrix safe to execute repeatedly.
 | Driver selection | 5 | 5 | 0 |
 | Readiness / fail-closed | 10 | 10 | 0 |
 | SQLite round trip | 7 | 7 | 0 |
-| Integrity / tampering | 6 | 6 | 0 |
+| Integrity / tampering | 7 | 7 | 0 |
 | Format compatibility | 5 | 5 | 0 |
 | Destination guards | 5 | 5 | 0 (symlink case executed as BDM-12b/c) |
 | MySQL real server | 3 | 0 | **3** |
 | Isolation | 3 | 3 | 0 |
-| **Total** | **44** | **41** | **3** |
+| **Total** | **45** | **42** | **3** |
 
-41 executed and passing. 3 blocked, all on the same missing prerequisite: a MySQL
+42 executed and passing. 3 blocked, all on the same missing prerequisite: a MySQL
 server with client tools.
 
 The blocked rows are the only ones that would prove the remediation works on the
 deployment it was written for. Everything else proves the failure modes are
 handled and the SQLite path is intact — which is what makes the change safe to
 ship, not what makes it complete.
+
+
+---
+
+## 10. A false pass found while checking this document
+
+Writing §4 forced a closer look at M-23, and it did not hold up.
+
+**The test never ran against the database it claimed to check.**
+`artisan-probe.php` force-sets `DB_DATABASE` from its first positional argument.
+The wrong-key case passed `DB_DATABASE: target` as an environment pair while the
+positional argument still named the *source* database, so the probe overwrote the
+env value and restored against the source. `target` was then compared with
+itself, before and after, and passed — proving nothing, in the one test whose
+entire job is to prove a refused restore cannot damage a database.
+
+**And the assertion was wrong even in principle.** It compared the whole-database
+fingerprint, which includes `audit_logs`. A refused restore appends a
+`restore_failed` row *by design* — that is the evidence trail, and BK-16 asserts
+it. So the file legitimately changes on a correct refusal, and a byte-identical
+expectation could only ever have been met by the test not running. The document
+said "target byte-identical", which was never true of a working restore path.
+
+**The fix:**
+
+- every `vira:restore` call goes through `artisanOn(target, …)`, so the restore
+  actually targets `target`; the helper's docblock now states that a
+  `DB_DATABASE` env pair is silently overwritten and cannot be used to redirect it;
+- the assertion compares **per-table digests** with `audit_logs` excluded, so it
+  asks "did any data table change?" rather than "did the file change?";
+- a new case, **BDM-14b**, asserts the audit row count went from 484 to 485 —
+  which is what proves the restore really did run against that database. Without
+  it, BDM-14 could silently regress to comparing a file with itself again, which
+  is exactly how it failed the first time.
+
+The suite went from 22 to 23 cases. BDM-14b is the one that would have caught the
+original defect, and it exists because the doc review did.

@@ -203,7 +203,7 @@ via `sqlite_master` and compared against the snapshot, so they are not a label.
 | `tests/run.php` (PHP classes) | **19/19, 864 assertions, 0 failed** |
 | `BackupDriverMatrixTest` | 38 assertions |
 | `BackupRestoreTest` | 96 assertions |
-| `tools/checks/backup-driver-matrix.mjs` | **22/22** (3 rows printed BLOCKED) |
+| `tools/checks/backup-driver-matrix.mjs` | **23/23** (3 rows printed BLOCKED) |
 | `tools/checks/backup-hardening.mjs` | **16/16**, unchanged by the refactor |
 
 `backup-hardening` passing unchanged is the important line: it means the
@@ -278,7 +278,7 @@ mysql -e 'DROP DATABASE vira_restore_check'
 | `app/Console/Commands/RestoreBackup.php` | driver/format derivation, explicit MySQL refusal |
 | `tests/Feature/BackupDriverMatrixTest.php` | **new** — 38 assertions |
 | `tests/Feature/BackupRestoreTest.php` | builder ctor updated |
-| `tools/checks/backup-driver-matrix.mjs` | **new** — 22/22 command-level cases |
+| `tools/checks/backup-driver-matrix.mjs` | **new** — 23/23 command-level cases |
 
 ---
 
