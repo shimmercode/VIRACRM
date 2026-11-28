@@ -341,6 +341,11 @@ requirements:
    text: "مشتریان، قراردادها، پروژه‌ها، دسترسی‌های محرمانه، پرسنل، حقوق، گزارش‌ها، خروجی‌ها، تنظیمات، Audit Log.",
    modules: [Permissions], tests: [T-SEC-03, T-SEC-04], status: in-analysis, phase: "فاز سه", source_section: "۱۰", source_lines: "212-224"}
 
+- {id: REQ-10.09, group: REQ-10, type: doc, priority: P0, weight: 4,
+   title: "نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده",
+   text: "تهیه نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده.",
+   modules: [Backup], tests: [BackupRestoreTest, BDM-01, BK-11], status: implemented, phase: "فاز سه", source_section: "۱۰", source_lines: "221"}
+
 - {id: REQ-10.04, group: REQ-10, type: doc, priority: P0, weight: 4,
    title: "Audit Log رویدادهای مهم",
    text: "ورود/خروج، ایجاد/ویرایش/حذف/آرشیو، مشاهده رمز، دریافت PDF محرمانه، تغییر مالی/حقوق/نقش/مجوز و عملیات مدیریتی، با کاربر/زمان/نوع/مرجع؛ بدون ذخیره رمز.",

@@ -36,8 +36,8 @@ In scope of the binding 15-section document: **85**.
 Outside it (the §16 file-workspace set, which the client document does not
 contain): **12** — tracked, but see the last section.
 
-Weighted completion (catalog weights): **259/396** =
-**65.4%** of contractual weight
+Weighted completion (catalog weights): **259/397** =
+**65.2%** of contractual weight
 is VERIFIED.
 
 ---
@@ -215,6 +215,27 @@ what is missing, and what to do next.
 
 **Remedy:** Build it as one slice: validated upload (MIME + extension + size allowlist), opaque random filenames, storage outside public/, a permission-checked download controller, and a check that guessing another tenant's file id returns 403 rather than 404-with-content. This unblocks REQ-06.07 and the file half of REQ-12.09.
 
+### REQ-10.09 — نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده
+
+| | |
+|---|---|
+| **Status** | `BLOCKED` |
+| **Priority** | P0 · weight 4 · type `` |
+| **Source** | §۱۰ |
+| **Contractual importance** | delivery-blocking |
+
+**What the document asks:**
+
+> تهیه نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده.
+
+**Where it stands:** Backup clause from contract §10 line 221 (retention/scheduling/host-independence)/
+
+**Evidence:** docs/requirements/source/Vira_CRM_Requirements_FA.txt §10 line 221; app/Services/Backup; docs/MYSQL_BACKUP_TEST_MATRIX.md; docs/CUTOVER_RUNBOOK.md — Code exists and is tested: 3 commands, BackupRestoreTest 96 assertions, backup-driver-matrix 23/23, backup-hardening 16/16. BLOCKED on infrastructure: no scheduler entry exists in the application (routes/console.php registers only `inspire`), no cron daemon exists on this host, and no MySQL server exists to prove the mysqldump path. "منظم" (regular) is precisely the part that cannot be shown without infrastructure.
+
+**Remaining gap:** (no authored gap — the status entry is the record)
+
+**Remedy:** (no remedy authored)
+
 ### REQ-11.05 — حالت‌های Loading/Empty/Success/Error و اعتبارسنجی
 
 | | |
@@ -382,27 +403,6 @@ what is missing, and what to do next.
 **Remaining gap:** No Excel export exists.
 
 **Remedy:** Install an Excel writer (maatwebsite/excel or phpoffice/phpspreadsheet) and add the same export endpoints that already produce CSV/PDF, with a check that the response Content-Type and extension are correct. Marked §9-6 "تکمیلی" in the catalog, so it is P2.
-
-### REQ-10.09 — (no catalog title)
-
-| | |
-|---|---|
-| **Status** | `BLOCKED` |
-| **Priority** | undefined · weight undefined · type `—` |
-| **Source** | §— |
-| **Contractual importance** | supplementary |
-
-**What the document asks:**
-
-> (text missing from the catalog)
-
-**Where it stands:** Backup clause from contract §10 line 221 (retention/scheduling/host-independence)/
-
-**Evidence:** docs/requirements/source/Vira_CRM_Requirements_FA.txt §10 line 221; app/Services/Backup; docs/MYSQL_BACKUP_TEST_MATRIX.md; docs/CUTOVER_RUNBOOK.md — Code exists and is tested: 3 commands, BackupRestoreTest 96 assertions, backup-driver-matrix 23/23, backup-hardening 16/16. BLOCKED on infrastructure: no scheduler entry exists in the application (routes/console.php registers only `inspire`), no cron daemon exists on this host, and no MySQL server exists to prove the mysqldump path. "منظم" (regular) is precisely the part that cannot be shown without infrastructure.
-
-**Remaining gap:** (no authored gap — the status entry is the record)
-
-**Remedy:** (no remedy authored)
 
 ### REQ-12.05 — استقلال یادآوری فاکتور و گزارش + چند دوره
 

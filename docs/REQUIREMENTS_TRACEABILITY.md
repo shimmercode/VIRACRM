@@ -4,7 +4,7 @@
 > `tools/traceability-status.json` را به‌روز کنید و `node tools/generate-traceability.mjs` را اجرا کنید.
 > `node tools/generate-traceability.mjs --check` بررسی می‌کند که سند با کاتالوگ هم‌گام است.
 
-**منبع نیازمندی‌ها:** `docs/requirements/requirements.catalog.yaml` (۹۶ نیازمندی)
+**منبع نیازمندی‌ها:** `docs/requirements/requirements.catalog.yaml` (۹۷ نیازمندی)
 
 **مبنا:** بازرسی مستقیم مخزن + اجرای واقعی. هیچ وضعیتی از گزارش قبلی کپی نشده.
 
@@ -14,23 +14,23 @@
 
 | وضعیت | تعداد | درصد |
 |-------|------:|-----:|
-| `VERIFIED` | 63 | 65.6% |
-| `PARTIAL` | 13 | 13.5% |
+| `VERIFIED` | 63 | 64.9% |
+| `PARTIAL` | 13 | 13.4% |
 | `NOT_VERIFIED` | 1 | 1.0% |
-| `NOT_IMPLEMENTED` | 15 | 15.6% |
-| `BLOCKED` | 4 | 4.2% |
-| **جمع** | **96** | **100%** |
+| `NOT_IMPLEMENTED` | 15 | 15.5% |
+| `BLOCKED` | 5 | 5.2% |
+| **جمع** | **97** | **100%** |
 
-### اولویت P0 (۳۹ نیازمندی)
+### اولویت P0 (۴۰ نیازمندی)
 
 | وضعیت | تعداد |
 |-------|------:|
 | `VERIFIED` | 20 |
 | `PARTIAL` | 6 |
 | `NOT_IMPLEMENTED` | 10 |
-| `BLOCKED` | 3 |
+| `BLOCKED` | 4 |
 
-**نتیجه:** از ۳۹ نیازمندی حیاتی، **۲۰ مورد اثبات‌شده** و **۱۰ مورد پیاده‌سازی‌نشده** است.
+**نتیجه:** از ۴۰ نیازمندی حیاتی، **۲۰ مورد اثبات‌شده** و **۱۰ مورد پیاده‌سازی‌نشده** است.
 
 ### نگاشت شناسه‌ها
 
@@ -211,6 +211,13 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `PERM-001` | `REQ-10.03` | مجوزهای مستقل به تفکیک حوزه | P0 | doc | **`VERIFIED`** | 55 permissions; permission: middleware on every employee/payroll/organization/accounting route; 2-session 403 proofs | tools/checks/route-permissions.php; tests/Feature/AuthorizationTest.php | — |
 
+### Backup
+
+| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
+|-------|-----|-------|:------:|-----|-------|------|------|-----|
+| `BAK-001` | `REQ-10.09` | نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده | P0 | doc | **`BLOCKED`** | Backup clause from contract §10 line 221 (retention/scheduling/host-independence)/ | docs/requirements/source/Vira_CRM_Requirements_FA.txt §10 line 221; app/Services/Backup; docs/MYSQL_BACKUP_TEST_MATRIX.md; docs/CUTOVER_RUNBOOK.md — Code exists and is tested: 3 commands, BackupRestoreTest 96 assertions, backup-driver-matrix 23/23, backup-hardening 16/16. BLOCKED on infrastructure: no scheduler entry exists in the application (routes/console.php registers only `inspire`), no cron daemon exists on this host, and no MySQL server exists to prove the mysqldump path. "منظم" (regular) is precisely the part that cannot be shown without infrastructure. | خارجی |
+| `BAK-002` | `REQ-15.02` | Backup و Restore تست‌شده | P0 | brief | **`VERIFIED`** | app/Services/Backup (4 classes: Cipher/Builder/Restorer/RetentionPolicy); 3 console commands; BackupRestoreTest 96 assertions; 7 verification gates; tamper refusals proven at gate 3 | app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is NOT REQ-12.07: that requirement is the reminder scheduler (contract §5-2/12) and never concerned backups. The contractual backup clause is §10 line 221 «تهیه نسخه پشتیبان منظم…», tracked as REQ-10.09 and BLOCKED on infrastructure. The earlier attribution here was wrong. | — |
+
 ### Audit
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
@@ -296,12 +303,6 @@
 |-------|-----|-------|:------:|-----|-------|------|------|-----|
 | `SET-001` | `REQ-15.01` | تنظیمات مدیریتی سامانه | P1 | doc | **`PARTIAL`** | Six of the seven §15 configuration areas now have a screen, and each is proven by an effect somewhere other than the screen that made the change: contract types (/settings/contract-types), project types (/settings/project-types), SEO packages (/settings/seo-packages), mandatory accesses (/settings/access-requirements), payroll rules (/settings/payroll-rules) and roles with their permission matrix (/settings/roles). The tables already existed and most were already read by real code; what was missing was any way to change them, so each list was frozen at whatever the seeder wrote. No new configuration structure was created for any of them. "Project amounts" is not a separate area — §15 puts it in the same bullet as payroll calculation («نحوه محاسبه حقوق و مبالغ مرتبط با تعداد پروژه‌ها»), and those amounts already exist as payroll_items rows carrying a project_id plus payslips.projects_total. The one open §15 bullet is the PDF template: contract templates are editable, but the project, access and payslip PDFs still have fixed layouts. | tools/checks/admin-config.mjs 24/24. Contract types: a type created here is offered by the contract form, a duplicate code is a field error, retiring it removes it from the form. Project types: a new type is selectable AND a project is really created with it (the validator and the model-level HasDomainConstraints guard both read project_types now, so they cannot disagree); retiring a type stops new projects of that kind; the code of a type projects use cannot change. Mandatory accesses: adding a blocking requirement for DESIGN immediately blocks activating a design project — proven on a type other than seo, because all three seeded requirements are for seo and a hard-coded list would have passed for the wrong reason; removing it lifts the block; "blocks" without "required" is refused since blockingFor() needs both. Payroll: a new period is stamped with the approved rule, an unapproved rule is never used even when it is the only one left (storePeriod previously filtered on is_active alone), a method outside PayrollRule::METHODS is refused so no formula can be introduced against OD-16, and approving needs payroll.approve rather than settings.manage. Roles: a granted permission really reaches a user and a missing one really returns 403; a user cannot hand out a permission they do not hold — removing that guard lets an editor grant themselves payroll.approve and the suite drops to 23/24; a role people are attached to cannot be deleted; the screen is closed to anyone without users.manage, which no seeded role holds. route-smoke covers all 30 new routes (152 routes, 0 skipped). FinalizationGate::message() no longer says «پروژه سئو», because which types are gated is data. | M1/M3 |
 
-### Backup
-
-| شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
-|-------|-----|-------|:------:|-----|-------|------|------|-----|
-| `BAK-001` | `REQ-15.02` | Backup و Restore تست‌شده | P0 | brief | **`VERIFIED`** | app/Services/Backup (4 classes: Cipher/Builder/Restorer/RetentionPolicy); 3 console commands; BackupRestoreTest 96 assertions; 7 verification gates; tamper refusals proven at gate 3 | app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap | — |
-
 ### Installer
 
 | شناسه | REQ | عنوان | اولویت | نوع | وضعیت | شاهد | شکاف | فاز |
@@ -349,6 +350,7 @@
 
 | شناسه | عنوان | دلیل انسداد |
 |-------|-------|-------------|
+| `BAK-001` | نسخه پشتیبان منظم از پایگاه داده و فایل‌های بارگذاری‌شده | Backup clause from contract §10 line 221 (retention/scheduling/host-independence)/ |
 | `SCH-001` | زمان‌بندی واقعی، Idempotent و قابل مشاهده | H-15 host cron unavailable |
 | `SCH-002` | تعریف روز تقویمی و Timezone | OD-07 timezone decision pending |
 | `DEP-003` | بازبینی و تأیید هاست مقصد | 14/21 host checks unknown |
@@ -360,7 +362,7 @@
 
 | قاعده | رعایت |
 |-------|-------|
-| هر ۹۶ نیازمندی نگاشت شده | ✅ (اسکریپت با نبود نگاشت شکست می‌خورد) |
+| هر ۹۷ نیازمندی نگاشت شده | ✅ (اسکریپت با نبود نگاشت شکست می‌خورد) |
 | `PASS` فقط با شاهد اجرایی | ✅ |
 | تست mock/skip هرگز `PASS` نیست | ✅ |
 | هیچ نیازمندی به‌خاطر دشواری حذف نشد | ✅ |
