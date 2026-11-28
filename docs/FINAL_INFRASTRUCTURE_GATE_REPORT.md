@@ -2,7 +2,9 @@
 
 **Date:** 2026-11-22
 **Branch:** `arena/3b43de84-viracrm`
-**HEAD at report time:** `9729ad5` (was `1357871` on arrival — see §1)
+**HEAD at report time:** `db3aff3` (was `1357871` on arrival — see §1; the gate
+results below were proven at `1f29da0` and only the manifest and this paragraph
+changed afterwards, so these commits differ by documentation alone)
 **Verdict:** **NOT PRODUCTION READY — EXTERNAL INFRASTRUCTURE BLOCKERS**
 
 Six gates were set. **Two are PASS**, **one is partial**, and **three are
