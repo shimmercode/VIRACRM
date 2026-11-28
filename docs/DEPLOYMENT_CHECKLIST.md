@@ -274,7 +274,7 @@ php artisan vira:backup --no-prune                # keep every container
 ```
 
 Verified by `tools/checks/backup-hardening.mjs` (**16/16**) and
-`tools/checks/backup-driver-matrix.mjs` (**22/22**):
+`tools/checks/backup-driver-matrix.mjs` (**23/23**):
 
 | Check | Result |
 |---|---|
