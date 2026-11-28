@@ -115,6 +115,7 @@ const SUITES = (() => {
    * when there is a valid lock file OR the absence is documented and BLOCKED.
    * Both of those are pass outcomes, so it belongs in the required set. */
   { id: 'composer-lock', label: 'composer.lock presence and provenance (BLOCKED: no registry)', kind: 'node', script: 'tools/checks/composer-lock-acceptance.mjs', required: true },
+  { id: 'tls-proxy', label: 'TLS terminator + proxy behaviour, security headers over TLS', kind: 'node', script: 'tools/checks/tls-proxy.mjs', required: true },
   { id: 'navigation-clarity', label: 'Every enabled sidebar entry reaches a real page; no false coming-soon', kind: 'node', script: 'tools/checks/navigation-clarity.mjs', required: true },
   { id: 'route-smoke', label: 'Every GET and POST route responds without a fatal', kind: 'node', script: 'tools/checks/route-smoke.mjs', required: true },
   // Composer state: what is declared vs installed, and the absent lock file.

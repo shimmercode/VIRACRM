@@ -29,15 +29,15 @@
 | `PARTIAL` | 13 |
 | `NOT_VERIFIED` | 1 |
 | `NOT_IMPLEMENTED` | 15 |
-| `BLOCKED` | 4 |
-| **Total tracked** | **96** |
+| `BLOCKED` | 5 |
+| **Total tracked** | **97** |
 
-In scope of the binding 15-section document: **84**.
+In scope of the binding 15-section document: **85**.
 Outside it (the §16 file-workspace set, which the client document does not
 contain): **12** — tracked, but see the last section.
 
-Weighted completion (catalog weights): **259/393** =
-**65.9%** of contractual weight
+Weighted completion (catalog weights): **259/396** =
+**65.4%** of contractual weight
 is VERIFIED.
 
 ---
@@ -383,6 +383,27 @@ what is missing, and what to do next.
 
 **Remedy:** Install an Excel writer (maatwebsite/excel or phpoffice/phpspreadsheet) and add the same export endpoints that already produce CSV/PDF, with a check that the response Content-Type and extension are correct. Marked §9-6 "تکمیلی" in the catalog, so it is P2.
 
+### REQ-10.09 — (no catalog title)
+
+| | |
+|---|---|
+| **Status** | `BLOCKED` |
+| **Priority** | undefined · weight undefined · type `—` |
+| **Source** | §— |
+| **Contractual importance** | supplementary |
+
+**What the document asks:**
+
+> (text missing from the catalog)
+
+**Where it stands:** Backup clause from contract §10 line 221 (retention/scheduling/host-independence)/
+
+**Evidence:** docs/requirements/source/Vira_CRM_Requirements_FA.txt §10 line 221; app/Services/Backup; docs/MYSQL_BACKUP_TEST_MATRIX.md; docs/CUTOVER_RUNBOOK.md — Code exists and is tested: 3 commands, BackupRestoreTest 96 assertions, backup-driver-matrix 23/23, backup-hardening 16/16. BLOCKED on infrastructure: no scheduler entry exists in the application (routes/console.php registers only `inspire`), no cron daemon exists on this host, and no MySQL server exists to prove the mysqldump path. "منظم" (regular) is precisely the part that cannot be shown without infrastructure.
+
+**Remaining gap:** (no authored gap — the status entry is the record)
+
+**Remedy:** (no remedy authored)
+
 ### REQ-12.05 — استقلال یادآوری فاکتور و گزارش + چند دوره
 
 | | |
@@ -551,7 +572,7 @@ re-run with one command. Evidence strings are reproduced verbatim from
 | `REQ-13.01` | مرحله‌بندی و گیت تأیید | ۱۳ | P1 | docs/CRM_REVIEW_CLIENT_DECISIONS.md |
 | `REQ-14.01` | تست واقعی، بدون Pass صوری | ۱۴ | P0 | tools/checks/phase4-integration.mjs 25/25 walks the nine integration chains end to end over HTTP with the resulting database state asserted at each li… |
 | `REQ-14.02` | Requirements Traceability Matrix | ۱۴ | P0 | docs/REQUIREMENT_CLOSURE.md |
-| `REQ-15.02` | Backup و Restore تست‌شده | ۱۵ | P0 | app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is REQ-12.07 (BLOCKED, no cron on host) — code is not the gap |
+| `REQ-15.02` | Backup و Restore تست‌شده | ۱۵ | P0 | app/Services/Backup; tests/Feature/BackupRestoreTest.php — scheduling is NOT REQ-12.07: that requirement is the reminder scheduler (contract §5-2/12) … |
 | `REQ-05.01` | اتصال پروژه به مشتری و قرارداد + فرم نوع‌محور | ۵-۱/۵-۳ | P1 | app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-flow.mjs |
 | `REQ-05.02` | فیلدهای پروژه سئو | ۵-۱/۵-۳ | P1 | tools/checks/seo-website.mjs 14/14: bare domain accepted (Laravel's own `url` rule would reject it), URL with port/path/query/fragment stored as typed… |
 | `REQ-05.03` | مدیریت ساختارمند کلمات کلیدی | ۵-۱/۵-۳ | P1 | app/Http/Controllers/Projects/ProjectController.php; tools/checks/project-keyword.mjs |
