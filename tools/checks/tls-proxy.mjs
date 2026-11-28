@@ -43,6 +43,7 @@
  * the setting exists to prevent.
  */
 import { execFileSync, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
@@ -58,6 +59,12 @@ const check = (id, ok, detail) => c.check(id, ok, detail);
 /* flow-user.php refuses to touch a database outside .arena/flows — a guard
  * worth respecting rather than working around, since it is what keeps test
  * fixtures from reaching the shared database. */
+/* Captured before any PHP runs, so a mutation anywhere in this suite is caught. */
+const sharedBefore = (() => {
+  const p = path.join(ROOT, 'database/database.sqlite');
+  return fs.existsSync(p) ? createHash('sha256').update(fs.readFileSync(p)).digest('hex') : '';
+})();
+
 const work = path.join(ROOT, '.arena/flows/gate4-tls');
 fs.rmSync(work, { recursive: true, force: true });
 fs.mkdirSync(work, { recursive: true });
@@ -295,7 +302,24 @@ async function secureCookieViaRenderer() {
     user_agent: 'gate4-tls',
     headers: {},
     forwarded_proto: 'https',
-    env: { SESSION_SECURE_COOKIE: 'true' },
+    /*
+     * DB_DATABASE is REQUIRED here, not optional.
+     *
+     * This spec drives http-render.php directly rather than through
+     * dev-server.mjs, so it bypasses the forwarding that keeps other suites on a
+     * private database. Without it, PHP falls back to the application default —
+     * database/database.sqlite — and simply rendering /login writes a session
+     * row into the SHARED database. That is exactly what happened: the first
+     * version of this file omitted it, the shared database went from 484 to 490
+     * rows (7 sessions instead of 1), and the only reason it was recoverable is
+     * that an earlier copy happened to be byte-identical to the reference.
+     *
+     * A test that mutates the state it is measuring is worse than no test.
+     */
+    env: {
+      SESSION_SECURE_COOKIE: 'true',
+      DB_DATABASE: db,
+    },
   }));
 
   const r = await new Promise((resolve) => {
@@ -396,5 +420,21 @@ check('TLS-G-TRUSTED-PROXIES-UNEXERCISED', true,
   + 'this environment — it needs the deployment host. Recorded, not skipped.');
 
 check('TLS-CLEANUP', true, 'the app instance and the TLS terminator were stopped');
+
+/*
+ * This suite once wrote six session rows into the shared database because the
+ * direct http-render.php spec omitted DB_DATABASE. The assertion below is the
+ * regression test for that mistake: the shared database must be byte-identical
+ * before and after, which is the same guarantee run-all.mjs makes globally but
+ * that this suite has to keep locally to fail fast and point at the cause.
+ */
+const digestOf = (p) => createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const sharedPath = path.join(ROOT, 'database/database.sqlite');
+
+check('TLS-ISOLATION',
+  !fs.existsSync(sharedPath) || digestOf(sharedPath) === sharedBefore,
+  `database/database.sqlite is byte-identical before and after (${sharedBefore.slice(0, 16)}…) — `
+  + `this suite drives the renderer directly, so it must forward DB_DATABASE explicitly or it `
+  + `writes sessions into the shared database`);
 
 process.exit(c.summary() ? 0 : 1);
