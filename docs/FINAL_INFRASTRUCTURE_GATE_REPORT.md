@@ -401,14 +401,25 @@ node tools/checks/run-all.mjs > .arena/phase7/…log 2>&1
 echo "RUNNER_EXIT=$?" > .arena/phase7/…exit.txt
 ```
 
-Last confirmed full run (`1357871`, 73 suites): **73/73, 1895 assertions, 0
-failed, 0 skipped, `RUNNER_EXIT=0`**, shared database byte-identical
-(`69d8b91f7ef3ba23…`, 57 tables, 484 rows) before and after, runner row digest
-`54fe60a4a88d1e61…` for the third consecutive run.
+Definitive run over the final SHA `1f29da0`, clean tree, unpiped, exit code to a
+file:
 
-This round adds one suite (`tls-proxy`, 10/10) for 74 total. The definitive
-post-report run over the final SHA is recorded in
-`docs/PRODUCTION_CUTOVER_RUNBOOK.md` §8 and in the git audit.
+```
+suites     74 total · 74 executed · 74 passed · 0 failed · 0 skipped
+assertions 1906 executed · 1906 passed · 0 failed · 0 skipped
+isolation  shared database untouched (every pass)
+REGRESSION SUITE PASSED
+RUNNER_EXIT=0
+```
+
+Shared database byte-identical before and after:
+`69d8b91f7ef3ba239287c14eead1cbe54c6e41b939912a9698f880ae12d31d9e`, 57 tables,
+484 rows; runner row digest `54fe60a4a88d1e61…` for the fourth consecutive full
+run. 24 evidence PNG/JSON files were rewritten by the suites (timestamps and
+re-rendered pixels from live seeded data) and reverted, so the tested tree and
+the committed tree are the same object.
+
+This round adds one suite — `tls-proxy`, **11/11** — taking 73 → 74.
 
 ---
 
